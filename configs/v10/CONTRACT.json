@@ -100,18 +100,20 @@
   "runtime": {
     "backend": "cuda",
     "checkpoint_optimizer_state": true,
+    "cuda_allocator_conf": "backend:native,expandable_segments:True",
+    "gradient_accumulation_offload": "cpu",
     "optimizer": "adafactor",
     "resume_from": "auto",
     "strict_resume": true
   },
   "source": {
     "preparation_scripts": {
-      "scripts/prepare_v10_matrix.py": "8f30f90b1bbe7c718c65176e946f0e716991837e42ec93e2da9bab34e7853e07",
+      "scripts/prepare_v10_matrix.py": "ced6d0a396e996375c8abbadac406581150891e18aff5ba4c487efd5f026b8a1",
       "scripts/remap_functional_choices.py": "3b8c64e7775edd14f754b15e21f67cb5d956b9a34952ac56f8286a889f71a4b3"
     },
     "runtime_sources": {
-      "src/latent_workspace_ft_v10/engine.py": "3139c6edea71575310a2e6f245999e504318fedede202786fe2c949861ad2e1c",
-      "src/latent_workspace_ft_v10/source_manifest.json": "4abca530bd07ec77d54399d6f4ccdd6eaa5503d6832c1fcddd3a807436518e46"
+      "src/latent_workspace_ft_v10/engine.py": "755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c",
+      "src/latent_workspace_ft_v10/source_manifest.json": "3264d9ebc6307e0028e58ded03c2d36c38a3b1dc71958822a93b3eacc09a0ee2"
     },
     "v9_reference_files": {
       "configs/v9_reference/MATRIX.json": "02a77f5cf4c35a50610fc549899c4b44d124ee39f2bb4106f3499a72dea3f942",

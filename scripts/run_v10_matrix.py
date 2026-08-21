@@ -54,6 +54,13 @@ DELTA_COMPARE_MAX_WORKING_SET_BYTES = 64 * 1024 * 1024
 DELTA_COMPARE_ESTIMATED_BYTES_PER_ELEMENT = 32
 PROFILES = ("smoke", "n3", "n10")
 PROFILE_GATE = {"n3": "smoke", "n10": "n3"}
+CUDA_ALLOCATOR_ENV = "PYTORCH_ALLOC_CONF"
+CUDA_ALLOCATOR_LEGACY_ENV = "PYTORCH_CUDA_ALLOC_CONF"
+CUDA_ALLOCATOR_HIP_LEGACY_ENV = "PYTORCH_HIP_ALLOC_CONF"
+CUDA_ALLOCATOR_DISABLE_ENV = "PYTORCH_NO_CUDA_MEMORY_CACHING"
+CUDA_ALLOCATOR_CONF = "backend:native,expandable_segments:True"
+GRADIENT_ACCUMULATION_OFFLOAD = "cpu"
+GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT = "gradient_accumulation_offload.json"
 SAFE_NAME_RE = re.compile(r"^[A-Za-z0-9_.-]+$")
 
 # The v10 comparison is specifically contracted as an unquantized, full-scope
@@ -94,6 +101,20 @@ FULL_UPDATE_REQUIREMENTS = (
         "sdpa",
         ("model", "attn_implementation"),
         "sdpa",
+    ),
+    (
+        "train.cuda_allocator_conf",
+        ("runtime", "cuda_allocator_conf"),
+        CUDA_ALLOCATOR_CONF,
+        ("train", "cuda_allocator_conf"),
+        CUDA_ALLOCATOR_CONF,
+    ),
+    (
+        "train.gradient_accumulation_offload",
+        ("runtime", "gradient_accumulation_offload"),
+        GRADIENT_ACCUMULATION_OFFLOAD,
+        ("train", "gradient_accumulation_offload"),
+        GRADIENT_ACCUMULATION_OFFLOAD,
     ),
 )
 
@@ -511,6 +532,28 @@ def validate_contract(
     for key in ("name_or_path", "revision"):
         if contract_model.get(key) != matrix_model.get(key):
             raise RunnerError(f"Contract model.{key} disagrees with matrix.")
+    contract_runtime = contract.get("runtime")
+    matrix_runtime = matrix.get("runtime")
+    if not isinstance(contract_runtime, dict) or not isinstance(matrix_runtime, dict):
+        raise RunnerError("Contract/matrix runtime object is missing.")
+    if contract_runtime.get("cuda_allocator_conf") != CUDA_ALLOCATOR_CONF:
+        raise RunnerError("Contract CUDA allocator policy is not the pinned value.")
+    if matrix_runtime.get("cuda_allocator_conf") != CUDA_ALLOCATOR_CONF:
+        raise RunnerError("Matrix CUDA allocator policy is not the pinned value.")
+    if (
+        contract_runtime.get("gradient_accumulation_offload")
+        != GRADIENT_ACCUMULATION_OFFLOAD
+    ):
+        raise RunnerError(
+            "Contract gradient-accumulation offload policy is not the pinned value."
+        )
+    if (
+        matrix_runtime.get("gradient_accumulation_offload")
+        != GRADIENT_ACCUMULATION_OFFLOAD
+    ):
+        raise RunnerError(
+            "Matrix gradient-accumulation offload policy is not the pinned value."
+        )
     contract_matrix = contract.get("matrix")
     profiles = (
         contract_matrix.get("profiles") if isinstance(contract_matrix, dict) else None
@@ -526,7 +569,7 @@ def validate_contract(
     source = contract.get("source")
     if not isinstance(source, dict):
         raise RunnerError("Contract source object is missing.")
-    for key in ("preparation_scripts", "v9_reference_files"):
+    for key in ("preparation_scripts", "runtime_sources", "v9_reference_files"):
         mapping = source.get(key)
         if not isinstance(mapping, dict):
             raise RunnerError(f"Contract source.{key} is missing.")
@@ -601,6 +644,16 @@ def prepare_runs(
             "seed": spec.seed,
             "max_steps": spec.max_steps,
             "output_dir": spec.output_dir_relative,
+            "runtime_policy": {
+                "environment_variable": CUDA_ALLOCATOR_ENV,
+                "pytorch_alloc_conf": CUDA_ALLOCATOR_CONF,
+                "gradient_accumulation_offload": GRADIENT_ACCUMULATION_OFFLOAD,
+                "forbidden_environment_variables": [
+                    CUDA_ALLOCATOR_LEGACY_ENV,
+                    CUDA_ALLOCATOR_HIP_LEGACY_ENV,
+                    CUDA_ALLOCATOR_DISABLE_ENV,
+                ],
+            },
             "hashes": hashes,
         }
         prepared.append(
@@ -1632,6 +1685,281 @@ def validate_full_update_delta(
     }
 
 
+def validate_allocator_environment_file(
+    path: Path,
+    *,
+    configured: Any,
+    expected_source_sha256: str,
+    label: str,
+    receipt_path: str,
+) -> dict[str, Any]:
+    """Validate and hash one child process's observed allocator policy."""
+
+    if not path.is_file() or path.stat().st_size <= 0:
+        raise RunnerError(f"Missing environment.json for {label}")
+    environment = read_json(path)
+    snapshot_settings = environment.get("allocator_snapshot_settings")
+    allocated_bytes = environment.get("cuda_memory_allocated_bytes")
+    runtime_identity = {
+        key: environment.get(key)
+        for key in (
+            "harness_version",
+            "python",
+            "platform",
+            "hostname",
+            "torch",
+            "cuda_runtime",
+            "cudnn",
+            "source_sha256",
+            "cuda_devices",
+            "transformers",
+            "peft",
+            "safetensors",
+        )
+    }
+    checks = {
+        "configured_policy_exact": configured == CUDA_ALLOCATOR_CONF,
+        "primary_environment_exact": (
+            environment.get("pytorch_alloc_conf") == CUDA_ALLOCATOR_CONF
+        ),
+        "legacy_alias_absent": (
+            "pytorch_cuda_alloc_conf_legacy" in environment
+            and
+            environment.get("pytorch_cuda_alloc_conf_legacy") is None
+        ),
+        "hip_legacy_alias_absent": (
+            "pytorch_hip_alloc_conf_legacy" in environment
+            and
+            environment.get("pytorch_hip_alloc_conf_legacy") is None
+        ),
+        "caching_allocator_enabled": (
+            "pytorch_no_cuda_memory_caching" in environment
+            and
+            environment.get("pytorch_no_cuda_memory_caching") is None
+        ),
+        "native_backend_reported": environment.get("allocator_backend") == "native",
+        "parsed_settings_roundtrip_exact": (
+            environment.get("allocator_settings") == CUDA_ALLOCATOR_CONF
+        ),
+        "snapshot_expandable_segments_enabled": (
+            isinstance(snapshot_settings, Mapping)
+            and snapshot_settings.get("expandable_segments") is True
+        ),
+        "allocator_initialized": environment.get("allocator_initialized") is True,
+        "live_cuda_allocation_observed": (
+            isinstance(allocated_bytes, int)
+            and not isinstance(allocated_bytes, bool)
+            and allocated_bytes > 0
+        ),
+        "runtime_identity_complete": (
+            all(key in environment for key in runtime_identity)
+            and all(
+                runtime_identity.get(key) is not None
+                for key in (
+                    "harness_version",
+                    "python",
+                    "platform",
+                    "hostname",
+                    "torch",
+                    "cuda_runtime",
+                    "cudnn",
+                    "source_sha256",
+                    "transformers",
+                    "safetensors",
+                )
+            )
+            and isinstance(runtime_identity.get("cuda_devices"), list)
+            and len(runtime_identity["cuda_devices"]) > 0
+        ),
+        "source_identity_exact": (
+            runtime_identity.get("source_sha256") == expected_source_sha256
+        ),
+    }
+    if not all(checks.values()):
+        failed = sorted(key for key, passed in checks.items() if not passed)
+        raise RunnerError(
+            "Allocator environment did not satisfy the pinned policy for "
+            f"{label}: {failed}"
+        )
+    return {
+        "path": receipt_path,
+        "sha256": sha256_file(path),
+        "configured": configured,
+        "observed_primary": environment["pytorch_alloc_conf"],
+        "observed_legacy_alias": environment.get(
+            "pytorch_cuda_alloc_conf_legacy"
+        ),
+        "observed_hip_legacy_alias": environment.get(
+            "pytorch_hip_alloc_conf_legacy"
+        ),
+        "observed_caching_allocator_disable": environment.get(
+            "pytorch_no_cuda_memory_caching"
+        ),
+        "active_backend": environment["allocator_backend"],
+        "parsed_settings": environment["allocator_settings"],
+        "snapshot_settings": snapshot_settings,
+        "allocator_initialized": environment["allocator_initialized"],
+        "cuda_memory_allocated_bytes": allocated_bytes,
+        "cuda_memory_reserved_bytes": environment.get(
+            "cuda_memory_reserved_bytes"
+        ),
+        "runtime_identity": runtime_identity,
+        "checks": checks,
+        "passed": True,
+    }
+
+
+def validate_allocator_environment(prepared: PreparedRun) -> dict[str, Any]:
+    """Bind the matrix child's observed allocator policy to verification."""
+
+    train = prepared.materialized.get("train")
+    if not isinstance(train, Mapping):
+        raise RunnerError("Prepared train config is malformed.")
+    hashes = _prepared_hashes(prepared)
+    source_files = hashes.get("source_files_sha256")
+    if not isinstance(source_files, Mapping):
+        raise RunnerError("Prepared source hash mapping is malformed.")
+    expected_source_sha256 = source_files.get(
+        "src/latent_workspace_ft_v10/engine.py"
+    )
+    if not isinstance(expected_source_sha256, str):
+        raise RunnerError("Prepared engine source hash is missing.")
+    return validate_allocator_environment_file(
+        prepared.spec.output_dir / "environment.json",
+        configured=train.get("cuda_allocator_conf"),
+        expected_source_sha256=expected_source_sha256,
+        label=prepared.spec.run_id,
+        receipt_path="environment.json",
+    )
+
+
+def gradient_accumulation_offload_checkpoint_descriptor(
+    checkpoint: Path,
+    *,
+    output_dir: Path,
+) -> dict[str, Any]:
+    """Recompute the engine's portable checkpoint descriptor."""
+
+    try:
+        return verified_pruning.gradient_offload_checkpoint_descriptor(
+            checkpoint,
+            output_dir=output_dir,
+        )
+    except verified_pruning.PruneError as exc:
+        raise RunnerError(str(exc)) from exc
+
+
+def validate_bundle_identity(
+    bundle_dir: Path,
+    *,
+    bundle_path: str,
+    expected_global_step: int,
+) -> dict[str, Any]:
+    """Cross-bind manifest, trainer state, and experiment config identity."""
+
+    try:
+        return verified_pruning.validate_bundle_identity(
+            bundle_dir,
+            bundle_path=bundle_path,
+            expected_global_step=expected_global_step,
+        )
+    except verified_pruning.PruneError as exc:
+        raise RunnerError(str(exc)) from exc
+
+
+def validate_gradient_accumulation_offload_file(
+    path: Path,
+    *,
+    receipt_path: str,
+    expected_run_id: str,
+    expected_source_sha256: str,
+    expected_resume_signature: str,
+    expected_initial_global_step: int,
+    expected_final_global_step: int,
+    expected_configured_accumulation_steps: int,
+    expected_initial_resume_checkpoint: Mapping[str, Any] | None,
+    expected_trainable_parameter_count: int,
+    expected_trainable_parameter_total_numel: int,
+) -> dict[str, Any]:
+    try:
+        return verified_pruning.validate_gradient_accumulation_offload_receipt_file(
+            path,
+            receipt_path=receipt_path,
+            expected_run_id=expected_run_id,
+            expected_source_sha256=expected_source_sha256,
+            expected_resume_signature=expected_resume_signature,
+            expected_initial_global_step=expected_initial_global_step,
+            expected_final_global_step=expected_final_global_step,
+            expected_configured_accumulation_steps=(
+                expected_configured_accumulation_steps
+            ),
+            expected_initial_resume_checkpoint=expected_initial_resume_checkpoint,
+            expected_trainable_parameter_count=expected_trainable_parameter_count,
+            expected_trainable_parameter_total_numel=(
+                expected_trainable_parameter_total_numel
+            ),
+        )
+    except verified_pruning.PruneError as exc:
+        raise RunnerError(str(exc)) from exc
+
+
+def validate_gradient_accumulation_offload(
+    prepared: PreparedRun,
+    *,
+    manifest: Mapping[str, Any],
+) -> dict[str, Any]:
+    train = prepared.materialized.get("train")
+    hashes = prepared.provenance.get("hashes")
+    if not isinstance(train, Mapping) or not isinstance(hashes, Mapping):
+        raise RunnerError("Prepared gradient-offload bindings are malformed.")
+    source_files = hashes.get("source_files_sha256")
+    if not isinstance(source_files, Mapping):
+        raise RunnerError("Prepared engine source hashes are malformed.")
+    expected_source = source_files.get("src/latent_workspace_ft_v10/engine.py")
+    run_id = manifest.get("run_id")
+    resume_signature = manifest.get("resume_signature")
+    accumulation_steps = train.get("gradient_accumulation_steps")
+    optimizer_coverage = read_json(
+        prepared.spec.output_dir / "final/optimizer_coverage.json"
+    )
+    trainable_parameter_count = optimizer_coverage.get(
+        "model_trainable_unique_physical_parameters"
+    )
+    trainable_parameter_total_numel = optimizer_coverage.get(
+        "model_trainable_numel"
+    )
+    if (
+        not isinstance(expected_source, str)
+        or manifest.get("source_sha256") != expected_source
+        or not isinstance(run_id, str)
+        or not run_id
+        or not isinstance(resume_signature, str)
+        or re.fullmatch(r"[0-9a-f]{64}", resume_signature) is None
+        or isinstance(accumulation_steps, bool)
+        or not isinstance(accumulation_steps, int)
+        or isinstance(trainable_parameter_count, bool)
+        or not isinstance(trainable_parameter_count, int)
+        or trainable_parameter_count < 1
+        or isinstance(trainable_parameter_total_numel, bool)
+        or not isinstance(trainable_parameter_total_numel, int)
+        or trainable_parameter_total_numel < 1
+    ):
+        raise RunnerError("Final manifest/config gradient-offload binding is incomplete.")
+    return validate_gradient_accumulation_offload_file(
+        prepared.spec.output_dir / GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT,
+        receipt_path=GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT,
+        expected_run_id=run_id,
+        expected_source_sha256=expected_source,
+        expected_resume_signature=resume_signature,
+        expected_initial_global_step=0,
+        expected_final_global_step=prepared.spec.max_steps,
+        expected_configured_accumulation_steps=accumulation_steps,
+        expected_initial_resume_checkpoint=None,
+        expected_trainable_parameter_count=trainable_parameter_count,
+        expected_trainable_parameter_total_numel=trainable_parameter_total_numel,
+    )
+
+
 def validate_final(prepared: PreparedRun) -> dict[str, Any]:
     final_dir = prepared.spec.output_dir / "final"
     completed = final_dir / "COMPLETED"
@@ -1657,6 +1985,11 @@ def validate_final(prepared: PreparedRun) -> dict[str, Any]:
     if int(manifest.get("global_step", -1)) != prepared.spec.max_steps:
         raise RunnerError(f"Final global_step mismatch for {prepared.spec.run_id}")
     final_config = read_json(config_path)
+    bundle_identity = validate_bundle_identity(
+        final_dir,
+        bundle_path="final",
+        expected_global_step=prepared.spec.max_steps,
+    )
     final_model = final_config.get("model")
     final_train = final_config.get("train")
     expected_model = prepared.materialized.get("model")
@@ -1671,6 +2004,23 @@ def validate_final(prepared: PreparedRun) -> dict[str, Any]:
         raise RunnerError(f"Final seed mismatch for {prepared.spec.run_id}")
     if int(final_train.get("max_steps", -1)) != prepared.spec.max_steps:
         raise RunnerError(f"Final max_steps mismatch for {prepared.spec.run_id}")
+    if final_train.get("cuda_allocator_conf") != CUDA_ALLOCATOR_CONF:
+        raise RunnerError(
+            f"Final allocator config mismatch for {prepared.spec.run_id}"
+        )
+    if (
+        final_train.get("gradient_accumulation_offload")
+        != GRADIENT_ACCUMULATION_OFFLOAD
+    ):
+        raise RunnerError(
+            "Final gradient-accumulation offload config mismatch for "
+            f"{prepared.spec.run_id}"
+        )
+    allocator_environment = validate_allocator_environment(prepared)
+    gradient_accumulation_offload = validate_gradient_accumulation_offload(
+        prepared,
+        manifest=manifest,
+    )
     weights = model_cache.inspect_safetensors_layout(final_dir / "base_model")
     semantic_entries, semantic_weights = inspect_semantic_safetensors(
         final_dir / "base_model"
@@ -1702,6 +2052,9 @@ def validate_final(prepared: PreparedRun) -> dict[str, Any]:
         "weights": weights,
         "semantic_weights": semantic_weights,
         "full_update_delta": full_update_delta,
+        "allocator_environment": allocator_environment,
+        "gradient_accumulation_offload": gradient_accumulation_offload,
+        "bundle_identity": bundle_identity,
         "inventory": inventory,
     }
 
@@ -1716,13 +2069,25 @@ def write_verification(prepared: PreparedRun, validated: Mapping[str, Any]) -> P
         "weights": validated["weights"],
         "semantic_weights": validated["semantic_weights"],
         "full_update_delta": validated["full_update_delta"],
+        "allocator_environment": validated["allocator_environment"],
+        "gradient_accumulation_offload": validated[
+            "gradient_accumulation_offload"
+        ],
+        "bundle_identity": validated["bundle_identity"],
         "final_inventory": validated["inventory"],
         "claim_boundary": (
             "This verifies artifact completeness and byte identity plus the bound "
             "mechanical full-scope optimizer membership, per-base-tensor optimization "
-            "attempt evidence, and exact persisted-delta classification for one "
-            "contracted run. It does not prove every stored parameter moved, training "
-            "quality, or scientific success."
+            "attempt evidence, exact persisted-delta classification, and the child "
+            "process's reported native allocator backend, parsed policy, effective "
+            "expandable_segments=true snapshot setting, live CUDA allocation, and "
+            "the completed, skip-free CPU gradient spill/merge/restore receipt with "
+            "optimizer-schema and cumulative segment-chain accounting for one "
+            "contracted run. Discarded/nonfinite/skipped or partial accumulation "
+            "windows are rejected. It does not prove that "
+            "any particular allocation expanded, model-level numerical parity without "
+            "a separate native-versus-offloaded parity oracle, training quality, or "
+            "scientific success."
         ),
     }
     path = prepared.spec.output_dir / "RUN_VERIFICATION.json"
@@ -1749,6 +2114,14 @@ def verify_completed(prepared: PreparedRun) -> tuple[bool, str]:
             return False, "safetensors semantic-schema mismatch"
         if receipt.get("full_update_delta") != validated["full_update_delta"]:
             return False, "full-update delta receipt/hash mismatch"
+        if receipt.get("allocator_environment") != validated["allocator_environment"]:
+            return False, "allocator environment receipt/hash mismatch"
+        if receipt.get("gradient_accumulation_offload") != validated[
+            "gradient_accumulation_offload"
+        ]:
+            return False, "gradient-accumulation offload receipt/hash mismatch"
+        if receipt.get("bundle_identity") != validated["bundle_identity"]:
+            return False, "bundle manifest/trainer/config identity mismatch"
     except (RunnerError, OSError, ValueError, TypeError) as exc:
         return False, str(exc)
     return True, "verified"
@@ -1903,8 +2276,18 @@ def run_child(
             signal.signal(signum, handler)
 
 
-def offline_environment(repo_root: Path) -> dict[str, str]:
+def offline_environment(
+    repo_root: Path,
+    *,
+    cache_dir: Path | None = None,
+) -> dict[str, str]:
     environment = dict(os.environ)
+    for forbidden in (
+        CUDA_ALLOCATOR_LEGACY_ENV,
+        CUDA_ALLOCATOR_HIP_LEGACY_ENV,
+        CUDA_ALLOCATOR_DISABLE_ENV,
+    ):
+        environment.pop(forbidden, None)
     environment.update(
         {
             "HF_HUB_OFFLINE": "1",
@@ -1912,8 +2295,11 @@ def offline_environment(repo_root: Path) -> dict[str, str]:
             "HF_DATASETS_OFFLINE": "1",
             "HF_HUB_DISABLE_TELEMETRY": "1",
             "TOKENIZERS_PARALLELISM": "false",
+            CUDA_ALLOCATOR_ENV: CUDA_ALLOCATOR_CONF,
         }
     )
+    if cache_dir is not None:
+        environment["HF_HUB_CACHE"] = str(cache_dir.resolve())
     source = str(repo_root / "src")
     existing = environment.get("PYTHONPATH")
     environment["PYTHONPATH"] = source if not existing else source + os.pathsep + existing
@@ -1948,6 +2334,13 @@ def run_matrix(
     )
     source_files, source_tree_sha256 = source_hashes(repo_root)
 
+    cache_dir = options.cache_dir
+    if cache_dir is not None:
+        cache_dir = cache_dir.expanduser()
+        if not cache_dir.is_absolute():
+            cache_dir = repo_root / cache_dir
+        cache_dir = cache_dir.resolve()
+
     matrix_model = matrix.get("model")
     if not isinstance(matrix_model, dict):
         raise RunnerError("Matrix model object is missing.")
@@ -1957,7 +2350,7 @@ def run_matrix(
             expected_model=str(matrix_model["name_or_path"]),
             expected_revision=str(matrix_model["revision"]),
             snapshot_path=options.model_snapshot,
-            cache_dir=options.cache_dir,
+            cache_dir=cache_dir,
         )
     except model_cache.PrefetchError as exc:
         raise RunnerError(f"Model prefetch receipt/cache verification failed: {exc}") from exc
@@ -2041,6 +2434,11 @@ def run_matrix(
         "states": states,
         "reasons": reasons,
         "offline_training": True,
+        "pytorch_alloc_conf": CUDA_ALLOCATOR_CONF,
+        "pytorch_cuda_alloc_conf_legacy": None,
+        "pytorch_hip_alloc_conf_legacy": None,
+        "pytorch_no_cuda_memory_caching": None,
+        "gradient_accumulation_offload": GRADIENT_ACCUMULATION_OFFLOAD,
         "dry_run": options.dry_run,
         "max_runs": options.max_runs,
     }
@@ -2197,7 +2595,7 @@ def run_matrix(
                     cwd=repo_root,
                     stdout_path=item.spec.output_dir / "subprocess.stdout.log",
                     stderr_path=item.spec.output_dir / "subprocess.stderr.log",
-                    environment=offline_environment(repo_root),
+                    environment=offline_environment(repo_root, cache_dir=cache_dir),
                 )
             except OSError as exc:
                 states[run_id] = "launch_failed"

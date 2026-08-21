@@ -16,6 +16,7 @@ if str(SCRIPTS) not in sys.path:
 
 prefetch = importlib.import_module("prefetch_v10_model")
 runner = importlib.import_module("run_v10_matrix")
+pruning = importlib.import_module("prune_v10_verified_run")
 
 MODEL = "mistralai/Mistral-7B-Instruct-v0.3"
 REVISION = "c170c708c41dac9275d15a8fff4eca08d52bab71"
@@ -24,6 +25,88 @@ REVISION = "c170c708c41dac9275d15a8fff4eca08d52bab71"
 def write_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(runner.canonical_json_bytes(value))
+
+
+def write_synthetic_gradient_offload_receipt(
+    path: Path,
+    *,
+    run_id: str,
+    source_sha256: str,
+    resume_signature: str,
+    initial_step: int,
+    final_step: int,
+    accumulation_steps: int,
+    parameter_count: int,
+    parameter_numel: int,
+    gradient_capacity_bytes: int,
+    initial_checkpoint: dict[str, object] | None = None,
+) -> dict[str, object]:
+    windows = final_step - initial_step
+    counters = {
+        "windows_started": windows,
+        "windows_restored": windows,
+        "windows_discarded": 0,
+        "single_microbatch_windows": 0,
+        "microbatch_spills": accumulation_steps * windows,
+        "parameter_first_spills": parameter_count * windows,
+        "parameter_merges": parameter_count * windows * (accumulation_steps - 1),
+        "cumulative_current_gradient_bytes": (
+            gradient_capacity_bytes * accumulation_steps * windows
+        ),
+        "peak_cpu_accumulator_bytes": gradient_capacity_bytes,
+    }
+    receipt: dict[str, object] = {
+        "schema_version": pruning.GRADIENT_OFFLOAD_SCHEMA_VERSION,
+        "mode": runner.GRADIENT_ACCUMULATION_OFFLOAD,
+        "algorithm": pruning.GRADIENT_OFFLOAD_ALGORITHM,
+        "claim_boundary": {
+            "execution_proof": "synthetic execution proof",
+            "numerical_proof": "synthetic numerical boundary",
+            "unsupported": "synthetic unsupported boundary",
+        },
+        "run_id": run_id,
+        "source_sha256": source_sha256,
+        "resume_signature": resume_signature,
+        "configured_gradient_accumulation_steps": accumulation_steps,
+        "initial_global_step": initial_step,
+        "last_observed_global_step": final_step,
+        "last_restored_global_step": final_step - 1,
+        "final_global_step": final_step,
+        "trainable_parameter_count": parameter_count,
+        "trainable_parameter_total_numel": parameter_numel,
+        "trainable_gradient_capacity_bytes": gradient_capacity_bytes,
+        "trainable_parameter_schema_sha256": "d" * 64,
+        "trainable_parameter_schema_fields": list(
+            pruning.GRADIENT_OFFLOAD_SCHEMA_FIELDS
+        ),
+        **counters,
+        "live_cpu_buffer_count": 0,
+        "live_cpu_buffer_bytes": 0,
+        "active_window": None,
+        "continuations": [],
+        "segments": [
+            {
+                "segment_index": 0,
+                "previous_receipt_sha256": None,
+                "resume_checkpoint": initial_checkpoint,
+                "initial_global_step": initial_step,
+                "last_observed_global_step": final_step,
+                "final_global_step": final_step,
+                "initial_cumulative_counters": {key: 0 for key in counters},
+                "latest_cumulative_counters": counters,
+                "final_cumulative_counters": counters,
+                "status": "completed",
+            }
+        ],
+        "status": "completed",
+        "updated_at": 1.0,
+        "receipt_sha256": None,
+    }
+    receipt["receipt_sha256"] = (
+        pruning.gradient_accumulation_offload_receipt_self_hash(receipt)
+    )
+    write_json(path, receipt)
+    return receipt
 
 
 def replace_json_field(
@@ -152,6 +235,11 @@ def make_repo(tmp_path: Path, *, profile: str = "smoke") -> tuple[Path, Path, Pa
                 "device": "cuda",
                 "mixed_precision": "bf16",
                 "optimizer": "adafactor",
+                "gradient_accumulation_steps": 8,
+                "cuda_allocator_conf": runner.CUDA_ALLOCATOR_CONF,
+                "gradient_accumulation_offload": (
+                    runner.GRADIENT_ACCUMULATION_OFFLOAD
+                ),
             },
             "data": {
                 "train_files": ["../../../data/v10/functional_train.jsonl"],
@@ -169,6 +257,12 @@ def make_repo(tmp_path: Path, *, profile: str = "smoke") -> tuple[Path, Path, Pa
         "expected_run_count": 1,
         "max_steps": 8,
         "model": {"name_or_path": MODEL, "revision": REVISION},
+        "runtime": {
+            "cuda_allocator_conf": runner.CUDA_ALLOCATOR_CONF,
+            "gradient_accumulation_offload": (
+                runner.GRADIENT_ACCUMULATION_OFFLOAD
+            ),
+        },
         "runs": [
             {
                 "run_id": "F0_query_only/seed_42",
@@ -197,7 +291,14 @@ def make_repo(tmp_path: Path, *, profile: str = "smoke") -> tuple[Path, Path, Pa
             "revision": REVISION,
             "train_mode": "full",
         },
-        "runtime": {"backend": "cuda", "optimizer": "adafactor"},
+        "runtime": {
+            "backend": "cuda",
+            "optimizer": "adafactor",
+            "cuda_allocator_conf": runner.CUDA_ALLOCATOR_CONF,
+            "gradient_accumulation_offload": (
+                runner.GRADIENT_ACCUMULATION_OFFLOAD
+            ),
+        },
         "matrix": {
             "profiles": {
                 profile: {"run_count": 1, "max_steps": 8},
@@ -207,6 +308,12 @@ def make_repo(tmp_path: Path, *, profile: str = "smoke") -> tuple[Path, Path, Pa
         "source": {
             "preparation_scripts": {
                 "scripts/prepare.py": runner.sha256_file(preparer),
+            },
+            "runtime_sources": {
+                "src/latent_workspace_ft_v10/engine.py": runner.sha256_file(engine),
+                "src/latent_workspace_ft_v10/source_manifest.json": runner.sha256_file(
+                    source_dir / "source_manifest.json"
+                ),
             },
             "v9_reference_files": {
                 "configs/v9_reference/MATRIX.json": runner.sha256_file(reference),
@@ -276,17 +383,66 @@ config = json.loads(config_path.read_text(encoding="utf-8"))
 output = config_path.parent
 (output / "offline_env.json").write_text(json.dumps({
     "HF_HUB_OFFLINE": os.environ.get("HF_HUB_OFFLINE"),
+    "HF_HUB_CACHE": os.environ.get("HF_HUB_CACHE"),
+    "PYTORCH_ALLOC_CONF": os.environ.get("PYTORCH_ALLOC_CONF"),
+    "PYTORCH_CUDA_ALLOC_CONF": os.environ.get("PYTORCH_CUDA_ALLOC_CONF"),
     "TRANSFORMERS_OFFLINE": os.environ.get("TRANSFORMERS_OFFLINE"),
     "HF_DATASETS_OFFLINE": os.environ.get("HF_DATASETS_OFFLINE"),
+}), encoding="utf-8")
+(output / "environment.json").write_text(json.dumps({
+    "harness_version": "synthetic-harness",
+    "python": "synthetic-python",
+    "platform": "synthetic-platform",
+    "hostname": "synthetic-host",
+    "torch": "synthetic-torch",
+    "cuda_runtime": "synthetic-cuda",
+    "cudnn": 1,
+    "source_sha256": hashlib.sha256(
+        (Path.cwd() / "src/latent_workspace_ft_v10/engine.py").read_bytes()
+    ).hexdigest(),
+    "cuda_devices": [{"index": 0, "name": "synthetic-gpu"}],
+    "transformers": "synthetic-transformers",
+    "peft": None,
+    "safetensors": "synthetic-safetensors",
+    "pytorch_alloc_conf": os.environ.get("PYTORCH_ALLOC_CONF"),
+    "pytorch_cuda_alloc_conf_legacy": os.environ.get("PYTORCH_CUDA_ALLOC_CONF"),
+    "pytorch_hip_alloc_conf_legacy": os.environ.get("PYTORCH_HIP_ALLOC_CONF"),
+    "pytorch_no_cuda_memory_caching": os.environ.get("PYTORCH_NO_CUDA_MEMORY_CACHING"),
+    "allocator_backend": "native",
+    "allocator_settings": os.environ.get("PYTORCH_ALLOC_CONF"),
+    "allocator_initialized": True,
+    "allocator_snapshot_settings": {"expandable_segments": True},
+    "cuda_memory_allocated_bytes": 1,
+    "cuda_memory_reserved_bytes": 1,
 }), encoding="utf-8")
 final = output / "final"
 base = final / "base_model"
 base.mkdir(parents=True)
 (final / "COMPLETED").write_text("ok\\n", encoding="utf-8")
 (final / "workspace_state.pt").write_bytes(b"workspace")
-(final / "trainer_state.pt").write_bytes(b"trainer")
 (final / "experiment_config.json").write_text(
     json.dumps(config, sort_keys=True), encoding="utf-8"
+)
+engine_run_id = "synthetic-engine-run"
+resume_signature = "b" * 64
+structural_resume_signature = "e" * 64
+data_fingerprint = {"files": [{"sha256": "a" * 64}]}
+config_sha256 = hashlib.sha256(
+    json.dumps(config, sort_keys=True, ensure_ascii=False).encode("utf-8")
+).hexdigest()
+torch.save(
+    {
+        "run_state": {
+            "run_id": engine_run_id,
+            "global_step": config["train"]["max_steps"],
+        },
+        "global_step": config["train"]["max_steps"],
+        "resume_signature": resume_signature,
+        "structural_resume_signature": structural_resume_signature,
+        "world_size": 1,
+        "data_fingerprint": data_fingerprint,
+    },
+    final / "trainer_state.pt",
 )
 coverage = {
     "format": "latent-workspace-ft-optimizer-coverage-v1",
@@ -299,6 +455,8 @@ coverage = {
     },
     "base_all_trainable": True,
     "optimizer_duplicate_memberships": 0,
+    "model_trainable_unique_physical_parameters": 2,
+    "model_trainable_numel": 24,
     "missing_parameters": [],
     "unexpected_parameters": [],
     "duplicate_parameters": [],
@@ -385,11 +543,91 @@ dynamic["report_sha256"] = hashlib.sha256(
     "format": "latent-workspace-ft-bundle-v4",
     "complete": True,
     "global_step": config["train"]["max_steps"],
+    "run_id": engine_run_id,
+    "source_sha256": hashlib.sha256(
+        (Path.cwd() / "src/latent_workspace_ft_v10/engine.py").read_bytes()
+    ).hexdigest(),
+    "resume_signature": resume_signature,
+    "structural_resume_signature": structural_resume_signature,
+    "config_sha256": config_sha256,
+    "world_size": 1,
+    "data_fingerprint": data_fingerprint,
     "optimizer_coverage_passed": True,
     "optimizer_coverage_sha256": coverage["report_sha256"],
     "base_update_coverage_passed": True,
     "base_update_coverage_sha256": dynamic["report_sha256"],
 }), encoding="utf-8")
+steps = config["train"]["max_steps"]
+accumulation_steps = config["train"]["gradient_accumulation_steps"]
+counters = {
+    "windows_started": steps,
+    "windows_restored": steps,
+    "windows_discarded": 0,
+    "single_microbatch_windows": 0,
+    "microbatch_spills": steps * accumulation_steps,
+    "parameter_first_spills": 2 * steps,
+    "parameter_merges": 2 * steps * (accumulation_steps - 1),
+    "cumulative_current_gradient_bytes": 96 * steps * accumulation_steps,
+    "peak_cpu_accumulator_bytes": 96,
+}
+gradient_offload_receipt = {
+    "schema_version": 2,
+    "mode": "cpu",
+    "algorithm": "pageable_cpu_storage_cuda_native_order_add_v1",
+    "claim_boundary": {
+        "execution_proof": "synthetic execution proof",
+        "numerical_proof": "synthetic numerical boundary",
+        "unsupported": "synthetic unsupported boundary",
+    },
+    "run_id": engine_run_id,
+    "source_sha256": hashlib.sha256(
+        (Path.cwd() / "src/latent_workspace_ft_v10/engine.py").read_bytes()
+    ).hexdigest(),
+    "resume_signature": resume_signature,
+    "configured_gradient_accumulation_steps": accumulation_steps,
+    "initial_global_step": 0,
+    "last_observed_global_step": steps,
+    "last_restored_global_step": steps - 1,
+    "final_global_step": steps,
+    "trainable_parameter_count": 2,
+    "trainable_parameter_total_numel": 24,
+    "trainable_gradient_capacity_bytes": 96,
+    "trainable_parameter_schema_sha256": "d" * 64,
+    "trainable_parameter_schema_fields": [
+        "name", "shape", "stride", "dtype", "device", "numel", "logical_bytes"
+    ],
+    **counters,
+    "live_cpu_buffer_count": 0,
+    "live_cpu_buffer_bytes": 0,
+    "active_window": None,
+    "continuations": [],
+    "segments": [{
+        "segment_index": 0,
+        "previous_receipt_sha256": None,
+        "resume_checkpoint": None,
+        "initial_global_step": 0,
+        "last_observed_global_step": steps,
+        "final_global_step": steps,
+        "initial_cumulative_counters": {key: 0 for key in counters},
+        "latest_cumulative_counters": counters,
+        "final_cumulative_counters": counters,
+        "status": "completed",
+    }],
+    "status": "completed",
+    "updated_at": 1.0,
+    "receipt_sha256": None,
+}
+gradient_offload_receipt["receipt_sha256"] = hashlib.sha256(
+    json.dumps(
+        gradient_offload_receipt,
+        sort_keys=True,
+        ensure_ascii=False,
+    ).encode("utf-8")
+).hexdigest()
+(output / "gradient_accumulation_offload.json").write_text(
+    json.dumps(gradient_offload_receipt, sort_keys=True),
+    encoding="utf-8",
+)
 """.lstrip().replace("__UNCHANGED_TENSOR__", repr(unchanged_tensor)).replace(
         "__DYNAMIC_EVIDENCE__", repr(dynamic_evidence)
     )
@@ -547,6 +785,10 @@ def test_dry_run_is_read_only_and_materializes_offline_config(tmp_path: Path) ->
     assert materialized["train"]["optimizer"] == "adafactor"
     assert materialized["train"]["device"] == "cuda"
     assert materialized["train"]["mixed_precision"] == "bf16"
+    assert (
+        materialized["train"]["gradient_accumulation_offload"]
+        == runner.GRADIENT_ACCUMULATION_OFFLOAD
+    )
     assert materialized["model"]["local_files_only"] is True
     assert materialized["train"]["resume_from"] == "none"
     assert materialized["train"]["seed"] == 42
@@ -560,6 +802,12 @@ def test_dry_run_is_read_only_and_materializes_offline_config(tmp_path: Path) ->
         ("train", "optimizer", "adamw", "train.optimizer"),
         ("train", "device", "cpu", "train.device"),
         ("train", "mixed_precision", "fp16", "train.mixed_precision"),
+        (
+            "train",
+            "gradient_accumulation_offload",
+            "none",
+            "train.gradient_accumulation_offload",
+        ),
         (
             "model",
             "attn_implementation",
@@ -593,6 +841,18 @@ def test_condition_full_update_drift_fails_closed_before_launch(
         ("model", "train_mode", "lora", "model.train_mode"),
         ("runtime", "optimizer", "adamw", "train.optimizer"),
         ("runtime", "backend", "cpu", "train.device"),
+        (
+            "runtime",
+            "cuda_allocator_conf",
+            "backend:cudaMallocAsync",
+            "allocator",
+        ),
+        (
+            "runtime",
+            "gradient_accumulation_offload",
+            "none",
+            "train.gradient_accumulation_offload",
+        ),
         ("model", "dtype", "float16", "train.mixed_precision"),
         (
             "model",
@@ -619,6 +879,87 @@ def test_contract_full_update_drift_fails_closed_before_launch(
     with pytest.raises(runner.RunnerError) as caught:
         runner.run_matrix(run_options)
     assert canonical in str(caught.value)
+
+
+def test_matrix_accumulation_offload_drift_fails_closed_before_launch(
+    tmp_path: Path,
+) -> None:
+    repo, snapshot, receipt = make_repo(tmp_path)
+    matrix_path = repo / "configs/v10/profiles/smoke/MATRIX.json"
+    replace_json_field(
+        matrix_path,
+        "runtime",
+        "gradient_accumulation_offload",
+        "none",
+    )
+    run_options = runner.RunnerOptions(
+        **{**options(repo, snapshot, receipt).__dict__, "dry_run": True}
+    )
+
+    with pytest.raises(runner.RunnerError, match="Matrix gradient-accumulation offload"):
+        runner.run_matrix(run_options)
+
+
+def test_allocator_environment_file_fails_closed_on_alias_or_tamper(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "environment.json"
+    valid = {
+        "harness_version": "synthetic-harness",
+        "python": "synthetic-python",
+        "platform": "synthetic-platform",
+        "hostname": "synthetic-host",
+        "torch": "synthetic-torch",
+        "cuda_runtime": "synthetic-cuda",
+        "cudnn": 1,
+        "source_sha256": "a" * 64,
+        "cuda_devices": [{"index": 0, "name": "synthetic-gpu"}],
+        "transformers": "synthetic-transformers",
+        "peft": None,
+        "safetensors": "synthetic-safetensors",
+        "pytorch_alloc_conf": runner.CUDA_ALLOCATOR_CONF,
+        "pytorch_cuda_alloc_conf_legacy": None,
+        "pytorch_hip_alloc_conf_legacy": None,
+        "pytorch_no_cuda_memory_caching": None,
+        "allocator_backend": "native",
+        "allocator_settings": runner.CUDA_ALLOCATOR_CONF,
+        "allocator_initialized": True,
+        "allocator_snapshot_settings": {"expandable_segments": True},
+        "cuda_memory_allocated_bytes": 1,
+        "cuda_memory_reserved_bytes": 1,
+    }
+    write_json(path, valid)
+    binding = runner.validate_allocator_environment_file(
+        path,
+        configured=runner.CUDA_ALLOCATOR_CONF,
+        expected_source_sha256="a" * 64,
+        label="synthetic child",
+        receipt_path="environment.json",
+    )
+    assert binding["passed"] is True
+
+    write_json(
+        path,
+        {**valid, "pytorch_cuda_alloc_conf_legacy": "backend:cudaMallocAsync"},
+    )
+    with pytest.raises(runner.RunnerError, match="legacy_alias_absent"):
+        runner.validate_allocator_environment_file(
+            path,
+            configured=runner.CUDA_ALLOCATOR_CONF,
+            expected_source_sha256="a" * 64,
+            label="synthetic child",
+            receipt_path="environment.json",
+        )
+
+    path.unlink()
+    with pytest.raises(runner.RunnerError, match="Missing environment.json"):
+        runner.validate_allocator_environment_file(
+            path,
+            configured=runner.CUDA_ALLOCATOR_CONF,
+            expected_source_sha256="a" * 64,
+            label="synthetic child",
+            receipt_path="environment.json",
+        )
 
 
 def test_n3_requires_exact_smoke_qualification(tmp_path: Path) -> None:
@@ -650,9 +991,19 @@ def test_n3_requires_exact_smoke_qualification(tmp_path: Path) -> None:
     assert result["profile"] == "n3"
 
 
-def test_stale_output_archived_fresh_stub_run_then_verified_skip(tmp_path: Path) -> None:
+def test_stale_output_archived_fresh_stub_run_then_verified_skip(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("PYTORCH_CUDA_ALLOC_CONF", "backend:cudaMallocAsync")
+    monkeypatch.setenv("PYTORCH_HIP_ALLOC_CONF", "backend:cudaMallocAsync")
+    monkeypatch.setenv("PYTORCH_NO_CUDA_MEMORY_CACHING", "1")
     repo, snapshot, receipt = make_repo(tmp_path)
-    run_options = options(repo, snapshot, receipt)
+    run_options = runner.RunnerOptions(
+        **{
+            **options(repo, snapshot, receipt).__dict__,
+            "cache_dir": Path("runs/v10/model_cache/hf-child"),
+        }
+    )
     output = repo / "runs/v10/smoke/F0_query_only/seed_42"
     output.mkdir(parents=True)
     (output / "stale.txt").write_text("preserve me", encoding="utf-8")
@@ -676,6 +1027,11 @@ def test_stale_output_archived_fresh_stub_run_then_verified_skip(tmp_path: Path)
     offline = json.loads((output / "offline_env.json").read_text(encoding="utf-8"))
     assert offline == {
         "HF_HUB_OFFLINE": "1",
+        "HF_HUB_CACHE": str(
+            (repo / "runs/v10/model_cache/hf-child").resolve()
+        ),
+        "PYTORCH_ALLOC_CONF": runner.CUDA_ALLOCATOR_CONF,
+        "PYTORCH_CUDA_ALLOC_CONF": None,
         "TRANSFORMERS_OFFLINE": "1",
         "HF_DATASETS_OFFLINE": "1",
     }
@@ -699,6 +1055,27 @@ def test_stale_output_archived_fresh_stub_run_then_verified_skip(tmp_path: Path)
     assert verification["full_update_delta"]["sha256"] == runner.sha256_file(
         delta_path
     )
+    assert verification["allocator_environment"]["passed"] is True
+    assert verification["allocator_environment"]["sha256"] == runner.sha256_file(
+        output / "environment.json"
+    )
+    assert verification["provenance"]["runtime_policy"][
+        "gradient_accumulation_offload"
+    ] == runner.GRADIENT_ACCUMULATION_OFFLOAD
+
+    final_config_path = output / "final/experiment_config.json"
+    original_final_config = final_config_path.read_bytes()
+    final_config = json.loads(final_config_path.read_text(encoding="utf-8"))
+    final_config["train"]["gradient_accumulation_offload"] = "none"
+    write_json(final_config_path, final_config)
+    drift = runner.run_matrix(
+        runner.RunnerOptions(**{**run_options.__dict__, "dry_run": True})
+    )
+    assert drift["states"]["F0_query_only/seed_42"] == "stale_incomplete"
+    assert "manifest/experiment_config hash binding" in drift["reasons"][
+        "F0_query_only/seed_42"
+    ]
+    final_config_path.write_bytes(original_final_config)
 
     second = runner.run_matrix(
         run_options,
@@ -717,6 +1094,143 @@ def test_stale_output_archived_fresh_stub_run_then_verified_skip(tmp_path: Path)
     )
     assert third["launched"] == 1
     assert len(list((repo / "runs/v10/_archived_incomplete").rglob("RUN_VERIFICATION.json"))) == 1
+
+
+@pytest.mark.parametrize(
+    ("mutation", "reason"),
+    [
+        ("run_id", "manifest/trainer run_id binding"),
+        ("global_step", "manifest/trainer global_step binding"),
+        ("resume_signature", "manifest/trainer resume_signature binding"),
+        (
+            "structural_resume_signature",
+            "manifest/trainer structural_resume_signature binding",
+        ),
+        ("config", "manifest/experiment_config hash binding"),
+        ("world_size", "manifest/trainer world_size binding"),
+        ("data_fingerprint", "manifest/trainer data_fingerprint binding"),
+    ],
+)
+def test_bundle_manifest_trainer_config_split_fails_closed(
+    tmp_path: Path,
+    mutation: str,
+    reason: str,
+) -> None:
+    repo, snapshot, receipt = make_repo(tmp_path)
+    run_options = options(repo, snapshot, receipt)
+    stub = make_stub(repo / "stub_engine.py")
+
+    def command(_options: runner.RunnerOptions, config: Path) -> list[str]:
+        return [sys.executable, str(stub), str(config)]
+
+    first = runner.run_matrix(
+        run_options,
+        child_command_factory=command,
+        preflight_fn=lambda _options: {"synthetic": True},
+    )
+    run_id = "F0_query_only/seed_42"
+    assert first["states"][run_id] == "verified_completed"
+    final = repo / "runs/v10/smoke/F0_query_only/seed_42/final"
+    if mutation == "config":
+        config_path = final / "experiment_config.json"
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+        config["synthetic_unbound_tamper"] = True
+        write_json(config_path, config)
+    else:
+        trainer_path = final / "trainer_state.pt"
+        trainer = torch.load(trainer_path, map_location="cpu", weights_only=False)
+        if mutation == "run_id":
+            trainer["run_state"]["run_id"] = "split-run-id"
+        elif mutation == "global_step":
+            trainer["run_state"]["global_step"] -= 1
+        elif mutation == "resume_signature":
+            trainer["resume_signature"] = "0" * 64
+        elif mutation == "structural_resume_signature":
+            trainer["structural_resume_signature"] = "0" * 64
+        elif mutation == "world_size":
+            trainer["world_size"] = 2
+        else:
+            trainer["data_fingerprint"] = {"files": [{"sha256": "0" * 64}]}
+        torch.save(trainer, trainer_path)
+
+    result = runner.run_matrix(
+        runner.RunnerOptions(**{**run_options.__dict__, "dry_run": True})
+    )
+    assert result["states"][run_id] == "stale_incomplete"
+    assert reason in result["reasons"][run_id]
+
+
+@pytest.mark.parametrize(
+    ("mutation", "reason"),
+    [
+        ("missing", "Missing artifact"),
+        ("self_hash", "self-hash mismatch"),
+        ("status", "terminal status"),
+        ("counter", "skip-free"),
+        ("source", "run/source/resume binding"),
+        ("signature", "run/source/resume binding"),
+        ("step", "terminal status/step"),
+        ("binding_path", "receipt/hash mismatch"),
+        ("binding_hash", "receipt/hash mismatch"),
+    ],
+)
+def test_gradient_offload_receipt_tamper_fails_closed(
+    tmp_path: Path,
+    mutation: str,
+    reason: str,
+) -> None:
+    repo, snapshot, receipt = make_repo(tmp_path)
+    run_options = options(repo, snapshot, receipt)
+    stub = make_stub(repo / "stub_engine.py")
+
+    def command(_options: runner.RunnerOptions, config: Path) -> list[str]:
+        return [sys.executable, str(stub), str(config)]
+
+    first = runner.run_matrix(
+        run_options,
+        child_command_factory=command,
+        preflight_fn=lambda _options: {"synthetic": True},
+    )
+    assert first["states"]["F0_query_only/seed_42"] == "verified_completed"
+    output = repo / "runs/v10/smoke/F0_query_only/seed_42"
+    receipt_path = output / runner.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT
+    verification_path = output / "RUN_VERIFICATION.json"
+    if mutation == "missing":
+        receipt_path.unlink()
+    elif mutation in {"binding_path", "binding_hash"}:
+        verification = json.loads(verification_path.read_text(encoding="utf-8"))
+        field = "path" if mutation == "binding_path" else "sha256"
+        verification["gradient_accumulation_offload"][field] = (
+            "wrong.json" if field == "path" else "0" * 64
+        )
+        write_json(verification_path, verification)
+    else:
+        offload = json.loads(receipt_path.read_text(encoding="utf-8"))
+        if mutation == "self_hash":
+            offload["receipt_sha256"] = "0" * 64
+        elif mutation == "status":
+            offload["status"] = "failed"
+        elif mutation == "counter":
+            offload["windows_discarded"] = 1
+            offload["windows_restored"] = 7
+        elif mutation == "source":
+            offload["source_sha256"] = "0" * 64
+        elif mutation == "signature":
+            offload["resume_signature"] = "0" * 64
+        elif mutation == "step":
+            offload["final_global_step"] = 7
+        if mutation != "self_hash":
+            offload["receipt_sha256"] = (
+                pruning.gradient_accumulation_offload_receipt_self_hash(offload)
+            )
+        write_json(receipt_path, offload)
+
+    result = runner.run_matrix(
+        runner.RunnerOptions(**{**run_options.__dict__, "dry_run": True})
+    )
+    run_id = "F0_query_only/seed_42"
+    assert result["states"][run_id] == "stale_incomplete"
+    assert reason in result["reasons"][run_id]
 
 
 def test_run_accepts_evidence_backed_unchanged_tensor_with_strict_diagnostic_false(

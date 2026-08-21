@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 import copy
+import gc
+import hashlib
 import json
+import os
+import weakref
 from pathlib import Path
 
 import pytest
@@ -11,25 +15,869 @@ from transformers import GPT2Config, GPT2LMHeadModel, MistralConfig, MistralForC
 from transformers.optimization import Adafactor
 
 from latent_workspace_ft_v10.engine import (
+    DistributedContext,
     ExperimentConfig,
     FunctionalBoundaryAdapter,
     LatentWorkspaceCausalLM,
     LatentWorkspaceLoss,
     TrainConfig,
     WorkspaceConfig,
+    _continue_gradient_accumulation_offload_receipt,
+    _CPUGradientAccumulator,
+    _cuda_base_activation_offload,
+    _finish_gradient_accumulation_offload_window,
     _functional_split_equivalence_check,
+    _mark_gradient_accumulation_offload_terminal,
+    _new_gradient_accumulation_offload_receipt,
+    _record_gradient_accumulation_offload_spill,
+    _release_unconsumed_training_logits,
+    _require_exact_gradient_offload_resume_signature,
+    _require_gradient_accumulation_offload_context,
     _require_resume_optimizer_mapping,
     _restore_optimizer_state_exact,
+    _start_gradient_accumulation_offload_window,
+    _write_gradient_accumulation_offload_receipt,
     base_update_coverage_report,
     build_optimizer,
     configure_trainability,
     optimizer_coverage_report,
     optimizer_step_with_base_sentinel,
     require_base_update_coverage,
+    require_cuda_allocator_policy,
+    require_effective_cuda_allocator_policy,
     require_exact_optimizer_coverage,
     resume_signature,
+    runtime_environment,
     stable_hash,
 )
+
+
+def test_releasing_unconsumed_logits_preserves_indexed_loss_gradients() -> None:
+    torch.manual_seed(20260822)
+    reference = torch.nn.Linear(7, 11, bias=False)
+    candidate = copy.deepcopy(reference)
+    inputs = torch.randn(2, 3, 7)
+    targets = torch.tensor([2, 8], dtype=torch.long)
+
+    reference_logits = reference(inputs)
+    reference_loss = F.cross_entropy(reference_logits[:, 1, :], targets)
+    reference_loss.backward()
+
+    candidate_logits = candidate(inputs)
+    candidate_loss = F.cross_entropy(candidate_logits[:, 1, :], targets)
+    output: dict[str, object] = {"logits": candidate_logits}
+    logits_ref = weakref.ref(candidate_logits)
+    expected_bytes = candidate_logits.numel() * candidate_logits.element_size()
+    del candidate_logits
+
+    assert _release_unconsumed_training_logits(output) == expected_bytes
+    gc.collect()
+    assert "logits" not in output
+    assert logits_ref() is None
+
+    candidate_loss.backward()
+    torch.testing.assert_close(candidate_loss, reference_loss, rtol=0.0, atol=0.0)
+    torch.testing.assert_close(
+        candidate.weight.grad,
+        reference.weight.grad,
+        rtol=0.0,
+        atol=0.0,
+    )
+
+
+def test_cpu_base_activation_offload_is_a_noop() -> None:
+    value = torch.tensor([1.0], requires_grad=True)
+    with _cuda_base_activation_offload(value.device):
+        objective = value.square().sum()
+    objective.backward()
+    torch.testing.assert_close(value.grad, torch.tensor([2.0]), rtol=0.0, atol=0.0)
+
+
+def test_runtime_environment_records_cuda_allocator_policy(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv(
+        "PYTORCH_ALLOC_CONF", "backend:native,expandable_segments:True"
+    )
+    monkeypatch.delenv("PYTORCH_CUDA_ALLOC_CONF", raising=False)
+    monkeypatch.delenv("PYTORCH_HIP_ALLOC_CONF", raising=False)
+    monkeypatch.delenv("PYTORCH_NO_CUDA_MEMORY_CACHING", raising=False)
+    environment = runtime_environment()
+    assert environment["pytorch_alloc_conf"] == (
+        "backend:native,expandable_segments:True"
+    )
+    assert environment["pytorch_cuda_alloc_conf_legacy"] is None
+
+
+def test_cuda_allocator_policy_rejects_missing_or_legacy_environment(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config = TrainConfig(
+        cuda_allocator_conf="backend:native,expandable_segments:True"
+    )
+    monkeypatch.delenv("PYTORCH_ALLOC_CONF", raising=False)
+    monkeypatch.delenv("PYTORCH_CUDA_ALLOC_CONF", raising=False)
+    monkeypatch.delenv("PYTORCH_HIP_ALLOC_CONF", raising=False)
+    monkeypatch.delenv("PYTORCH_NO_CUDA_MEMORY_CACHING", raising=False)
+    with pytest.raises(RuntimeError, match="policy mismatch"):
+        require_cuda_allocator_policy(config)
+
+    monkeypatch.setenv(
+        "PYTORCH_ALLOC_CONF", "backend:native,expandable_segments:True"
+    )
+    monkeypatch.setenv("PYTORCH_CUDA_ALLOC_CONF", "backend:cudaMallocAsync")
+    with pytest.raises(RuntimeError, match="forbids compatibility"):
+        require_cuda_allocator_policy(config)
+
+    monkeypatch.delenv("PYTORCH_CUDA_ALLOC_CONF")
+    monkeypatch.setenv("PYTORCH_HIP_ALLOC_CONF", "backend:cudaMallocAsync")
+    with pytest.raises(RuntimeError, match="PYTORCH_HIP_ALLOC_CONF"):
+        require_cuda_allocator_policy(config)
+
+    monkeypatch.delenv("PYTORCH_HIP_ALLOC_CONF")
+    monkeypatch.setenv("PYTORCH_NO_CUDA_MEMORY_CACHING", "1")
+    with pytest.raises(RuntimeError, match="PYTORCH_NO_CUDA_MEMORY_CACHING"):
+        require_cuda_allocator_policy(config)
+
+    monkeypatch.delenv("PYTORCH_NO_CUDA_MEMORY_CACHING")
+    require_cuda_allocator_policy(config)
+
+
+def test_effective_cuda_allocator_policy_requires_snapshot_and_live_allocation(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config = TrainConfig(
+        cuda_allocator_conf="backend:native,expandable_segments:True"
+    )
+    observation = {
+        "pytorch_alloc_conf": config.cuda_allocator_conf,
+        "pytorch_cuda_alloc_conf_legacy": None,
+        "pytorch_hip_alloc_conf_legacy": None,
+        "pytorch_no_cuda_memory_caching": None,
+        "allocator_backend": "native",
+        "allocator_settings": config.cuda_allocator_conf,
+        "allocator_initialized": True,
+        "allocator_snapshot_settings": {"expandable_segments": True},
+        "cuda_memory_allocated_bytes": 1,
+    }
+    monkeypatch.setattr(
+        "latent_workspace_ft_v10.engine.allocator_runtime_environment",
+        lambda: observation,
+    )
+    assert require_effective_cuda_allocator_policy(
+        config, torch.device("cuda")
+    ) == observation
+
+    broken = {**observation, "allocator_snapshot_settings": {"expandable_segments": False}}
+    monkeypatch.setattr(
+        "latent_workspace_ft_v10.engine.allocator_runtime_environment",
+        lambda: broken,
+    )
+    with pytest.raises(RuntimeError, match="snapshot_expandable_segments"):
+        require_effective_cuda_allocator_policy(config, torch.device("cuda"))
+
+
+def test_gradient_accumulation_offload_is_validated_and_resume_bound() -> None:
+    invalid = ExperimentConfig()
+    invalid.train.gradient_accumulation_offload = "disk"
+    with pytest.raises(ValueError, match="gradient_accumulation_offload"):
+        invalid.validate()
+
+    native = ExperimentConfig()
+    offloaded = copy.deepcopy(native)
+    offloaded.train.gradient_accumulation_offload = "cpu"
+    assert resume_signature(native) != resume_signature(offloaded)
+
+    cpu_offload = TrainConfig(gradient_accumulation_offload="cpu")
+    with pytest.raises(RuntimeError, match="single-process only"):
+        _require_gradient_accumulation_offload_context(
+            cpu_offload,
+            DistributedContext(
+                enabled=True,
+                rank=0,
+                local_rank=0,
+                world_size=2,
+                backend="nccl",
+                device=torch.device("cuda:0"),
+            ),
+        )
+    with pytest.raises(RuntimeError, match="requires a CUDA device"):
+        _require_gradient_accumulation_offload_context(
+            cpu_offload,
+            DistributedContext(
+                enabled=False,
+                rank=0,
+                local_rank=0,
+                world_size=1,
+                backend="none",
+                device=torch.device("cpu"),
+            ),
+        )
+
+
+def test_cpu_gradient_accumulator_preserves_order_and_receipt(
+    tmp_path: Path,
+) -> None:
+    initial_weight = torch.tensor(
+        [[0.5, -0.25, 0.125], [-0.75, 0.375, 0.625]],
+        dtype=torch.bfloat16,
+    )
+    initial_bias = torch.tensor([0.25, -0.5], dtype=torch.bfloat16)
+    reference_weight = torch.nn.Parameter(initial_weight.clone())
+    reference_bias = torch.nn.Parameter(initial_bias.clone())
+    candidate_weight = torch.nn.Parameter(initial_weight.clone())
+    candidate_bias = torch.nn.Parameter(initial_bias.clone())
+    candidate_parameters = (
+        ("weight", candidate_weight),
+        ("bias", candidate_bias),
+    )
+    accumulator = _CPUGradientAccumulator(candidate_parameters)
+    schema_records = accumulator.schema_records()
+    receipt = _new_gradient_accumulation_offload_receipt(
+        schema_records,
+        run_id="run-gradient-offload-test",
+        source_digest="a" * 64,
+        resume_digest="b" * 64,
+        initial_global_step=7,
+        configured_accumulation_steps=3,
+    )
+    _start_gradient_accumulation_offload_window(
+        receipt,
+        global_step=7,
+        batch_start=21,
+        microbatch_count=3,
+    )
+
+    microbatch_gradients = (
+        (
+            torch.tensor(
+                [[0.125, -0.5, 0.25], [0.75, -0.125, 0.375]],
+                dtype=torch.bfloat16,
+            ),
+            torch.tensor([0.5, -0.25], dtype=torch.bfloat16),
+        ),
+        (
+            torch.tensor(
+                [[-0.375, 0.25, 0.5], [0.125, 0.25, -0.75]],
+                dtype=torch.bfloat16,
+            ),
+            None,
+        ),
+        (
+            None,
+            torch.tensor([-0.125, 0.75], dtype=torch.bfloat16),
+        ),
+    )
+    for microbatch_index, (weight_gradient, bias_gradient) in enumerate(
+        microbatch_gradients
+    ):
+        for reference, candidate, gradient in (
+            (reference_weight, candidate_weight, weight_gradient),
+            (reference_bias, candidate_bias, bias_gradient),
+        ):
+            if gradient is None:
+                candidate.grad = None
+                continue
+            if reference.grad is None:
+                reference.grad = gradient.clone()
+            else:
+                reference.grad.add_(gradient)
+            candidate.grad = gradient.clone()
+        spill = accumulator.spill()
+        _record_gradient_accumulation_offload_spill(
+            receipt,
+            global_step=7,
+            microbatch_index=microbatch_index,
+            statistics=spill,
+        )
+        assert candidate_weight.grad is None
+        assert candidate_bias.grad is None
+        assert spill["cpu_accumulator_bytes"] > 0
+        assert all(buffer.device.type == "cpu" for buffer in accumulator._buffers.values())
+        assert all(
+            buffer.dtype == torch.bfloat16
+            for buffer in accumulator._buffers.values()
+        )
+
+    restored = accumulator.restore()
+    assert restored["spill_count"] == 3
+    assert restored["merge_count"] == 2
+    assert restored["live_cpu_buffer_count"] == 0
+    assert torch.equal(candidate_weight.grad, reference_weight.grad)
+    assert torch.equal(candidate_bias.grad, reference_bias.grad)
+    statistics = accumulator.statistics()
+    _finish_gradient_accumulation_offload_window(
+        receipt,
+        global_step=7,
+        statistics=statistics,
+        restored=True,
+    )
+    _mark_gradient_accumulation_offload_terminal(
+        receipt,
+        status="completed",
+        global_step=8,
+    )
+    receipt_path = tmp_path / "gradient_accumulation_offload.json"
+    _write_gradient_accumulation_offload_receipt(receipt_path, receipt)
+
+    stored = json.loads(receipt_path.read_text(encoding="utf-8"))
+    assert stored["mode"] == "cpu"
+    assert stored["trainable_parameter_count"] == 2
+    assert stored["windows_restored"] == 1
+    assert stored["microbatch_spills"] == 3
+    assert stored["parameter_merges"] == 2
+    assert stored["peak_cpu_accumulator_bytes"] > 0
+    assert stored["live_cpu_buffer_count"] == 0
+    assert stored["live_cpu_buffer_bytes"] == 0
+    receipt_digest = stored["receipt_sha256"]
+    stored["receipt_sha256"] = None
+    assert stable_hash(stored) == receipt_digest
+
+
+def test_cpu_gradient_accumulator_fails_closed_on_duplicate_and_missing_state() -> None:
+    parameter = torch.nn.Parameter(torch.ones((2, 3), dtype=torch.bfloat16))
+    with pytest.raises(RuntimeError, match="duplicate physical"):
+        _CPUGradientAccumulator((("left", parameter), ("right", parameter)))
+    with pytest.raises(RuntimeError, match="requires every trainable parameter on CUDA"):
+        _CPUGradientAccumulator((("weight", parameter),), require_cuda=True)
+
+    accumulator = _CPUGradientAccumulator((("weight", parameter),))
+    parameter.grad = torch.full_like(parameter, 0.25)
+    accumulator.spill()
+    accumulator._buffers.pop(id(parameter))
+    with pytest.raises(RuntimeError, match="buffer accounting mismatch"):
+        accumulator.restore()
+    assert parameter.grad is None
+    assert accumulator.statistics()["live_cpu_buffer_count"] == 0
+
+    accumulator = _CPUGradientAccumulator((("weight", parameter),))
+    parameter.grad = torch.full_like(parameter, 0.25)
+    accumulator.spill()
+    accumulator._buffers[id(parameter)] = accumulator._buffers[id(parameter)].float()
+    with pytest.raises(RuntimeError, match="buffer schema mismatch.*dtype"):
+        accumulator.restore()
+    assert parameter.grad is None
+    assert accumulator.statistics()["live_cpu_buffer_count"] == 0
+
+
+def gradient_offload_test_schema() -> list[dict[str, object]]:
+    return [
+        {
+            "name": "weight",
+            "shape": [2],
+            "stride": [1],
+            "dtype": "torch.bfloat16",
+            "device": "cuda:0",
+            "numel": 2,
+            "logical_bytes": 4,
+        }
+    ]
+
+
+def record_gradient_offload_test_window(
+    receipt: dict[str, object],
+    *,
+    global_step: int,
+    microbatch_count: int = 2,
+) -> None:
+    _start_gradient_accumulation_offload_window(
+        receipt,
+        global_step=global_step,
+        batch_start=global_step * microbatch_count,
+        microbatch_count=microbatch_count,
+    )
+    for microbatch_index in range(microbatch_count):
+        _record_gradient_accumulation_offload_spill(
+            receipt,
+            global_step=global_step,
+            microbatch_index=microbatch_index,
+            statistics={
+                "spill_count": microbatch_index + 1,
+                "accumulated_parameter_count": 1,
+                "cpu_accumulator_bytes": 4,
+                "peak_cpu_accumulator_bytes": 4,
+                "cumulative_merge_count": microbatch_index,
+                "cumulative_current_gradient_bytes": 4 * (microbatch_index + 1),
+            },
+        )
+    _finish_gradient_accumulation_offload_window(
+        receipt,
+        global_step=global_step,
+        statistics={
+            "spill_count": microbatch_count,
+            "merge_count": microbatch_count - 1,
+            "first_spill_count": 1,
+            "cumulative_current_gradient_bytes": 4 * microbatch_count,
+            "peak_cpu_accumulator_bytes": 4,
+            "live_cpu_buffer_count": 0,
+            "live_cpu_buffer_bytes": 0,
+        },
+        restored=True,
+    )
+
+
+def write_gradient_offload_test_checkpoint(
+    checkpoint: Path,
+    *,
+    run_id: str,
+    global_step: int,
+    source_digest: str,
+    resume_digest: str,
+) -> None:
+    checkpoint.mkdir(parents=True)
+    (checkpoint / "manifest.json").write_text(
+        json.dumps(
+            {
+                "run_id": run_id,
+                "global_step": global_step,
+                "source_sha256": source_digest,
+                "resume_signature": resume_digest,
+            },
+            sort_keys=True,
+        ),
+        encoding="utf-8",
+    )
+    (checkpoint / "COMPLETED").write_text("ok\n", encoding="utf-8")
+    (checkpoint / "workspace_state.pt").write_bytes(b"workspace-state")
+    (checkpoint / "trainer_state.pt").write_bytes(b"trainer-state")
+    base_model = checkpoint / "base_model"
+    base_model.mkdir()
+    (base_model / "model.safetensors").write_bytes(b"base-model-shard")
+
+
+def expected_gradient_offload_test_inventory(checkpoint: Path) -> dict[str, object]:
+    records = []
+    for path in sorted(
+        (candidate for candidate in checkpoint.rglob("*") if candidate.is_file()),
+        key=lambda candidate: candidate.relative_to(checkpoint).as_posix(),
+    ):
+        payload = path.read_bytes()
+        records.append(
+            {
+                "path": path.relative_to(checkpoint).as_posix(),
+                "bytes": len(payload),
+                "sha256": hashlib.sha256(payload).hexdigest(),
+            }
+        )
+    return {
+        "bundle_inventory_sha256": stable_hash(records),
+        "file_count": len(records),
+        "logical_bytes": sum(int(record["bytes"]) for record in records),
+    }
+
+
+def make_preempted_gradient_offload_test_receipt(
+    tmp_path: Path,
+) -> tuple[list[dict[str, object]], Path, Path, dict[str, object]]:
+    schema = gradient_offload_test_schema()
+    output_dir = tmp_path / "run"
+    output_dir.mkdir()
+    checkpoint = output_dir / "checkpoint-1"
+    write_gradient_offload_test_checkpoint(
+        checkpoint,
+        run_id="run-chain-test",
+        global_step=1,
+        source_digest="c" * 64,
+        resume_digest="d" * 64,
+    )
+    receipt = _new_gradient_accumulation_offload_receipt(
+        schema,
+        run_id="run-chain-test",
+        source_digest="c" * 64,
+        resume_digest="d" * 64,
+        initial_global_step=0,
+        configured_accumulation_steps=2,
+    )
+    record_gradient_offload_test_window(receipt, global_step=0)
+    _mark_gradient_accumulation_offload_terminal(
+        receipt,
+        status="preempted",
+        global_step=1,
+        checkpoint=checkpoint,
+        output_dir=output_dir,
+    )
+    receipt_path = output_dir / "gradient_accumulation_offload.json"
+    _write_gradient_accumulation_offload_receipt(receipt_path, receipt)
+    return schema, receipt_path, checkpoint, receipt
+
+
+def test_gradient_offload_receipt_hash_chains_same_output_resume(
+    tmp_path: Path,
+) -> None:
+    schema, receipt_path, checkpoint, preempted = (
+        make_preempted_gradient_offload_test_receipt(tmp_path)
+    )
+    previous_digest = preempted["receipt_sha256"]
+    previous_counters = preempted["segments"][0]["final_cumulative_counters"]
+
+    continued = _continue_gradient_accumulation_offload_receipt(
+        receipt_path,
+        schema,
+        run_id="run-chain-test",
+        source_digest="c" * 64,
+        resume_digest="d" * 64,
+        resume_checkpoint=checkpoint,
+        resume_step=1,
+        configured_accumulation_steps=2,
+    )
+    assert continued["initial_global_step"] == 0
+    assert continued["final_global_step"] is None
+    assert continued["windows_restored"] == 1
+    assert len(continued["segments"]) == 2
+    assert len(continued["continuations"]) == 1
+    continuation = continued["continuations"][0]
+    assert continuation["previous_receipt_sha256"] == previous_digest
+    assert continuation["previous_cumulative_counters"] == previous_counters
+    assert continued["segments"][1]["previous_receipt_sha256"] == previous_digest
+    assert continuation["checkpoint"]["scope"] == "output_dir"
+    assert continuation["checkpoint"]["relative_path"] == "checkpoint-1"
+    assert {
+        field_name: continuation["checkpoint"][field_name]
+        for field_name in (
+            "bundle_inventory_sha256",
+            "file_count",
+            "logical_bytes",
+        )
+    } == expected_gradient_offload_test_inventory(checkpoint)
+    assert "records" not in continuation["checkpoint"]
+    assert "files" not in continuation["checkpoint"]
+    assert continuation["checkpoint"]["manifest_identity"] == {
+        "run_id": "run-chain-test",
+        "global_step": 1,
+        "source_sha256": "c" * 64,
+        "resume_signature": "d" * 64,
+    }
+    _write_gradient_accumulation_offload_receipt(receipt_path, continued)
+
+    record_gradient_offload_test_window(continued, global_step=1)
+    _mark_gradient_accumulation_offload_terminal(
+        continued,
+        status="completed",
+        global_step=2,
+    )
+    _write_gradient_accumulation_offload_receipt(receipt_path, continued)
+    stored = json.loads(receipt_path.read_text(encoding="utf-8"))
+    assert stored["status"] == "completed"
+    assert stored["initial_global_step"] == 0
+    assert stored["final_global_step"] == 2
+    assert stored["windows_started"] == 2
+    assert stored["windows_restored"] == 2
+    assert stored["microbatch_spills"] == 4
+    assert stored["parameter_merges"] == 2
+    assert [segment["status"] for segment in stored["segments"]] == [
+        "preempted",
+        "completed",
+    ]
+    assert stored["segments"][0]["initial_global_step"] == 0
+    assert stored["segments"][0]["final_global_step"] == 1
+    assert stored["segments"][1]["initial_global_step"] == 1
+    assert stored["segments"][1]["final_global_step"] == 2
+    assert str(tmp_path) not in json.dumps(stored)
+    stored_digest = stored["receipt_sha256"]
+    stored["receipt_sha256"] = None
+    assert stable_hash(stored) == stored_digest
+
+
+@pytest.mark.parametrize(
+    "relative_payload",
+    ["trainer_state.pt", "base_model/model.safetensors"],
+)
+def test_gradient_offload_same_output_resume_rejects_bundle_payload_substitution(
+    tmp_path: Path,
+    relative_payload: str,
+) -> None:
+    schema, receipt_path, checkpoint, preempted = (
+        make_preempted_gradient_offload_test_receipt(tmp_path)
+    )
+    manifest_before = (checkpoint / "manifest.json").read_bytes()
+    stored_descriptor = preempted["preempted_checkpoint"]
+    assert isinstance(stored_descriptor, dict)
+    stored_inventory = stored_descriptor["bundle_inventory_sha256"]
+
+    payload = checkpoint / relative_payload
+    payload.write_bytes(b"payload-substitution-with-unchanged-manifest")
+    assert (checkpoint / "manifest.json").read_bytes() == manifest_before
+
+    with pytest.raises(RuntimeError, match="preempted_checkpoint"):
+        _continue_gradient_accumulation_offload_receipt(
+            receipt_path,
+            schema,
+            run_id="run-chain-test",
+            source_digest="c" * 64,
+            resume_digest="d" * 64,
+            resume_checkpoint=checkpoint,
+            resume_step=1,
+            configured_accumulation_steps=2,
+        )
+    assert preempted["preempted_checkpoint"]["bundle_inventory_sha256"] == (
+        stored_inventory
+    )
+
+
+def test_gradient_offload_same_output_resume_rejects_tamper_stale_and_wrong_checkpoint(
+    tmp_path: Path,
+) -> None:
+    schema, receipt_path, checkpoint, preempted = (
+        make_preempted_gradient_offload_test_receipt(tmp_path)
+    )
+    arguments = {
+        "run_id": "run-chain-test",
+        "source_digest": "c" * 64,
+        "resume_digest": "d" * 64,
+        "resume_step": 1,
+        "configured_accumulation_steps": 2,
+    }
+
+    tampered = copy.deepcopy(preempted)
+    tampered["windows_restored"] = 99
+    receipt_path.write_text(json.dumps(tampered), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="self-hash mismatch"):
+        _continue_gradient_accumulation_offload_receipt(
+            receipt_path,
+            schema,
+            resume_checkpoint=checkpoint,
+            **arguments,
+        )
+
+    stale = copy.deepcopy(preempted)
+    stale["last_observed_global_step"] = 0
+    _write_gradient_accumulation_offload_receipt(receipt_path, stale)
+    with pytest.raises(RuntimeError, match="last_observed_global_step"):
+        _continue_gradient_accumulation_offload_receipt(
+            receipt_path,
+            schema,
+            resume_checkpoint=checkpoint,
+            **arguments,
+        )
+
+    _write_gradient_accumulation_offload_receipt(receipt_path, preempted)
+    wrong_checkpoint = checkpoint.parent / "checkpoint-wrong"
+    write_gradient_offload_test_checkpoint(
+        wrong_checkpoint,
+        run_id="run-chain-test",
+        global_step=1,
+        source_digest="c" * 64,
+        resume_digest="d" * 64,
+    )
+    with pytest.raises(RuntimeError, match="preempted_checkpoint"):
+        _continue_gradient_accumulation_offload_receipt(
+            receipt_path,
+            schema,
+            resume_checkpoint=wrong_checkpoint,
+            **arguments,
+        )
+
+    external_checkpoint = tmp_path / "external" / "checkpoint-1"
+    write_gradient_offload_test_checkpoint(
+        external_checkpoint,
+        run_id="run-chain-test",
+        global_step=1,
+        source_digest="c" * 64,
+        resume_digest="d" * 64,
+    )
+    with pytest.raises(RuntimeError, match="checkpoint_output_containment"):
+        _continue_gradient_accumulation_offload_receipt(
+            receipt_path,
+            schema,
+            resume_checkpoint=external_checkpoint,
+            **arguments,
+        )
+
+
+def test_gradient_offload_external_resume_descriptor_is_portable(
+    tmp_path: Path,
+) -> None:
+    checkpoint = tmp_path / "external" / "checkpoint-4"
+    write_gradient_offload_test_checkpoint(
+        checkpoint,
+        run_id="external-run",
+        global_step=4,
+        source_digest="e" * 64,
+        resume_digest="f" * 64,
+    )
+    receipt = _new_gradient_accumulation_offload_receipt(
+        gradient_offload_test_schema(),
+        run_id="external-run",
+        source_digest="e" * 64,
+        resume_digest="f" * 64,
+        initial_global_step=4,
+        configured_accumulation_steps=2,
+        resume_checkpoint=checkpoint,
+        output_dir=tmp_path / "new-output",
+    )
+    descriptor = receipt["segments"][0]["resume_checkpoint"]
+    assert descriptor["scope"] == "external"
+    assert descriptor["basename"] == "checkpoint-4"
+    assert {
+        field_name: descriptor[field_name]
+        for field_name in (
+            "bundle_inventory_sha256",
+            "file_count",
+            "logical_bytes",
+        )
+    } == expected_gradient_offload_test_inventory(checkpoint)
+    assert descriptor["manifest_identity"] == {
+        "run_id": "external-run",
+        "global_step": 4,
+        "source_sha256": "e" * 64,
+        "resume_signature": "f" * 64,
+    }
+    assert str(tmp_path) not in json.dumps(receipt)
+
+
+@pytest.mark.parametrize(
+    ("unsafe_kind", "message"),
+    [
+        ("symlink", "symbolic links"),
+        ("hardlink", "hard-linked regular files"),
+        ("fifo", "special files"),
+    ],
+)
+def test_gradient_offload_checkpoint_inventory_rejects_unsafe_entries(
+    tmp_path: Path,
+    unsafe_kind: str,
+    message: str,
+) -> None:
+    checkpoint = tmp_path / "external" / "checkpoint-unsafe"
+    write_gradient_offload_test_checkpoint(
+        checkpoint,
+        run_id="unsafe-run",
+        global_step=3,
+        source_digest="1" * 64,
+        resume_digest="2" * 64,
+    )
+    unsafe_path = checkpoint / "unsafe-entry"
+    try:
+        if unsafe_kind == "symlink":
+            unsafe_path.symlink_to("trainer_state.pt")
+        elif unsafe_kind == "hardlink":
+            os.link(checkpoint / "trainer_state.pt", unsafe_path)
+        else:
+            os.mkfifo(unsafe_path)
+    except (NotImplementedError, OSError) as exc:
+        pytest.skip(f"{unsafe_kind} is unavailable on this filesystem: {exc}")
+
+    with pytest.raises(RuntimeError, match=message):
+        _new_gradient_accumulation_offload_receipt(
+            gradient_offload_test_schema(),
+            run_id="unsafe-run",
+            source_digest="1" * 64,
+            resume_digest="2" * 64,
+            initial_global_step=3,
+            configured_accumulation_steps=2,
+            resume_checkpoint=checkpoint,
+            output_dir=tmp_path / "new-output",
+        )
+
+
+def test_gradient_offload_resume_requires_exact_schedule(tmp_path: Path) -> None:
+    config = ExperimentConfig()
+    checkpoint = tmp_path / "checkpoint"
+    checkpoint.mkdir()
+    (checkpoint / "manifest.json").write_text(
+        json.dumps({"resume_signature": resume_signature(config)}),
+        encoding="utf-8",
+    )
+    _require_exact_gradient_offload_resume_signature(checkpoint, config)
+
+    extension = copy.deepcopy(config)
+    extension.train.allow_schedule_extension = True
+    with pytest.raises(RuntimeError, match="does not support schedule extension"):
+        _require_exact_gradient_offload_resume_signature(checkpoint, extension)
+
+    changed_schedule = copy.deepcopy(config)
+    changed_schedule.train.max_steps = 12
+    with pytest.raises(RuntimeError, match="exact checkpoint resume_signature"):
+        _require_exact_gradient_offload_resume_signature(checkpoint, changed_schedule)
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is required")
+def test_cuda_gradient_accumulation_offload_is_bitwise_native() -> None:
+    class Probe(torch.nn.Module):
+        def __init__(self, weight: torch.Tensor, bias: torch.Tensor) -> None:
+            super().__init__()
+            self.weight = torch.nn.Parameter(weight.clone())
+            self.bias = torch.nn.Parameter(bias.clone())
+
+        def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+            return ((self.weight * inputs + self.bias).float().square()).sum()
+
+    torch.manual_seed(20260824)
+    device = torch.device("cuda")
+    initial_weight = torch.randn(32, 64, dtype=torch.bfloat16).to(device)
+    initial_bias = torch.randn(32, 64, dtype=torch.bfloat16).to(device)
+    reference = Probe(initial_weight, initial_bias).to(device)
+    candidate = copy.deepcopy(reference)
+    microbatches = [
+        torch.randn(32, 64, dtype=torch.bfloat16).to(device)
+        for _ in range(4)
+    ]
+
+    for inputs in microbatches:
+        reference(inputs).backward()
+
+    accumulator = _CPUGradientAccumulator(
+        tuple(candidate.named_parameters()),
+        require_cuda=True,
+    )
+    for inputs in microbatches:
+        candidate(inputs).backward()
+        accumulator.spill()
+        assert all(parameter.grad is None for parameter in candidate.parameters())
+    accumulator.restore()
+
+    reference_parameters = dict(reference.named_parameters())
+    candidate_parameters = dict(candidate.named_parameters())
+    assert reference_parameters.keys() == candidate_parameters.keys()
+    for name, expected in reference_parameters.items():
+        actual = candidate_parameters[name]
+        assert expected.grad is not None, name
+        assert actual.grad is not None, name
+        assert torch.equal(actual.grad, expected.grad), name
+
+    reference_optimizer = torch.optim.SGD(reference.parameters(), lr=0.03125)
+    candidate_optimizer = torch.optim.SGD(candidate.parameters(), lr=0.03125)
+    reference_optimizer.step()
+    candidate_optimizer.step()
+    for name, expected in reference_parameters.items():
+        actual = candidate_parameters[name]
+        assert torch.equal(actual, expected), name
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is required")
+def test_cuda_base_offload_preserves_accumulated_gradients() -> None:
+    torch.manual_seed(20260823)
+    device = torch.device("cuda")
+    reference = torch.nn.Sequential(
+        torch.nn.Linear(32, 64, bias=False),
+        torch.nn.GELU(),
+        torch.nn.Linear(64, 32, bias=False),
+    ).to(device=device, dtype=torch.bfloat16)
+    candidate = copy.deepcopy(reference)
+    microbatches = [
+        torch.randn(4, 8, 32, device=device, dtype=torch.bfloat16)
+        for _ in range(3)
+    ]
+
+    for inputs in microbatches:
+        expected = reference(inputs)
+        with _cuda_base_activation_offload(device):
+            actual = candidate(inputs)
+        torch.testing.assert_close(actual, expected, rtol=0.0, atol=0.0)
+        expected.float().square().mean().backward()
+        actual.float().square().mean().backward()
+
+    for expected_parameter, actual_parameter in zip(
+        reference.parameters(), candidate.parameters(), strict=True
+    ):
+        assert expected_parameter.grad is not None
+        assert actual_parameter.grad is not None
+        torch.testing.assert_close(
+            actual_parameter.grad,
+            expected_parameter.grad,
+            rtol=0.0,
+            atol=0.0,
+        )
 
 
 class MixedDtypeSplitProbe(torch.nn.Module):

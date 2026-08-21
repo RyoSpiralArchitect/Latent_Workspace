@@ -603,8 +603,10 @@
   ],
   "runtime": {
     "attention": "sdpa",
+    "cuda_allocator_conf": "backend:native,expandable_segments:True",
     "device": "cuda",
     "dtype": "bfloat16",
+    "gradient_accumulation_offload": "cpu",
     "gradient_checkpointing": true,
     "optimizer": "adafactor",
     "trainability": "full"

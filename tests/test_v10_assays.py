@@ -6,14 +6,19 @@ import sys
 from pathlib import Path
 
 import pytest
+import torch
 
 REPO = Path(__file__).resolve().parents[1]
 SCRIPTS = REPO / "scripts"
-if str(SCRIPTS) not in sys.path:
-    sys.path.insert(0, str(SCRIPTS))
+TESTS = REPO / "tests"
+for directory in (SCRIPTS, TESTS):
+    if str(directory) not in sys.path:
+        sys.path.insert(0, str(directory))
 
 assays = importlib.import_module("verify_v10_assays")
 prune = importlib.import_module("prune_v10_verified_run")
+runner = importlib.import_module("run_v10_matrix")
+runner_fixtures = importlib.import_module("test_v10_runner")
 
 SOURCE_SHA = "a" * 64
 ENGINE_RUN_ID = "engine-run-123"
@@ -74,24 +79,55 @@ def make_run(
     (base / "model.safetensors").write_bytes(b"tiny verified weights")
     write_json(base / "config.json", {"model_type": "synthetic"})
     (final / "COMPLETED").write_text("ok\n", encoding="utf-8")
+    experiment_config = {"train": {"max_steps": 8}}
+    resume_signature = "e" * 64
+    structural_resume_signature = "f" * 64
+    data_fingerprint = {"files": [{"sha256": "9" * 64}]}
     manifest: dict[str, object] = {
         "format": "latent-workspace-ft-bundle-v4",
         "complete": True,
         "global_step": 8,
         "run_id": ENGINE_RUN_ID,
         "source_sha256": SOURCE_SHA,
+        "resume_signature": resume_signature,
+        "structural_resume_signature": structural_resume_signature,
+        "config_sha256": prune._stable_json_sha256(experiment_config),
+        "world_size": 1,
+        "data_fingerprint": data_fingerprint,
     }
     write_json(final / "manifest.json", manifest)
-    write_json(final / "experiment_config.json", {"train": {"max_steps": 8}})
-    write_json(final / "optimizer_coverage.json", {"passed": True})
+    write_json(final / "experiment_config.json", experiment_config)
+    write_json(
+        final / "optimizer_coverage.json",
+        {
+            "passed": True,
+            "model_trainable_unique_physical_parameters": 1,
+            "model_trainable_numel": 1,
+        },
+    )
     write_json(final / "base_update_coverage.json", {"passed": True})
     (final / "workspace_state.pt").write_bytes(b"workspace")
-    (final / "trainer_state.pt").write_bytes(b"trainer")
+    torch.save(
+        {
+            "run_state": {"run_id": ENGINE_RUN_ID, "global_step": 8},
+            "global_step": 8,
+            "resume_signature": resume_signature,
+            "structural_resume_signature": structural_resume_signature,
+            "world_size": 1,
+            "data_fingerprint": data_fingerprint,
+        },
+        final / "trainer_state.pt",
+    )
 
     config = {
         "train": {
             "seed": 42,
             "max_steps": 8,
+            "gradient_accumulation_steps": 8,
+            "cuda_allocator_conf": runner.CUDA_ALLOCATOR_CONF,
+            "gradient_accumulation_offload": (
+                runner.GRADIENT_ACCUMULATION_OFFLOAD
+            ),
             # ExperimentConfig.from_json resolves relative paths from the
             # launched config's parent, which is the run directory.
             "output_dir": ".",
@@ -106,14 +142,93 @@ def make_run(
         "seed": 42,
         "max_steps": 8,
         "output_dir": "runs/v10/smoke/F0_query_only/seed_42",
+        "runtime_policy": {
+            "environment_variable": runner.CUDA_ALLOCATOR_ENV,
+            "pytorch_alloc_conf": runner.CUDA_ALLOCATOR_CONF,
+            "gradient_accumulation_offload": (
+                runner.GRADIENT_ACCUMULATION_OFFLOAD
+            ),
+            "forbidden_environment_variables": [
+                runner.CUDA_ALLOCATOR_LEGACY_ENV,
+                runner.CUDA_ALLOCATOR_HIP_LEGACY_ENV,
+                runner.CUDA_ALLOCATOR_DISABLE_ENV,
+            ],
+        },
         "hashes": {
+            "source_files_sha256": {
+                "src/latent_workspace_ft_v10/engine.py": SOURCE_SHA,
+            },
             "materialized_config_sha256": prune.sha256_file(
                 run / assays.LAUNCHED_CONFIG_NAME
             )
         },
     }
     write_json(run / prune.FULL_UPDATE_DELTA_NAME, {"format": "synthetic", "passed": True})
+    environment = {
+        "harness_version": "synthetic-harness",
+        "python": "synthetic-python",
+        "platform": "synthetic-platform",
+        "hostname": "synthetic-host",
+        "torch": "synthetic-torch",
+        "cuda_runtime": "synthetic-cuda",
+        "cudnn": 1,
+        "source_sha256": SOURCE_SHA,
+        "cuda_devices": [{"index": 0, "name": "synthetic-gpu"}],
+        "transformers": "synthetic-transformers",
+        "peft": None,
+        "safetensors": "synthetic-safetensors",
+        "pytorch_alloc_conf": runner.CUDA_ALLOCATOR_CONF,
+        "pytorch_cuda_alloc_conf_legacy": None,
+        "pytorch_hip_alloc_conf_legacy": None,
+        "pytorch_no_cuda_memory_caching": None,
+        "allocator_backend": "native",
+        "allocator_settings": runner.CUDA_ALLOCATOR_CONF,
+        "allocator_initialized": True,
+        "allocator_snapshot_settings": {"expandable_segments": True},
+        "cuda_memory_allocated_bytes": 1,
+        "cuda_memory_reserved_bytes": 1,
+    }
+    write_json(run / prune.ENVIRONMENT_NAME, environment)
+    allocator_binding = runner.validate_allocator_environment_file(
+        run / prune.ENVIRONMENT_NAME,
+        configured=runner.CUDA_ALLOCATOR_CONF,
+        expected_source_sha256=SOURCE_SHA,
+        label="synthetic assay baseline",
+        receipt_path=prune.ENVIRONMENT_NAME,
+    )
+    runner_fixtures.write_synthetic_gradient_offload_receipt(
+        run / prune.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME,
+        run_id=ENGINE_RUN_ID,
+        source_sha256=SOURCE_SHA,
+        resume_signature="e" * 64,
+        initial_step=0,
+        final_step=8,
+        accumulation_steps=8,
+        parameter_count=1,
+        parameter_numel=1,
+        gradient_capacity_bytes=4,
+    )
+    gradient_offload_binding = (
+        prune.validate_gradient_accumulation_offload_receipt_file(
+            run / prune.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME,
+            receipt_path=prune.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME,
+            expected_run_id=ENGINE_RUN_ID,
+            expected_source_sha256=SOURCE_SHA,
+            expected_resume_signature="e" * 64,
+            expected_initial_global_step=0,
+            expected_final_global_step=8,
+            expected_configured_accumulation_steps=8,
+            expected_initial_resume_checkpoint=None,
+            expected_trainable_parameter_count=1,
+            expected_trainable_parameter_total_numel=1,
+        )
+    )
     inventory, _directories = prune._directory_layout(final)
+    bundle_identity = prune.validate_bundle_identity(
+        final,
+        bundle_path="final",
+        expected_global_step=8,
+    )
     write_json(
         run / prune.RUN_VERIFICATION_NAME,
         {
@@ -126,6 +241,9 @@ def make_run(
                 "sha256": prune.sha256_file(run / prune.FULL_UPDATE_DELTA_NAME),
                 "passed": True,
             },
+            "allocator_environment": allocator_binding,
+            "gradient_accumulation_offload": gradient_offload_binding,
+            "bundle_identity": bundle_identity,
             "final_inventory": inventory,
         },
     )
@@ -329,6 +447,26 @@ def test_current_repository_hash_mismatch_fails_closed(
     )
 
     with pytest.raises(assays.AssayVerificationError, match="stale.*runner hash mismatch"):
+        assays.build_receipt(repo, run)
+
+
+@pytest.mark.parametrize("mutation", ["missing", "tampered"])
+def test_allocator_environment_evidence_fails_closed(
+    tmp_path: Path, mutation: str
+) -> None:
+    repo, run, _ = make_run(tmp_path)
+    environment_path = run / prune.ENVIRONMENT_NAME
+    if mutation == "missing":
+        environment_path.unlink()
+    else:
+        environment = json.loads(environment_path.read_text(encoding="utf-8"))
+        environment["allocator_snapshot_settings"]["expandable_segments"] = False
+        write_json(environment_path, environment)
+
+    with pytest.raises(
+        assays.AssayVerificationError,
+        match="Baseline is not currently verified",
+    ):
         assays.build_receipt(repo, run)
 
 

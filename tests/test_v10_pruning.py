@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 import pytest
+import torch
 
 REPO = Path(__file__).resolve().parents[1]
 SCRIPTS = REPO / "scripts"
@@ -220,6 +221,167 @@ def add_required_evidence(run_dir: Path, provenance: dict[str, object]) -> None:
     engine_sha256 = source_hashes.get(
         "src/latent_workspace_ft_v10/engine.py", "6" * 64
     )
+    baseline_allocator = verification["allocator_environment"]
+    control_allocator = {
+        **baseline_allocator,
+        "path": "runs/v10/resume_equivalence/control_uninterrupted/environment.json",
+    }
+    resumed_allocator = {
+        **baseline_allocator,
+        "path": "runs/v10/resume_equivalence/resumed_from_split/environment.json",
+    }
+    for name in (
+        prune.RESUME_CONTROL_ENVIRONMENT_NAME,
+        prune.RESUME_RESUMED_ENVIRONMENT_NAME,
+    ):
+        (run_dir / name).write_bytes((run_dir / prune.ENVIRONMENT_NAME).read_bytes())
+    control_output = "runs/v10/resume_equivalence/control_uninterrupted"
+    resumed_output = "runs/v10/resume_equivalence/resumed_from_split"
+    baseline_gradient_offload = verification["gradient_accumulation_offload"]
+    resume_signature = baseline_gradient_offload["resume_signature"]
+    checkpoint_inventory = final_inventory
+    checkpoint_manifest_record = next(
+        item for item in checkpoint_inventory if item["path"] == "manifest.json"
+    )
+    resumed_checkpoint = {
+        "scope": "external",
+        "basename": f"checkpoint-{split_step}",
+        "manifest_sha256": checkpoint_manifest_record["sha256"],
+        "manifest_identity": {
+            "run_id": "synthetic-resume-engine-run",
+            "global_step": split_step,
+            "source_sha256": engine_sha256,
+            "resume_signature": resume_signature,
+        },
+        "bundle_inventory_sha256": prune.sha256_bytes(
+            json.dumps(
+                checkpoint_inventory,
+                sort_keys=True,
+                ensure_ascii=False,
+            ).encode("utf-8")
+        ),
+        "file_count": len(checkpoint_inventory),
+        "logical_bytes": sum(int(item["bytes"]) for item in checkpoint_inventory),
+    }
+    parameter_count = baseline_gradient_offload["trainable_parameter_count"]
+    parameter_numel = baseline_gradient_offload[
+        "trainable_parameter_total_numel"
+    ]
+    gradient_capacity_bytes = baseline_gradient_offload[
+        "trainable_gradient_capacity_bytes"
+    ]
+    runner_fixtures.write_synthetic_gradient_offload_receipt(
+        run_dir / prune.RESUME_CONTROL_GRADIENT_OFFLOAD_NAME,
+        run_id="synthetic-resume-engine-run",
+        source_sha256=engine_sha256,
+        resume_signature=resume_signature,
+        initial_step=0,
+        final_step=global_step,
+        accumulation_steps=8,
+        parameter_count=parameter_count,
+        parameter_numel=parameter_numel,
+        gradient_capacity_bytes=gradient_capacity_bytes,
+    )
+    runner_fixtures.write_synthetic_gradient_offload_receipt(
+        run_dir / prune.RESUME_RESUMED_GRADIENT_OFFLOAD_NAME,
+        run_id="synthetic-resume-engine-run",
+        source_sha256=engine_sha256,
+        resume_signature=resume_signature,
+        initial_step=split_step,
+        final_step=global_step,
+        accumulation_steps=8,
+        parameter_count=parameter_count,
+        parameter_numel=parameter_numel,
+        gradient_capacity_bytes=gradient_capacity_bytes,
+        initial_checkpoint=resumed_checkpoint,
+    )
+    control_gradient_offload = (
+        prune.validate_gradient_accumulation_offload_receipt_file(
+            run_dir / prune.RESUME_CONTROL_GRADIENT_OFFLOAD_NAME,
+            receipt_path=(
+                f"{control_output}/{prune.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME}"
+            ),
+            expected_run_id="synthetic-resume-engine-run",
+            expected_source_sha256=engine_sha256,
+            expected_resume_signature=resume_signature,
+            expected_initial_global_step=0,
+            expected_final_global_step=global_step,
+            expected_configured_accumulation_steps=8,
+            expected_initial_resume_checkpoint=None,
+            expected_trainable_parameter_count=parameter_count,
+            expected_trainable_parameter_total_numel=parameter_numel,
+        )
+    )
+    resumed_gradient_offload = (
+        prune.validate_gradient_accumulation_offload_receipt_file(
+            run_dir / prune.RESUME_RESUMED_GRADIENT_OFFLOAD_NAME,
+            receipt_path=(
+                f"{resumed_output}/{prune.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME}"
+            ),
+            expected_run_id="synthetic-resume-engine-run",
+            expected_source_sha256=engine_sha256,
+            expected_resume_signature=resume_signature,
+            expected_initial_global_step=split_step,
+            expected_final_global_step=global_step,
+            expected_configured_accumulation_steps=8,
+            expected_initial_resume_checkpoint=resumed_checkpoint,
+            expected_trainable_parameter_count=parameter_count,
+            expected_trainable_parameter_total_numel=parameter_numel,
+        )
+    )
+    gradient_receipts = {
+        "baseline": baseline_gradient_offload,
+        "control": control_gradient_offload,
+        "resumed": resumed_gradient_offload,
+    }
+    gradient_semantic_identities = {
+        name: {
+            field: binding[field]
+            for field in prune.GRADIENT_OFFLOAD_SEMANTIC_FIELDS
+        }
+        for name, binding in gradient_receipts.items()
+    }
+    baseline_bundle_identity = dict(verification["bundle_identity"])
+    baseline_bundle_identity["bundle_path"] = (
+        f"{provenance['output_dir']}/final"
+    )
+    control_bundle_identity = dict(baseline_bundle_identity)
+    control_bundle_identity["bundle_path"] = f"{control_output}/final"
+    control_bundle_identity["run_id"] = "synthetic-resume-engine-run"
+    resumed_bundle_identity = dict(control_bundle_identity)
+    resumed_bundle_identity["bundle_path"] = f"{resumed_output}/final"
+    bundle_identities = {
+        "baseline": baseline_bundle_identity,
+        "control": control_bundle_identity,
+        "resumed": resumed_bundle_identity,
+    }
+    bundle_cross_run_fields = (
+        "resume_signature",
+        "structural_resume_signature",
+        "world_size",
+        "data_fingerprint_sha256",
+    )
+    bundle_semantic_identities = {
+        name: {
+            field: binding[field]
+            for field in bundle_cross_run_fields
+        }
+        for name, binding in bundle_identities.items()
+    }
+    identity_keys = (
+        "configured",
+        "observed_primary",
+        "observed_legacy_alias",
+        "observed_hip_legacy_alias",
+        "observed_caching_allocator_disable",
+        "active_backend",
+        "parsed_settings",
+        "snapshot_settings",
+        "runtime_identity",
+    )
+    allocator_identity = {
+        key: baseline_allocator.get(key) for key in identity_keys
+    }
     resume_output = run_dir / prune.RESUME_EQUIVALENCE_NAME
     write_json(
         resume_output,
@@ -229,8 +391,8 @@ def add_required_evidence(run_dir: Path, provenance: dict[str, object]) -> None:
             "created_utc": "2026-08-22T00:00:00+00:00",
             "design": {
                 "baseline_A": provenance["output_dir"],
-                "control_B": "runs/v10/resume_equivalence/control_uninterrupted",
-                "resumed_C": "runs/v10/resume_equivalence/resumed_from_split",
+                "control_B": control_output,
+                "resumed_C": resumed_output,
                 "split_step": split_step,
                 "total_steps": global_step,
                 "scheduler_horizon_held_fixed": True,
@@ -243,7 +405,7 @@ def add_required_evidence(run_dir: Path, provenance: dict[str, object]) -> None:
                 ),
                 "control_config_sha256": "4" * 64,
                 "resumed_config_sha256": "5" * 64,
-                "checkpoint_resume_signature": "synthetic-resume-signature",
+                "checkpoint_resume_signature": resume_signature,
                 "validated_baseline_provenance_hashes": provenance["hashes"],
             },
             "environment": {
@@ -251,6 +413,68 @@ def add_required_evidence(run_dir: Path, provenance: dict[str, object]) -> None:
                 "matrix_runner_sha256": provenance_hashes["runner_sha256"],
                 "resume_harness_sha256": "7" * 64,
                 "cuda_available": True,
+            },
+            "allocator_environment_bindings": {
+                "control": control_allocator,
+                "resumed": resumed_allocator,
+            },
+            "allocator_runtime_equivalence": {
+                "passed": True,
+                "comparison": "selected_runtime_fields_exact",
+                "all_equal": True,
+                "identities": {
+                    "baseline": allocator_identity,
+                    "control": allocator_identity,
+                    "resumed": allocator_identity,
+                },
+                "excluded_dynamic_fields": [
+                    "path",
+                    "sha256",
+                    "cuda_memory_allocated_bytes",
+                    "cuda_memory_reserved_bytes",
+                ],
+            },
+            "gradient_accumulation_offload_binding": {
+                "passed": True,
+                "required": prune.GRADIENT_ACCUMULATION_OFFLOAD,
+                "all_equal": True,
+                "observed": {
+                    "baseline": prune.GRADIENT_ACCUMULATION_OFFLOAD,
+                    "control": prune.GRADIENT_ACCUMULATION_OFFLOAD,
+                    "resumed": prune.GRADIENT_ACCUMULATION_OFFLOAD,
+                },
+            },
+            "bundle_identity_bindings": {
+                "passed": True,
+                "bundles": bundle_identities,
+                "exact_cross_run_fields": list(bundle_cross_run_fields),
+                "semantic_identities": bundle_semantic_identities,
+                "all_semantic_identities_equal": True,
+                "control_resume_run_id_preserved": True,
+            },
+            "gradient_accumulation_offload_receipt_bindings": {
+                "passed": True,
+                "receipts": gradient_receipts,
+                "expected_step_ranges": {
+                    "baseline": {
+                        "initial_global_step": 0,
+                        "final_global_step": global_step,
+                    },
+                    "control": {
+                        "initial_global_step": 0,
+                        "final_global_step": global_step,
+                    },
+                    "resumed": {
+                        "initial_global_step": split_step,
+                        "final_global_step": global_step,
+                    },
+                },
+                "exact_semantic_fields": list(
+                    prune.GRADIENT_OFFLOAD_SEMANTIC_FIELDS
+                ),
+                "semantic_identities": gradient_semantic_identities,
+                "all_semantic_identities_equal": True,
+                "control_resume_run_id_preserved": True,
             },
             "preflight": {"world_size": 1, "cuda_device": "synthetic-cuda"},
             "launches": {
@@ -288,7 +512,23 @@ def add_required_evidence(run_dir: Path, provenance: dict[str, object]) -> None:
                 "baseline_run_verification_sha256": verification_sha256,
             },
             "artifacts": [
-                artifact(resume_output, relative=prune.RESUME_EQUIVALENCE_NAME)
+                artifact(resume_output, relative=prune.RESUME_EQUIVALENCE_NAME),
+                artifact(
+                    run_dir / prune.RESUME_CONTROL_ENVIRONMENT_NAME,
+                    relative=prune.RESUME_CONTROL_ENVIRONMENT_NAME,
+                ),
+                artifact(
+                    run_dir / prune.RESUME_RESUMED_ENVIRONMENT_NAME,
+                    relative=prune.RESUME_RESUMED_ENVIRONMENT_NAME,
+                ),
+                artifact(
+                    run_dir / prune.RESUME_CONTROL_GRADIENT_OFFLOAD_NAME,
+                    relative=prune.RESUME_CONTROL_GRADIENT_OFFLOAD_NAME,
+                ),
+                artifact(
+                    run_dir / prune.RESUME_RESUMED_GRADIENT_OFFLOAD_NAME,
+                    relative=prune.RESUME_RESUMED_GRADIENT_OFFLOAD_NAME,
+                ),
             ],
         },
     )
@@ -328,6 +568,10 @@ def make_verified_run(
         {"weight_map": {"weight": "model.safetensors"}},
     )
     (final / "COMPLETED").write_text("ok\n", encoding="utf-8")
+    experiment_config = {"train": {"max_steps": 8}}
+    resume_signature = "e" * 64
+    structural_resume_signature = "f" * 64
+    data_fingerprint = {"files": [{"sha256": "9" * 64}]}
     write_json(
         final / "manifest.json",
         {
@@ -335,19 +579,50 @@ def make_verified_run(
             "complete": True,
             "global_step": 8,
             "run_id": "synthetic-engine-run",
+            "source_sha256": "6" * 64,
+            "resume_signature": resume_signature,
+            "structural_resume_signature": structural_resume_signature,
+            "config_sha256": prune._stable_json_sha256(experiment_config),
+            "world_size": 1,
+            "data_fingerprint": data_fingerprint,
         },
     )
-    write_json(final / "experiment_config.json", {"train": {"max_steps": 8}})
-    write_json(final / "optimizer_coverage.json", {"passed": True})
+    write_json(final / "experiment_config.json", experiment_config)
+    write_json(
+        final / "optimizer_coverage.json",
+        {
+            "passed": True,
+            "model_trainable_unique_physical_parameters": 1,
+            "model_trainable_numel": 1,
+        },
+    )
     write_json(final / "base_update_coverage.json", {"passed": True})
     (final / "workspace_state.pt").write_bytes(b"workspace-retained")
-    (final / "trainer_state.pt").write_bytes(b"trainer-retained")
+    torch.save(
+        {
+            "run_state": {
+                "run_id": "synthetic-engine-run",
+                "global_step": 8,
+            },
+            "global_step": 8,
+            "resume_signature": resume_signature,
+            "structural_resume_signature": structural_resume_signature,
+            "world_size": 1,
+            "data_fingerprint": data_fingerprint,
+        },
+        final / "trainer_state.pt",
+    )
 
     launched = {
         "train": {
             "seed": 42,
             "max_steps": 8,
+            "gradient_accumulation_steps": 8,
             "output_dir": "runs/v10/smoke/F0_query_only/seed_42",
+            "cuda_allocator_conf": runner.CUDA_ALLOCATOR_CONF,
+            "gradient_accumulation_offload": (
+                runner.GRADIENT_ACCUMULATION_OFFLOAD
+            ),
         },
         "assays": complete_assay_config(),
     }
@@ -359,6 +634,11 @@ def make_verified_run(
         "seed": 42,
         "max_steps": 8,
         "output_dir": "runs/v10/smoke/F0_query_only/seed_42",
+        "runtime_policy": {
+            "gradient_accumulation_offload": (
+                runner.GRADIENT_ACCUMULATION_OFFLOAD
+            )
+        },
         "hashes": {
             "contract_sha256": "a" * 64,
             "source_tree_sha256": "b" * 64,
@@ -375,6 +655,70 @@ def make_verified_run(
     delta_path = run_dir / prune.FULL_UPDATE_DELTA_NAME
     write_json(delta_path, {"format": "synthetic-delta", "passed": True})
     final_inventory, _directories = prune._directory_layout(final)
+    bundle_identity = prune.validate_bundle_identity(
+        final,
+        bundle_path="final",
+        expected_global_step=8,
+    )
+    environment = {
+        "harness_version": "synthetic-harness",
+        "python": "synthetic-python",
+        "platform": "synthetic-platform",
+        "hostname": "synthetic-host",
+        "torch": "synthetic-torch",
+        "cuda_runtime": "synthetic-cuda",
+        "cudnn": 1,
+        "source_sha256": "6" * 64,
+        "cuda_devices": [{"index": 0, "name": "synthetic-gpu"}],
+        "transformers": "synthetic-transformers",
+        "peft": None,
+        "safetensors": "synthetic-safetensors",
+        "pytorch_alloc_conf": runner.CUDA_ALLOCATOR_CONF,
+        "pytorch_cuda_alloc_conf_legacy": None,
+        "pytorch_hip_alloc_conf_legacy": None,
+        "pytorch_no_cuda_memory_caching": None,
+        "allocator_backend": "native",
+        "allocator_settings": runner.CUDA_ALLOCATOR_CONF,
+        "allocator_initialized": True,
+        "allocator_snapshot_settings": {"expandable_segments": True},
+        "cuda_memory_allocated_bytes": 1,
+        "cuda_memory_reserved_bytes": 1,
+    }
+    write_json(run_dir / prune.ENVIRONMENT_NAME, environment)
+    allocator_binding = runner.validate_allocator_environment_file(
+        run_dir / prune.ENVIRONMENT_NAME,
+        configured=runner.CUDA_ALLOCATOR_CONF,
+        expected_source_sha256="6" * 64,
+        label="synthetic prune baseline",
+        receipt_path=prune.ENVIRONMENT_NAME,
+    )
+    runner_fixtures.write_synthetic_gradient_offload_receipt(
+        run_dir / prune.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME,
+        run_id="synthetic-engine-run",
+        source_sha256="6" * 64,
+        resume_signature="e" * 64,
+        initial_step=0,
+        final_step=8,
+        accumulation_steps=8,
+        parameter_count=1,
+        parameter_numel=1,
+        gradient_capacity_bytes=4,
+    )
+    gradient_offload_binding = (
+        prune.validate_gradient_accumulation_offload_receipt_file(
+            run_dir / prune.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME,
+            receipt_path=prune.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME,
+            expected_run_id="synthetic-engine-run",
+            expected_source_sha256="6" * 64,
+            expected_resume_signature="e" * 64,
+            expected_initial_global_step=0,
+            expected_final_global_step=8,
+            expected_configured_accumulation_steps=8,
+            expected_initial_resume_checkpoint=None,
+            expected_trainable_parameter_count=1,
+            expected_trainable_parameter_total_numel=1,
+        )
+    )
     write_json(
         run_dir / prune.RUN_VERIFICATION_NAME,
         {
@@ -389,6 +733,9 @@ def make_verified_run(
                 "sha256": prune.sha256_file(delta_path),
                 "passed": True,
             },
+            "allocator_environment": allocator_binding,
+            "gradient_accumulation_offload": gradient_offload_binding,
+            "bundle_identity": bundle_identity,
             "final_inventory": final_inventory,
         },
     )
@@ -463,6 +810,58 @@ def test_missing_assay_or_resume_blocks_before_intent(
     assert not export_root.exists()
 
 
+@pytest.mark.parametrize(
+    "missing",
+    [
+        prune.RESUME_CONTROL_ENVIRONMENT_NAME,
+        prune.RESUME_RESUMED_ENVIRONMENT_NAME,
+    ],
+)
+def test_missing_published_resume_environment_blocks_before_intent(
+    tmp_path: Path,
+    missing: str,
+) -> None:
+    run_dir, _provenance, export_root = make_verified_run(tmp_path)
+    (run_dir / missing).unlink()
+
+    with pytest.raises(prune.PruneError):
+        prune.execute_prune(
+            run_dir,
+            reason="missing resume child environment",
+            compact_export_root=export_root,
+        )
+
+    assert (run_dir / "final/base_model/model.safetensors").is_file()
+    assert not (run_dir / prune.PRUNE_INTENT_NAME).exists()
+    assert not export_root.exists()
+
+
+@pytest.mark.parametrize("mutation", ["launched", "provenance"])
+def test_root_accumulation_offload_binding_fails_closed(
+    tmp_path: Path,
+    mutation: str,
+) -> None:
+    run_dir, _provenance, _export_root = make_verified_run(tmp_path)
+    verification = json.loads(
+        (run_dir / prune.RUN_VERIFICATION_NAME).read_text(encoding="utf-8")
+    )
+    provenance = verification["provenance"]
+    if mutation == "launched":
+        launched_path = run_dir / prune.LAUNCHED_CONFIG_NAME
+        launched = json.loads(launched_path.read_text(encoding="utf-8"))
+        launched["train"]["gradient_accumulation_offload"] = "none"
+        write_json(launched_path, launched)
+    else:
+        provenance["runtime_policy"]["gradient_accumulation_offload"] = "none"
+
+    with pytest.raises(prune.PruneError, match="offload binding is not exact"):
+        prune._validate_allocator_environment_binding(
+            run_dir,
+            verification,
+            provenance,
+        )
+
+
 def test_producer_shaped_evidence_builds_a_prune_plan(tmp_path: Path) -> None:
     run_dir, provenance, _export_root = make_verified_run(tmp_path)
 
@@ -474,6 +873,14 @@ def test_producer_shaped_evidence_builds_a_prune_plan(tmp_path: Path) -> None:
         "heldout_eval",
     ]
     assert plan["preconditions"]["resume_comparison_passed"] is True
+    compact_paths = {
+        item["path"] for item in plan["compact_evidence_inventory"]
+    }
+    assert prune.RESUME_CONTROL_ENVIRONMENT_NAME in compact_paths
+    assert prune.RESUME_RESUMED_ENVIRONMENT_NAME in compact_paths
+    assert prune.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME in compact_paths
+    assert prune.RESUME_CONTROL_GRADIENT_OFFLOAD_NAME in compact_paths
+    assert prune.RESUME_RESUMED_GRADIENT_OFFLOAD_NAME in compact_paths
 
 
 def test_assay_required_set_is_recomputed_from_launched_config(tmp_path: Path) -> None:
@@ -533,7 +940,23 @@ def rewrite_resume_equivalence(run_dir: Path, receipt: dict[str, object]) -> Non
     wrapper = json.loads(wrapper_path.read_text(encoding="utf-8"))
     wrapper["comparison"]["equivalence_sha256"] = prune.sha256_file(result_path)
     wrapper["artifacts"] = [
-        artifact(result_path, relative=prune.RESUME_EQUIVALENCE_NAME)
+        artifact(result_path, relative=prune.RESUME_EQUIVALENCE_NAME),
+        artifact(
+            run_dir / prune.RESUME_CONTROL_ENVIRONMENT_NAME,
+            relative=prune.RESUME_CONTROL_ENVIRONMENT_NAME,
+        ),
+        artifact(
+            run_dir / prune.RESUME_RESUMED_ENVIRONMENT_NAME,
+            relative=prune.RESUME_RESUMED_ENVIRONMENT_NAME,
+        ),
+        artifact(
+            run_dir / prune.RESUME_CONTROL_GRADIENT_OFFLOAD_NAME,
+            relative=prune.RESUME_CONTROL_GRADIENT_OFFLOAD_NAME,
+        ),
+        artifact(
+            run_dir / prune.RESUME_RESUMED_GRADIENT_OFFLOAD_NAME,
+            relative=prune.RESUME_RESUMED_GRADIENT_OFFLOAD_NAME,
+        ),
     ]
     write_json(wrapper_path, wrapper)
 
@@ -558,7 +981,13 @@ def test_minimal_handwritten_resume_receipt_is_rejected(tmp_path: Path) -> None:
 
 @pytest.mark.parametrize(
     "mutation",
-    ["comparison_group", "comparison_pass", "provenance_hashes", "final_a"],
+    [
+        "comparison_group",
+        "comparison_pass",
+        "provenance_hashes",
+        "final_a",
+        "accumulation_offload",
+    ],
 )
 def test_resume_detail_and_provenance_bindings_fail_closed(
     tmp_path: Path,
@@ -575,13 +1004,132 @@ def test_resume_detail_and_provenance_bindings_fail_closed(
         receipt["input_bindings"]["validated_baseline_provenance_hashes"] = {
             "runner_sha256": "f" * 64
         }
-    else:
+    elif mutation == "final_a":
         receipt["artifact_inventories"]["final_A"] = receipt["artifact_inventories"][
             "final_A"
         ][1:]
+    else:
+        receipt["gradient_accumulation_offload_binding"]["observed"]["control"] = (
+            "none"
+        )
     rewrite_resume_equivalence(run_dir, receipt)
 
     with pytest.raises(prune.PruneError):
+        prune.build_prune_plan(run_dir)
+    assert not (run_dir / prune.PRUNE_INTENT_NAME).exists()
+
+
+@pytest.mark.parametrize("mutation", ["run_id", "artifact_hash"])
+def test_resume_bundle_identity_chain_fails_closed_before_prune(
+    tmp_path: Path,
+    mutation: str,
+) -> None:
+    run_dir, _provenance, _export_root = make_verified_run(tmp_path)
+    result_path = run_dir / prune.RESUME_EQUIVALENCE_NAME
+    receipt = json.loads(result_path.read_text(encoding="utf-8"))
+    resumed = receipt["bundle_identity_bindings"]["bundles"]["resumed"]
+    if mutation == "run_id":
+        resumed["run_id"] = "split-run-id"
+    else:
+        resumed["artifacts"]["trainer_state.pt"]["sha256"] = "0" * 64
+    rewrite_resume_equivalence(run_dir, receipt)
+
+    with pytest.raises(prune.PruneError, match="[Bb]undle identity"):
+        prune.build_prune_plan(run_dir)
+    assert not (run_dir / prune.PRUNE_INTENT_NAME).exists()
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    ["published_content", "recorded_check", "binding_path", "published_source"],
+)
+def test_published_resume_environment_content_is_recomputed_fail_closed(
+    tmp_path: Path,
+    mutation: str,
+) -> None:
+    run_dir, _provenance, _export_root = make_verified_run(tmp_path)
+    result_path = run_dir / prune.RESUME_EQUIVALENCE_NAME
+    receipt = json.loads(result_path.read_text(encoding="utf-8"))
+    binding = receipt["allocator_environment_bindings"]["control"]
+    environment_path = run_dir / prune.RESUME_CONTROL_ENVIRONMENT_NAME
+
+    if mutation in {"published_content", "published_source"}:
+        environment = json.loads(environment_path.read_text(encoding="utf-8"))
+        if mutation == "published_content":
+            environment["pytorch_alloc_conf"] = "backend:native"
+        else:
+            environment["source_sha256"] = "f" * 64
+        write_json(environment_path, environment)
+        # Keep the wrapper inventory and binding hash self-consistent so the
+        # pruner must inspect the retained JSON content, not only its digest.
+        binding["sha256"] = prune.sha256_file(environment_path)
+    elif mutation == "recorded_check":
+        binding["checks"]["primary_environment_exact"] = False
+    else:
+        binding["path"] = (
+            "runs/v10/resume_equivalence/resumed_from_split/environment.json"
+        )
+    rewrite_resume_equivalence(run_dir, receipt)
+
+    with pytest.raises(prune.PruneError):
+        prune.build_prune_plan(run_dir)
+    assert not (run_dir / prune.PRUNE_INTENT_NAME).exists()
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "manifest_sha256",
+        "bundle_inventory_sha256",
+        "file_count",
+        "logical_bytes",
+    ],
+)
+def test_published_resumed_checkpoint_descriptor_is_cross_bound_to_inventory(
+    tmp_path: Path,
+    field: str,
+) -> None:
+    run_dir, _provenance, _export_root = make_verified_run(tmp_path)
+    result_path = run_dir / prune.RESUME_EQUIVALENCE_NAME
+    receipt = json.loads(result_path.read_text(encoding="utf-8"))
+    recorded = receipt["gradient_accumulation_offload_receipt_bindings"][
+        "receipts"
+    ]["resumed"]
+    child_path = run_dir / prune.RESUME_RESUMED_GRADIENT_OFFLOAD_NAME
+    child = json.loads(child_path.read_text(encoding="utf-8"))
+    descriptor = child["segments"][0]["resume_checkpoint"]
+    descriptor[field] = (
+        "0" * 64
+        if field in {"manifest_sha256", "bundle_inventory_sha256"}
+        else int(descriptor[field]) + 1
+    )
+    child["receipt_sha256"] = (
+        prune.gradient_accumulation_offload_receipt_self_hash(child)
+    )
+    write_json(child_path, child)
+    recomputed = prune.validate_gradient_accumulation_offload_receipt_file(
+        child_path,
+        receipt_path=recorded["path"],
+        expected_run_id=recorded["run_id"],
+        expected_source_sha256=recorded["source_sha256"],
+        expected_resume_signature=recorded["resume_signature"],
+        expected_initial_global_step=recorded["initial_global_step"],
+        expected_final_global_step=recorded["final_global_step"],
+        expected_configured_accumulation_steps=recorded[
+            "configured_gradient_accumulation_steps"
+        ],
+        expected_initial_resume_checkpoint=descriptor,
+        expected_trainable_parameter_count=recorded["trainable_parameter_count"],
+        expected_trainable_parameter_total_numel=recorded[
+            "trainable_parameter_total_numel"
+        ],
+    )
+    receipt["gradient_accumulation_offload_receipt_bindings"]["receipts"][
+        "resumed"
+    ] = recomputed
+    rewrite_resume_equivalence(run_dir, receipt)
+
+    with pytest.raises(prune.PruneError, match="exact split inventory"):
         prune.build_prune_plan(run_dir)
     assert not (run_dir / prune.PRUNE_INTENT_NAME).exists()
 
@@ -620,6 +1168,19 @@ def test_success_reverifies_and_preserves_unrelated_siblings(tmp_path: Path) -> 
     export_destination = Path(receipt["compact_export"]["destination"])
     assert (export_destination / prune.EXPORT_RECEIPT_NAME).is_file()
     assert (export_destination / prune.RUN_VERIFICATION_NAME).is_file()
+    for name in (
+        prune.RESUME_CONTROL_ENVIRONMENT_NAME,
+        prune.RESUME_RESUMED_ENVIRONMENT_NAME,
+    ):
+        retained = run_dir / name
+        exported = export_destination / name
+        assert retained.is_file()
+        assert exported.read_bytes() == retained.read_bytes()
+    exported_paths = {
+        item["path"] for item in receipt["compact_export"]["inventory"]
+    }
+    assert prune.RESUME_CONTROL_ENVIRONMENT_NAME in exported_paths
+    assert prune.RESUME_RESUMED_ENVIRONMENT_NAME in exported_paths
 
 
 def test_historically_dangling_phase_pointer_is_recorded_and_pruned(
@@ -943,14 +1504,7 @@ def _run_stub_to_verified(tmp_path: Path) -> tuple[Path, object, object, object,
     )
     assert first["states"]["F0_query_only/seed_42"] == "verified_completed"
     run_dir = repo / "runs/v10/smoke/F0_query_only/seed_42"
-    manifest_path = run_dir / "final/manifest.json"
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    manifest["run_id"] = "synthetic-engine-run"
-    write_json(manifest_path, manifest)
     verification = json.loads((run_dir / prune.RUN_VERIFICATION_NAME).read_text(encoding="utf-8"))
-    verification["final_manifest"] = manifest
-    verification["final_inventory"], _directories = prune._directory_layout(run_dir / "final")
-    write_json(run_dir / prune.RUN_VERIFICATION_NAME, verification)
     add_required_evidence(run_dir, verification["provenance"])
     return run_dir, run_options, command, repo, verification["provenance"]
 

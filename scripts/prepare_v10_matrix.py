@@ -21,6 +21,8 @@ from typing import Any
 FORMAT = "latent-workspace-v10-matrix-contract-v1"
 MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"
 MODEL_REVISION = "c170c708c41dac9275d15a8fff4eca08d52bab71"
+CUDA_ALLOCATOR_CONF = "backend:native,expandable_segments:True"
+GRADIENT_ACCUMULATION_OFFLOAD = "cpu"
 SOURCE_LAYER_COUNT = 12
 TARGET_LAYER_COUNT = 32
 BOUNDARY_MAP = {3: 8, 6: 16, 9: 24}
@@ -267,9 +269,11 @@ def _configure_v10(source: Mapping[str, Any], *, condition: str) -> dict[str, An
             "batch_size": 1,
             "eval_batch_size": 1,
             "gradient_accumulation_steps": 8,
+            "gradient_accumulation_offload": GRADIENT_ACCUMULATION_OFFLOAD,
             "optimizer": "adafactor",
             "fused_adamw": "false",
             "mixed_precision": "bf16",
+            "cuda_allocator_conf": CUDA_ALLOCATOR_CONF,
             "save_every": 64,
             "save_every_minutes": 20.0,
             "resume_from": "auto",
@@ -356,6 +360,8 @@ def _profile_matrix(
             "optimizer": "adafactor",
             "trainability": "full",
             "gradient_checkpointing": True,
+            "gradient_accumulation_offload": GRADIENT_ACCUMULATION_OFFLOAD,
+            "cuda_allocator_conf": CUDA_ALLOCATOR_CONF,
         },
         "condition_order": list(spec["conditions"]),
         "seeds": list(spec["seeds"]),
@@ -486,6 +492,8 @@ def build_artifacts(
         "runtime": {
             "backend": "cuda",
             "optimizer": "adafactor",
+            "cuda_allocator_conf": CUDA_ALLOCATOR_CONF,
+            "gradient_accumulation_offload": GRADIENT_ACCUMULATION_OFFLOAD,
             "resume_from": "auto",
             "strict_resume": True,
             "checkpoint_optimizer_state": True,

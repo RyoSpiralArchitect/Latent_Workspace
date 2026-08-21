@@ -38,6 +38,14 @@ BASELINE_VERIFICATION_FORMAT = "latent-workspace-v10-run-verification-v1"
 PRUNE_RESUME_VERIFICATION_FORMAT = "latent-workspace-v10-resume-verification-v1"
 PRUNE_RESUME_VERIFICATION_NAME = "RESUME_VERIFICATION.json"
 PUBLISHED_EQUIVALENCE_NAME = "resume_equivalence_result.json"
+PUBLISHED_CONTROL_ENVIRONMENT_NAME = "resume_control_environment.json"
+PUBLISHED_RESUMED_ENVIRONMENT_NAME = "resume_resumed_environment.json"
+PUBLISHED_CONTROL_GRADIENT_OFFLOAD_NAME = (
+    "resume_control_gradient_accumulation_offload.json"
+)
+PUBLISHED_RESUMED_GRADIENT_OFFLOAD_NAME = (
+    "resume_resumed_gradient_accumulation_offload.json"
+)
 DEFAULT_BASELINE = Path("runs/v10/smoke/F0_query_only/seed_42")
 DEFAULT_OUTPUT = Path("runs/v10/resume_equivalence/F0_query_only/seed_42_step4")
 
@@ -78,6 +86,25 @@ CONFIG_DIFFERENCE_ALLOWLIST = frozenset(
         "train.save_every_minutes",
         "train.keep_last_checkpoints",
     }
+)
+GRADIENT_OFFLOAD_SEMANTIC_FIELDS = (
+    "schema_version",
+    "mode",
+    "algorithm",
+    "source_sha256",
+    "resume_signature",
+    "configured_gradient_accumulation_steps",
+    "trainable_parameter_count",
+    "trainable_parameter_total_numel",
+    "trainable_gradient_capacity_bytes",
+    "trainable_parameter_schema_sha256",
+    "trainable_parameter_schema_fields",
+)
+BUNDLE_IDENTITY_CROSS_RUN_FIELDS = (
+    "resume_signature",
+    "structural_resume_signature",
+    "world_size",
+    "data_fingerprint_sha256",
 )
 
 
@@ -440,6 +467,13 @@ def derive_pilot_configs(
         raise EquivalenceError("Baseline allow_schedule_extension=false is required.")
     if train.get("device") != "cuda":
         raise EquivalenceError("Resume pilot is contracted for train.device='cuda'.")
+    if (
+        train.get("gradient_accumulation_offload")
+        != matrix_runner.GRADIENT_ACCUMULATION_OFFLOAD
+    ):
+        raise EquivalenceError(
+            "Resume pilot requires train.gradient_accumulation_offload='cpu'."
+        )
     model = _require_mapping(base.get("model"), label="baseline config.model")
     if model.get("local_files_only") is not True or model.get("trust_remote_code") is not False:
         raise EquivalenceError("Baseline must be local-files-only with trust_remote_code=false.")
@@ -471,6 +505,14 @@ def derive_pilot_configs(
     _assert_only_allowed_config_differences(control, resumed)
     if control_train["max_steps"] != resumed_train["max_steps"]:
         raise EquivalenceError("Control/resume scheduler horizons differ.")
+    if any(
+        candidate.get("gradient_accumulation_offload")
+        != matrix_runner.GRADIENT_ACCUMULATION_OFFLOAD
+        for candidate in (control_train, resumed_train)
+    ):
+        raise EquivalenceError(
+            "Control/resume gradient-accumulation offload policies differ from 'cpu'."
+        )
     return control, resumed
 
 
@@ -556,6 +598,12 @@ def _default_launch(
 
 def _offline_environment(repo_root: Path) -> dict[str, str]:
     environment = dict(os.environ)
+    for forbidden in (
+        matrix_runner.CUDA_ALLOCATOR_LEGACY_ENV,
+        matrix_runner.CUDA_ALLOCATOR_HIP_LEGACY_ENV,
+        matrix_runner.CUDA_ALLOCATOR_DISABLE_ENV,
+    ):
+        environment.pop(forbidden, None)
     environment.update(
         {
             "HF_HUB_OFFLINE": "1",
@@ -564,6 +612,7 @@ def _offline_environment(repo_root: Path) -> dict[str, str]:
             "HF_HUB_DISABLE_TELEMETRY": "1",
             "HF_HUB_CACHE": str((repo_root / "runs/v10/model_cache/hf").resolve()),
             "TOKENIZERS_PARALLELISM": "false",
+            matrix_runner.CUDA_ALLOCATOR_ENV: matrix_runner.CUDA_ALLOCATOR_CONF,
         }
     )
     source = str(repo_root / "src")
@@ -1132,6 +1181,427 @@ def _runtime_environment(repo_root: Path) -> dict[str, Any]:
     return result
 
 
+def _child_allocator_environment_binding(
+    plan: PilotPlan,
+    *,
+    output_dir: Path,
+    config_path: Path,
+    label: str,
+) -> dict[str, Any]:
+    config = _read_json(config_path)
+    train = _require_mapping(config.get("train"), label=f"{label} config.train")
+    configured = train.get("cuda_allocator_conf")
+    try:
+        return matrix_runner.validate_allocator_environment_file(
+            output_dir / "environment.json",
+            configured=configured,
+            expected_source_sha256=matrix_runner.sha256_file(
+                plan.repo_root / "src/latent_workspace_ft_v10/engine.py"
+            ),
+            label=label,
+            receipt_path=_relative(
+                plan.repo_root, output_dir / "environment.json"
+            ),
+        )
+    except matrix_runner.RunnerError as exc:
+        raise EquivalenceError(str(exc)) from exc
+
+
+def _allocator_identity(binding: Mapping[str, Any], *, label: str) -> dict[str, Any]:
+    if binding.get("passed") is not True:
+        raise EquivalenceError(f"{label} allocator binding is not passing.")
+    return {
+        key: binding.get(key)
+        for key in (
+            "configured",
+            "observed_primary",
+            "observed_legacy_alias",
+            "observed_hip_legacy_alias",
+            "observed_caching_allocator_disable",
+            "active_backend",
+            "parsed_settings",
+            "snapshot_settings",
+            "runtime_identity",
+        )
+    }
+
+
+def _allocator_runtime_equivalence(
+    plan: PilotPlan,
+    child_bindings: Mapping[str, Mapping[str, Any]],
+) -> dict[str, Any]:
+    baseline_binding = _require_mapping(
+        plan.baseline.verification.get("allocator_environment"),
+        label="baseline allocator_environment",
+    )
+    identities = {
+        "baseline": _allocator_identity(
+            baseline_binding, label="baseline allocator_environment"
+        ),
+        "control": _allocator_identity(
+            child_bindings["control"], label="control allocator_environment"
+        ),
+        "resumed": _allocator_identity(
+            child_bindings["resumed"], label="resumed allocator_environment"
+        ),
+    }
+    all_equal = identities["baseline"] == identities["control"] == identities["resumed"]
+    if not all_equal:
+        raise EquivalenceError(
+            "Baseline/control/resumed allocator and runtime identities differ."
+        )
+    return {
+        "passed": True,
+        "comparison": "selected_runtime_fields_exact",
+        "all_equal": True,
+        "identities": identities,
+        "excluded_dynamic_fields": [
+            "path",
+            "sha256",
+            "cuda_memory_allocated_bytes",
+            "cuda_memory_reserved_bytes",
+        ],
+    }
+
+
+def _gradient_accumulation_offload_binding(plan: PilotPlan) -> dict[str, Any]:
+    """Bind the exact accumulation offload policy across A/B/C configs."""
+
+    configs = {
+        "baseline": plan.baseline.launched_config,
+        "control": _read_json(plan.control_config_path),
+        "resumed": _read_json(plan.resumed_config_path),
+    }
+    observed: dict[str, Any] = {}
+    for name, config in configs.items():
+        train = _require_mapping(config.get("train"), label=f"{name} config.train")
+        observed[name] = train.get("gradient_accumulation_offload")
+    required = matrix_runner.GRADIENT_ACCUMULATION_OFFLOAD
+    if any(value != required for value in observed.values()):
+        raise EquivalenceError(
+            "Baseline/control/resumed gradient-accumulation offload policies "
+            f"must all equal {required!r}: {observed}."
+        )
+    return {
+        "passed": True,
+        "required": required,
+        "all_equal": True,
+        "observed": observed,
+    }
+
+
+def _bundle_identity_bindings(plan: PilotPlan) -> dict[str, Any]:
+    """Bind each final bundle internally and then bind A/B/C continuation identity."""
+
+    specifications = {
+        "baseline": (
+            plan.baseline.final_dir,
+            f"{_relative(plan.repo_root, plan.baseline.run_dir)}/final",
+        ),
+        "control": (
+            plan.control_output / "final",
+            f"{_relative(plan.repo_root, plan.control_output)}/final",
+        ),
+        "resumed": (
+            plan.resumed_output / "final",
+            f"{_relative(plan.repo_root, plan.resumed_output)}/final",
+        ),
+    }
+    bundles: dict[str, dict[str, Any]] = {}
+    for name, (bundle_dir, bundle_path) in specifications.items():
+        try:
+            bundles[name] = matrix_runner.validate_bundle_identity(
+                bundle_dir,
+                bundle_path=bundle_path,
+                expected_global_step=plan.total_steps,
+            )
+        except matrix_runner.RunnerError as exc:
+            raise EquivalenceError(f"{name} bundle identity failed: {exc}") from exc
+
+    semantic_identities = {
+        name: {
+            field: bundle.get(field)
+            for field in BUNDLE_IDENTITY_CROSS_RUN_FIELDS
+        }
+        for name, bundle in bundles.items()
+    }
+    if not (
+        semantic_identities["baseline"]
+        == semantic_identities["control"]
+        == semantic_identities["resumed"]
+    ):
+        raise EquivalenceError(
+            "Baseline/control/resumed bundle signatures/runtime identities differ."
+        )
+    if bundles["control"].get("run_id") != bundles["resumed"].get("run_id"):
+        raise EquivalenceError(
+            "Control/resumed manifest-trainer bundle identity did not preserve run_id."
+        )
+    return {
+        "passed": True,
+        "bundles": bundles,
+        "exact_cross_run_fields": list(BUNDLE_IDENTITY_CROSS_RUN_FIELDS),
+        "semantic_identities": semantic_identities,
+        "all_semantic_identities_equal": True,
+        "control_resume_run_id_preserved": True,
+    }
+
+
+def _baseline_claim_identity(plan: PilotPlan) -> dict[str, Any]:
+    """Return claim wording fields only after provenance/config cross-binding."""
+
+    provenance = _require_mapping(
+        plan.baseline.verification.get("provenance"),
+        label="baseline provenance",
+    )
+    train = _require_mapping(
+        plan.baseline.launched_config.get("train"),
+        label="baseline launched config.train",
+    )
+    condition = _require_string(
+        provenance.get("condition"), label="baseline provenance condition"
+    )
+    run_id = _require_string(
+        provenance.get("run_id"), label="baseline provenance run_id"
+    )
+    provenance_seed = provenance.get("seed")
+    config_seed = train.get("seed")
+    provenance_steps = provenance.get("max_steps")
+    config_steps = train.get("max_steps")
+    for value, label in (
+        (provenance_seed, "baseline provenance seed"),
+        (config_seed, "baseline config seed"),
+        (provenance_steps, "baseline provenance max_steps"),
+        (config_steps, "baseline config max_steps"),
+    ):
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise EquivalenceError(f"{label} must be an integer.")
+    if provenance_seed != config_seed:
+        raise EquivalenceError("Baseline provenance/config seed binding is not exact.")
+    if not (
+        provenance_steps == config_steps == plan.total_steps
+    ):
+        raise EquivalenceError(
+            "Baseline provenance/config/plan total_steps binding is not exact."
+        )
+    return {
+        "condition": condition,
+        "run_id": run_id,
+        "seed": provenance_seed,
+        "total_steps": provenance_steps,
+    }
+
+
+def _resume_equivalence_claim_boundary(plan: PilotPlan) -> str:
+    identity = _baseline_claim_identity(plan)
+    return (
+        f"This verifies one {identity['condition']} run {identity['run_id']!r} "
+        f"(seed={identity['seed']}) on the recorded single-GPU host/runtime: "
+        "a step-boundary checkpoint saved under the original fixed "
+        f"{identity['total_steps']}-step schedule, then reloaded with strict resume, "
+        "produced bitwise-identical durable base, workspace, optimizer, scheduler, "
+        "scaler, sampler, RNG, and RunState state plus exact stable metrics. It does "
+        "not verify signal-preemption behavior, multi-GPU resume, schedule extension, "
+        "or cross-hardware/runtime reproducibility."
+    )
+
+
+def _resume_wrapper_claim_boundary(plan: PilotPlan) -> str:
+    identity = _baseline_claim_identity(plan)
+    return (
+        f"This bridges the hash-bound {identity['condition']} resume-equivalence "
+        f"receipt for run {identity['run_id']!r} (seed={identity['seed']}, "
+        f"total_steps={identity['total_steps']}) into the verified run retention "
+        "chain. It does not extend the same-host, single-GPU, fixed-schedule claim "
+        "boundary of that receipt."
+    )
+
+
+def _child_gradient_offload_receipt_binding(
+    plan: PilotPlan,
+    *,
+    name: str,
+    output_dir: Path,
+    config_path: Path,
+    expected_initial_global_step: int,
+    expected_initial_checkpoint: Path | None,
+) -> dict[str, Any]:
+    expected_source = matrix_runner.sha256_file(
+        plan.repo_root / "src/latent_workspace_ft_v10/engine.py"
+    )
+    manifest = _require_complete_bundle(
+        output_dir / "final",
+        expected_step=plan.total_steps,
+        expected_source_sha256=expected_source,
+    )
+    config = _read_json(config_path)
+    train = _require_mapping(config.get("train"), label=f"{name} config.train")
+    accumulation_steps = train.get("gradient_accumulation_steps")
+    optimizer_coverage = _read_json(output_dir / "final/optimizer_coverage.json")
+    trainable_parameter_count = optimizer_coverage.get(
+        "model_trainable_unique_physical_parameters"
+    )
+    trainable_parameter_total_numel = optimizer_coverage.get(
+        "model_trainable_numel"
+    )
+    if (
+        isinstance(accumulation_steps, bool)
+        or not isinstance(accumulation_steps, int)
+        or isinstance(trainable_parameter_count, bool)
+        or not isinstance(trainable_parameter_count, int)
+        or isinstance(trainable_parameter_total_numel, bool)
+        or not isinstance(trainable_parameter_total_numel, int)
+    ):
+        raise EquivalenceError(f"{name} accumulation-step config is invalid.")
+    expected_checkpoint = (
+        matrix_runner.gradient_accumulation_offload_checkpoint_descriptor(
+            expected_initial_checkpoint,
+            output_dir=output_dir,
+        )
+        if expected_initial_checkpoint is not None
+        else None
+    )
+    try:
+        return matrix_runner.validate_gradient_accumulation_offload_file(
+            output_dir / matrix_runner.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT,
+            receipt_path=_relative(
+                plan.repo_root,
+                output_dir / matrix_runner.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT,
+            ),
+            expected_run_id=_require_string(
+                manifest.get("run_id"), label=f"{name} final run_id"
+            ),
+            expected_source_sha256=expected_source,
+            expected_resume_signature=_require_string(
+                manifest.get("resume_signature"),
+                label=f"{name} final resume_signature",
+            ),
+            expected_initial_global_step=expected_initial_global_step,
+            expected_final_global_step=plan.total_steps,
+            expected_configured_accumulation_steps=accumulation_steps,
+            expected_initial_resume_checkpoint=expected_checkpoint,
+            expected_trainable_parameter_count=trainable_parameter_count,
+            expected_trainable_parameter_total_numel=(
+                trainable_parameter_total_numel
+            ),
+        )
+    except matrix_runner.RunnerError as exc:
+        raise EquivalenceError(f"{name} gradient-offload receipt failed: {exc}") from exc
+
+
+def _gradient_offload_semantic_identity(
+    binding: Mapping[str, Any],
+    *,
+    label: str,
+) -> dict[str, Any]:
+    identity = {field: binding.get(field) for field in GRADIENT_OFFLOAD_SEMANTIC_FIELDS}
+    if any(value is None for value in identity.values()):
+        raise EquivalenceError(f"{label} gradient-offload semantic identity is incomplete.")
+    return identity
+
+
+def _gradient_accumulation_offload_receipt_bindings(
+    plan: PilotPlan,
+) -> dict[str, Any]:
+    baseline_manifest = _read_json(plan.baseline.final_dir / "manifest.json")
+    baseline_train = _require_mapping(
+        plan.baseline.launched_config.get("train"), label="baseline config.train"
+    )
+    baseline_coverage = _read_json(
+        plan.baseline.final_dir / "optimizer_coverage.json"
+    )
+    try:
+        baseline = matrix_runner.validate_gradient_accumulation_offload_file(
+            plan.baseline.run_dir
+            / matrix_runner.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT,
+            receipt_path=matrix_runner.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT,
+            expected_run_id=_require_string(
+                baseline_manifest.get("run_id"), label="baseline final run_id"
+            ),
+            expected_source_sha256=matrix_runner.sha256_file(
+                plan.repo_root / "src/latent_workspace_ft_v10/engine.py"
+            ),
+            expected_resume_signature=_require_string(
+                baseline_manifest.get("resume_signature"),
+                label="baseline final resume_signature",
+            ),
+            expected_initial_global_step=0,
+            expected_final_global_step=plan.total_steps,
+            expected_configured_accumulation_steps=int(
+                baseline_train["gradient_accumulation_steps"]
+            ),
+            expected_initial_resume_checkpoint=None,
+            expected_trainable_parameter_count=int(
+                baseline_coverage[
+                    "model_trainable_unique_physical_parameters"
+                ]
+            ),
+            expected_trainable_parameter_total_numel=int(
+                baseline_coverage["model_trainable_numel"]
+            ),
+        )
+    except matrix_runner.RunnerError as exc:
+        raise EquivalenceError(
+            f"Baseline gradient-offload receipt failed: {exc}"
+        ) from exc
+    control = _child_gradient_offload_receipt_binding(
+        plan,
+        name="control",
+        output_dir=plan.control_output,
+        config_path=plan.control_config_path,
+        expected_initial_global_step=0,
+        expected_initial_checkpoint=None,
+    )
+    checkpoint = plan.control_output / f"checkpoint-{plan.split_step}"
+    resumed = _child_gradient_offload_receipt_binding(
+        plan,
+        name="resumed",
+        output_dir=plan.resumed_output,
+        config_path=plan.resumed_config_path,
+        expected_initial_global_step=plan.split_step,
+        expected_initial_checkpoint=checkpoint,
+    )
+    receipts = {"baseline": baseline, "control": control, "resumed": resumed}
+    identities = {
+        name: _gradient_offload_semantic_identity(binding, label=name)
+        for name, binding in receipts.items()
+    }
+    if not identities["baseline"] == identities["control"] == identities["resumed"]:
+        raise EquivalenceError(
+            "Baseline/control/resumed gradient-offload semantic identities differ."
+        )
+    if control.get("run_id") != resumed.get("run_id"):
+        raise EquivalenceError(
+            "Control/resumed gradient-offload receipts did not preserve run_id."
+        )
+    expected_ranges = {
+        "baseline": {"initial_global_step": 0, "final_global_step": plan.total_steps},
+        "control": {"initial_global_step": 0, "final_global_step": plan.total_steps},
+        "resumed": {
+            "initial_global_step": plan.split_step,
+            "final_global_step": plan.total_steps,
+        },
+    }
+    observed_ranges = {
+        name: {
+            "initial_global_step": binding.get("initial_global_step"),
+            "final_global_step": binding.get("final_global_step"),
+        }
+        for name, binding in receipts.items()
+    }
+    if observed_ranges != expected_ranges:
+        raise EquivalenceError("Gradient-offload A/B/C step ranges are not exact.")
+    return {
+        "passed": True,
+        "receipts": receipts,
+        "expected_step_ranges": expected_ranges,
+        "exact_semantic_fields": list(GRADIENT_OFFLOAD_SEMANTIC_FIELDS),
+        "semantic_identities": identities,
+        "all_semantic_identities_equal": True,
+        "control_resume_run_id_preserved": True,
+    }
+
+
 def _execution_preflight(plan: PilotPlan) -> dict[str, Any]:
     verified_model_cache = _verify_pinned_model_cache(plan)
     try:
@@ -1168,7 +1638,14 @@ def _execution_preflight(plan: PilotPlan) -> dict[str, Any]:
 
 
 def _require_new_baseline_evidence_paths(plan: PilotPlan) -> None:
-    for name in (PRUNE_RESUME_VERIFICATION_NAME, PUBLISHED_EQUIVALENCE_NAME):
+    for name in (
+        PRUNE_RESUME_VERIFICATION_NAME,
+        PUBLISHED_EQUIVALENCE_NAME,
+        PUBLISHED_CONTROL_ENVIRONMENT_NAME,
+        PUBLISHED_RESUMED_ENVIRONMENT_NAME,
+        PUBLISHED_CONTROL_GRADIENT_OFFLOAD_NAME,
+        PUBLISHED_RESUMED_GRADIENT_OFFLOAD_NAME,
+    ):
         path = plan.baseline.run_dir / name
         if path.exists() or path.is_symlink():
             raise EquivalenceError(
@@ -1191,9 +1668,8 @@ def _regular_single_link(path: Path, *, label: str) -> None:
         )
 
 
-def _atomic_create_json(path: Path, value: Mapping[str, Any]) -> None:
-    """Create one JSON artifact without a check-then-replace overwrite race."""
-
+def _atomic_create_bytes(path: Path, payload: bytes) -> None:
+    """Create one byte-exact artifact without an overwrite race."""
     if path.exists() or path.is_symlink():
         raise EquivalenceError(f"Refusing to overwrite existing resume evidence: {path}")
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -1203,7 +1679,7 @@ def _atomic_create_json(path: Path, value: Mapping[str, Any]) -> None:
     temporary = Path(temporary_name)
     try:
         with os.fdopen(descriptor, "wb") as handle:
-            handle.write(matrix_runner.canonical_json_bytes(value))
+            handle.write(payload)
             handle.flush()
             os.fsync(handle.fileno())
         try:
@@ -1221,6 +1697,12 @@ def _atomic_create_json(path: Path, value: Mapping[str, Any]) -> None:
     finally:
         if temporary.exists():
             temporary.unlink()
+
+
+def _atomic_create_json(path: Path, value: Mapping[str, Any]) -> None:
+    """Create one canonical JSON artifact without an overwrite race."""
+
+    _atomic_create_bytes(path, matrix_runner.canonical_json_bytes(value))
 
 
 def _require_exact_comparison_receipt(plan: PilotPlan, receipt: Mapping[str, Any]) -> None:
@@ -1273,6 +1755,67 @@ def _require_exact_comparison_receipt(plan: PilotPlan, receipt: Mapping[str, Any
             raise EquivalenceError(f"Resume equivalence environment mismatch: {key}.")
     if environment.get("cuda_available") is not True:
         raise EquivalenceError("Resume equivalence receipt is not from an available CUDA runtime.")
+
+    allocator_bindings = _require_mapping(
+        receipt.get("allocator_environment_bindings"),
+        label="allocator_environment_bindings",
+    )
+    expected_allocator_bindings = {
+        "control": _child_allocator_environment_binding(
+            plan,
+            output_dir=plan.control_output,
+            config_path=plan.control_config_path,
+            label="resume control child",
+        ),
+        "resumed": _child_allocator_environment_binding(
+            plan,
+            output_dir=plan.resumed_output,
+            config_path=plan.resumed_config_path,
+            label="resume resumed child",
+        ),
+    }
+    if dict(allocator_bindings) != expected_allocator_bindings:
+        raise EquivalenceError(
+            "Resume equivalence child allocator environment bindings differ."
+        )
+    expected_allocator_equivalence = _allocator_runtime_equivalence(
+        plan, expected_allocator_bindings
+    )
+    recorded_allocator_equivalence = _require_mapping(
+        receipt.get("allocator_runtime_equivalence"),
+        label="allocator_runtime_equivalence",
+    )
+    if dict(recorded_allocator_equivalence) != expected_allocator_equivalence:
+        raise EquivalenceError(
+            "Resume equivalence allocator/runtime identity comparison differs."
+        )
+    expected_accumulation_offload = _gradient_accumulation_offload_binding(plan)
+    recorded_accumulation_offload = _require_mapping(
+        receipt.get("gradient_accumulation_offload_binding"),
+        label="gradient_accumulation_offload_binding",
+    )
+    if dict(recorded_accumulation_offload) != expected_accumulation_offload:
+        raise EquivalenceError(
+            "Resume equivalence gradient-accumulation offload binding differs."
+        )
+    expected_bundle_identities = _bundle_identity_bindings(plan)
+    recorded_bundle_identities = _require_mapping(
+        receipt.get("bundle_identity_bindings"),
+        label="bundle_identity_bindings",
+    )
+    if dict(recorded_bundle_identities) != expected_bundle_identities:
+        raise EquivalenceError(
+            "Resume equivalence manifest/trainer/config bundle identities differ."
+        )
+    expected_receipt_bindings = _gradient_accumulation_offload_receipt_bindings(plan)
+    recorded_receipt_bindings = _require_mapping(
+        receipt.get("gradient_accumulation_offload_receipt_bindings"),
+        label="gradient_accumulation_offload_receipt_bindings",
+    )
+    if dict(recorded_receipt_bindings) != expected_receipt_bindings:
+        raise EquivalenceError(
+            "Resume equivalence gradient-offload receipt bindings differ."
+        )
 
     launches = _require_mapping(receipt.get("launches"), label="launches")
     for name in ("control", "resumed"):
@@ -1342,8 +1885,18 @@ def _require_exact_comparison_receipt(plan: PilotPlan, receipt: Mapping[str, Any
 def _validate_published_wrapper(
     plan: PilotPlan,
     wrapper: Mapping[str, Any],
-    result_record: Mapping[str, Any],
+    artifact_records: Sequence[Mapping[str, Any]],
 ) -> None:
+    expected_paths = [
+        PUBLISHED_EQUIVALENCE_NAME,
+        PUBLISHED_CONTROL_ENVIRONMENT_NAME,
+        PUBLISHED_RESUMED_ENVIRONMENT_NAME,
+        PUBLISHED_CONTROL_GRADIENT_OFFLOAD_NAME,
+        PUBLISHED_RESUMED_GRADIENT_OFFLOAD_NAME,
+    ]
+    if [record.get("path") for record in artifact_records] != expected_paths:
+        raise EquivalenceError("Published resume artifact set is incomplete.")
+    result_record = artifact_records[0]
     provenance = _require_mapping(
         plan.baseline.verification.get("provenance"), label="baseline provenance"
     )
@@ -1361,7 +1914,7 @@ def _validate_published_wrapper(
         or comparison.get("equivalence_sha256") != result_record["sha256"]
         or comparison.get("baseline_run_verification_sha256")
         != matrix_runner.sha256_file(plan.baseline.verification_path)
-        or wrapper.get("artifacts") != [dict(result_record)]
+        or wrapper.get("artifacts") != [dict(item) for item in artifact_records]
     ):
         raise EquivalenceError("Existing RESUME_VERIFICATION.json is not exactly valid.")
 
@@ -1377,15 +1930,42 @@ def _publish_prune_resume_verification(
     _require_exact_comparison_receipt(plan, receipt)
     result_path = plan.baseline.run_dir / PUBLISHED_EQUIVALENCE_NAME
     wrapper_path = plan.baseline.run_dir / PRUNE_RESUME_VERIFICATION_NAME
+    child_publications = (
+        (
+            plan.control_output / "environment.json",
+            plan.baseline.run_dir / PUBLISHED_CONTROL_ENVIRONMENT_NAME,
+        ),
+        (
+            plan.resumed_output / "environment.json",
+            plan.baseline.run_dir / PUBLISHED_RESUMED_ENVIRONMENT_NAME,
+        ),
+        (
+            plan.control_output
+            / matrix_runner.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT,
+            plan.baseline.run_dir / PUBLISHED_CONTROL_GRADIENT_OFFLOAD_NAME,
+        ),
+        (
+            plan.resumed_output
+            / matrix_runner.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT,
+            plan.baseline.run_dir / PUBLISHED_RESUMED_GRADIENT_OFFLOAD_NAME,
+        ),
+    )
+    evidence_paths = [
+        result_path,
+        *(destination for _source, destination in child_publications),
+    ]
     existing_result = result_path.exists() or result_path.is_symlink()
     existing_wrapper = wrapper_path.exists() or wrapper_path.is_symlink()
-    if (existing_result or existing_wrapper) and not allow_existing_recovery:
-        existing = result_path if existing_result else wrapper_path
+    existing_evidence = [
+        path for path in evidence_paths if path.exists() or path.is_symlink()
+    ]
+    if (existing_evidence or existing_wrapper) and not allow_existing_recovery:
+        existing = existing_evidence[0] if existing_evidence else wrapper_path
         raise EquivalenceError(
             f"Refusing to overwrite existing baseline resume evidence: {existing}"
         )
-    if existing_wrapper and not existing_result:
-        raise EquivalenceError("Resume wrapper exists without its equivalence result.")
+    if existing_wrapper and len(existing_evidence) != len(evidence_paths):
+        raise EquivalenceError("Resume wrapper exists without its complete evidence set.")
     expected_result_bytes = matrix_runner.canonical_json_bytes(receipt)
     if existing_result:
         _regular_single_link(result_path, label="published equivalence result")
@@ -1393,11 +1973,26 @@ def _publish_prune_resume_verification(
             raise EquivalenceError("Existing equivalence result differs from recovery input.")
     else:
         _atomic_create_json(result_path, receipt)
-    result_record = {
-        "path": PUBLISHED_EQUIVALENCE_NAME,
-        "bytes": result_path.stat().st_size,
-        "sha256": matrix_runner.sha256_file(result_path),
-    }
+    for source, destination in child_publications:
+        _regular_single_link(source, label="resume child evidence source")
+        expected = source.read_bytes()
+        if destination.exists() or destination.is_symlink():
+            _regular_single_link(destination, label="published child evidence")
+            if destination.read_bytes() != expected:
+                raise EquivalenceError(
+                    "Published child evidence differs from its bound source."
+                )
+        else:
+            _atomic_create_bytes(destination, expected)
+    artifact_records = [
+        {
+            "path": path.name,
+            "bytes": path.stat().st_size,
+            "sha256": matrix_runner.sha256_file(path),
+        }
+        for path in evidence_paths
+    ]
+    result_record = artifact_records[0]
     provenance = _require_mapping(
         plan.baseline.verification.get("provenance"),
         label="baseline provenance",
@@ -1420,16 +2015,12 @@ def _publish_prune_resume_verification(
             "equivalence_sha256": result_record["sha256"],
             "baseline_run_verification_sha256": verification_sha256,
         },
-        "artifacts": [result_record],
-        "claim_boundary": (
-            "This bridges the hash-bound F0 resume-equivalence receipt into the "
-            "verified run retention chain. It does not extend the same-host, "
-            "single-GPU, fixed-schedule F0 claim boundary of that receipt."
-        ),
+        "artifacts": artifact_records,
+        "claim_boundary": _resume_wrapper_claim_boundary(plan),
     }
     if existing_wrapper:
         _regular_single_link(wrapper_path, label="published resume wrapper")
-        _validate_published_wrapper(plan, _read_json(wrapper_path), result_record)
+        _validate_published_wrapper(plan, _read_json(wrapper_path), artifact_records)
     else:
         _atomic_create_json(wrapper_path, wrapper)
     return wrapper_path
@@ -1513,6 +2104,9 @@ def execute_plan(plan: PilotPlan, *, launch: LaunchFunction = _default_launch) -
         total_steps=plan.total_steps,
     )
     _write_configs(plan, control, resumed)
+    gradient_accumulation_offload_binding = (
+        _gradient_accumulation_offload_binding(plan)
+    )
     environment = _offline_environment(plan.repo_root)
     control_command = (
         plan.python,
@@ -1535,6 +2129,12 @@ def execute_plan(plan: PilotPlan, *, launch: LaunchFunction = _default_launch) -
             f"Control training failed with {control_launch.returncode}; see "
             f"{control_launch.stderr_path}."
         )
+    control_allocator_environment = _child_allocator_environment_binding(
+        plan,
+        output_dir=plan.control_output,
+        config_path=plan.control_config_path,
+        label="resume control child",
+    )
 
     expected_engine_sha = matrix_runner.sha256_file(
         plan.repo_root / "src" / "latent_workspace_ft_v10" / "engine.py"
@@ -1576,6 +2176,19 @@ def execute_plan(plan: PilotPlan, *, launch: LaunchFunction = _default_launch) -
             f"Resumed training failed with {resumed_launch.returncode}; see "
             f"{resumed_launch.stderr_path}."
         )
+    resumed_allocator_environment = _child_allocator_environment_binding(
+        plan,
+        output_dir=plan.resumed_output,
+        config_path=plan.resumed_config_path,
+        label="resume resumed child",
+    )
+    allocator_environment_bindings = {
+        "control": control_allocator_environment,
+        "resumed": resumed_allocator_environment,
+    }
+    allocator_runtime_equivalence = _allocator_runtime_equivalence(
+        plan, allocator_environment_bindings
+    )
     resumed_manifest = _require_complete_bundle(
         plan.resumed_output / "final",
         expected_step=plan.total_steps,
@@ -1584,6 +2197,10 @@ def execute_plan(plan: PilotPlan, *, launch: LaunchFunction = _default_launch) -
     if checkpoint_manifest.get("resume_signature") != resumed_manifest.get("resume_signature"):
         raise EquivalenceError("Checkpoint/resumed-final resume signatures differ.")
 
+    gradient_accumulation_offload_receipt_bindings = (
+        _gradient_accumulation_offload_receipt_bindings(plan)
+    )
+    bundle_identity_bindings = _bundle_identity_bindings(plan)
     comparisons = compare_all_artifacts(plan)
     receipt = {
         "format": RECEIPT_FORMAT,
@@ -1617,6 +2234,18 @@ def execute_plan(plan: PilotPlan, *, launch: LaunchFunction = _default_launch) -
             ),
         },
         "environment": _runtime_environment(plan.repo_root),
+        "allocator_environment_bindings": {
+            "control": control_allocator_environment,
+            "resumed": resumed_allocator_environment,
+        },
+        "allocator_runtime_equivalence": allocator_runtime_equivalence,
+        "gradient_accumulation_offload_binding": (
+            gradient_accumulation_offload_binding
+        ),
+        "bundle_identity_bindings": bundle_identity_bindings,
+        "gradient_accumulation_offload_receipt_bindings": (
+            gradient_accumulation_offload_receipt_bindings
+        ),
         "preflight": preflight,
         "launches": {
             "control": {
@@ -1645,15 +2274,7 @@ def execute_plan(plan: PilotPlan, *, launch: LaunchFunction = _default_launch) -
             + (plan.total_steps - plan.split_step),
             "comparison_scope": "same_host_same_single_gpu_same_source_and_runtime",
         },
-        "claim_boundary": (
-            "This verifies one F0 seed-42 single-GPU run on the recorded host/runtime: "
-            "a step-boundary checkpoint saved under the original eight-step schedule, "
-            "then reloaded with strict resume, produced bitwise-identical durable base, "
-            "workspace, optimizer, scheduler, scaler, sampler, RNG, and RunState state "
-            "plus exact stable metrics. It does not verify signal-preemption behavior, "
-            "multi-GPU resume, schedule extension, cross-hardware/runtime reproducibility, "
-            "or the active stochastic workspace route; F0 bypasses that route."
-        ),
+        "claim_boundary": _resume_equivalence_claim_boundary(plan),
     }
     receipt_path = plan.output_root / "RESUME_EQUIVALENCE.json"
     matrix_runner.atomic_write_json(receipt_path, receipt)

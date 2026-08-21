@@ -16,6 +16,7 @@ if str(SCRIPTS) not in sys.path:
 
 resume = importlib.import_module("run_v10_resume_equivalence")
 runner = importlib.import_module("run_v10_matrix")
+pruning = importlib.import_module("prune_v10_verified_run")
 
 
 def write_json(path: Path, value: object) -> None:
@@ -42,6 +43,82 @@ def write_base(path: Path, *, offset: float = 0.0) -> None:
         },
         str(path / "model.safetensors"),
     )
+
+
+def write_gradient_offload_receipt(
+    path: Path,
+    *,
+    run_id: str,
+    source_sha256: str,
+    initial_step: int,
+    final_step: int,
+    initial_checkpoint: dict[str, object] | None = None,
+    accumulation_steps: int = 2,
+) -> dict[str, object]:
+    windows = final_step - initial_step
+    counters = {
+        "windows_started": windows,
+        "windows_restored": windows,
+        "windows_discarded": 0,
+        "single_microbatch_windows": 0,
+        "microbatch_spills": windows * accumulation_steps,
+        "parameter_first_spills": 2 * windows,
+        "parameter_merges": 2 * windows * (accumulation_steps - 1),
+        "cumulative_current_gradient_bytes": 60 * windows * accumulation_steps,
+        "peak_cpu_accumulator_bytes": 60,
+    }
+    receipt: dict[str, object] = {
+        "schema_version": 2,
+        "mode": "cpu",
+        "algorithm": "pageable_cpu_storage_cuda_native_order_add_v1",
+        "claim_boundary": {
+            "execution_proof": "synthetic execution proof",
+            "numerical_proof": "synthetic numerical boundary",
+            "unsupported": "synthetic unsupported boundary",
+        },
+        "run_id": run_id,
+        "source_sha256": source_sha256,
+        "resume_signature": "b" * 64,
+        "configured_gradient_accumulation_steps": accumulation_steps,
+        "initial_global_step": initial_step,
+        "last_observed_global_step": final_step,
+        "last_restored_global_step": final_step - 1,
+        "final_global_step": final_step,
+        "trainable_parameter_count": 2,
+        "trainable_parameter_total_numel": 15,
+        "trainable_gradient_capacity_bytes": 60,
+        "trainable_parameter_schema_sha256": "d" * 64,
+        "trainable_parameter_schema_fields": list(
+            pruning.GRADIENT_OFFLOAD_SCHEMA_FIELDS
+        ),
+        **counters,
+        "live_cpu_buffer_count": 0,
+        "live_cpu_buffer_bytes": 0,
+        "active_window": None,
+        "continuations": [],
+        "segments": [
+            {
+                "segment_index": 0,
+                "previous_receipt_sha256": None,
+                "resume_checkpoint": initial_checkpoint,
+                "initial_global_step": initial_step,
+                "last_observed_global_step": final_step,
+                "final_global_step": final_step,
+                "initial_cumulative_counters": {key: 0 for key in counters},
+                "latest_cumulative_counters": counters,
+                "final_cumulative_counters": counters,
+                "status": "completed",
+            }
+        ],
+        "status": "completed",
+        "updated_at": 1.0,
+        "receipt_sha256": None,
+    }
+    receipt["receipt_sha256"] = (
+        pruning.gradient_accumulation_offload_receipt_self_hash(receipt)
+    )
+    write_json(path, receipt)
+    return receipt
 
 
 def trainer_state(run_id: str, *, rng_offset: int = 0, step: int = 2) -> dict[str, object]:
@@ -130,9 +207,43 @@ def make_comparison_tree(tmp_path: Path) -> resume.PilotPlan:
     (repo / "src/latent_workspace_ft_v10/engine.py").write_text(
         "# synthetic engine\n", encoding="utf-8"
     )
-    for final in (baseline_run / "final", control / "final", resumed / "final"):
+    engine_sha256 = runner.sha256_file(
+        repo / "src/latent_workspace_ft_v10/engine.py"
+    )
+    final_specs = (
+        (baseline_run / "final", "baseline"),
+        (control / "final", "continued"),
+        (resumed / "final", "continued"),
+    )
+    for final, run_id in final_specs:
         write_base(final / "base_model")
         torch.save({"workspace.weight": torch.tensor([1.0, -0.0])}, final / "workspace_state.pt")
+        (final / "COMPLETED").write_text("ok\n", encoding="utf-8")
+        experiment_config = {"train": {"max_steps": 2}}
+        write_json(final / "experiment_config.json", experiment_config)
+        write_json(
+            final / "optimizer_coverage.json",
+            {
+                "model_trainable_unique_physical_parameters": 2,
+                "model_trainable_numel": 15,
+            },
+        )
+        write_json(
+            final / "manifest.json",
+            {
+                "format": "latent-workspace-ft-bundle-v4",
+                "complete": True,
+                "global_step": 2,
+                "run_id": run_id,
+                "source_sha256": engine_sha256,
+                "resume_signature": "b" * 64,
+                "structural_resume_signature": "c" * 64,
+                "config_sha256": pruning._stable_json_sha256(experiment_config),
+                "world_size": 1,
+                "data_fingerprint": {"files": [{"sha256": "a" * 64}]},
+                "optimizer_saved": True,
+            },
+        )
     torch.save(trainer_state("baseline"), baseline_run / "final/trainer_state.pt")
     torch.save(trainer_state("continued"), control / "final/trainer_state.pt")
     torch.save(trainer_state("continued"), resumed / "final/trainer_state.pt")
@@ -145,12 +256,21 @@ def make_comparison_tree(tmp_path: Path) -> resume.PilotPlan:
         metric_records("continued", start_step=2, total_steps=2, resumed=True),
     )
     launched = baseline_run / "LAUNCHED_CONFIG.json"
-    write_json(launched, {"train": {"max_steps": 2}})
+    baseline_train = {
+        "seed": 42,
+        "max_steps": 2,
+        "gradient_accumulation_steps": 2,
+        "gradient_accumulation_offload": runner.GRADIENT_ACCUMULATION_OFFLOAD,
+    }
+    write_json(launched, {"train": baseline_train})
     verification = baseline_run / "RUN_VERIFICATION.json"
     verification_payload = {
         "verified": True,
         "provenance": {
+            "condition": "F0_query_only",
             "run_id": "F0_query_only/seed_42",
+            "seed": 42,
+            "max_steps": 2,
             "output_dir": "runs/v10/smoke/F0_query_only/seed_42",
             "hashes": {},
         },
@@ -159,7 +279,7 @@ def make_comparison_tree(tmp_path: Path) -> resume.PilotPlan:
     baseline = resume.Baseline(
         run_dir=baseline_run,
         launched_config_path=launched,
-        launched_config={"train": {"max_steps": 2}},
+        launched_config={"train": baseline_train},
         verification_path=verification,
         verification=verification_payload,
         final_dir=baseline_run / "final",
@@ -178,11 +298,129 @@ def make_comparison_tree(tmp_path: Path) -> resume.PilotPlan:
         engine_module="synthetic",
         max_working_set_bytes=1024 * 1024,
     )
-    write_json(plan.control_config_path, {"kind": "control"})
-    write_json(plan.resumed_config_path, {"kind": "resumed"})
+    write_json(
+        plan.control_config_path,
+        {
+            "kind": "control",
+            "train": {
+                "cuda_allocator_conf": runner.CUDA_ALLOCATOR_CONF,
+                "gradient_accumulation_steps": 2,
+                "gradient_accumulation_offload": (
+                    runner.GRADIENT_ACCUMULATION_OFFLOAD
+                ),
+            },
+        },
+    )
+    write_json(
+        plan.resumed_config_path,
+        {
+            "kind": "resumed",
+            "train": {
+                "cuda_allocator_conf": runner.CUDA_ALLOCATOR_CONF,
+                "gradient_accumulation_steps": 2,
+                "gradient_accumulation_offload": (
+                    runner.GRADIENT_ACCUMULATION_OFFLOAD
+                ),
+            },
+        },
+    )
+    allocator_environment = {
+        "harness_version": "synthetic-harness",
+        "python": "synthetic-python",
+        "platform": "synthetic-platform",
+        "hostname": "synthetic-host",
+        "torch": "synthetic-torch",
+        "cuda_runtime": "synthetic-cuda",
+        "cudnn": 1,
+        "source_sha256": runner.sha256_file(
+            repo / "src/latent_workspace_ft_v10/engine.py"
+        ),
+        "cuda_devices": [{"index": 0, "name": "synthetic-gpu"}],
+        "transformers": "synthetic-transformers",
+        "peft": None,
+        "safetensors": "synthetic-safetensors",
+        "pytorch_alloc_conf": runner.CUDA_ALLOCATOR_CONF,
+        "pytorch_cuda_alloc_conf_legacy": None,
+        "pytorch_hip_alloc_conf_legacy": None,
+        "pytorch_no_cuda_memory_caching": None,
+        "allocator_backend": "native",
+        "allocator_settings": runner.CUDA_ALLOCATOR_CONF,
+        "allocator_initialized": True,
+        "allocator_snapshot_settings": {"expandable_segments": True},
+        "cuda_memory_allocated_bytes": 1,
+        "cuda_memory_reserved_bytes": 1,
+    }
+    write_json(control / "environment.json", allocator_environment)
+    write_json(resumed / "environment.json", allocator_environment)
+    write_json(baseline_run / "environment.json", allocator_environment)
+    verification_payload["allocator_environment"] = (
+        runner.validate_allocator_environment_file(
+            baseline_run / "environment.json",
+            configured=runner.CUDA_ALLOCATOR_CONF,
+            expected_source_sha256=runner.sha256_file(
+                repo / "src/latent_workspace_ft_v10/engine.py"
+            ),
+            label="synthetic baseline",
+            receipt_path="environment.json",
+        )
+    )
+    write_json(verification, verification_payload)
     checkpoint = plan.control_output / "checkpoint-1"
     checkpoint.mkdir(parents=True)
     (checkpoint / "state.bin").write_bytes(b"synthetic checkpoint")
+    (checkpoint / "COMPLETED").write_text("ok\n", encoding="utf-8")
+    (checkpoint / "workspace_state.pt").write_bytes(b"synthetic workspace")
+    write_json(
+        checkpoint / "manifest.json",
+        {
+            "run_id": "continued",
+            "global_step": 1,
+            "source_sha256": engine_sha256,
+            "resume_signature": "b" * 64,
+        },
+    )
+    write_gradient_offload_receipt(
+        baseline_run / runner.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT,
+        run_id="baseline",
+        source_sha256=engine_sha256,
+        initial_step=0,
+        final_step=2,
+    )
+    write_gradient_offload_receipt(
+        control / runner.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT,
+        run_id="continued",
+        source_sha256=engine_sha256,
+        initial_step=0,
+        final_step=2,
+    )
+    resumed_descriptor = runner.gradient_accumulation_offload_checkpoint_descriptor(
+        checkpoint,
+        output_dir=resumed,
+    )
+    write_gradient_offload_receipt(
+        resumed / runner.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT,
+        run_id="continued",
+        source_sha256=engine_sha256,
+        initial_step=1,
+        final_step=2,
+        initial_checkpoint=resumed_descriptor,
+    )
+    verification_payload["gradient_accumulation_offload"] = (
+        runner.validate_gradient_accumulation_offload_file(
+            baseline_run / runner.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT,
+            receipt_path=runner.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT,
+            expected_run_id="baseline",
+            expected_source_sha256=engine_sha256,
+            expected_resume_signature="b" * 64,
+            expected_initial_global_step=0,
+            expected_final_global_step=2,
+            expected_configured_accumulation_steps=2,
+            expected_initial_resume_checkpoint=None,
+            expected_trainable_parameter_count=2,
+            expected_trainable_parameter_total_numel=15,
+        )
+    )
+    write_json(verification, verification_payload)
     return plan
 
 
@@ -217,6 +455,44 @@ def valid_publish_receipt(plan: resume.PilotPlan) -> dict[str, object]:
             ]["hashes"],
         },
         "environment": environment,
+        "allocator_environment_bindings": {
+            "control": resume._child_allocator_environment_binding(
+                plan,
+                output_dir=plan.control_output,
+                config_path=plan.control_config_path,
+                label="resume control child",
+            ),
+            "resumed": resume._child_allocator_environment_binding(
+                plan,
+                output_dir=plan.resumed_output,
+                config_path=plan.resumed_config_path,
+                label="resume resumed child",
+            ),
+        },
+        "allocator_runtime_equivalence": resume._allocator_runtime_equivalence(
+            plan,
+            {
+                "control": resume._child_allocator_environment_binding(
+                    plan,
+                    output_dir=plan.control_output,
+                    config_path=plan.control_config_path,
+                    label="resume control child",
+                ),
+                "resumed": resume._child_allocator_environment_binding(
+                    plan,
+                    output_dir=plan.resumed_output,
+                    config_path=plan.resumed_config_path,
+                    label="resume resumed child",
+                ),
+            },
+        ),
+        "gradient_accumulation_offload_binding": (
+            resume._gradient_accumulation_offload_binding(plan)
+        ),
+        "bundle_identity_bindings": resume._bundle_identity_bindings(plan),
+        "gradient_accumulation_offload_receipt_bindings": (
+            resume._gradient_accumulation_offload_receipt_bindings(plan)
+        ),
         "launches": {
             "control": {"returncode": 0},
             "resumed": {"returncode": 0},
@@ -238,6 +514,30 @@ def valid_publish_receipt(plan: resume.PilotPlan) -> dict[str, object]:
         },
         "claim_boundary": "Synthetic exact resume evidence only.",
     }
+
+
+def test_checkpoint_descriptor_uses_engine_compact_inventory_identity(
+    tmp_path: Path,
+) -> None:
+    plan = make_comparison_tree(tmp_path)
+    checkpoint = plan.control_output / f"checkpoint-{plan.split_step}"
+
+    descriptor = runner.gradient_accumulation_offload_checkpoint_descriptor(
+        checkpoint,
+        output_dir=plan.resumed_output,
+    )
+    inventory, _directories = pruning._directory_layout(checkpoint)
+    expected_identity = pruning.gradient_offload_inventory_identity(inventory)
+
+    assert descriptor["scope"] == "external"
+    assert descriptor["basename"] == checkpoint.name
+    assert {
+        field: descriptor[field] for field in expected_identity
+    } == expected_identity
+    manifest_record = next(
+        item for item in inventory if item["path"] == "manifest.json"
+    )
+    assert descriptor["manifest_sha256"] == manifest_record["sha256"]
 
 
 def make_config_baseline(tmp_path: Path, *, max_steps: int = 8) -> tuple[Path, resume.Baseline]:
@@ -274,6 +574,7 @@ def make_config_baseline(tmp_path: Path, *, max_steps: int = 8) -> tuple[Path, r
             "save_every": 64,
             "save_every_minutes": 20.0,
             "keep_last_checkpoints": 2,
+            "gradient_accumulation_offload": runner.GRADIENT_ACCUMULATION_OFFLOAD,
         },
     }
     write_json(launched, config)
@@ -309,7 +610,26 @@ def test_scheduler_horizon_mismatch_is_rejected(tmp_path: Path) -> None:
         )
 
 
-def test_offline_environment_pins_repository_model_cache(tmp_path: Path) -> None:
+def test_resume_derivation_requires_cpu_accumulation_offload(tmp_path: Path) -> None:
+    repo, baseline = make_config_baseline(tmp_path, max_steps=8)
+    baseline.launched_config["train"]["gradient_accumulation_offload"] = "none"
+
+    with pytest.raises(resume.EquivalenceError, match="offload='cpu'"):
+        resume.derive_pilot_configs(
+            baseline,
+            repo,
+            repo / "runs/v10/resume_equivalence/test",
+            split_step=4,
+            total_steps=8,
+        )
+
+
+def test_offline_environment_pins_repository_model_cache(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("PYTORCH_CUDA_ALLOC_CONF", "backend:cudaMallocAsync")
+    monkeypatch.setenv("PYTORCH_HIP_ALLOC_CONF", "backend:cudaMallocAsync")
+    monkeypatch.setenv("PYTORCH_NO_CUDA_MEMORY_CACHING", "1")
     repo = tmp_path / "repo"
     environment = resume._offline_environment(repo)
 
@@ -317,6 +637,10 @@ def test_offline_environment_pins_repository_model_cache(tmp_path: Path) -> None
         (repo / "runs/v10/model_cache/hf").resolve()
     )
     assert environment["HF_HUB_OFFLINE"] == "1"
+    assert environment["PYTORCH_ALLOC_CONF"] == runner.CUDA_ALLOCATOR_CONF
+    assert "PYTORCH_CUDA_ALLOC_CONF" not in environment
+    assert "PYTORCH_HIP_ALLOC_CONF" not in environment
+    assert "PYTORCH_NO_CUDA_MEMORY_CACHING" not in environment
 
 
 def test_pinned_model_cache_is_bound_to_baseline_provenance(
@@ -552,8 +876,46 @@ def test_prune_resume_wrapper_is_exactly_bound_to_equivalence(
     assert wrapper["comparison"]["equivalence_sha256"] == runner.sha256_file(
         artifact
     )
+    assert [item["path"] for item in wrapper["artifacts"]] == [
+        resume.PUBLISHED_EQUIVALENCE_NAME,
+        resume.PUBLISHED_CONTROL_ENVIRONMENT_NAME,
+        resume.PUBLISHED_RESUMED_ENVIRONMENT_NAME,
+        resume.PUBLISHED_CONTROL_GRADIENT_OFFLOAD_NAME,
+        resume.PUBLISHED_RESUMED_GRADIENT_OFFLOAD_NAME,
+    ]
+    for name in (
+        resume.PUBLISHED_CONTROL_GRADIENT_OFFLOAD_NAME,
+        resume.PUBLISHED_RESUMED_GRADIENT_OFFLOAD_NAME,
+    ):
+        assert (plan.baseline.run_dir / name).is_file()
+    ranges = receipt["gradient_accumulation_offload_receipt_bindings"][
+        "expected_step_ranges"
+    ]
+    assert ranges == {
+        "baseline": {"initial_global_step": 0, "final_global_step": 2},
+        "control": {"initial_global_step": 0, "final_global_step": 2},
+        "resumed": {"initial_global_step": 1, "final_global_step": 2},
+    }
     with pytest.raises(resume.EquivalenceError, match="Refusing to overwrite"):
         resume._publish_prune_resume_verification(plan, receipt)
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        resume.PUBLISHED_CONTROL_GRADIENT_OFFLOAD_NAME,
+        resume.PUBLISHED_RESUMED_GRADIENT_OFFLOAD_NAME,
+    ],
+)
+def test_execute_preflight_rejects_existing_published_gradient_receipt(
+    tmp_path: Path,
+    name: str,
+) -> None:
+    plan = make_comparison_tree(tmp_path)
+    (plan.baseline.run_dir / name).write_text("occupied\n", encoding="utf-8")
+
+    with pytest.raises(resume.EquivalenceError, match="Refusing to overwrite"):
+        resume._require_new_baseline_evidence_paths(plan)
 
 
 def test_publish_recovery_completes_missing_wrapper_without_overwrite(
@@ -573,6 +935,63 @@ def test_publish_recovery_completes_missing_wrapper_without_overwrite(
     assert json.loads(wrapper.read_text(encoding="utf-8"))["verified"] is True
 
 
+def test_b_condition_claim_wording_is_bound_and_not_f0_specific(
+    tmp_path: Path,
+) -> None:
+    plan = make_comparison_tree(tmp_path)
+    provenance = plan.baseline.verification["provenance"]
+    provenance.update(
+        {
+            "condition": "B_local_invariance",
+            "run_id": "B_local_invariance/seed_17",
+            "seed": 17,
+        }
+    )
+    plan.baseline.launched_config["train"]["seed"] = 17
+
+    receipt_claim = resume._resume_equivalence_claim_boundary(plan)
+    wrapper_claim = resume._resume_wrapper_claim_boundary(plan)
+
+    for claim in (receipt_claim, wrapper_claim):
+        assert "B_local_invariance" in claim
+        assert "B_local_invariance/seed_17" in claim
+        assert "seed=17" in claim
+        assert "F0" not in claim
+        assert "eight-step" not in claim
+    assert "2-step" in receipt_claim
+    assert "total_steps=2" in wrapper_claim
+
+    plan.baseline.launched_config["train"]["seed"] = 18
+    with pytest.raises(resume.EquivalenceError, match="seed binding"):
+        resume._resume_equivalence_claim_boundary(plan)
+
+
+def test_recovery_rejects_manifest_trainer_bundle_identity_split(
+    tmp_path: Path,
+) -> None:
+    plan = make_comparison_tree(tmp_path)
+    receipt = valid_publish_receipt(plan)
+    for output in (plan.control_output, plan.resumed_output):
+        trainer_path = output / "final/trainer_state.pt"
+        trainer = torch.load(trainer_path, map_location="cpu", weights_only=False)
+        trainer["run_state"]["run_id"] = "split-run-id"
+        torch.save(trainer, trainer_path)
+        metrics_path = output / "metrics.jsonl"
+        records = resume._read_metrics(metrics_path)
+        for record in records:
+            record["run_id"] = "split-run-id"
+        write_jsonl(metrics_path, records)
+    receipt["comparisons"] = resume.compare_all_artifacts(plan)
+    write_json(plan.output_root / "RESUME_EQUIVALENCE.json", receipt)
+
+    with pytest.raises(resume.EquivalenceError, match="bundle identity"):
+        resume.recover_publication(plan)
+
+    assert not (
+        plan.baseline.run_dir / resume.PUBLISHED_EQUIVALENCE_NAME
+    ).exists()
+
+
 def test_publisher_rejects_minimal_or_false_comparison_receipt(tmp_path: Path) -> None:
     plan = make_comparison_tree(tmp_path)
     receipt = valid_publish_receipt(plan)
@@ -584,3 +1003,62 @@ def test_publisher_rejects_minimal_or_false_comparison_receipt(tmp_path: Path) -
     assert not (
         plan.baseline.run_dir / resume.PUBLISHED_EQUIVALENCE_NAME
     ).exists()
+
+
+def test_publisher_rejects_tampered_resumed_allocator_environment(
+    tmp_path: Path,
+) -> None:
+    plan = make_comparison_tree(tmp_path)
+    receipt = valid_publish_receipt(plan)
+    environment_path = plan.resumed_output / "environment.json"
+    environment = json.loads(environment_path.read_text(encoding="utf-8"))
+    environment["allocator_backend"] = "cudaMallocAsync"
+    write_json(environment_path, environment)
+
+    with pytest.raises(resume.EquivalenceError, match="native_backend_reported"):
+        resume._publish_prune_resume_verification(plan, receipt)
+
+
+def test_publisher_rejects_tampered_accumulation_offload_binding(
+    tmp_path: Path,
+) -> None:
+    plan = make_comparison_tree(tmp_path)
+    receipt = valid_publish_receipt(plan)
+    receipt["gradient_accumulation_offload_binding"]["observed"]["resumed"] = (
+        "none"
+    )
+
+    with pytest.raises(resume.EquivalenceError, match="offload binding differs"):
+        resume._publish_prune_resume_verification(plan, receipt)
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    ["missing", "status", "binding_path", "binding_hash"],
+)
+def test_publisher_rejects_missing_or_tampered_child_gradient_offload_receipt(
+    tmp_path: Path,
+    mutation: str,
+) -> None:
+    plan = make_comparison_tree(tmp_path)
+    receipt = valid_publish_receipt(plan)
+    child_path = (
+        plan.resumed_output / runner.GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT
+    )
+    if mutation == "missing":
+        child_path.unlink()
+    elif mutation == "status":
+        child = json.loads(child_path.read_text(encoding="utf-8"))
+        child["status"] = "failed"
+        child["receipt_sha256"] = (
+            pruning.gradient_accumulation_offload_receipt_self_hash(child)
+        )
+        write_json(child_path, child)
+    else:
+        field = "path" if mutation == "binding_path" else "sha256"
+        receipt["gradient_accumulation_offload_receipt_bindings"]["receipts"][
+            "resumed"
+        ][field] = "wrong.json" if field == "path" else "0" * 64
+
+    with pytest.raises(resume.EquivalenceError):
+        resume._publish_prune_resume_verification(plan, receipt)

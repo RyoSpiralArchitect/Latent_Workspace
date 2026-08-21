@@ -32,6 +32,7 @@ RUN_VERIFICATION_FORMAT = "latent-workspace-v10-run-verification-v1"
 ASSAY_VERIFICATION_FORMAT = "latent-workspace-v10-assay-verification-v1"
 RESUME_VERIFICATION_FORMAT = "latent-workspace-v10-resume-verification-v1"
 RESUME_EQUIVALENCE_FORMAT = "latent-workspace-v10-resume-equivalence-v1"
+BUNDLE_IDENTITY_FORMAT = "latent-workspace-v10-bundle-identity-v1"
 COMPACT_EXPORT_FORMAT = "latent-workspace-v10-compact-evidence-export-v1"
 PRUNE_INTENT_FORMAT = "latent-workspace-v10-prune-intent-v1"
 PRUNE_RECEIPT_FORMAT = "latent-workspace-v10-verified-run-prune-v1"
@@ -44,6 +45,54 @@ LAUNCHED_CONFIG_NAME = "LAUNCHED_CONFIG.json"
 METRICS_NAME = "metrics.jsonl"
 AMPUTATION_REPORT_NAME = "amputation_report.json"
 RESUME_EQUIVALENCE_NAME = "resume_equivalence_result.json"
+RESUME_CONTROL_ENVIRONMENT_NAME = "resume_control_environment.json"
+RESUME_RESUMED_ENVIRONMENT_NAME = "resume_resumed_environment.json"
+ENVIRONMENT_NAME = "environment.json"
+GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME = (
+    "gradient_accumulation_offload.json"
+)
+RESUME_CONTROL_GRADIENT_OFFLOAD_NAME = (
+    "resume_control_gradient_accumulation_offload.json"
+)
+RESUME_RESUMED_GRADIENT_OFFLOAD_NAME = (
+    "resume_resumed_gradient_accumulation_offload.json"
+)
+GRADIENT_ACCUMULATION_OFFLOAD = "cpu"
+GRADIENT_OFFLOAD_SCHEMA_VERSION = 2
+GRADIENT_OFFLOAD_ALGORITHM = "pageable_cpu_storage_cuda_native_order_add_v1"
+GRADIENT_OFFLOAD_COUNTER_FIELDS = (
+    "windows_started",
+    "windows_restored",
+    "windows_discarded",
+    "single_microbatch_windows",
+    "microbatch_spills",
+    "parameter_first_spills",
+    "parameter_merges",
+    "cumulative_current_gradient_bytes",
+    "peak_cpu_accumulator_bytes",
+)
+GRADIENT_OFFLOAD_SCHEMA_FIELDS = (
+    "name",
+    "shape",
+    "stride",
+    "dtype",
+    "device",
+    "numel",
+    "logical_bytes",
+)
+GRADIENT_OFFLOAD_SEMANTIC_FIELDS = (
+    "schema_version",
+    "mode",
+    "algorithm",
+    "source_sha256",
+    "resume_signature",
+    "configured_gradient_accumulation_steps",
+    "trainable_parameter_count",
+    "trainable_parameter_total_numel",
+    "trainable_gradient_capacity_bytes",
+    "trainable_parameter_schema_sha256",
+    "trainable_parameter_schema_fields",
+)
 PRUNE_INTENT_NAME = "PRUNE_INTENT.json"
 PRUNE_RECEIPT_NAME = "PRUNE_RECEIPT.json"
 EXPORT_RECEIPT_NAME = "EXPORT_RECEIPT.json"
@@ -273,6 +322,238 @@ def _validate_inventory_records(
     return sorted(records, key=lambda item: str(item["path"]))
 
 
+def _stable_json_sha256(value: Any) -> str:
+    encoded = json.dumps(value, sort_keys=True, ensure_ascii=False).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _load_trainer_state_identity(path: Path) -> Mapping[str, Any]:
+    """Load trainer metadata without materializing tensor storage when supported."""
+
+    try:
+        import torch
+    except ImportError as exc:  # pragma: no cover - project runtime dependency
+        raise PruneError("Bundle identity validation requires torch.") from exc
+    try:
+        try:
+            value = torch.load(
+                path,
+                map_location="cpu",
+                weights_only=False,
+                mmap=True,
+            )
+        except TypeError:  # pragma: no cover - older supported torch
+            value = torch.load(path, map_location="cpu", weights_only=False)
+    except Exception as exc:
+        raise PruneError(f"Could not load trainer identity from {path}: {exc}") from exc
+    if not isinstance(value, Mapping):
+        raise PruneError(f"Trainer state must contain a mapping: {path}")
+    return value
+
+
+def validate_bundle_identity(
+    bundle_dir: Path,
+    *,
+    bundle_path: str,
+    expected_global_step: int,
+) -> dict[str, Any]:
+    """Cross-bind one bundle's manifest, trainer state, and persisted config."""
+
+    bundle_path = _safe_relative(bundle_path, label="bundle identity path")
+    expected_global_step = _require_nonnegative_integer(
+        expected_global_step,
+        label="expected bundle global_step",
+    )
+    _require_plain_directory(bundle_dir, label="bundle identity directory")
+    artifacts = {
+        name: _regular_file_record(bundle_dir / name, relative=name)
+        for name in ("manifest.json", "trainer_state.pt", "experiment_config.json")
+    }
+    manifest = read_json(bundle_dir / "manifest.json")
+    experiment_config = read_json(bundle_dir / "experiment_config.json")
+    trainer = _load_trainer_state_identity(bundle_dir / "trainer_state.pt")
+    run_state = _require_mapping(
+        trainer.get("run_state"), label="bundle trainer_state.run_state"
+    )
+
+    run_id = manifest.get("run_id")
+    manifest_step = manifest.get("global_step")
+    trainer_step = trainer.get("global_step")
+    run_state_step = run_state.get("global_step")
+    manifest_resume = manifest.get("resume_signature")
+    trainer_resume = trainer.get("resume_signature")
+    manifest_structural = manifest.get("structural_resume_signature")
+    trainer_structural = trainer.get("structural_resume_signature")
+    manifest_world_size = manifest.get("world_size")
+    trainer_world_size = trainer.get("world_size")
+    manifest_fingerprint = manifest.get("data_fingerprint")
+    trainer_fingerprint = trainer.get("data_fingerprint")
+    manifest_config_sha256 = manifest.get("config_sha256")
+    computed_config_sha256 = _stable_json_sha256(experiment_config)
+
+    if not isinstance(run_id, str) or not run_id:
+        raise PruneError("Bundle manifest run_id is incomplete.")
+    if run_state.get("run_id") != run_id:
+        raise PruneError("Bundle manifest/trainer run_id binding is not exact.")
+    for value, label in (
+        (manifest_step, "manifest global_step"),
+        (trainer_step, "trainer global_step"),
+        (run_state_step, "run_state global_step"),
+    ):
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise PruneError(f"Bundle {label} must be an integer.")
+    if not (
+        manifest_step == trainer_step == run_state_step == expected_global_step
+    ):
+        raise PruneError("Bundle manifest/trainer global_step binding is not exact.")
+    for value, label in (
+        (manifest_resume, "manifest resume_signature"),
+        (trainer_resume, "trainer resume_signature"),
+        (manifest_structural, "manifest structural_resume_signature"),
+        (trainer_structural, "trainer structural_resume_signature"),
+        (manifest_config_sha256, "manifest config_sha256"),
+    ):
+        _validate_sha256(value, label=f"bundle {label}")
+    if manifest_resume != trainer_resume:
+        raise PruneError("Bundle manifest/trainer resume_signature binding is not exact.")
+    if manifest_structural != trainer_structural:
+        raise PruneError(
+            "Bundle manifest/trainer structural_resume_signature binding is not exact."
+        )
+    if manifest_config_sha256 != computed_config_sha256:
+        raise PruneError("Bundle manifest/experiment_config hash binding is not exact.")
+    if (
+        isinstance(manifest_world_size, bool)
+        or not isinstance(manifest_world_size, int)
+        or manifest_world_size < 1
+        or trainer_world_size != manifest_world_size
+    ):
+        raise PruneError("Bundle manifest/trainer world_size binding is not exact.")
+    if not isinstance(manifest_fingerprint, Mapping) or not isinstance(
+        trainer_fingerprint, Mapping
+    ):
+        raise PruneError("Bundle manifest/trainer data_fingerprint is malformed.")
+    if dict(manifest_fingerprint) != dict(trainer_fingerprint):
+        raise PruneError("Bundle manifest/trainer data_fingerprint binding is not exact.")
+
+    return {
+        "format": BUNDLE_IDENTITY_FORMAT,
+        "passed": True,
+        "bundle_path": bundle_path,
+        "artifacts": artifacts,
+        "run_id": run_id,
+        "global_step": expected_global_step,
+        "resume_signature": manifest_resume,
+        "structural_resume_signature": manifest_structural,
+        "config_sha256": computed_config_sha256,
+        "world_size": manifest_world_size,
+        "data_fingerprint_sha256": _stable_json_sha256(
+            dict(manifest_fingerprint)
+        ),
+        "bindings": {
+            "manifest_trainer_run_id_exact": True,
+            "manifest_trainer_global_step_exact": True,
+            "manifest_trainer_resume_signature_exact": True,
+            "manifest_trainer_structural_resume_signature_exact": True,
+            "manifest_experiment_config_sha256_exact": True,
+            "manifest_trainer_world_size_exact": True,
+            "manifest_trainer_data_fingerprint_exact": True,
+        },
+    }
+
+
+def validate_bundle_identity_summary(
+    value: Any,
+    *,
+    expected_bundle_path: str,
+    expected_global_step: int,
+    expected_inventory: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Validate a persisted bundle identity and bind its three source files."""
+
+    summary = _require_mapping(value, label="bundle identity summary")
+    expected_keys = {
+        "format",
+        "passed",
+        "bundle_path",
+        "artifacts",
+        "run_id",
+        "global_step",
+        "resume_signature",
+        "structural_resume_signature",
+        "config_sha256",
+        "world_size",
+        "data_fingerprint_sha256",
+        "bindings",
+    }
+    _require_exact_keys(summary, expected_keys, label="bundle identity summary")
+    expected_bundle_path = _safe_relative(
+        expected_bundle_path, label="expected bundle identity path"
+    )
+    if (
+        summary.get("format") != BUNDLE_IDENTITY_FORMAT
+        or summary.get("passed") is not True
+        or summary.get("bundle_path") != expected_bundle_path
+        or summary.get("global_step") != expected_global_step
+        or not isinstance(summary.get("run_id"), str)
+        or not summary.get("run_id")
+        or isinstance(summary.get("world_size"), bool)
+        or not isinstance(summary.get("world_size"), int)
+        or int(summary["world_size"]) < 1
+    ):
+        raise PruneError("Bundle identity summary scalar bindings are not exact.")
+    for field in (
+        "resume_signature",
+        "structural_resume_signature",
+        "config_sha256",
+        "data_fingerprint_sha256",
+    ):
+        _validate_sha256(summary.get(field), label=f"bundle identity {field}")
+    expected_bindings = {
+        "manifest_trainer_run_id_exact": True,
+        "manifest_trainer_global_step_exact": True,
+        "manifest_trainer_resume_signature_exact": True,
+        "manifest_trainer_structural_resume_signature_exact": True,
+        "manifest_experiment_config_sha256_exact": True,
+        "manifest_trainer_world_size_exact": True,
+        "manifest_trainer_data_fingerprint_exact": True,
+    }
+    if summary.get("bindings") != expected_bindings:
+        raise PruneError("Bundle identity summary checks are not exact.")
+
+    artifacts = _require_mapping(
+        summary.get("artifacts"), label="bundle identity artifacts"
+    )
+    required_artifacts = {
+        "manifest.json",
+        "trainer_state.pt",
+        "experiment_config.json",
+    }
+    _require_exact_keys(
+        artifacts, required_artifacts, label="bundle identity artifacts"
+    )
+    inventory_by_path = {
+        str(record["path"]): record
+        for record in _validate_inventory_records(
+            list(expected_inventory), label="bundle identity inventory"
+        )
+    }
+    normalized_artifacts: dict[str, dict[str, Any]] = {}
+    for name in sorted(required_artifacts):
+        records = _validate_inventory_records(
+            [artifacts[name]], label=f"bundle identity artifact {name}"
+        )
+        record = records[0]
+        if record["path"] != name or inventory_by_path.get(name) != record:
+            raise PruneError(
+                f"Bundle identity artifact {name} is not exact in its inventory."
+            )
+        normalized_artifacts[name] = record
+    normalized = dict(summary)
+    normalized["artifacts"] = normalized_artifacts
+    return normalized
+
+
 def _artifact_matches(path: Path, expected: Mapping[str, Any]) -> None:
     actual = _regular_file_record(path, relative=str(expected["path"]))
     if actual != dict(expected):
@@ -306,6 +587,639 @@ def _require_nonnegative_number(value: Any, *, label: str) -> float:
     if observed != observed or observed in {float("inf"), float("-inf")}:
         raise PruneError(f"{label} must be a non-negative finite number.")
     return observed
+
+
+def _require_nonnegative_integer(value: Any, *, label: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise PruneError(f"{label} must be a non-negative integer.")
+    return value
+
+
+def gradient_accumulation_offload_receipt_self_hash(
+    receipt: Mapping[str, Any],
+) -> str:
+    """Recompute the engine's self-hash with only receipt_sha256 nulled."""
+
+    payload = dict(receipt)
+    payload["receipt_sha256"] = None
+    encoded = json.dumps(payload, sort_keys=True, ensure_ascii=False).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def gradient_offload_inventory_identity(
+    records: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Return the engine-stable compact hash/count/bytes for sorted records."""
+
+    normalized = _validate_inventory_records(
+        list(records), label="gradient-offload checkpoint inventory"
+    )
+    compact = json.dumps(normalized, sort_keys=True, ensure_ascii=False).encode("utf-8")
+    return {
+        "bundle_inventory_sha256": hashlib.sha256(compact).hexdigest(),
+        "file_count": len(normalized),
+        "logical_bytes": sum(int(record["bytes"]) for record in normalized),
+    }
+
+
+def gradient_offload_checkpoint_bundle_inventory(checkpoint: Path) -> dict[str, Any]:
+    """Recompute the engine's compact-hash checkpoint inventory identity."""
+
+    _require_plain_directory(checkpoint, label="gradient-offload checkpoint")
+    for required_name in ("COMPLETED", "manifest.json", "workspace_state.pt"):
+        _regular_file_record(
+            checkpoint / required_name,
+            relative=required_name,
+        )
+    records, _directories = _directory_layout(checkpoint)
+    manifest_records = [record for record in records if record["path"] == "manifest.json"]
+    if len(manifest_records) != 1:
+        raise PruneError(
+            "Gradient-offload checkpoint inventory has no unique manifest."
+        )
+    return gradient_offload_inventory_identity(records)
+
+
+def gradient_offload_checkpoint_descriptor(
+    checkpoint: Path,
+    *,
+    output_dir: Path,
+) -> dict[str, Any]:
+    """Recompute the engine's portable checkpoint descriptor from live bytes."""
+
+    checkpoint = checkpoint.expanduser().resolve()
+    output_dir = output_dir.expanduser().resolve()
+    inventory = gradient_offload_checkpoint_bundle_inventory(checkpoint)
+    manifest_path = checkpoint / "manifest.json"
+    manifest = read_json(manifest_path)
+    identity = {
+        "run_id": manifest.get("run_id"),
+        "global_step": manifest.get("global_step"),
+        "source_sha256": manifest.get("source_sha256"),
+        "resume_signature": manifest.get("resume_signature"),
+    }
+    if (
+        not isinstance(identity["run_id"], str)
+        or not identity["run_id"]
+        or isinstance(identity["global_step"], bool)
+        or not isinstance(identity["global_step"], int)
+        or not isinstance(identity["source_sha256"], str)
+        or SHA256_RE.fullmatch(identity["source_sha256"]) is None
+        or not isinstance(identity["resume_signature"], str)
+        or SHA256_RE.fullmatch(identity["resume_signature"]) is None
+    ):
+        raise PruneError(
+            "Gradient-offload checkpoint manifest identity is incomplete."
+        )
+    common = {
+        "manifest_sha256": sha256_file(manifest_path),
+        "manifest_identity": identity,
+        **inventory,
+    }
+    if checkpoint.parent == output_dir:
+        return {
+            "scope": "output_dir",
+            "relative_path": checkpoint.name,
+            **common,
+        }
+    return {"scope": "external", "basename": checkpoint.name, **common}
+
+
+def _gradient_offload_counter_snapshot(
+    value: Any,
+    *,
+    label: str,
+) -> dict[str, int]:
+    mapping = _require_mapping(value, label=label)
+    _require_exact_keys(
+        mapping,
+        set(GRADIENT_OFFLOAD_COUNTER_FIELDS),
+        label=label,
+    )
+    return {
+        field: _require_nonnegative_integer(mapping.get(field), label=f"{label}.{field}")
+        for field in GRADIENT_OFFLOAD_COUNTER_FIELDS
+    }
+
+
+def _gradient_offload_checkpoint_descriptor(
+    value: Any,
+    *,
+    label: str,
+    expected_run_id: str,
+    expected_step: int,
+    expected_source_sha256: str,
+    expected_resume_signature: str,
+    required_scope: str | None = None,
+) -> dict[str, Any]:
+    descriptor = _require_mapping(value, label=label)
+    scope = descriptor.get("scope")
+    common_keys = {
+        "scope",
+        "manifest_sha256",
+        "manifest_identity",
+        "bundle_inventory_sha256",
+        "file_count",
+        "logical_bytes",
+    }
+    if scope == "output_dir":
+        _require_exact_keys(
+            descriptor,
+            common_keys | {"relative_path"},
+            label=label,
+        )
+        checkpoint_name = _safe_relative(
+            descriptor.get("relative_path"), label=f"{label}.relative_path"
+        )
+        if PurePosixPath(checkpoint_name).name != checkpoint_name:
+            raise PruneError(f"{label}.relative_path must be one checkpoint basename.")
+    elif scope == "external":
+        _require_exact_keys(
+            descriptor,
+            common_keys | {"basename"},
+            label=label,
+        )
+        checkpoint_name = descriptor.get("basename")
+        if (
+            not isinstance(checkpoint_name, str)
+            or not checkpoint_name
+            or "/" in checkpoint_name
+            or "\\" in checkpoint_name
+            or checkpoint_name in {".", ".."}
+        ):
+            raise PruneError(f"{label}.basename is unsafe.")
+    else:
+        raise PruneError(f"{label}.scope is unsupported: {scope!r}.")
+    if required_scope is not None and scope != required_scope:
+        raise PruneError(f"{label}.scope must be {required_scope!r}.")
+    if CHECKPOINT_RE.fullmatch(str(checkpoint_name)) is None:
+        raise PruneError(f"{label} does not name a canonical checkpoint.")
+    _validate_sha256(descriptor.get("manifest_sha256"), label=f"{label}.manifest_sha256")
+    _validate_sha256(
+        descriptor.get("bundle_inventory_sha256"),
+        label=f"{label}.bundle_inventory_sha256",
+    )
+    file_count = _require_nonnegative_integer(
+        descriptor.get("file_count"), label=f"{label}.file_count"
+    )
+    if file_count < 1:
+        raise PruneError(f"{label}.file_count must be positive.")
+    _require_nonnegative_integer(
+        descriptor.get("logical_bytes"), label=f"{label}.logical_bytes"
+    )
+    identity = _require_mapping(
+        descriptor.get("manifest_identity"), label=f"{label}.manifest_identity"
+    )
+    _require_exact_keys(
+        identity,
+        {"run_id", "global_step", "source_sha256", "resume_signature"},
+        label=f"{label}.manifest_identity",
+    )
+    if dict(identity) != {
+        "run_id": expected_run_id,
+        "global_step": expected_step,
+        "source_sha256": expected_source_sha256,
+        "resume_signature": expected_resume_signature,
+    }:
+        raise PruneError(f"{label}.manifest_identity is not exact.")
+    return dict(descriptor)
+
+
+def _validate_gradient_offload_counter_equations(
+    counters: Mapping[str, int],
+    *,
+    label: str,
+    configured_accumulation_steps: int,
+    parameter_count: int,
+    gradient_capacity_bytes: int,
+    validate_peak: bool = True,
+) -> None:
+    windows = counters["windows_started"]
+    multi_windows = counters["windows_restored"] + counters["windows_discarded"]
+    if windows != multi_windows + counters["single_microbatch_windows"]:
+        raise PruneError(f"{label} window counters do not balance.")
+    if (
+        counters["windows_discarded"] != 0
+        or counters["single_microbatch_windows"] != 0
+        or counters["windows_restored"] != windows
+    ):
+        raise PruneError(
+            f"{label} is not skip-free: discarded, nonfinite, skipped, and "
+            "single-microbatch windows are rejected."
+        )
+    spills = counters["microbatch_spills"]
+    if spills != configured_accumulation_steps * windows:
+        raise PruneError(f"{label} does not prove every contracted microbatch spill.")
+    first_spills = counters["parameter_first_spills"]
+    if multi_windows == 0:
+        if any(
+            counters[field] != 0
+            for field in (
+                "microbatch_spills",
+                "parameter_first_spills",
+                "parameter_merges",
+                "cumulative_current_gradient_bytes",
+                "peak_cpu_accumulator_bytes",
+            )
+        ):
+            raise PruneError(f"{label} records spill work without a multi-window.")
+        return
+    if not (multi_windows <= first_spills <= parameter_count * multi_windows):
+        raise PruneError(f"{label} first-spill count is impossible.")
+    merge_limit = parameter_count * (spills - multi_windows)
+    if counters["parameter_merges"] > merge_limit:
+        raise PruneError(f"{label} parameter merge count is impossible.")
+    gradient_bytes = counters["cumulative_current_gradient_bytes"]
+    if not (0 < gradient_bytes <= gradient_capacity_bytes * spills):
+        raise PruneError(f"{label} cumulative gradient bytes are impossible.")
+    peak_bytes = counters["peak_cpu_accumulator_bytes"]
+    if validate_peak:
+        if not (0 < peak_bytes <= gradient_capacity_bytes):
+            raise PruneError(f"{label} peak CPU accumulator bytes are impossible.")
+    elif peak_bytes > gradient_capacity_bytes:
+        raise PruneError(f"{label} peak CPU accumulator delta is impossible.")
+
+
+def validate_gradient_accumulation_offload_receipt_file(
+    path: Path,
+    *,
+    receipt_path: str,
+    expected_run_id: str,
+    expected_source_sha256: str,
+    expected_resume_signature: str,
+    expected_initial_global_step: int,
+    expected_final_global_step: int,
+    expected_configured_accumulation_steps: int,
+    expected_initial_resume_checkpoint: Mapping[str, Any] | None,
+    expected_trainable_parameter_count: int,
+    expected_trainable_parameter_total_numel: int,
+) -> dict[str, Any]:
+    """Deeply validate one completed v2 CPU accumulation-offload receipt."""
+
+    if not isinstance(expected_run_id, str) or not expected_run_id:
+        raise PruneError("Expected gradient-offload run_id is incomplete.")
+    _validate_sha256(
+        expected_source_sha256,
+        label="expected gradient-offload source_sha256",
+    )
+    _validate_sha256(
+        expected_resume_signature,
+        label="expected gradient-offload resume_signature",
+    )
+    for expected_value, expected_label in (
+        (expected_initial_global_step, "expected initial global step"),
+        (expected_final_global_step, "expected final global step"),
+        (
+            expected_configured_accumulation_steps,
+            "expected configured accumulation steps",
+        ),
+        (expected_trainable_parameter_count, "expected trainable parameter count"),
+        (expected_trainable_parameter_total_numel, "expected trainable total numel"),
+    ):
+        _require_nonnegative_integer(expected_value, label=expected_label)
+    relative = _safe_relative(receipt_path, label="gradient-offload receipt path")
+    record = _regular_file_record(path, relative=relative)
+    receipt = read_json(path)
+    expected_top_keys = {
+        "schema_version",
+        "mode",
+        "algorithm",
+        "claim_boundary",
+        "run_id",
+        "source_sha256",
+        "resume_signature",
+        "configured_gradient_accumulation_steps",
+        "initial_global_step",
+        "last_observed_global_step",
+        "last_restored_global_step",
+        "final_global_step",
+        "trainable_parameter_count",
+        "trainable_parameter_total_numel",
+        "trainable_gradient_capacity_bytes",
+        "trainable_parameter_schema_sha256",
+        "trainable_parameter_schema_fields",
+        *GRADIENT_OFFLOAD_COUNTER_FIELDS,
+        "live_cpu_buffer_count",
+        "live_cpu_buffer_bytes",
+        "active_window",
+        "continuations",
+        "segments",
+        "status",
+        "updated_at",
+        "receipt_sha256",
+    }
+    _require_exact_keys(receipt, expected_top_keys, label="gradient-offload receipt")
+    if (
+        receipt.get("schema_version") != GRADIENT_OFFLOAD_SCHEMA_VERSION
+        or receipt.get("mode") != GRADIENT_ACCUMULATION_OFFLOAD
+        or receipt.get("algorithm") != GRADIENT_OFFLOAD_ALGORITHM
+    ):
+        raise PruneError("Gradient-offload receipt schema/mode/algorithm is unsupported.")
+    boundary = _require_mapping(
+        receipt.get("claim_boundary"), label="gradient-offload claim_boundary"
+    )
+    _require_exact_keys(
+        boundary,
+        {"execution_proof", "numerical_proof", "unsupported"},
+        label="gradient-offload claim_boundary",
+    )
+    if any(not isinstance(value, str) or not value for value in boundary.values()):
+        raise PruneError("Gradient-offload claim boundary is incomplete.")
+    source_sha256 = _validate_sha256(
+        receipt.get("source_sha256"), label="gradient-offload source_sha256"
+    )
+    resume_signature = _validate_sha256(
+        receipt.get("resume_signature"), label="gradient-offload resume_signature"
+    )
+    if (
+        receipt.get("run_id") != expected_run_id
+        or source_sha256 != expected_source_sha256
+        or resume_signature != expected_resume_signature
+    ):
+        raise PruneError("Gradient-offload run/source/resume binding is not exact.")
+    configured = _require_nonnegative_integer(
+        receipt.get("configured_gradient_accumulation_steps"),
+        label="configured gradient accumulation steps",
+    )
+    if configured != expected_configured_accumulation_steps or configured < 2:
+        raise PruneError("Gradient-offload accumulation-step binding is not exact.")
+    initial_step = _require_nonnegative_integer(
+        receipt.get("initial_global_step"), label="gradient-offload initial_global_step"
+    )
+    final_step = _require_nonnegative_integer(
+        receipt.get("final_global_step"), label="gradient-offload final_global_step"
+    )
+    if (
+        initial_step != expected_initial_global_step
+        or final_step != expected_final_global_step
+        or final_step <= initial_step
+        or receipt.get("last_observed_global_step") != final_step
+        or receipt.get("status") != "completed"
+        or receipt.get("active_window") is not None
+        or receipt.get("live_cpu_buffer_count") != 0
+        or receipt.get("live_cpu_buffer_bytes") != 0
+    ):
+        raise PruneError("Gradient-offload terminal status/step/buffer state is invalid.")
+    _require_nonnegative_number(receipt.get("updated_at"), label="gradient-offload updated_at")
+    stored_self_hash = _validate_sha256(
+        receipt.get("receipt_sha256"), label="gradient-offload receipt_sha256"
+    )
+    if stored_self_hash != gradient_accumulation_offload_receipt_self_hash(receipt):
+        raise PruneError("Gradient-offload receipt self-hash mismatch.")
+
+    parameter_count = _require_nonnegative_integer(
+        receipt.get("trainable_parameter_count"), label="trainable parameter count"
+    )
+    total_numel = _require_nonnegative_integer(
+        receipt.get("trainable_parameter_total_numel"), label="trainable total numel"
+    )
+    capacity_bytes = _require_nonnegative_integer(
+        receipt.get("trainable_gradient_capacity_bytes"),
+        label="trainable gradient capacity bytes",
+    )
+    if (
+        not (0 < parameter_count <= total_numel <= capacity_bytes)
+        or parameter_count != expected_trainable_parameter_count
+        or total_numel != expected_trainable_parameter_total_numel
+    ):
+        raise PruneError("Gradient-offload trainable schema counts are not positive/plausible.")
+    schema_sha256 = _validate_sha256(
+        receipt.get("trainable_parameter_schema_sha256"),
+        label="trainable parameter schema sha256",
+    )
+    if receipt.get("trainable_parameter_schema_fields") != list(
+        GRADIENT_OFFLOAD_SCHEMA_FIELDS
+    ):
+        raise PruneError("Gradient-offload trainable schema fields are not exact.")
+    counters = {
+        field: _require_nonnegative_integer(
+            receipt.get(field), label=f"gradient-offload {field}"
+        )
+        for field in GRADIENT_OFFLOAD_COUNTER_FIELDS
+    }
+    if counters["windows_started"] != final_step - initial_step:
+        raise PruneError("Gradient-offload window count disagrees with the step range.")
+    if counters["windows_restored"] < 1:
+        raise PruneError("Gradient-offload receipt proves no restored multi-window.")
+    _validate_gradient_offload_counter_equations(
+        counters,
+        label="gradient-offload cumulative counters",
+        configured_accumulation_steps=configured,
+        parameter_count=parameter_count,
+        gradient_capacity_bytes=capacity_bytes,
+    )
+    last_restored = _require_nonnegative_integer(
+        receipt.get("last_restored_global_step"),
+        label="gradient-offload last_restored_global_step",
+    )
+    if not initial_step <= last_restored < final_step:
+        raise PruneError("Gradient-offload last restored step is outside the run range.")
+    if last_restored != final_step - 1:
+        raise PruneError("Gradient-offload final window was not restored exactly.")
+
+    raw_segments = receipt.get("segments")
+    raw_continuations = receipt.get("continuations")
+    if not isinstance(raw_segments, list) or not raw_segments:
+        raise PruneError("Gradient-offload receipt has no segments.")
+    if not isinstance(raw_continuations, list) or len(raw_continuations) != len(
+        raw_segments
+    ) - 1:
+        raise PruneError("Gradient-offload continuation/segment count is inconsistent.")
+    zero_counters = {field: 0 for field in GRADIENT_OFFLOAD_COUNTER_FIELDS}
+    segment_summaries: list[dict[str, Any]] = []
+    previous_segment: Mapping[str, Any] | None = None
+    for index, raw_segment in enumerate(raw_segments):
+        segment = _require_mapping(raw_segment, label=f"gradient-offload segments[{index}]")
+        expected_segment_keys = {
+            "segment_index",
+            "previous_receipt_sha256",
+            "resume_checkpoint",
+            "initial_global_step",
+            "last_observed_global_step",
+            "final_global_step",
+            "initial_cumulative_counters",
+            "latest_cumulative_counters",
+            "final_cumulative_counters",
+            "status",
+        }
+        if index < len(raw_segments) - 1:
+            expected_segment_keys.add("terminal_checkpoint")
+        _require_exact_keys(
+            segment, expected_segment_keys, label=f"gradient-offload segments[{index}]"
+        )
+        segment_initial = _require_nonnegative_integer(
+            segment.get("initial_global_step"),
+            label=f"gradient-offload segments[{index}].initial_global_step",
+        )
+        segment_final = _require_nonnegative_integer(
+            segment.get("final_global_step"),
+            label=f"gradient-offload segments[{index}].final_global_step",
+        )
+        expected_status = "completed" if index == len(raw_segments) - 1 else "preempted"
+        if (
+            segment.get("segment_index") != index
+            or segment.get("status") != expected_status
+            or segment.get("last_observed_global_step") != segment_final
+            or segment_final <= segment_initial
+        ):
+            raise PruneError(f"Gradient-offload segment {index} terminal state is invalid.")
+        initial_counters = _gradient_offload_counter_snapshot(
+            segment.get("initial_cumulative_counters"),
+            label=f"gradient-offload segments[{index}].initial counters",
+        )
+        latest_counters = _gradient_offload_counter_snapshot(
+            segment.get("latest_cumulative_counters"),
+            label=f"gradient-offload segments[{index}].latest counters",
+        )
+        final_counters = _gradient_offload_counter_snapshot(
+            segment.get("final_cumulative_counters"),
+            label=f"gradient-offload segments[{index}].final counters",
+        )
+        if latest_counters != final_counters or any(
+            final_counters[field] < initial_counters[field]
+            for field in GRADIENT_OFFLOAD_COUNTER_FIELDS
+        ):
+            raise PruneError(f"Gradient-offload segment {index} counters moved backwards.")
+        counter_delta = {
+            field: final_counters[field] - initial_counters[field]
+            for field in GRADIENT_OFFLOAD_COUNTER_FIELDS
+        }
+        if counter_delta["windows_started"] != segment_final - segment_initial:
+            raise PruneError(f"Gradient-offload segment {index} step/window delta differs.")
+        _validate_gradient_offload_counter_equations(
+            counter_delta,
+            label=f"gradient-offload segment {index} counter delta",
+            configured_accumulation_steps=configured,
+            parameter_count=parameter_count,
+            gradient_capacity_bytes=capacity_bytes,
+            validate_peak=False,
+        )
+        resume_checkpoint = segment.get("resume_checkpoint")
+        if index == 0:
+            if segment.get("previous_receipt_sha256") is not None:
+                raise PruneError("Gradient-offload first segment has a previous receipt hash.")
+            if initial_counters != zero_counters:
+                raise PruneError("Gradient-offload first segment counters do not start at zero.")
+            if expected_initial_resume_checkpoint is None:
+                if resume_checkpoint is not None:
+                    raise PruneError("Gradient-offload first segment unexpectedly resumed.")
+            else:
+                observed_checkpoint = _gradient_offload_checkpoint_descriptor(
+                    resume_checkpoint,
+                    label="gradient-offload initial resume checkpoint",
+                    expected_run_id=expected_run_id,
+                    expected_step=segment_initial,
+                    expected_source_sha256=expected_source_sha256,
+                    expected_resume_signature=expected_resume_signature,
+                    required_scope="external",
+                )
+                if observed_checkpoint != dict(expected_initial_resume_checkpoint):
+                    raise PruneError("Gradient-offload initial resume descriptor differs.")
+        else:
+            assert previous_segment is not None
+            continuation = _require_mapping(
+                raw_continuations[index - 1],
+                label=f"gradient-offload continuations[{index - 1}]",
+            )
+            _require_exact_keys(
+                continuation,
+                {
+                    "event",
+                    "previous_segment_index",
+                    "next_segment_index",
+                    "previous_receipt_sha256",
+                    "checkpoint",
+                    "global_step",
+                    "previous_cumulative_counters",
+                    "continued_at",
+                },
+                label=f"gradient-offload continuations[{index - 1}]",
+            )
+            previous_hash = _validate_sha256(
+                continuation.get("previous_receipt_sha256"),
+                label=f"gradient-offload continuations[{index - 1}].previous hash",
+            )
+            checkpoint = _gradient_offload_checkpoint_descriptor(
+                continuation.get("checkpoint"),
+                label=f"gradient-offload continuations[{index - 1}].checkpoint",
+                expected_run_id=expected_run_id,
+                expected_step=segment_initial,
+                expected_source_sha256=expected_source_sha256,
+                expected_resume_signature=expected_resume_signature,
+                required_scope="output_dir",
+            )
+            _require_nonnegative_number(
+                continuation.get("continued_at"),
+                label=f"gradient-offload continuations[{index - 1}].continued_at",
+            )
+            if (
+                continuation.get("event") != "resume_continuation"
+                or continuation.get("previous_segment_index") != index - 1
+                or continuation.get("next_segment_index") != index
+                or continuation.get("global_step") != segment_initial
+                or continuation.get("previous_cumulative_counters")
+                != previous_segment.get("final_cumulative_counters")
+                or segment.get("previous_receipt_sha256") != previous_hash
+                or segment.get("resume_checkpoint") != checkpoint
+                or segment_initial != previous_segment.get("final_global_step")
+                or initial_counters != previous_segment.get("final_cumulative_counters")
+                or previous_segment.get("terminal_checkpoint") != checkpoint
+            ):
+                raise PruneError(f"Gradient-offload continuation {index - 1} is broken.")
+        segment_summaries.append(
+            {
+                "segment_index": index,
+                "status": expected_status,
+                "initial_global_step": segment_initial,
+                "final_global_step": segment_final,
+            }
+        )
+        previous_segment = segment
+    if (
+        raw_segments[0].get("initial_global_step") != initial_step
+        or raw_segments[-1].get("final_global_step") != final_step
+        or raw_segments[-1].get("final_cumulative_counters") != counters
+    ):
+        raise PruneError("Gradient-offload root/segment terminal bindings differ.")
+
+    return {
+        "passed": True,
+        **record,
+        "receipt_sha256": stored_self_hash,
+        "schema_version": GRADIENT_OFFLOAD_SCHEMA_VERSION,
+        "mode": GRADIENT_ACCUMULATION_OFFLOAD,
+        "algorithm": GRADIENT_OFFLOAD_ALGORITHM,
+        "run_id": expected_run_id,
+        "source_sha256": expected_source_sha256,
+        "resume_signature": expected_resume_signature,
+        "configured_gradient_accumulation_steps": configured,
+        "initial_global_step": initial_step,
+        "final_global_step": final_step,
+        "initial_resume_checkpoint": (
+            dict(expected_initial_resume_checkpoint)
+            if expected_initial_resume_checkpoint is not None
+            else None
+        ),
+        "trainable_parameter_count": parameter_count,
+        "trainable_parameter_total_numel": total_numel,
+        "trainable_gradient_capacity_bytes": capacity_bytes,
+        "trainable_parameter_schema_sha256": schema_sha256,
+        "trainable_parameter_schema_fields": list(GRADIENT_OFFLOAD_SCHEMA_FIELDS),
+        "counters": counters,
+        "optimizer_coverage_binding": {
+            "model_trainable_unique_physical_parameters": parameter_count,
+            "model_trainable_numel": total_numel,
+        },
+        "skip_free_windows": True,
+        "continuation_chain": {
+            "passed": True,
+            "segment_count": len(raw_segments),
+            "continuation_count": len(raw_continuations),
+            "same_output_continuation_observed": bool(raw_continuations),
+            "segments": segment_summaries,
+        },
+        "status": "completed",
+    }
 
 
 def _records_by_path(
@@ -587,12 +1501,208 @@ def _validate_exact_resume_comparisons(
         raise PruneError("Resume event does not prove exact checkpoint continuity.")
 
 
+def _validate_published_resume_environment(
+    run_dir: Path,
+    *,
+    name: str,
+    local_name: str,
+    expected_child_root: str,
+    artifact_record: Mapping[str, Any],
+    binding: Mapping[str, Any],
+    expected_configured: Any,
+    expected_source_sha256: Any,
+) -> None:
+    """Recompute one published child environment binding from retained bytes."""
+
+    expected_source = _validate_sha256(
+        expected_source_sha256,
+        label=f"resume {name} expected engine source sha256",
+    )
+    expected_child_root = _safe_relative(
+        expected_child_root, label=f"resume {name} output"
+    )
+    expected_binding_path = f"{expected_child_root}/{ENVIRONMENT_NAME}"
+    binding_path = _safe_relative(
+        binding.get("path"), label=f"resume {name} allocator environment path"
+    )
+    if binding_path != expected_binding_path:
+        raise PruneError(
+            f"Resume {name} allocator environment path is not canonical."
+        )
+
+    _require_exact_keys(
+        binding,
+        {
+            "path",
+            "sha256",
+            "configured",
+            "observed_primary",
+            "observed_legacy_alias",
+            "observed_hip_legacy_alias",
+            "observed_caching_allocator_disable",
+            "active_backend",
+            "parsed_settings",
+            "snapshot_settings",
+            "allocator_initialized",
+            "cuda_memory_allocated_bytes",
+            "cuda_memory_reserved_bytes",
+            "runtime_identity",
+            "checks",
+            "passed",
+        },
+        label=f"resume {name} allocator binding",
+    )
+    local_path = _safe_join(
+        run_dir, local_name, label=f"resume {name} published environment"
+    )
+    actual_record = _regular_file_record(local_path, relative=local_name)
+    if actual_record != dict(artifact_record):
+        raise PruneError(
+            f"Resume {name} published environment artifact record is not exact."
+        )
+    if binding.get("sha256") != actual_record["sha256"]:
+        raise PruneError(
+            f"Resume {name} published environment hash disagrees with its binding."
+        )
+
+    environment = read_json(local_path)
+    runtime_identity_keys = {
+        "harness_version",
+        "python",
+        "platform",
+        "hostname",
+        "torch",
+        "cuda_runtime",
+        "cudnn",
+        "source_sha256",
+        "cuda_devices",
+        "transformers",
+        "peft",
+        "safetensors",
+    }
+    runtime_identity = _require_mapping(
+        binding.get("runtime_identity"),
+        label=f"resume {name} runtime identity",
+    )
+    _require_exact_keys(
+        runtime_identity,
+        runtime_identity_keys,
+        label=f"resume {name} runtime identity",
+    )
+    environment_snapshot = _require_mapping(
+        environment.get("allocator_snapshot_settings"),
+        label=f"resume {name} published allocator snapshot",
+    )
+    binding_snapshot = _require_mapping(
+        binding.get("snapshot_settings"),
+        label=f"resume {name} allocator snapshot binding",
+    )
+    allocated = environment.get("cuda_memory_allocated_bytes")
+    runtime_complete = (
+        runtime_identity_keys.issubset(environment)
+        and all(
+            environment.get(key) is not None
+            for key in (
+                "harness_version",
+                "python",
+                "platform",
+                "hostname",
+                "torch",
+                "cuda_runtime",
+                "cudnn",
+                "source_sha256",
+                "transformers",
+                "safetensors",
+            )
+        )
+        and isinstance(environment.get("cuda_devices"), list)
+        and len(environment["cuda_devices"]) > 0
+    )
+    recomputed_checks = {
+        "configured_policy_exact": binding.get("configured") == expected_configured,
+        "primary_environment_exact": (
+            environment.get("pytorch_alloc_conf") == expected_configured
+        ),
+        "legacy_alias_absent": (
+            "pytorch_cuda_alloc_conf_legacy" in environment
+            and environment.get("pytorch_cuda_alloc_conf_legacy") is None
+        ),
+        "hip_legacy_alias_absent": (
+            "pytorch_hip_alloc_conf_legacy" in environment
+            and environment.get("pytorch_hip_alloc_conf_legacy") is None
+        ),
+        "caching_allocator_enabled": (
+            "pytorch_no_cuda_memory_caching" in environment
+            and environment.get("pytorch_no_cuda_memory_caching") is None
+        ),
+        "native_backend_reported": environment.get("allocator_backend") == "native",
+        "parsed_settings_roundtrip_exact": (
+            environment.get("allocator_settings") == expected_configured
+        ),
+        "snapshot_expandable_segments_enabled": (
+            environment_snapshot.get("expandable_segments") is True
+        ),
+        "allocator_initialized": environment.get("allocator_initialized") is True,
+        "live_cuda_allocation_observed": (
+            isinstance(allocated, int)
+            and not isinstance(allocated, bool)
+            and allocated > 0
+        ),
+        "runtime_identity_complete": runtime_complete,
+        "source_identity_exact": environment.get("source_sha256") == expected_source,
+    }
+    recorded_checks = _require_mapping(
+        binding.get("checks"), label=f"resume {name} allocator checks"
+    )
+    _require_exact_keys(
+        recorded_checks,
+        set(recomputed_checks),
+        label=f"resume {name} allocator checks",
+    )
+
+    content_bindings = {
+        "observed_primary": environment.get("pytorch_alloc_conf"),
+        "observed_legacy_alias": environment.get(
+            "pytorch_cuda_alloc_conf_legacy"
+        ),
+        "observed_hip_legacy_alias": environment.get(
+            "pytorch_hip_alloc_conf_legacy"
+        ),
+        "observed_caching_allocator_disable": environment.get(
+            "pytorch_no_cuda_memory_caching"
+        ),
+        "active_backend": environment.get("allocator_backend"),
+        "parsed_settings": environment.get("allocator_settings"),
+        "snapshot_settings": dict(environment_snapshot),
+        "allocator_initialized": environment.get("allocator_initialized"),
+        "cuda_memory_allocated_bytes": allocated,
+        "cuda_memory_reserved_bytes": environment.get(
+            "cuda_memory_reserved_bytes"
+        ),
+        "runtime_identity": {
+            key: environment.get(key) for key in runtime_identity_keys
+        },
+    }
+    if (
+        binding.get("passed") is not True
+        or dict(recorded_checks) != recomputed_checks
+        or not all(recomputed_checks.values())
+        or dict(binding_snapshot) != dict(environment_snapshot)
+        or any(binding.get(key) != value for key, value in content_bindings.items())
+        or runtime_identity.get("source_sha256") != expected_source
+    ):
+        raise PruneError(
+            f"Resume {name} published allocator environment is inconsistent."
+        )
+
+
 def _validate_resume_equivalence(
     run_dir: Path,
     equivalence: Mapping[str, Any],
     *,
     provenance: Mapping[str, Any],
     verification_sha256: str,
+    published_artifacts: Sequence[Mapping[str, Any]],
 ) -> None:
     if (
         equivalence.get("format") != RESUME_EQUIVALENCE_FORMAT
@@ -627,8 +1737,12 @@ def _validate_resume_equivalence(
         or not 0 < split_step < total_steps
     ):
         raise PruneError("Resume equivalence design is not exact for this run.")
-    _safe_relative(design.get("control_B"), label="resume control output")
-    _safe_relative(design.get("resumed_C"), label="resume resumed output")
+    control_output = _safe_relative(
+        design.get("control_B"), label="resume control output"
+    )
+    resumed_output = _safe_relative(
+        design.get("resumed_C"), label="resume resumed output"
+    )
 
     input_bindings = _require_mapping(
         equivalence.get("input_bindings"), label="resume equivalence input_bindings"
@@ -668,12 +1782,410 @@ def _validate_resume_equivalence(
         name: _validate_inventory_records(raw, label=f"resume inventory {name}")
         for name, raw in inventories.items()
     }
+    checkpoint_inventory = normalized_inventories["checkpoint_B_split"]
+    checkpoint_manifest_records = [
+        record for record in checkpoint_inventory if record["path"] == "manifest.json"
+    ]
+    if len(checkpoint_manifest_records) != 1:
+        raise PruneError("Resume split-checkpoint inventory has no unique manifest.")
+    checkpoint_descriptor_inventory = gradient_offload_inventory_identity(
+        checkpoint_inventory
+    )
+    checkpoint_descriptor_inventory["manifest_sha256"] = (
+        checkpoint_manifest_records[0]["sha256"]
+    )
     verification = read_json(run_dir / RUN_VERIFICATION_NAME)
     expected_final = _validate_inventory_records(
         verification.get("final_inventory"), label="RUN_VERIFICATION final_inventory"
     )
     if normalized_inventories["final_A"] != expected_final:
         raise PruneError("Resume equivalence final_A inventory is not this verified run.")
+
+    bundle_identity_bindings = _require_mapping(
+        equivalence.get("bundle_identity_bindings"),
+        label="resume bundle identity bindings",
+    )
+    _require_exact_keys(
+        bundle_identity_bindings,
+        {
+            "passed",
+            "bundles",
+            "exact_cross_run_fields",
+            "semantic_identities",
+            "all_semantic_identities_equal",
+            "control_resume_run_id_preserved",
+        },
+        label="resume bundle identity bindings",
+    )
+    recorded_bundles = _require_mapping(
+        bundle_identity_bindings.get("bundles"),
+        label="resume bundle identities",
+    )
+    _require_exact_keys(
+        recorded_bundles,
+        {"baseline", "control", "resumed"},
+        label="resume bundle identities",
+    )
+    expected_bundle_paths = {
+        "baseline": f"{provenance['output_dir']}/final",
+        "control": f"{control_output}/final",
+        "resumed": f"{resumed_output}/final",
+    }
+    expected_bundle_inventories = {
+        "baseline": normalized_inventories["final_A"],
+        "control": normalized_inventories["final_B"],
+        "resumed": normalized_inventories["final_C"],
+    }
+    validated_bundles = {
+        name: validate_bundle_identity_summary(
+            recorded_bundles.get(name),
+            expected_bundle_path=expected_bundle_paths[name],
+            expected_global_step=total_steps,
+            expected_inventory=expected_bundle_inventories[name],
+        )
+        for name in ("baseline", "control", "resumed")
+    }
+    baseline_bundle_identity = _require_mapping(
+        verification.get("bundle_identity"),
+        label="RUN_VERIFICATION bundle identity",
+    )
+    expected_baseline_identity = dict(validated_bundles["baseline"])
+    expected_baseline_identity["bundle_path"] = "final"
+    if dict(baseline_bundle_identity) != expected_baseline_identity:
+        raise PruneError("Resume baseline bundle identity is not this verified run.")
+    bundle_cross_run_fields = (
+        "resume_signature",
+        "structural_resume_signature",
+        "world_size",
+        "data_fingerprint_sha256",
+    )
+    bundle_semantic_identities = {
+        name: {
+            field: binding.get(field) for field in bundle_cross_run_fields
+        }
+        for name, binding in validated_bundles.items()
+    }
+    if (
+        bundle_identity_bindings.get("passed") is not True
+        or bundle_identity_bindings.get("exact_cross_run_fields")
+        != list(bundle_cross_run_fields)
+        or bundle_identity_bindings.get("semantic_identities")
+        != bundle_semantic_identities
+        or bundle_identity_bindings.get("all_semantic_identities_equal") is not True
+        or bundle_identity_bindings.get("control_resume_run_id_preserved") is not True
+        or not (
+            bundle_semantic_identities["baseline"]
+            == bundle_semantic_identities["control"]
+            == bundle_semantic_identities["resumed"]
+        )
+        or validated_bundles["control"].get("run_id")
+        != validated_bundles["resumed"].get("run_id")
+        or checkpoint_signature
+        != validated_bundles["control"].get("resume_signature")
+    ):
+        raise PruneError("Resume A/B/C bundle identity chain is not exact.")
+
+    allocator_bindings = _require_mapping(
+        equivalence.get("allocator_environment_bindings"),
+        label="resume allocator environment bindings",
+    )
+    _require_exact_keys(
+        allocator_bindings,
+        {"control", "resumed"},
+        label="resume allocator environment bindings",
+    )
+    artifacts_by_path = {str(item["path"]): item for item in published_artifacts}
+    if set(artifacts_by_path) != {
+        RESUME_EQUIVALENCE_NAME,
+        RESUME_CONTROL_ENVIRONMENT_NAME,
+        RESUME_RESUMED_ENVIRONMENT_NAME,
+        RESUME_CONTROL_GRADIENT_OFFLOAD_NAME,
+        RESUME_RESUMED_GRADIENT_OFFLOAD_NAME,
+    }:
+        raise PruneError("Resume published artifact set is not exact.")
+    expected_environment_artifacts = {
+        "control": RESUME_CONTROL_ENVIRONMENT_NAME,
+        "resumed": RESUME_RESUMED_ENVIRONMENT_NAME,
+    }
+    expected_gradient_offload_artifacts = {
+        "control": RESUME_CONTROL_GRADIENT_OFFLOAD_NAME,
+        "resumed": RESUME_RESUMED_GRADIENT_OFFLOAD_NAME,
+    }
+    expected_engine_source = _require_mapping(
+        _require_mapping(provenance.get("hashes"), label="provenance hashes").get(
+            "source_files_sha256"
+        ),
+        label="provenance source files",
+    ).get("src/latent_workspace_ft_v10/engine.py")
+    launched = read_json(run_dir / LAUNCHED_CONFIG_NAME)
+    train = _require_mapping(
+        launched.get("train"), label="LAUNCHED_CONFIG train"
+    )
+    accumulation_offload = _require_mapping(
+        equivalence.get("gradient_accumulation_offload_binding"),
+        label="resume gradient-accumulation offload binding",
+    )
+    expected_accumulation_offload = {
+        "passed": True,
+        "required": GRADIENT_ACCUMULATION_OFFLOAD,
+        "all_equal": True,
+        "observed": {
+            "baseline": GRADIENT_ACCUMULATION_OFFLOAD,
+            "control": GRADIENT_ACCUMULATION_OFFLOAD,
+            "resumed": GRADIENT_ACCUMULATION_OFFLOAD,
+        },
+    }
+    if (
+        train.get("gradient_accumulation_offload")
+        != GRADIENT_ACCUMULATION_OFFLOAD
+        or dict(accumulation_offload) != expected_accumulation_offload
+    ):
+        raise PruneError(
+            "Resume gradient-accumulation offload binding is not exact."
+        )
+
+    receipt_bindings = _require_mapping(
+        equivalence.get("gradient_accumulation_offload_receipt_bindings"),
+        label="resume gradient-offload receipt bindings",
+    )
+    _require_exact_keys(
+        receipt_bindings,
+        {
+            "passed",
+            "receipts",
+            "expected_step_ranges",
+            "exact_semantic_fields",
+            "semantic_identities",
+            "all_semantic_identities_equal",
+            "control_resume_run_id_preserved",
+        },
+        label="resume gradient-offload receipt bindings",
+    )
+    recorded_receipts = _require_mapping(
+        receipt_bindings.get("receipts"),
+        label="resume gradient-offload receipts",
+    )
+    _require_exact_keys(
+        recorded_receipts,
+        {"baseline", "control", "resumed"},
+        label="resume gradient-offload receipts",
+    )
+    baseline_gradient_offload = _require_mapping(
+        verification.get("gradient_accumulation_offload"),
+        label="baseline gradient-offload binding",
+    )
+    if dict(recorded_receipts["baseline"]) != dict(baseline_gradient_offload):
+        raise PruneError("Resume baseline gradient-offload receipt is not this run.")
+    accumulation_steps = train.get("gradient_accumulation_steps")
+    baseline_parameter_count = baseline_gradient_offload.get(
+        "trainable_parameter_count"
+    )
+    baseline_parameter_numel = baseline_gradient_offload.get(
+        "trainable_parameter_total_numel"
+    )
+    if (
+        isinstance(accumulation_steps, bool)
+        or not isinstance(accumulation_steps, int)
+        or isinstance(baseline_parameter_count, bool)
+        or not isinstance(baseline_parameter_count, int)
+        or isinstance(baseline_parameter_numel, bool)
+        or not isinstance(baseline_parameter_numel, int)
+    ):
+        raise PruneError("Resume gradient-offload schema/config binding is invalid.")
+    expected_ranges = {
+        "baseline": {"initial_global_step": 0, "final_global_step": total_steps},
+        "control": {"initial_global_step": 0, "final_global_step": total_steps},
+        "resumed": {
+            "initial_global_step": split_step,
+            "final_global_step": total_steps,
+        },
+    }
+    expected_receipt_paths = {
+        "control": f"{control_output}/{GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME}",
+        "resumed": f"{resumed_output}/{GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME}",
+    }
+    recomputed_receipts: dict[str, Mapping[str, Any]] = {
+        "baseline": baseline_gradient_offload
+    }
+    for name in ("control", "resumed"):
+        recorded = _require_mapping(
+            recorded_receipts.get(name),
+            label=f"resume {name} gradient-offload binding",
+        )
+        local_name = expected_gradient_offload_artifacts[name]
+        artifact_record = artifacts_by_path.get(local_name)
+        if not isinstance(artifact_record, Mapping):
+            raise PruneError(
+                f"Resume {name} published gradient-offload artifact is missing."
+            )
+        actual_record = _regular_file_record(
+            run_dir / local_name,
+            relative=local_name,
+        )
+        if (
+            dict(artifact_record) != actual_record
+            or recorded.get("bytes") != actual_record["bytes"]
+            or recorded.get("sha256") != actual_record["sha256"]
+            or recorded.get("path") != expected_receipt_paths[name]
+        ):
+            raise PruneError(
+                f"Resume {name} published gradient-offload path/hash is not exact."
+            )
+        initial_checkpoint = (
+            _require_mapping(
+                recorded.get("initial_resume_checkpoint"),
+                label="resume resumed initial checkpoint descriptor",
+            )
+            if name == "resumed"
+            else None
+        )
+        recorded_run_id = recorded.get("run_id")
+        if not isinstance(recorded_run_id, str) or not recorded_run_id:
+            raise PruneError(
+                f"Resume {name} gradient-offload run_id is incomplete."
+            )
+        recomputed = validate_gradient_accumulation_offload_receipt_file(
+            run_dir / local_name,
+            receipt_path=expected_receipt_paths[name],
+            expected_run_id=recorded_run_id,
+            expected_source_sha256=_validate_sha256(
+                expected_engine_source,
+                label="resume gradient-offload engine source sha256",
+            ),
+            expected_resume_signature=_validate_sha256(
+                checkpoint_signature,
+                label="resume checkpoint resume_signature",
+            ),
+            expected_initial_global_step=(0 if name == "control" else split_step),
+            expected_final_global_step=total_steps,
+            expected_configured_accumulation_steps=accumulation_steps,
+            expected_initial_resume_checkpoint=initial_checkpoint,
+            expected_trainable_parameter_count=baseline_parameter_count,
+            expected_trainable_parameter_total_numel=baseline_parameter_numel,
+        )
+        if recomputed != dict(recorded):
+            raise PruneError(
+                f"Resume {name} gradient-offload receipt summary differs."
+            )
+        if name == "resumed":
+            descriptor = _require_mapping(
+                recomputed.get("initial_resume_checkpoint"),
+                label="resumed gradient-offload checkpoint descriptor",
+            )
+            if (
+                descriptor.get("scope") != "external"
+                or descriptor.get("basename") != f"checkpoint-{split_step}"
+                or any(
+                    descriptor.get(field) != expected
+                    for field, expected in checkpoint_descriptor_inventory.items()
+                )
+            ):
+                raise PruneError(
+                    "Resumed gradient-offload checkpoint descriptor is not the exact "
+                    "split inventory."
+                )
+        recomputed_receipts[name] = recomputed
+    semantic_identities = {
+        name: {field: binding.get(field) for field in GRADIENT_OFFLOAD_SEMANTIC_FIELDS}
+        for name, binding in recomputed_receipts.items()
+    }
+    if (
+        receipt_bindings.get("passed") is not True
+        or receipt_bindings.get("expected_step_ranges") != expected_ranges
+        or receipt_bindings.get("exact_semantic_fields")
+        != list(GRADIENT_OFFLOAD_SEMANTIC_FIELDS)
+        or receipt_bindings.get("semantic_identities") != semantic_identities
+        or receipt_bindings.get("all_semantic_identities_equal") is not True
+        or receipt_bindings.get("control_resume_run_id_preserved") is not True
+        or not (
+            semantic_identities["baseline"]
+            == semantic_identities["control"]
+            == semantic_identities["resumed"]
+        )
+        or recomputed_receipts["control"].get("run_id")
+        != recomputed_receipts["resumed"].get("run_id")
+        or any(
+            recomputed_receipts[name].get("run_id")
+            != validated_bundles[name].get("run_id")
+            or recomputed_receipts[name].get("resume_signature")
+            != validated_bundles[name].get("resume_signature")
+            for name in ("baseline", "control", "resumed")
+        )
+    ):
+        raise PruneError("Resume gradient-offload A/B/C semantics are not exact.")
+
+    expected_child_roots = {
+        "control": control_output,
+        "resumed": resumed_output,
+    }
+    for name, local_name in expected_environment_artifacts.items():
+        binding = _require_mapping(
+            allocator_bindings.get(name), label=f"resume {name} allocator binding"
+        )
+        local_record = artifacts_by_path.get(local_name)
+        if not isinstance(local_record, Mapping):
+            raise PruneError(
+                f"Resume {name} published environment artifact is missing."
+            )
+        _validate_published_resume_environment(
+            run_dir,
+            name=name,
+            local_name=local_name,
+            expected_child_root=expected_child_roots[name],
+            artifact_record=local_record,
+            binding=binding,
+            expected_configured=train.get("cuda_allocator_conf"),
+            expected_source_sha256=expected_engine_source,
+        )
+
+    allocator_equivalence = _require_mapping(
+        equivalence.get("allocator_runtime_equivalence"),
+        label="resume allocator runtime equivalence",
+    )
+    identities = _require_mapping(
+        allocator_equivalence.get("identities"),
+        label="resume allocator runtime identities",
+    )
+    baseline_allocator = _require_mapping(
+        verification.get("allocator_environment"),
+        label="baseline allocator environment",
+    )
+    baseline_identity = {
+        key: baseline_allocator.get(key)
+        for key in (
+            "configured",
+            "observed_primary",
+            "observed_legacy_alias",
+            "observed_hip_legacy_alias",
+            "observed_caching_allocator_disable",
+            "active_backend",
+            "parsed_settings",
+            "snapshot_settings",
+            "runtime_identity",
+        )
+    }
+    expected_identities = {
+        "baseline": baseline_identity,
+        "control": {
+            key: allocator_bindings["control"].get(key)
+            for key in baseline_identity
+        },
+        "resumed": {
+            key: allocator_bindings["resumed"].get(key)
+            for key in baseline_identity
+        },
+    }
+    if (
+        allocator_equivalence.get("passed") is not True
+        or allocator_equivalence.get("all_equal") is not True
+        or identities != expected_identities
+        or not (
+            expected_identities["baseline"]
+            == expected_identities["control"]
+            == expected_identities["resumed"]
+        )
+    ):
+        raise PruneError("Resume allocator/runtime equivalence is not exact.")
 
     comparisons = _require_mapping(
         equivalence.get("comparisons"), label="resume equivalence comparisons"
@@ -805,8 +2317,191 @@ def _validate_evidence_receipts(
         equivalence,
         provenance=provenance,
         verification_sha256=verification_sha256,
+        published_artifacts=resume_artifacts,
     )
     return assay, resume, assay_artifacts + resume_artifacts
+
+
+def _validate_allocator_environment_binding(
+    run_dir: Path,
+    verification: Mapping[str, Any],
+    provenance: Mapping[str, Any],
+) -> dict[str, Any]:
+    binding = _require_mapping(
+        verification.get("allocator_environment"),
+        label="RUN_VERIFICATION allocator_environment",
+    )
+    if binding.get("passed") is not True or binding.get("path") != ENVIRONMENT_NAME:
+        raise PruneError("RUN_VERIFICATION allocator binding is not passing/canonical.")
+    record = _regular_file_record(
+        run_dir / ENVIRONMENT_NAME, relative=ENVIRONMENT_NAME
+    )
+    if record["sha256"] != binding.get("sha256"):
+        raise PruneError("environment.json hash disagrees with RUN_VERIFICATION.")
+    environment = read_json(run_dir / ENVIRONMENT_NAME)
+    launched = read_json(run_dir / LAUNCHED_CONFIG_NAME)
+    train = _require_mapping(launched.get("train"), label="LAUNCHED_CONFIG train")
+    runtime_policy = _require_mapping(
+        provenance.get("runtime_policy"), label="provenance runtime_policy"
+    )
+    if (
+        train.get("gradient_accumulation_offload")
+        != GRADIENT_ACCUMULATION_OFFLOAD
+        or runtime_policy.get("gradient_accumulation_offload")
+        != GRADIENT_ACCUMULATION_OFFLOAD
+    ):
+        raise PruneError(
+            "RUN_VERIFICATION gradient-accumulation offload binding is not exact."
+        )
+    source_files = _require_mapping(
+        _require_mapping(provenance.get("hashes"), label="provenance hashes").get(
+            "source_files_sha256"
+        ),
+        label="provenance source files",
+    )
+    expected_source = source_files.get("src/latent_workspace_ft_v10/engine.py")
+    runtime_identity = _require_mapping(
+        binding.get("runtime_identity"), label="allocator runtime identity"
+    )
+    snapshot = _require_mapping(
+        binding.get("snapshot_settings"), label="allocator snapshot settings"
+    )
+    checks = _require_mapping(binding.get("checks"), label="allocator checks")
+    required_checks = {
+        "configured_policy_exact",
+        "primary_environment_exact",
+        "legacy_alias_absent",
+        "hip_legacy_alias_absent",
+        "caching_allocator_enabled",
+        "native_backend_reported",
+        "parsed_settings_roundtrip_exact",
+        "snapshot_expandable_segments_enabled",
+        "allocator_initialized",
+        "live_cuda_allocation_observed",
+        "runtime_identity_complete",
+        "source_identity_exact",
+    }
+    required_environment_keys = {
+        "pytorch_alloc_conf",
+        "pytorch_cuda_alloc_conf_legacy",
+        "pytorch_hip_alloc_conf_legacy",
+        "pytorch_no_cuda_memory_caching",
+        "allocator_backend",
+        "allocator_settings",
+        "allocator_snapshot_settings",
+        "allocator_initialized",
+        "cuda_memory_allocated_bytes",
+        "cuda_memory_reserved_bytes",
+    }
+    allocated = environment.get("cuda_memory_allocated_bytes")
+    if (
+        not required_checks.issubset(checks)
+        or not required_environment_keys.issubset(environment)
+        or any(checks.get(key) is not True for key in required_checks)
+        or binding.get("configured") != train.get("cuda_allocator_conf")
+        or binding.get("observed_primary") != environment.get("pytorch_alloc_conf")
+        or binding.get("observed_legacy_alias") is not None
+        or binding.get("observed_hip_legacy_alias") is not None
+        or binding.get("observed_caching_allocator_disable") is not None
+        or environment.get("pytorch_cuda_alloc_conf_legacy") is not None
+        or environment.get("pytorch_hip_alloc_conf_legacy") is not None
+        or environment.get("pytorch_no_cuda_memory_caching") is not None
+        or binding.get("active_backend") != environment.get("allocator_backend")
+        or binding.get("active_backend") != "native"
+        or binding.get("parsed_settings") != environment.get("allocator_settings")
+        or dict(snapshot) != environment.get("allocator_snapshot_settings")
+        or snapshot.get("expandable_segments") is not True
+        or binding.get("allocator_initialized") is not True
+        or environment.get("allocator_initialized") is not True
+        or binding.get("cuda_memory_allocated_bytes") != allocated
+        or isinstance(allocated, bool)
+        or not isinstance(allocated, int)
+        or allocated <= 0
+        or binding.get("cuda_memory_reserved_bytes")
+        != environment.get("cuda_memory_reserved_bytes")
+        or runtime_identity.get("source_sha256") != expected_source
+        or any(environment.get(key) != value for key, value in runtime_identity.items())
+    ):
+        raise PruneError("RUN_VERIFICATION allocator environment binding is inconsistent.")
+    return record
+
+
+def _validate_gradient_accumulation_offload_binding(
+    run_dir: Path,
+    verification: Mapping[str, Any],
+    provenance: Mapping[str, Any],
+) -> dict[str, Any]:
+    binding = _require_mapping(
+        verification.get("gradient_accumulation_offload"),
+        label="RUN_VERIFICATION gradient_accumulation_offload",
+    )
+    if (
+        binding.get("passed") is not True
+        or binding.get("path") != GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME
+    ):
+        raise PruneError(
+            "RUN_VERIFICATION gradient-offload receipt path/status is not canonical."
+        )
+    manifest = read_json(run_dir / "final/manifest.json")
+    if verification.get("final_manifest") != manifest:
+        raise PruneError("RUN_VERIFICATION final manifest binding is not exact.")
+    launched = read_json(run_dir / LAUNCHED_CONFIG_NAME)
+    train = _require_mapping(launched.get("train"), label="LAUNCHED_CONFIG train")
+    source_files = _require_mapping(
+        _require_mapping(provenance.get("hashes"), label="provenance hashes").get(
+            "source_files_sha256"
+        ),
+        label="provenance source files",
+    )
+    expected_source = _validate_sha256(
+        source_files.get("src/latent_workspace_ft_v10/engine.py"),
+        label="provenance engine source sha256",
+    )
+    run_id = manifest.get("run_id")
+    resume_signature = manifest.get("resume_signature")
+    accumulation_steps = train.get("gradient_accumulation_steps")
+    final_step = manifest.get("global_step")
+    optimizer_coverage = read_json(run_dir / "final/optimizer_coverage.json")
+    trainable_parameter_count = optimizer_coverage.get(
+        "model_trainable_unique_physical_parameters"
+    )
+    trainable_parameter_total_numel = optimizer_coverage.get(
+        "model_trainable_numel"
+    )
+    if (
+        not isinstance(run_id, str)
+        or not run_id
+        or manifest.get("source_sha256") != expected_source
+        or not isinstance(resume_signature, str)
+        or SHA256_RE.fullmatch(resume_signature) is None
+        or isinstance(accumulation_steps, bool)
+        or not isinstance(accumulation_steps, int)
+        or isinstance(final_step, bool)
+        or not isinstance(final_step, int)
+        or isinstance(trainable_parameter_count, bool)
+        or not isinstance(trainable_parameter_count, int)
+        or isinstance(trainable_parameter_total_numel, bool)
+        or not isinstance(trainable_parameter_total_numel, int)
+    ):
+        raise PruneError("Gradient-offload manifest/config binding is incomplete.")
+    recomputed = validate_gradient_accumulation_offload_receipt_file(
+        run_dir / GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME,
+        receipt_path=GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME,
+        expected_run_id=run_id,
+        expected_source_sha256=expected_source,
+        expected_resume_signature=resume_signature,
+        expected_initial_global_step=0,
+        expected_final_global_step=final_step,
+        expected_configured_accumulation_steps=accumulation_steps,
+        expected_initial_resume_checkpoint=None,
+        expected_trainable_parameter_count=trainable_parameter_count,
+        expected_trainable_parameter_total_numel=trainable_parameter_total_numel,
+    )
+    if dict(binding) != recomputed:
+        raise PruneError(
+            "RUN_VERIFICATION gradient-offload receipt summary/hash differs."
+        )
+    return recomputed
 
 
 def _validate_run_verification(
@@ -823,6 +2518,13 @@ def _validate_run_verification(
     if not isinstance(provenance, dict):
         raise PruneError("RUN_VERIFICATION.json has no provenance object.")
     _safe_relative(provenance.get("run_id"), label="provenance run_id")
+    max_steps = _require_nonnegative_integer(
+        provenance.get("max_steps"), label="provenance max_steps"
+    )
+    _validate_allocator_environment_binding(run_dir, verification, provenance)
+    _validate_gradient_accumulation_offload_binding(
+        run_dir, verification, provenance
+    )
 
     expected_final = _validate_inventory_records(
         verification.get("final_inventory"), label="RUN_VERIFICATION final_inventory"
@@ -831,6 +2533,19 @@ def _validate_run_verification(
     actual_final, _directories = _directory_layout(final_dir)
     if actual_final != expected_final:
         raise PruneError("RUN_VERIFICATION final inventory/hash differs from final/.")
+    recorded_bundle_identity = validate_bundle_identity_summary(
+        verification.get("bundle_identity"),
+        expected_bundle_path="final",
+        expected_global_step=max_steps,
+        expected_inventory=expected_final,
+    )
+    live_bundle_identity = validate_bundle_identity(
+        final_dir,
+        bundle_path="final",
+        expected_global_step=max_steps,
+    )
+    if recorded_bundle_identity != live_bundle_identity:
+        raise PruneError("RUN_VERIFICATION bundle identity differs from live final bytes.")
     completed = final_dir / "COMPLETED"
     if completed.read_text(encoding="utf-8").strip() != "ok":
         raise PruneError("Final COMPLETED marker is invalid.")
@@ -1033,6 +2748,8 @@ def build_prune_plan(run_dir: Path) -> dict[str, Any]:
         FULL_UPDATE_DELTA_NAME,
         ASSAY_VERIFICATION_NAME,
         RESUME_VERIFICATION_NAME,
+        ENVIRONMENT_NAME,
+        GRADIENT_ACCUMULATION_OFFLOAD_RECEIPT_NAME,
         "final/COMPLETED",
         "final/manifest.json",
         "final/experiment_config.json",
@@ -1606,6 +3323,10 @@ def _validate_recovery_intent(
         or verification.get("provenance") != provenance
     ):
         raise PruneError("Recovery intent does not bind the retained verified run.")
+    _validate_allocator_environment_binding(run_dir, verification, provenance)
+    _validate_gradient_accumulation_offload_binding(
+        run_dir, verification, provenance
+    )
     preconditions = _require_mapping(intent.get("preconditions"), label="intent preconditions")
     for key in (
         "run_verification",
@@ -1857,6 +3578,30 @@ def verify_pruned(
         or run_verification.get("provenance") != provenance
     ):
         raise PruneError("Retained RUN_VERIFICATION.json is no longer exact.")
+    _validate_allocator_environment_binding(run_dir, run_verification, provenance)
+    _validate_gradient_accumulation_offload_binding(
+        run_dir, run_verification, provenance
+    )
+    max_steps = _require_nonnegative_integer(
+        provenance.get("max_steps"), label="retained provenance max_steps"
+    )
+    retained_final_inventory = _validate_inventory_records(
+        run_verification.get("final_inventory"),
+        label="retained RUN_VERIFICATION final inventory",
+    )
+    recorded_bundle_identity = validate_bundle_identity_summary(
+        run_verification.get("bundle_identity"),
+        expected_bundle_path="final",
+        expected_global_step=max_steps,
+        expected_inventory=retained_final_inventory,
+    )
+    live_bundle_identity = validate_bundle_identity(
+        run_dir / "final",
+        bundle_path="final",
+        expected_global_step=max_steps,
+    )
+    if recorded_bundle_identity != live_bundle_identity:
+        raise PruneError("Retained bundle identity differs from live final metadata.")
     _validate_evidence_receipts(run_dir, provenance=provenance)
 
     targets = receipt.get("deleted_targets")

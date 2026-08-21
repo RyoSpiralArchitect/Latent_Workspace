@@ -29,6 +29,7 @@ import re
 import shutil
 import signal
 import socket
+import stat as stat_module
 import sys
 import tempfile
 import time
@@ -779,6 +780,7 @@ class TrainConfig:
     batch_size: int = 4
     eval_batch_size: int = 4
     gradient_accumulation_steps: int = 4
+    gradient_accumulation_offload: str = "none"  # none | cpu
 
     learning_rate: float = 2e-5
     workspace_learning_rate: float = 1e-4
@@ -796,6 +798,9 @@ class TrainConfig:
     allow_tf32: bool = True
     matmul_precision: str = "high"  # highest | high | medium
     deterministic_algorithms: bool = False
+    # Empty preserves the general-purpose engine default. Contracted CUDA runs
+    # pin the exact PYTORCH_ALLOC_CONF value here so it becomes resume-bound.
+    cuda_allocator_conf: str = ""
 
     # torchrun-aware single-node DDP. "auto" activates only when WORLD_SIZE>1.
     distributed: str = "auto"  # auto | none | ddp
@@ -1286,6 +1291,10 @@ class ExperimentConfig:
             raise ValueError("max_grad_norm must be positive.")
         if self.train.gradient_accumulation_steps < 1:
             raise ValueError("gradient_accumulation_steps must be positive.")
+        if self.train.gradient_accumulation_offload not in {"none", "cpu"}:
+            raise ValueError(
+                "train.gradient_accumulation_offload must be none or cpu."
+            )
         if self.train.epochs < 1 and self.train.max_steps < 1:
             raise ValueError("Set epochs >= 1 or max_steps >= 1.")
         if self.train.fused_adamw not in {"auto", "true", "false"}:
@@ -1296,6 +1305,12 @@ class ExperimentConfig:
             )
         if self.train.matmul_precision not in {"highest", "high", "medium"}:
             raise ValueError("Unsupported train.matmul_precision.")
+        if not isinstance(self.train.cuda_allocator_conf, str):
+            raise ValueError("train.cuda_allocator_conf must be a string.")
+        if self.train.cuda_allocator_conf != self.train.cuda_allocator_conf.strip():
+            raise ValueError(
+                "train.cuda_allocator_conf must not contain surrounding whitespace."
+            )
         if self.train.distributed not in {"auto", "none", "ddp"}:
             raise ValueError("train.distributed must be auto, none, or ddp.")
         if self.train.ddp_backend not in {"auto", "nccl", "gloo"}:
@@ -1594,6 +1609,155 @@ def source_sha256() -> str:
         return "unavailable"
 
 
+def allocator_runtime_environment() -> dict[str, Any]:
+    """Observe the allocator policy without silently mutating it.
+
+    PyTorch 2.13 documents ``PYTORCH_ALLOC_CONF`` as the primary setting while
+    retaining device-specific compatibility aliases. Those aliases can win
+    when several variables are present, and disabling the caching allocator
+    bypasses the policy entirely, so contracted runs require all three override
+    channels below to be absent.
+    """
+
+    result: dict[str, Any] = {
+        "pytorch_alloc_conf": os.environ.get("PYTORCH_ALLOC_CONF"),
+        "pytorch_cuda_alloc_conf_legacy": os.environ.get(
+            "PYTORCH_CUDA_ALLOC_CONF"
+        ),
+        "pytorch_hip_alloc_conf_legacy": os.environ.get(
+            "PYTORCH_HIP_ALLOC_CONF"
+        ),
+        "pytorch_no_cuda_memory_caching": os.environ.get(
+            "PYTORCH_NO_CUDA_MEMORY_CACHING"
+        ),
+        "allocator_backend": None,
+        "allocator_settings": None,
+        "allocator_initialized": None,
+        "allocator_snapshot_settings": None,
+        "cuda_memory_allocated_bytes": None,
+        "cuda_memory_reserved_bytes": None,
+    }
+    try:
+        result["allocator_backend"] = torch.cuda.memory.get_allocator_backend()
+    except Exception as exc:
+        result["allocator_backend_error"] = f"{type(exc).__name__}: {exc}"
+    try:
+        getter = getattr(torch._C, "_accelerator_getAllocatorSettings", None)
+        if getter is not None:
+            result["allocator_settings"] = getter()
+    except Exception as exc:
+        result["allocator_settings_error"] = f"{type(exc).__name__}: {exc}"
+    try:
+        initialized = getattr(torch._C, "_accelerator_isAllocatorInitialized", None)
+        if initialized is not None:
+            result["allocator_initialized"] = bool(initialized())
+    except Exception as exc:
+        result["allocator_initialized_error"] = f"{type(exc).__name__}: {exc}"
+    if result["allocator_initialized"] is True:
+        try:
+            snapshot = torch.cuda.memory._snapshot()
+            settings = snapshot.get("allocator_settings")
+            if isinstance(settings, Mapping):
+                result["allocator_snapshot_settings"] = {
+                    "expandable_segments": settings.get("expandable_segments"),
+                    "max_split_size": settings.get("max_split_size"),
+                    "garbage_collection_threshold": settings.get(
+                        "garbage_collection_threshold"
+                    ),
+                }
+            result["cuda_memory_allocated_bytes"] = int(
+                torch.cuda.memory_allocated()
+            )
+            result["cuda_memory_reserved_bytes"] = int(
+                torch.cuda.memory_reserved()
+            )
+        except Exception as exc:
+            result["allocator_snapshot_error"] = f"{type(exc).__name__}: {exc}"
+    return result
+
+
+def require_cuda_allocator_policy(train: TrainConfig) -> None:
+    """Fail closed before CUDA initialization when a config pins a policy."""
+
+    expected = train.cuda_allocator_conf
+    if not expected:
+        return
+    forbidden = {
+        name: os.environ.get(name)
+        for name in (
+            "PYTORCH_CUDA_ALLOC_CONF",
+            "PYTORCH_HIP_ALLOC_CONF",
+            "PYTORCH_NO_CUDA_MEMORY_CACHING",
+        )
+        if os.environ.get(name) is not None
+    }
+    if forbidden:
+        raise RuntimeError(
+            "Contracted CUDA allocator policy forbids compatibility aliases and "
+            "the caching-allocator disable switch because they can override or "
+            f"disable PYTORCH_ALLOC_CONF: {sorted(forbidden)}."
+        )
+    actual = os.environ.get("PYTORCH_ALLOC_CONF")
+    if actual != expected:
+        raise RuntimeError(
+            "Contracted CUDA allocator policy mismatch: "
+            f"PYTORCH_ALLOC_CONF={actual!r}, expected {expected!r}."
+        )
+
+
+def require_effective_cuda_allocator_policy(
+    train: TrainConfig,
+    device: torch.device,
+) -> dict[str, Any]:
+    """Verify the CUDA allocator after live model allocations exist."""
+
+    observation = allocator_runtime_environment()
+    if not train.cuda_allocator_conf or device.type != "cuda":
+        return observation
+    configured: dict[str, str] = {}
+    for item in train.cuda_allocator_conf.split(","):
+        key, separator, value = item.partition(":")
+        if separator:
+            configured[key.strip()] = value.strip()
+    snapshot = observation.get("allocator_snapshot_settings")
+    failures: list[str] = []
+    if observation.get("pytorch_alloc_conf") != train.cuda_allocator_conf:
+        failures.append("primary_environment")
+    for key in (
+        "pytorch_cuda_alloc_conf_legacy",
+        "pytorch_hip_alloc_conf_legacy",
+        "pytorch_no_cuda_memory_caching",
+    ):
+        if observation.get(key) is not None:
+            failures.append(key)
+    expected_backend = configured.get("backend")
+    if expected_backend and observation.get("allocator_backend") != expected_backend:
+        failures.append("allocator_backend")
+    if observation.get("allocator_settings") != train.cuda_allocator_conf:
+        failures.append("parsed_settings")
+    expected_expandable = configured.get("expandable_segments")
+    if expected_expandable is not None:
+        expected_enabled = expected_expandable.lower() == "true"
+        if not isinstance(snapshot, Mapping) or snapshot.get(
+            "expandable_segments"
+        ) is not expected_enabled:
+            failures.append("snapshot_expandable_segments")
+    allocated = observation.get("cuda_memory_allocated_bytes")
+    if (
+        observation.get("allocator_initialized") is not True
+        or isinstance(allocated, bool)
+        or not isinstance(allocated, int)
+        or allocated <= 0
+    ):
+        failures.append("live_cuda_allocation")
+    if failures:
+        raise RuntimeError(
+            "Effective CUDA allocator policy validation failed after model allocation: "
+            f"{sorted(set(failures))}."
+        )
+    return observation
+
+
 def runtime_environment() -> dict[str, Any]:
     result: dict[str, Any] = {
         "harness_version": __version__,
@@ -1608,6 +1772,7 @@ def runtime_environment() -> dict[str, Any]:
             else None
         ),
         "source_sha256": source_sha256(),
+        **allocator_runtime_environment(),
     }
     if torch.cuda.is_available():
         result["cuda_devices"] = [
@@ -5496,11 +5661,14 @@ class LatentWorkspaceCausalLM(nn.Module):
                 with isolated_torch_rng(
                     isolate, context_seed, context_flat_ids.device
                 ):
-                    context_boundary = self.functional_boundary_adapter.encode(
-                        context_flat_ids,
-                        context_flat_mask,
-                        boundary,
-                    )
+                    with _cuda_base_activation_offload(
+                        context_flat_ids.device
+                    ):
+                        context_boundary = self.functional_boundary_adapter.encode(
+                            context_flat_ids,
+                            context_flat_mask,
+                            boundary,
+                        )
                 with isolated_torch_rng(
                     isolate, route_seed, context_boundary.device
                 ):
@@ -5527,11 +5695,12 @@ class LatentWorkspaceCausalLM(nn.Module):
                     mode=memory_intervention,
                     seed=memory_intervention_seed,
                 )
-                query_boundary = self.functional_boundary_adapter.encode(
-                    flat_ids,
-                    flat_mask,
-                    boundary,
-                )
+                with _cuda_base_activation_offload(flat_ids.device):
+                    query_boundary = self.functional_boundary_adapter.encode(
+                        flat_ids,
+                        flat_mask,
+                        boundary,
+                    )
                 expanded_memory = memory.index_select(0, world_side_indices)
                 expanded_memory_mask = memory_mask.index_select(0, world_side_indices)
                 logits, gate_mean, read_norm = self._functional_decode_with_memory(
@@ -6599,6 +6768,24 @@ class DistributedContext:
             torch.distributed.destroy_process_group()
 
 
+def _require_gradient_accumulation_offload_context(
+    train: TrainConfig,
+    context: DistributedContext,
+) -> None:
+    if train.gradient_accumulation_offload != "cpu":
+        return
+    if context.enabled or context.world_size != 1:
+        raise RuntimeError(
+            "train.gradient_accumulation_offload='cpu' is single-process only; "
+            "clearing gradients between no_sync microbatches would break DDP's "
+            "final reduction."
+        )
+    if context.device.type != "cuda":
+        raise RuntimeError(
+            "train.gradient_accumulation_offload='cpu' requires a CUDA device."
+        )
+
+
 def initialize_distributed(config: TrainConfig) -> DistributedContext:
     world_size = int(os.environ.get("WORLD_SIZE", "1"))
     rank = int(os.environ.get("RANK", "0"))
@@ -6713,6 +6900,26 @@ def isolated_torch_rng(
         if device.type == "cuda":
             torch.cuda.manual_seed(int(seed))
         yield
+
+
+def _cuda_base_activation_offload(device: torch.device) -> Any:
+    """Offload only tensors saved by a CUDA base-encoder graph.
+
+    Full-update gradient accumulation keeps base gradients resident while the
+    next microbatch recomputes its activations. Functional context/query split
+    transformer calls are the narrow graph regions whose saved activations can
+    safely be packed to host memory without changing graph connectivity,
+    parameter gradients, RNG streams, or optimizer semantics. Reader/writer
+    operations remain outside this context so persistent workspace parameters
+    are never duplicated by the saved-tensor hook.
+    """
+
+    if device.type != "cuda" or not torch.is_grad_enabled():
+        return contextlib.nullcontext()
+    return torch.autograd.graph.save_on_cpu(
+        pin_memory=True,
+        device_type=device.type,
+    )
 
 
 def make_rng_streams(
@@ -6983,6 +7190,1277 @@ def _named_parameter_aliases(
         )
         record["names"].add(f"{prefix}{name}")
     return records
+
+
+@dataclass(frozen=True)
+class _CPUGradientAccumulatorSpec:
+    name: str
+    parameter: nn.Parameter = field(repr=False, compare=False)
+    shape: tuple[int, ...]
+    stride: tuple[int, ...]
+    dtype: torch.dtype
+    device: torch.device
+
+
+class _CPUGradientAccumulator:
+    """Store one accumulation window's gradients on pageable host memory.
+
+    The host tensors are storage only: BF16/FP16 accumulation never runs on
+    CPU.  For every microbatch after the first observation of a parameter, the
+    previous host value is copied back to its original device and receives the
+    current gradient with an in-place device ``add_``.  This preserves native
+    ``AccumulateGrad`` order while permitting ``parameter.grad`` to be cleared
+    before the next forward.
+    """
+
+    def __init__(
+        self,
+        parameters: Iterable[tuple[str, nn.Parameter]],
+        *,
+        require_cuda: bool = False,
+    ) -> None:
+        specs: list[_CPUGradientAccumulatorSpec] = []
+        names: set[str] = set()
+        physical_ids: set[int] = set()
+        for name, parameter in parameters:
+            if not isinstance(name, str) or not name:
+                raise RuntimeError(
+                    "CPU gradient accumulation requires non-empty parameter names."
+                )
+            if name in names:
+                raise RuntimeError(
+                    f"Duplicate CPU gradient accumulation parameter name: {name!r}."
+                )
+            if not isinstance(parameter, nn.Parameter):
+                raise RuntimeError(
+                    f"CPU gradient accumulation entry {name!r} is not a Parameter."
+                )
+            physical_id = id(parameter)
+            if physical_id in physical_ids:
+                raise RuntimeError(
+                    "CPU gradient accumulation received a duplicate physical "
+                    f"parameter at {name!r}."
+                )
+            if not parameter.requires_grad:
+                raise RuntimeError(
+                    f"CPU gradient accumulation parameter {name!r} is not trainable."
+                )
+            if parameter.layout is not torch.strided:
+                raise RuntimeError(
+                    f"CPU gradient accumulation parameter {name!r} is not strided."
+                )
+            if not torch.is_floating_point(parameter):
+                raise RuntimeError(
+                    f"CPU gradient accumulation parameter {name!r} is not floating point."
+                )
+            if require_cuda and parameter.device.type != "cuda":
+                raise RuntimeError(
+                    "CPU gradient accumulation offload requires every trainable "
+                    f"parameter on CUDA; {name!r} is on {parameter.device}."
+                )
+            names.add(name)
+            physical_ids.add(physical_id)
+            specs.append(
+                _CPUGradientAccumulatorSpec(
+                    name=name,
+                    parameter=parameter,
+                    shape=tuple(parameter.shape),
+                    stride=tuple(parameter.stride()),
+                    dtype=parameter.dtype,
+                    device=parameter.device,
+                )
+            )
+        if not specs:
+            raise RuntimeError(
+                "CPU gradient accumulation offload found no trainable parameters."
+            )
+
+        # Releasing small current gradients before a large merge bounds the
+        # transient device allocation to one parameter-sized tensor.
+        self._specs = tuple(
+            sorted(specs, key=lambda spec: (spec.parameter.numel(), spec.name))
+        )
+        self._specs_by_id = {id(spec.parameter): spec for spec in self._specs}
+        self._buffers: dict[int, torch.Tensor] = {}
+        self._seen_parameter_ids: set[int] = set()
+        self._buffer_strides: dict[int, tuple[int, ...]] = {}
+        self._spill_count = 0
+        self._merge_count = 0
+        self._first_spill_count = 0
+        self._cumulative_current_gradient_bytes = 0
+        self._peak_cpu_accumulator_bytes = 0
+        self._active = True
+
+    def schema_records(self) -> list[dict[str, Any]]:
+        return [
+            {
+                "name": spec.name,
+                "shape": list(spec.shape),
+                "stride": list(spec.stride),
+                "dtype": str(spec.dtype),
+                "device": str(spec.device),
+                "numel": int(spec.parameter.numel()),
+                "logical_bytes": int(
+                    spec.parameter.numel() * spec.parameter.element_size()
+                ),
+            }
+            for spec in sorted(self._specs, key=lambda spec: spec.name)
+        ]
+
+    @staticmethod
+    def _storage_bytes(tensor: torch.Tensor) -> int:
+        try:
+            return int(tensor.untyped_storage().nbytes())
+        except (AttributeError, RuntimeError):
+            return int(tensor.numel() * tensor.element_size())
+
+    def _buffer_bytes(self) -> int:
+        return sum(self._storage_bytes(buffer) for buffer in self._buffers.values())
+
+    def _require_active(self) -> None:
+        if not self._active:
+            raise RuntimeError("CPU gradient accumulator is no longer active.")
+
+    @staticmethod
+    def _has_internal_overlap(tensor: torch.Tensor) -> bool:
+        checker = getattr(torch, "_debug_has_internal_overlap", None)
+        if checker is None:
+            return False
+        return int(checker(tensor)) != 0
+
+    def _validate_parameter(self, spec: _CPUGradientAccumulatorSpec) -> None:
+        parameter = spec.parameter
+        failures: list[str] = []
+        if not parameter.requires_grad:
+            failures.append("requires_grad")
+        if tuple(parameter.shape) != spec.shape:
+            failures.append("shape")
+        if parameter.layout is not torch.strided:
+            failures.append("layout")
+        elif tuple(parameter.stride()) != spec.stride:
+            failures.append("stride")
+        if parameter.dtype != spec.dtype:
+            failures.append("dtype")
+        if parameter.device != spec.device:
+            failures.append("device")
+        if failures:
+            raise RuntimeError(
+                "CPU gradient accumulation parameter schema changed for "
+                f"{spec.name!r}: {sorted(failures)}."
+            )
+
+    def _validate_gradient(
+        self,
+        spec: _CPUGradientAccumulatorSpec,
+        gradient: torch.Tensor,
+    ) -> None:
+        failures: list[str] = []
+        if tuple(gradient.shape) != spec.shape:
+            failures.append("shape")
+        if gradient.layout is not torch.strided:
+            failures.append("layout")
+        elif self._has_internal_overlap(gradient):
+            failures.append("internal_overlap")
+        if gradient.dtype != spec.dtype:
+            failures.append("dtype")
+        if gradient.device != spec.device:
+            failures.append("device")
+        if gradient.requires_grad or gradient.grad_fn is not None:
+            failures.append("autograd_history")
+        if failures:
+            raise RuntimeError(
+                "CPU gradient accumulation gradient schema mismatch for "
+                f"{spec.name!r}: {sorted(failures)}."
+            )
+
+    def _validate_buffer(
+        self,
+        spec: _CPUGradientAccumulatorSpec,
+        buffer: torch.Tensor,
+    ) -> None:
+        failures: list[str] = []
+        if tuple(buffer.shape) != spec.shape:
+            failures.append("shape")
+        if buffer.layout is not torch.strided:
+            failures.append("layout")
+        elif self._has_internal_overlap(buffer):
+            failures.append("internal_overlap")
+        if buffer.dtype != spec.dtype:
+            failures.append("dtype")
+        if buffer.device.type != "cpu":
+            failures.append("device")
+        expected_stride = self._buffer_strides.get(id(spec.parameter))
+        if expected_stride is None:
+            failures.append("missing_stride_schema")
+        elif tuple(buffer.stride()) != expected_stride:
+            failures.append("stride")
+        if failures:
+            raise RuntimeError(
+                "CPU gradient accumulation buffer schema mismatch for "
+                f"{spec.name!r}: {sorted(failures)}."
+            )
+
+    @torch.no_grad()
+    def spill(self) -> dict[str, int]:
+        """Merge current grads in native device order, then clear them."""
+
+        self._require_active()
+        current_gradient_count = 0
+        current_gradient_bytes = 0
+        new_parameter_count = 0
+        merged_parameter_count = 0
+        try:
+            for spec in self._specs:
+                self._validate_parameter(spec)
+                physical_id = id(spec.parameter)
+                buffer = self._buffers.get(physical_id)
+                if buffer is not None:
+                    self._validate_buffer(spec, buffer)
+                gradient = spec.parameter.grad
+                if gradient is None:
+                    continue
+                self._validate_gradient(spec, gradient)
+                gradient_bytes = self._storage_bytes(gradient)
+                current_gradient_count += 1
+                current_gradient_bytes += gradient_bytes
+
+                if buffer is None:
+                    buffer = torch.empty_strided(
+                        tuple(gradient.shape),
+                        tuple(gradient.stride()),
+                        dtype=gradient.dtype,
+                        device="cpu",
+                    )
+                    buffer.copy_(gradient.detach(), non_blocking=False)
+                    self._buffers[physical_id] = buffer
+                    self._seen_parameter_ids.add(physical_id)
+                    self._buffer_strides[physical_id] = tuple(buffer.stride())
+                    new_parameter_count += 1
+                else:
+                    previous_device = torch.empty_strided(
+                        tuple(buffer.shape),
+                        tuple(buffer.stride()),
+                        dtype=buffer.dtype,
+                        device=spec.device,
+                    )
+                    previous_device.copy_(buffer, non_blocking=False)
+                    previous_device.add_(gradient.detach())
+                    buffer.copy_(previous_device, non_blocking=False)
+                    del previous_device
+                    merged_parameter_count += 1
+
+                # Clear only after the synchronous host copy has succeeded.
+                spec.parameter.grad = None
+
+            if not self._buffers:
+                raise RuntimeError(
+                    "CPU gradient accumulation spill observed no trainable gradients."
+                )
+            if set(self._buffers) != self._seen_parameter_ids:
+                raise RuntimeError(
+                    "CPU gradient accumulation buffer accounting is incomplete."
+                )
+            if set(self._buffer_strides) != self._seen_parameter_ids:
+                raise RuntimeError(
+                    "CPU gradient accumulation stride accounting is incomplete."
+                )
+            self._spill_count += 1
+            self._merge_count += merged_parameter_count
+            self._first_spill_count += new_parameter_count
+            self._cumulative_current_gradient_bytes += current_gradient_bytes
+            self._peak_cpu_accumulator_bytes = max(
+                self._peak_cpu_accumulator_bytes,
+                self._buffer_bytes(),
+            )
+            return {
+                "spill_count": self._spill_count,
+                "current_gradient_count": current_gradient_count,
+                "current_gradient_bytes": current_gradient_bytes,
+                "new_parameter_count": new_parameter_count,
+                "merged_parameter_count": merged_parameter_count,
+                "accumulated_parameter_count": len(self._buffers),
+                "cpu_accumulator_bytes": self._buffer_bytes(),
+                "peak_cpu_accumulator_bytes": self._peak_cpu_accumulator_bytes,
+                "cumulative_merge_count": self._merge_count,
+                "cumulative_first_spill_count": self._first_spill_count,
+                "cumulative_current_gradient_bytes": (
+                    self._cumulative_current_gradient_bytes
+                ),
+            }
+        except Exception:
+            self.discard()
+            raise
+
+    @torch.no_grad()
+    def restore(self) -> dict[str, int]:
+        """Restore the complete window to original devices for optimizer use."""
+
+        self._require_active()
+        try:
+            buffer_ids = set(self._buffers)
+            if buffer_ids != self._seen_parameter_ids:
+                missing = sorted(self._seen_parameter_ids - buffer_ids)
+                unexpected = sorted(buffer_ids - self._seen_parameter_ids)
+                raise RuntimeError(
+                    "CPU gradient accumulation restore buffer accounting mismatch: "
+                    f"missing={missing}, unexpected={unexpected}."
+                )
+            if not buffer_ids:
+                raise RuntimeError(
+                    "CPU gradient accumulation restore has no spilled gradients."
+                )
+            if set(self._buffer_strides) != self._seen_parameter_ids:
+                raise RuntimeError(
+                    "CPU gradient accumulation restore stride accounting mismatch."
+                )
+            if not buffer_ids <= set(self._specs_by_id):
+                raise RuntimeError(
+                    "CPU gradient accumulation restore found an unknown parameter buffer."
+                )
+
+            for spec in self._specs:
+                self._validate_parameter(spec)
+                if spec.parameter.grad is not None:
+                    raise RuntimeError(
+                        "CPU gradient accumulation restore would duplicate an existing "
+                        f"gradient for {spec.name!r}."
+                    )
+                buffer = self._buffers.get(id(spec.parameter))
+                if buffer is not None:
+                    self._validate_buffer(spec, buffer)
+
+            cpu_accumulator_bytes = self._buffer_bytes()
+            restored_parameter_count = 0
+            for spec in self._specs:
+                buffer = self._buffers.get(id(spec.parameter))
+                if buffer is None:
+                    continue
+                restored = torch.empty_strided(
+                    tuple(buffer.shape),
+                    tuple(buffer.stride()),
+                    dtype=buffer.dtype,
+                    device=spec.device,
+                )
+                restored.copy_(buffer, non_blocking=False)
+                spec.parameter.grad = restored
+                restored_parameter_count += 1
+
+            self._buffers.clear()
+            self._seen_parameter_ids.clear()
+            self._buffer_strides.clear()
+            self._active = False
+            return {
+                "spill_count": self._spill_count,
+                "merge_count": self._merge_count,
+                "first_spill_count": self._first_spill_count,
+                "cumulative_current_gradient_bytes": (
+                    self._cumulative_current_gradient_bytes
+                ),
+                "restored_parameter_count": restored_parameter_count,
+                "cpu_accumulator_bytes_before_restore": cpu_accumulator_bytes,
+                "peak_cpu_accumulator_bytes": self._peak_cpu_accumulator_bytes,
+                "live_cpu_buffer_count": 0,
+                "live_cpu_buffer_bytes": 0,
+            }
+        except Exception:
+            self.discard()
+            raise
+
+    @torch.no_grad()
+    def discard(self) -> None:
+        """Drop host state and all managed device gradients after failure."""
+
+        for spec in self._specs:
+            spec.parameter.grad = None
+        self._buffers.clear()
+        self._seen_parameter_ids.clear()
+        self._buffer_strides.clear()
+        self._active = False
+
+    def statistics(self) -> dict[str, int]:
+        return {
+            "spill_count": self._spill_count,
+            "merge_count": self._merge_count,
+            "first_spill_count": self._first_spill_count,
+            "cumulative_current_gradient_bytes": (
+                self._cumulative_current_gradient_bytes
+            ),
+            "peak_cpu_accumulator_bytes": self._peak_cpu_accumulator_bytes,
+            "live_cpu_buffer_count": len(self._buffers),
+            "live_cpu_buffer_bytes": self._buffer_bytes(),
+        }
+
+
+_GRADIENT_OFFLOAD_COUNTER_FIELDS = (
+    "windows_started",
+    "windows_restored",
+    "windows_discarded",
+    "single_microbatch_windows",
+    "microbatch_spills",
+    "parameter_first_spills",
+    "parameter_merges",
+    "cumulative_current_gradient_bytes",
+    "peak_cpu_accumulator_bytes",
+)
+
+
+def _gradient_offload_counter_snapshot(
+    receipt: Mapping[str, Any],
+) -> dict[str, int]:
+    result: dict[str, int] = {}
+    for field_name in _GRADIENT_OFFLOAD_COUNTER_FIELDS:
+        value = receipt.get(field_name)
+        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+            raise RuntimeError(
+                "CPU gradient accumulation receipt counter is invalid: "
+                f"{field_name}={value!r}."
+            )
+        result[field_name] = int(value)
+    return result
+
+
+def _gradient_offload_schema_identity(
+    schema_records: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    records = [dict(record) for record in schema_records]
+    names = [str(record.get("name", "")) for record in records]
+    if not records or any(not name for name in names) or len(names) != len(set(names)):
+        raise RuntimeError(
+            "CPU gradient accumulation receipt requires a unique non-empty schema."
+        )
+    return {
+        "trainable_parameter_count": len(records),
+        "trainable_parameter_total_numel": sum(
+            int(record["numel"]) for record in records
+        ),
+        "trainable_gradient_capacity_bytes": sum(
+            int(record["logical_bytes"]) for record in records
+        ),
+        "trainable_parameter_schema_sha256": stable_hash(records),
+    }
+
+
+def _gradient_offload_receipt_hash(receipt: Mapping[str, Any]) -> str:
+    payload = copy.deepcopy(dict(receipt))
+    payload["receipt_sha256"] = None
+    return stable_hash(payload)
+
+
+def _require_valid_gradient_offload_receipt_hash(
+    receipt: Mapping[str, Any],
+) -> str:
+    stored_digest = receipt.get("receipt_sha256")
+    if not isinstance(stored_digest, str) or not stored_digest:
+        raise RuntimeError(
+            "CPU gradient accumulation receipt has no self-hash."
+        )
+    actual_digest = _gradient_offload_receipt_hash(receipt)
+    if actual_digest != stored_digest:
+        raise RuntimeError(
+            "CPU gradient accumulation receipt self-hash mismatch."
+        )
+    return stored_digest
+
+
+def _current_gradient_offload_segment(
+    receipt: MutableMapping[str, Any],
+) -> MutableMapping[str, Any]:
+    segments = receipt.get("segments")
+    if not isinstance(segments, list) or not segments:
+        raise RuntimeError(
+            "CPU gradient accumulation receipt has no execution segment."
+        )
+    segment = segments[-1]
+    if not isinstance(segment, MutableMapping):
+        raise RuntimeError(
+            "CPU gradient accumulation receipt segment is malformed."
+        )
+    if int(segment.get("segment_index", -1)) != len(segments) - 1:
+        raise RuntimeError(
+            "CPU gradient accumulation receipt segment index is not contiguous."
+        )
+    return segment
+
+
+def _gradient_offload_checkpoint_bundle_inventory(
+    checkpoint: Path,
+) -> tuple[dict[str, Any], bytes]:
+    try:
+        checkpoint_stat = checkpoint.lstat()
+    except OSError as exc:
+        raise RuntimeError(
+            "CPU gradient accumulation checkpoint inventory root is unreadable."
+        ) from exc
+    if stat_module.S_ISLNK(checkpoint_stat.st_mode):
+        raise RuntimeError(
+            "CPU gradient accumulation checkpoint inventory rejects a symbolic-link "
+            "root."
+        )
+    if not stat_module.S_ISDIR(checkpoint_stat.st_mode):
+        raise RuntimeError(
+            "CPU gradient accumulation checkpoint inventory root is not a directory."
+        )
+    if not _is_complete_checkpoint(checkpoint):
+        raise RuntimeError(
+            "CPU gradient accumulation checkpoint inventory requires a completed "
+            "checkpoint."
+        )
+
+    records: list[dict[str, Any]] = []
+    manifest_bytes: Optional[bytes] = None
+    pending: list[tuple[Path, str]] = [(checkpoint, "")]
+    while pending:
+        directory, relative_directory = pending.pop()
+        try:
+            with os.scandir(directory) as iterator:
+                entries = sorted(iterator, key=lambda entry: entry.name, reverse=True)
+        except OSError as exc:
+            raise RuntimeError(
+                "CPU gradient accumulation checkpoint inventory directory is "
+                "unreadable."
+            ) from exc
+        for entry in entries:
+            relative_path = (
+                f"{relative_directory}/{entry.name}"
+                if relative_directory
+                else entry.name
+            )
+            try:
+                entry_stat = entry.stat(follow_symlinks=False)
+            except OSError as exc:
+                raise RuntimeError(
+                    "CPU gradient accumulation checkpoint inventory entry is "
+                    f"unreadable: {relative_path!r}."
+                ) from exc
+            if stat_module.S_ISLNK(entry_stat.st_mode):
+                raise RuntimeError(
+                    "CPU gradient accumulation checkpoint inventory rejects symbolic "
+                    f"links: {relative_path!r}."
+                )
+            if stat_module.S_ISDIR(entry_stat.st_mode):
+                pending.append((Path(entry.path), relative_path))
+                continue
+            if not stat_module.S_ISREG(entry_stat.st_mode):
+                raise RuntimeError(
+                    "CPU gradient accumulation checkpoint inventory rejects special "
+                    f"files: {relative_path!r}."
+                )
+            if int(entry_stat.st_nlink) != 1:
+                raise RuntimeError(
+                    "CPU gradient accumulation checkpoint inventory rejects hard-linked "
+                    f"regular files: {relative_path!r}."
+                )
+
+            flags = os.O_RDONLY | getattr(os, "O_CLOEXEC", 0)
+            flags |= getattr(os, "O_NOFOLLOW", 0)
+            try:
+                file_descriptor = os.open(entry.path, flags)
+            except OSError as exc:
+                raise RuntimeError(
+                    "CPU gradient accumulation checkpoint inventory file is unreadable: "
+                    f"{relative_path!r}."
+                ) from exc
+            digest = hashlib.sha256()
+            captured_blocks: Optional[list[bytes]] = (
+                [] if relative_path == "manifest.json" else None
+            )
+            try:
+                opened_stat = os.fstat(file_descriptor)
+                if (
+                    not stat_module.S_ISREG(opened_stat.st_mode)
+                    or int(opened_stat.st_nlink) != 1
+                    or int(opened_stat.st_dev) != int(entry_stat.st_dev)
+                    or int(opened_stat.st_ino) != int(entry_stat.st_ino)
+                ):
+                    raise RuntimeError(
+                        "CPU gradient accumulation checkpoint inventory file changed "
+                        f"during inspection: {relative_path!r}."
+                    )
+                while True:
+                    block = os.read(file_descriptor, 1024 * 1024)
+                    if not block:
+                        break
+                    digest.update(block)
+                    if captured_blocks is not None:
+                        captured_blocks.append(block)
+                final_stat = os.fstat(file_descriptor)
+                stable_fields = (
+                    "st_dev",
+                    "st_ino",
+                    "st_mode",
+                    "st_nlink",
+                    "st_size",
+                )
+                if any(
+                    getattr(opened_stat, field_name) != getattr(final_stat, field_name)
+                    for field_name in stable_fields
+                ) or any(
+                    getattr(opened_stat, field_name, None)
+                    != getattr(final_stat, field_name, None)
+                    for field_name in ("st_mtime_ns", "st_ctime_ns")
+                ):
+                    raise RuntimeError(
+                        "CPU gradient accumulation checkpoint inventory file changed "
+                        f"while hashing: {relative_path!r}."
+                    )
+            finally:
+                os.close(file_descriptor)
+            if captured_blocks is not None:
+                manifest_bytes = b"".join(captured_blocks)
+            records.append(
+                {
+                    "path": relative_path,
+                    "bytes": int(opened_stat.st_size),
+                    "sha256": digest.hexdigest(),
+                }
+            )
+
+    records.sort(key=lambda record: str(record["path"]))
+    if manifest_bytes is None or sum(
+        record["path"] == "manifest.json" for record in records
+    ) != 1:
+        raise RuntimeError(
+            "CPU gradient accumulation checkpoint inventory has no unique manifest."
+        )
+    return (
+        {
+            "bundle_inventory_sha256": stable_hash(records),
+            "file_count": len(records),
+            "logical_bytes": sum(int(record["bytes"]) for record in records),
+        },
+        manifest_bytes,
+    )
+
+
+def _gradient_offload_checkpoint_descriptor(
+    checkpoint: Path,
+    *,
+    output_dir: Path,
+) -> dict[str, Any]:
+    expanded_checkpoint = checkpoint.expanduser()
+    inventory, manifest_bytes = (
+        _gradient_offload_checkpoint_bundle_inventory(expanded_checkpoint)
+    )
+    resolved_checkpoint = expanded_checkpoint.resolve()
+    resolved_output = output_dir.expanduser().resolve()
+    try:
+        manifest_sha256 = hashlib.sha256(manifest_bytes).hexdigest()
+        manifest = json.loads(manifest_bytes.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise RuntimeError(
+            "CPU gradient accumulation checkpoint has no readable manifest."
+        ) from exc
+    if not isinstance(manifest, Mapping):
+        raise RuntimeError(
+            "CPU gradient accumulation checkpoint manifest is not a JSON object."
+        )
+    manifest_identity = {
+        "run_id": manifest.get("run_id"),
+        "global_step": manifest.get("global_step"),
+        "source_sha256": manifest.get("source_sha256"),
+        "resume_signature": manifest.get("resume_signature"),
+    }
+    if (
+        not isinstance(manifest_identity["run_id"], str)
+        or not manifest_identity["run_id"]
+        or isinstance(manifest_identity["global_step"], bool)
+        or not isinstance(manifest_identity["global_step"], int)
+        or not isinstance(manifest_identity["source_sha256"], str)
+        or not manifest_identity["source_sha256"]
+        or not isinstance(manifest_identity["resume_signature"], str)
+        or not manifest_identity["resume_signature"]
+    ):
+        raise RuntimeError(
+            "CPU gradient accumulation checkpoint manifest identity is incomplete."
+        )
+    if resolved_checkpoint.parent == resolved_output:
+        return {
+            "scope": "output_dir",
+            "relative_path": resolved_checkpoint.name,
+            "manifest_sha256": manifest_sha256,
+            "manifest_identity": manifest_identity,
+            **inventory,
+        }
+    return {
+        "scope": "external",
+        "basename": resolved_checkpoint.name,
+        "manifest_sha256": manifest_sha256,
+        "manifest_identity": manifest_identity,
+        **inventory,
+    }
+
+
+def _new_gradient_accumulation_offload_receipt(
+    schema_records: Sequence[Mapping[str, Any]],
+    *,
+    run_id: str,
+    source_digest: str,
+    resume_digest: str,
+    initial_global_step: int,
+    configured_accumulation_steps: int,
+    resume_checkpoint: Optional[Path] = None,
+    output_dir: Optional[Path] = None,
+) -> dict[str, Any]:
+    schema_identity = _gradient_offload_schema_identity(schema_records)
+    counters = {field_name: 0 for field_name in _GRADIENT_OFFLOAD_COUNTER_FIELDS}
+    if resume_checkpoint is not None and output_dir is None:
+        raise RuntimeError(
+            "An external CPU gradient accumulation resume requires output_dir."
+        )
+    checkpoint = (
+        _gradient_offload_checkpoint_descriptor(
+            resume_checkpoint,
+            output_dir=output_dir,
+        )
+        if resume_checkpoint is not None and output_dir is not None
+        else None
+    )
+    receipt: dict[str, Any] = {
+        "schema_version": 2,
+        "mode": "cpu",
+        "algorithm": "pageable_cpu_storage_cuda_native_order_add_v1",
+        "claim_boundary": {
+            "execution_proof": (
+                "This receipt proves that the single-process CUDA spill/merge/restore "
+                "path executed with exact schema accounting and no live host buffers "
+                "after each recorded restore."
+            ),
+            "numerical_proof": (
+                "Additions run on each parameter's original CUDA device and dtype in "
+                "microbatch order; model-level bitwise parity remains an external "
+                "oracle comparison."
+            ),
+            "unsupported": (
+                "DDP, non-CUDA execution, and schedule-extension resumes are rejected."
+            ),
+        },
+        "run_id": str(run_id),
+        "source_sha256": str(source_digest),
+        "resume_signature": str(resume_digest),
+        "configured_gradient_accumulation_steps": int(
+            configured_accumulation_steps
+        ),
+        "initial_global_step": int(initial_global_step),
+        "last_observed_global_step": int(initial_global_step),
+        "last_restored_global_step": None,
+        "final_global_step": None,
+        **schema_identity,
+        "trainable_parameter_schema_fields": [
+            "name",
+            "shape",
+            "stride",
+            "dtype",
+            "device",
+            "numel",
+            "logical_bytes",
+        ],
+        **counters,
+        "live_cpu_buffer_count": 0,
+        "live_cpu_buffer_bytes": 0,
+        "active_window": None,
+        "continuations": [],
+        "segments": [
+            {
+                "segment_index": 0,
+                "previous_receipt_sha256": None,
+                "resume_checkpoint": checkpoint,
+                "initial_global_step": int(initial_global_step),
+                "last_observed_global_step": int(initial_global_step),
+                "final_global_step": None,
+                "initial_cumulative_counters": copy.deepcopy(counters),
+                "latest_cumulative_counters": copy.deepcopy(counters),
+                "final_cumulative_counters": None,
+                "status": "initialized",
+            }
+        ],
+        "status": "initialized",
+        "updated_at": None,
+        "receipt_sha256": None,
+    }
+    return receipt
+
+
+def _require_exact_gradient_offload_resume_signature(
+    checkpoint: Path,
+    config: ExperimentConfig,
+) -> None:
+    if config.train.allow_schedule_extension:
+        raise RuntimeError(
+            "CPU gradient accumulation offload does not support schedule extension "
+            "during resume. Exact resume_signature equality is required."
+        )
+    manifest = _read_bundle_manifest(checkpoint)
+    expected = manifest.get("resume_signature")
+    actual = resume_signature(config)
+    if not isinstance(expected, str) or not expected or expected != actual:
+        raise RuntimeError(
+            "CPU gradient accumulation offload requires an exact checkpoint "
+            "resume_signature; schedule or optimizer semantics changed."
+        )
+
+
+def _continue_gradient_accumulation_offload_receipt(
+    receipt_path: Path,
+    schema_records: Sequence[Mapping[str, Any]],
+    *,
+    run_id: str,
+    source_digest: str,
+    resume_digest: str,
+    resume_checkpoint: Path,
+    resume_step: int,
+    configured_accumulation_steps: int,
+) -> dict[str, Any]:
+    try:
+        loaded = json.loads(receipt_path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise RuntimeError(
+            "Cannot read the existing CPU gradient accumulation receipt."
+        ) from exc
+    if not isinstance(loaded, dict):
+        raise RuntimeError(
+            "Existing CPU gradient accumulation receipt is not a JSON object."
+        )
+    previous_receipt_sha256 = _require_valid_gradient_offload_receipt_hash(loaded)
+    schema_identity = _gradient_offload_schema_identity(schema_records)
+    checkpoint = resume_checkpoint.expanduser().resolve()
+    receipt_output_dir = receipt_path.parent.expanduser().resolve()
+    checkpoint_descriptor = _gradient_offload_checkpoint_descriptor(
+        checkpoint,
+        output_dir=receipt_output_dir,
+    )
+    manifest = _read_bundle_manifest(checkpoint)
+    counters = _gradient_offload_counter_snapshot(loaded)
+    failures: list[str] = []
+
+    expected_scalars: dict[str, Any] = {
+        "schema_version": 2,
+        "mode": "cpu",
+        "algorithm": "pageable_cpu_storage_cuda_native_order_add_v1",
+        "run_id": str(run_id),
+        "source_sha256": str(source_digest),
+        "resume_signature": str(resume_digest),
+        "configured_gradient_accumulation_steps": int(
+            configured_accumulation_steps
+        ),
+        "status": "preempted",
+        "last_observed_global_step": int(resume_step),
+        "final_global_step": int(resume_step),
+        "preempted_global_step": int(resume_step),
+        "preempted_checkpoint": checkpoint_descriptor,
+        "live_cpu_buffer_count": 0,
+        "live_cpu_buffer_bytes": 0,
+    }
+    expected_scalars.update(schema_identity)
+    for field_name, expected_value in expected_scalars.items():
+        if loaded.get(field_name) != expected_value:
+            failures.append(field_name)
+    if loaded.get("active_window") is not None:
+        failures.append("active_window")
+    if checkpoint.parent != receipt_output_dir:
+        failures.append("checkpoint_output_containment")
+    initial_step = loaded.get("initial_global_step")
+    if (
+        isinstance(initial_step, bool)
+        or not isinstance(initial_step, int)
+        or initial_step > int(resume_step)
+    ):
+        failures.append("initial_global_step")
+
+    manifest_expected = {
+        "run_id": str(run_id),
+        "global_step": int(resume_step),
+        "source_sha256": str(source_digest),
+        "resume_signature": str(resume_digest),
+    }
+    for field_name, expected_value in manifest_expected.items():
+        if manifest.get(field_name) != expected_value:
+            failures.append(f"checkpoint_manifest.{field_name}")
+
+    segments = loaded.get("segments")
+    continuations = loaded.get("continuations")
+    if not isinstance(segments, list) or not segments:
+        failures.append("segments")
+    if not isinstance(continuations, list):
+        failures.append("continuations")
+    elif isinstance(segments, list) and len(continuations) != len(segments) - 1:
+        failures.append("continuation_count")
+    last_segment: Optional[Mapping[str, Any]] = None
+    if isinstance(segments, list) and segments:
+        if loaded.get("initial_global_step") != (
+            segments[0].get("initial_global_step")
+            if isinstance(segments[0], Mapping)
+            else None
+        ):
+            failures.append("segments[0].initial_global_step")
+        for segment_index, candidate_segment in enumerate(segments):
+            if not isinstance(candidate_segment, Mapping):
+                failures.append(f"segments[{segment_index}]")
+                continue
+            if candidate_segment.get("segment_index") != segment_index:
+                failures.append(f"segments[{segment_index}].segment_index")
+            if segment_index == 0:
+                if candidate_segment.get("previous_receipt_sha256") is not None:
+                    failures.append("segments[0].previous_receipt_sha256")
+                continue
+            if not isinstance(continuations, list) or len(continuations) < segment_index:
+                failures.append(f"continuations[{segment_index - 1}]")
+                continue
+            continuation = continuations[segment_index - 1]
+            previous_segment = segments[segment_index - 1]
+            if not isinstance(continuation, Mapping) or not isinstance(
+                previous_segment, Mapping
+            ):
+                failures.append(f"continuations[{segment_index - 1}]")
+                continue
+            expected_link = {
+                "event": "resume_continuation",
+                "previous_segment_index": segment_index - 1,
+                "next_segment_index": segment_index,
+                "checkpoint": candidate_segment.get("resume_checkpoint"),
+                "global_step": candidate_segment.get("initial_global_step"),
+                "previous_cumulative_counters": previous_segment.get(
+                    "final_cumulative_counters"
+                ),
+            }
+            for field_name, expected_value in expected_link.items():
+                if continuation.get(field_name) != expected_value:
+                    failures.append(
+                        f"continuations[{segment_index - 1}].{field_name}"
+                    )
+            previous_link_hash = continuation.get("previous_receipt_sha256")
+            if (
+                not isinstance(previous_link_hash, str)
+                or not previous_link_hash
+                or candidate_segment.get("previous_receipt_sha256")
+                != previous_link_hash
+            ):
+                failures.append(
+                    f"segments[{segment_index}].previous_receipt_sha256"
+                )
+            if candidate_segment.get("initial_cumulative_counters") != (
+                previous_segment.get("final_cumulative_counters")
+            ):
+                failures.append(
+                    f"segments[{segment_index}].initial_cumulative_counters"
+                )
+            if previous_segment.get("status") != "preempted":
+                failures.append(f"segments[{segment_index - 1}].status")
+        candidate_segment = segments[-1]
+        if isinstance(candidate_segment, Mapping):
+            last_segment = candidate_segment
+            expected_segment = {
+                "segment_index": len(segments) - 1,
+                "status": "preempted",
+                "last_observed_global_step": int(resume_step),
+                "final_global_step": int(resume_step),
+                "terminal_checkpoint": checkpoint_descriptor,
+                "latest_cumulative_counters": counters,
+                "final_cumulative_counters": counters,
+            }
+            for field_name, expected_value in expected_segment.items():
+                if last_segment.get(field_name) != expected_value:
+                    failures.append(f"segments[-1].{field_name}")
+        else:
+            failures.append("segments[-1]")
+    if failures:
+        raise RuntimeError(
+            "Existing CPU gradient accumulation receipt cannot continue because "
+            f"bindings changed: {sorted(set(failures))}."
+        )
+
+    receipt = copy.deepcopy(loaded)
+    receipt_continuations = receipt["continuations"]
+    receipt_segments = receipt["segments"]
+    next_segment_index = len(receipt_segments)
+    continuation = {
+        "event": "resume_continuation",
+        "previous_segment_index": next_segment_index - 1,
+        "next_segment_index": next_segment_index,
+        "previous_receipt_sha256": previous_receipt_sha256,
+        "checkpoint": copy.deepcopy(checkpoint_descriptor),
+        "global_step": int(resume_step),
+        "previous_cumulative_counters": copy.deepcopy(counters),
+        "continued_at": time.time(),
+    }
+    receipt_continuations.append(continuation)
+    receipt_segments.append(
+        {
+            "segment_index": next_segment_index,
+            "previous_receipt_sha256": previous_receipt_sha256,
+            "resume_checkpoint": copy.deepcopy(checkpoint_descriptor),
+            "initial_global_step": int(resume_step),
+            "last_observed_global_step": int(resume_step),
+            "final_global_step": None,
+            "initial_cumulative_counters": copy.deepcopy(counters),
+            "latest_cumulative_counters": copy.deepcopy(counters),
+            "final_cumulative_counters": None,
+            "status": "initialized",
+        }
+    )
+    receipt["status"] = "initialized"
+    receipt["last_observed_global_step"] = int(resume_step)
+    receipt["final_global_step"] = None
+    receipt["active_window"] = None
+    receipt["live_cpu_buffer_count"] = 0
+    receipt["live_cpu_buffer_bytes"] = 0
+    for stale_field in (
+        "preempted_checkpoint",
+        "preempted_global_step",
+        "failed_active_window",
+        "failed_window_statistics",
+        "last_error_type",
+        "last_error",
+    ):
+        receipt.pop(stale_field, None)
+    receipt["updated_at"] = None
+    receipt["receipt_sha256"] = None
+    return receipt
+
+
+def _start_gradient_accumulation_offload_window(
+    receipt: MutableMapping[str, Any],
+    *,
+    global_step: int,
+    batch_start: int,
+    microbatch_count: int,
+) -> None:
+    if receipt.get("active_window") is not None:
+        raise RuntimeError(
+            "CPU gradient accumulation receipt already has an active window."
+        )
+    if microbatch_count < 1:
+        raise RuntimeError(
+            "CPU gradient accumulation receipt cannot start an empty window."
+        )
+    receipt["windows_started"] = int(receipt["windows_started"]) + 1
+    receipt["last_observed_global_step"] = int(global_step)
+    receipt["active_window"] = {
+        "global_step": int(global_step),
+        "batch_start": int(batch_start),
+        "microbatch_count": int(microbatch_count),
+        "spills_completed": 0,
+        "last_microbatch_index": None,
+        "latest_cpu_accumulator_bytes": 0,
+    }
+    receipt["status"] = "running"
+    segment = _current_gradient_offload_segment(receipt)
+    segment_initial_step = segment.get("initial_global_step")
+    if (
+        isinstance(segment_initial_step, bool)
+        or not isinstance(segment_initial_step, int)
+        or int(global_step) < segment_initial_step
+    ):
+        raise RuntimeError(
+            "CPU gradient accumulation segment step moved backwards."
+        )
+    if segment.get("status") not in {"initialized", "running"}:
+        raise RuntimeError(
+            "CPU gradient accumulation cannot start a terminal segment."
+        )
+    segment["status"] = "running"
+    segment["last_observed_global_step"] = int(global_step)
+
+
+def _record_gradient_accumulation_offload_spill(
+    receipt: MutableMapping[str, Any],
+    *,
+    global_step: int,
+    microbatch_index: int,
+    statistics: Mapping[str, int],
+) -> None:
+    active_window = receipt.get("active_window")
+    if not isinstance(active_window, MutableMapping):
+        raise RuntimeError(
+            "CPU gradient accumulation receipt has no active spill window."
+        )
+    if int(active_window.get("global_step", -1)) != int(global_step):
+        raise RuntimeError(
+            "CPU gradient accumulation spill global-step binding changed."
+        )
+    expected_spill_count = int(microbatch_index) + 1
+    if int(statistics["spill_count"]) != expected_spill_count:
+        raise RuntimeError(
+            "CPU gradient accumulation spill order is not contiguous."
+        )
+    if expected_spill_count > int(active_window["microbatch_count"]):
+        raise RuntimeError(
+            "CPU gradient accumulation recorded more spills than microbatches."
+        )
+    live_count = int(statistics["accumulated_parameter_count"])
+    live_bytes = int(statistics["cpu_accumulator_bytes"])
+    if live_count < 1 or live_bytes < 1:
+        raise RuntimeError(
+            "CPU gradient accumulation spill did not retain a host accumulator."
+        )
+    active_window["spills_completed"] = expected_spill_count
+    active_window["last_microbatch_index"] = int(microbatch_index)
+    active_window["latest_cpu_accumulator_bytes"] = live_bytes
+    active_window["cumulative_parameter_merges"] = int(
+        statistics["cumulative_merge_count"]
+    )
+    active_window["cumulative_current_gradient_bytes"] = int(
+        statistics["cumulative_current_gradient_bytes"]
+    )
+    receipt["last_observed_global_step"] = int(global_step)
+    receipt["live_cpu_buffer_count"] = live_count
+    receipt["live_cpu_buffer_bytes"] = live_bytes
+    receipt["peak_cpu_accumulator_bytes"] = max(
+        int(receipt["peak_cpu_accumulator_bytes"]),
+        int(statistics["peak_cpu_accumulator_bytes"]),
+    )
+
+
+def _finish_gradient_accumulation_offload_window(
+    receipt: MutableMapping[str, Any],
+    *,
+    global_step: int,
+    statistics: Optional[Mapping[str, int]],
+    restored: bool,
+    single_microbatch: bool = False,
+) -> None:
+    active_window = receipt.get("active_window")
+    if not isinstance(active_window, Mapping):
+        raise RuntimeError(
+            "CPU gradient accumulation receipt has no active window to finish."
+        )
+    if int(active_window.get("global_step", -1)) != int(global_step):
+        raise RuntimeError(
+            "CPU gradient accumulation receipt global-step binding changed."
+        )
+    if single_microbatch:
+        if int(active_window.get("microbatch_count", -1)) != 1:
+            raise RuntimeError(
+                "CPU gradient accumulation single-microbatch accounting mismatch."
+            )
+        if statistics is not None or restored:
+            raise RuntimeError(
+                "A single-microbatch window cannot record spill statistics."
+            )
+        receipt["single_microbatch_windows"] = (
+            int(receipt["single_microbatch_windows"]) + 1
+        )
+    else:
+        if statistics is None:
+            raise RuntimeError(
+                "CPU gradient accumulation window is missing spill statistics."
+            )
+        live_count = int(statistics["live_cpu_buffer_count"])
+        live_bytes = int(statistics["live_cpu_buffer_bytes"])
+        if live_count != 0 or live_bytes != 0:
+            raise RuntimeError(
+                "CPU gradient accumulation window finished with live host buffers."
+            )
+        spill_count = int(statistics["spill_count"])
+        if spill_count != int(active_window.get("microbatch_count", -1)):
+            raise RuntimeError(
+                "CPU gradient accumulation spill count does not match the window."
+            )
+        if spill_count != int(active_window.get("spills_completed", -1)):
+            raise RuntimeError(
+                "CPU gradient accumulation durable spill receipt is incomplete."
+            )
+        receipt["microbatch_spills"] = int(receipt["microbatch_spills"]) + spill_count
+        receipt["parameter_first_spills"] = int(
+            receipt["parameter_first_spills"]
+        ) + int(statistics["first_spill_count"])
+        receipt["parameter_merges"] = int(receipt["parameter_merges"]) + int(
+            statistics["merge_count"]
+        )
+        receipt["cumulative_current_gradient_bytes"] = int(
+            receipt["cumulative_current_gradient_bytes"]
+        ) + int(statistics["cumulative_current_gradient_bytes"])
+        receipt["peak_cpu_accumulator_bytes"] = max(
+            int(receipt["peak_cpu_accumulator_bytes"]),
+            int(statistics["peak_cpu_accumulator_bytes"]),
+        )
+        receipt["live_cpu_buffer_count"] = live_count
+        receipt["live_cpu_buffer_bytes"] = live_bytes
+        if restored:
+            receipt["windows_restored"] = int(receipt["windows_restored"]) + 1
+            receipt["last_restored_global_step"] = int(global_step)
+        else:
+            receipt["windows_discarded"] = int(receipt["windows_discarded"]) + 1
+    receipt["last_observed_global_step"] = int(global_step)
+    receipt["active_window"] = None
+    segment = _current_gradient_offload_segment(receipt)
+    segment["last_observed_global_step"] = int(global_step)
+    segment["latest_cumulative_counters"] = (
+        _gradient_offload_counter_snapshot(receipt)
+    )
+
+
+def _mark_gradient_accumulation_offload_terminal(
+    receipt: MutableMapping[str, Any],
+    *,
+    status: str,
+    global_step: int,
+    checkpoint: Optional[Path] = None,
+    output_dir: Optional[Path] = None,
+) -> None:
+    if status not in {"preempted", "completed", "failed"}:
+        raise RuntimeError(
+            f"Unsupported CPU gradient accumulation terminal status: {status!r}."
+        )
+    if receipt.get("active_window") is not None:
+        raise RuntimeError(
+            "CPU gradient accumulation terminal receipt has an active window."
+        )
+    if int(receipt.get("live_cpu_buffer_count", -1)) != 0 or int(
+        receipt.get("live_cpu_buffer_bytes", -1)
+    ) != 0:
+        raise RuntimeError(
+            "CPU gradient accumulation terminal receipt has live host buffers."
+        )
+    checkpoint_descriptor: Optional[dict[str, Any]] = None
+    if status == "preempted":
+        if checkpoint is None or output_dir is None:
+            raise RuntimeError(
+                "A preempted CPU gradient accumulation receipt requires a checkpoint "
+                "and output_dir."
+            )
+        checkpoint_descriptor = _gradient_offload_checkpoint_descriptor(
+            checkpoint,
+            output_dir=output_dir,
+        )
+        if checkpoint_descriptor.get("scope") != "output_dir":
+            raise RuntimeError(
+                "A preemption checkpoint must be contained directly in output_dir."
+            )
+    elif checkpoint is not None or output_dir is not None:
+        raise RuntimeError(
+            "Only a preempted CPU gradient accumulation segment binds a checkpoint."
+        )
+
+    counters = _gradient_offload_counter_snapshot(receipt)
+    segment = _current_gradient_offload_segment(receipt)
+    if segment.get("status") not in {"initialized", "running"}:
+        raise RuntimeError(
+            "CPU gradient accumulation segment is already terminal."
+        )
+    segment["status"] = status
+    segment["last_observed_global_step"] = int(global_step)
+    segment["final_global_step"] = int(global_step)
+    segment["latest_cumulative_counters"] = copy.deepcopy(counters)
+    segment["final_cumulative_counters"] = copy.deepcopy(counters)
+    if checkpoint_descriptor is not None:
+        segment["terminal_checkpoint"] = copy.deepcopy(checkpoint_descriptor)
+
+    receipt["status"] = status
+    receipt["last_observed_global_step"] = int(global_step)
+    receipt["final_global_step"] = int(global_step)
+    if status == "preempted":
+        receipt["preempted_checkpoint"] = copy.deepcopy(checkpoint_descriptor)
+        receipt["preempted_global_step"] = int(global_step)
+
+
+def _write_gradient_accumulation_offload_receipt(
+    path: Path,
+    receipt: MutableMapping[str, Any],
+) -> None:
+    receipt["updated_at"] = time.time()
+    receipt["receipt_sha256"] = None
+    receipt["receipt_sha256"] = stable_hash(receipt)
+    _atomic_write_json(path, dict(receipt))
 
 
 def _parameter_identity_record(
@@ -8086,6 +9564,26 @@ def _scalar_workspace_metrics(output: Mapping[str, Any]) -> dict[str, float]:
         if isinstance(value, torch.Tensor) and value.numel() == 1:
             result[key] = float(value.float().item())
     return result
+
+
+def _release_unconsumed_training_logits(output: MutableMapping[str, Any]) -> int:
+    """Drop dense logits once scalar objectives have captured their graph.
+
+    Functional training builds its losses from a small set of indexed answer
+    rows. The corresponding backward node retains the indices and source
+    shape, not the dense logits storage itself. Keeping the public ``logits``
+    entry alive until after backward therefore costs memory without changing
+    the objective or its gradients.
+
+    Returns the number of tensor bytes whose final Python reference may have
+    been released. The return value is diagnostic only and is deliberately
+    excluded from the training state and metric stream.
+    """
+
+    logits = output.pop("logits", None)
+    if not isinstance(logits, torch.Tensor):
+        return 0
+    return int(logits.numel() * logits.element_size())
 
 
 class MetricAccumulator:
@@ -9248,10 +10746,23 @@ def _load_resume_state(
 
 def train_experiment(config: ExperimentConfig) -> Path:
     config.validate()
+    require_cuda_allocator_policy(config.train)
     configure_runtime_math(config.train)
     context = initialize_distributed(config.train)
+    gradient_accumulation_offload_enabled = (
+        config.train.gradient_accumulation_offload == "cpu"
+    )
+    try:
+        _require_gradient_accumulation_offload_context(config.train, context)
+    except Exception:
+        context.close()
+        raise
     controller = PreemptionController()
     controller.install()
+    active_gradient_accumulator: Optional[_CPUGradientAccumulator] = None
+    gradient_offload_parameters: tuple[tuple[str, nn.Parameter], ...] = ()
+    gradient_offload_receipt: Optional[dict[str, Any]] = None
+    gradient_offload_receipt_path: Optional[Path] = None
 
     try:
         output_dir = Path(config.train.output_dir)
@@ -9260,12 +10771,18 @@ def train_experiment(config: ExperimentConfig) -> Path:
         context.barrier()
 
         resume_checkpoint = resolve_resume_checkpoint(config)
+        if gradient_accumulation_offload_enabled and resume_checkpoint is not None:
+            _require_exact_gradient_offload_resume_signature(
+                resume_checkpoint,
+                config,
+            )
         set_global_seed(config.train.seed)
         if resume_checkpoint is None:
             model, tokenizer = build_workspace_model(config)
         else:
             model, tokenizer, _ = _load_training_model(resume_checkpoint, config)
         model.to(context.device)
+        require_effective_cuda_allocator_policy(config.train, context.device)
 
         train_dataset = JsonlFineTuningDataset(
             config.data.train_files,
@@ -9391,6 +10908,66 @@ def train_experiment(config: ExperimentConfig) -> Path:
 
         training_model = wrap_distributed_model(model, context, config)
         raw_model = unwrap_model(training_model)
+        if gradient_accumulation_offload_enabled:
+            gradient_offload_receipt_path = (
+                output_dir / "gradient_accumulation_offload.json"
+            )
+            gradient_offload_parameters = tuple(
+                (name, parameter)
+                for name, parameter in raw_model.named_parameters()
+                if parameter.requires_grad
+            )
+            schema_probe = _CPUGradientAccumulator(
+                gradient_offload_parameters,
+                require_cuda=True,
+            )
+            schema_records = schema_probe.schema_records()
+            schema_probe.discard()
+            current_source_digest = source_sha256()
+            current_resume_digest = resume_signature(config)
+            if gradient_offload_receipt_path.exists():
+                if resume_checkpoint is None:
+                    raise RuntimeError(
+                        "An existing CPU gradient accumulation receipt cannot be "
+                        "overwritten by a fresh run."
+                    )
+                gradient_offload_receipt = (
+                    _continue_gradient_accumulation_offload_receipt(
+                        gradient_offload_receipt_path,
+                        schema_records,
+                        run_id=state.run_id,
+                        source_digest=current_source_digest,
+                        resume_digest=current_resume_digest,
+                        resume_checkpoint=resume_checkpoint,
+                        resume_step=state.global_step,
+                        configured_accumulation_steps=(
+                            config.train.gradient_accumulation_steps
+                        ),
+                    )
+                )
+            else:
+                same_output_checkpoint = bool(
+                    resume_checkpoint is not None
+                    and resume_checkpoint.expanduser().resolve().parent
+                    == output_dir.expanduser().resolve()
+                )
+                if same_output_checkpoint:
+                    raise RuntimeError(
+                        "Same-output CPU gradient accumulation resume is missing its "
+                        "root gradient_accumulation_offload.json receipt."
+                    )
+                gradient_offload_receipt = _new_gradient_accumulation_offload_receipt(
+                    schema_records,
+                    run_id=state.run_id,
+                    source_digest=current_source_digest,
+                    resume_digest=current_resume_digest,
+                    initial_global_step=state.global_step,
+                    configured_accumulation_steps=(
+                        config.train.gradient_accumulation_steps
+                    ),
+                    resume_checkpoint=resume_checkpoint,
+                    output_dir=output_dir,
+                )
         # Restore stochastic state only after model construction, optimizer
         # creation, DataLoader setup, and DDP wrapping. None of those setup
         # operations may perturb the resumed dropout/sampling trajectory.
@@ -9398,6 +10975,7 @@ def train_experiment(config: ExperimentConfig) -> Path:
             _restore_rng_state(resume_rng, context.device)
 
         metrics_path = output_dir / "metrics.jsonl"
+        microbatch_memory_path = output_dir / "microbatch_memory.jsonl"
         if context.is_main:
             if resume_checkpoint is None and metrics_path.exists():
                 raise RuntimeError(
@@ -9407,6 +10985,14 @@ def train_experiment(config: ExperimentConfig) -> Path:
             config.to_json(output_dir / "resolved_config.json")
             _atomic_write_json(output_dir / "environment.json", runtime_environment())
             _atomic_write_json(output_dir / "data_fingerprint.json", train_fingerprint)
+            if (
+                gradient_offload_receipt is not None
+                and gradient_offload_receipt_path is not None
+            ):
+                _write_gradient_accumulation_offload_receipt(
+                    gradient_offload_receipt_path,
+                    gradient_offload_receipt,
+                )
             _write_jsonl(
                 metrics_path,
                 {
@@ -9430,6 +11016,9 @@ def train_experiment(config: ExperimentConfig) -> Path:
                 "optimizer_steps": total_steps,
                 "optimizer_coverage_passed": optimizer_coverage["passed"],
                 "optimizer_coverage_sha256": optimizer_coverage["report_sha256"],
+                "gradient_accumulation_offload": (
+                    config.train.gradient_accumulation_offload
+                ),
                 "resume_checkpoint": str(resume_checkpoint) if resume_checkpoint else None,
                 **count_parameters(raw_model),
             }
@@ -9464,6 +11053,30 @@ def train_experiment(config: ExperimentConfig) -> Path:
                 consumed_any = True
                 window_start = batch_cursor
                 batch_cursor += len(window)
+                if gradient_offload_receipt is not None:
+                    _start_gradient_accumulation_offload_window(
+                        gradient_offload_receipt,
+                        global_step=state.global_step,
+                        batch_start=window_start,
+                        microbatch_count=len(window),
+                    )
+                    if gradient_offload_receipt_path is None:
+                        raise RuntimeError(
+                            "CPU gradient accumulation receipt path is unavailable."
+                        )
+                    _write_gradient_accumulation_offload_receipt(
+                        gradient_offload_receipt_path,
+                        gradient_offload_receipt,
+                    )
+                if gradient_accumulation_offload_enabled and len(window) > 1:
+                    if active_gradient_accumulator is not None:
+                        raise RuntimeError(
+                            "A prior CPU gradient accumulation window is still active."
+                        )
+                    active_gradient_accumulator = _CPUGradientAccumulator(
+                        gradient_offload_parameters,
+                        require_cuda=True,
+                    )
                 current_induction = induction_status(
                     config.workspace,
                     config.induction,
@@ -9541,6 +11154,24 @@ def train_experiment(config: ExperimentConfig) -> Path:
                         and state.global_step % spectral_every == 0
                         and micro_index == 0
                     )
+
+                    if (
+                        context.is_main
+                        and config.train.log_memory
+                        and context.device.type == "cuda"
+                    ):
+                        _write_jsonl(
+                            microbatch_memory_path,
+                            {
+                                "event": "pre_forward",
+                                "peak_scope": "run_since_process_start",
+                                "run_id": state.run_id,
+                                "step": state.global_step,
+                                "microbatch_index": micro_index,
+                                "accumulation_window_size": len(window),
+                                **_memory_metrics(context.device),
+                            },
+                        )
 
                     with sync_context:
                         with autocast_context(context.device, precision):
@@ -9623,6 +11254,25 @@ def train_experiment(config: ExperimentConfig) -> Path:
                         if not finite:
                             window_failed = True
 
+                        _release_unconsumed_training_logits(output)
+                        if (
+                            context.is_main
+                            and config.train.log_memory
+                            and context.device.type == "cuda"
+                        ):
+                            _write_jsonl(
+                                microbatch_memory_path,
+                                {
+                                    "event": "pre_backward",
+                                    "peak_scope": "run_since_process_start",
+                                    "run_id": state.run_id,
+                                    "step": state.global_step,
+                                    "microbatch_index": micro_index,
+                                    "accumulation_window_size": len(window),
+                                    **_memory_metrics(context.device),
+                                },
+                            )
+
                         # DDP requires every forward to be paired with a backward.
                         # Once a window is poisoned, run a zero-gradient surrogate
                         # through the remaining microbatches so the reducer reaches
@@ -9636,6 +11286,65 @@ def train_experiment(config: ExperimentConfig) -> Path:
                             scaler.scale(safe_objective).backward()
                         else:
                             scaler.scale(objective).backward()
+
+                        if (
+                            context.is_main
+                            and config.train.log_memory
+                            and context.device.type == "cuda"
+                        ):
+                            _write_jsonl(
+                                microbatch_memory_path,
+                                {
+                                    "event": "post_backward",
+                                    "peak_scope": "run_since_process_start",
+                                    "run_id": state.run_id,
+                                    "step": state.global_step,
+                                    "microbatch_index": micro_index,
+                                    "accumulation_window_size": len(window),
+                                    **_memory_metrics(context.device),
+                                },
+                            )
+
+                        if active_gradient_accumulator is not None:
+                            spill_statistics = active_gradient_accumulator.spill()
+                            if (
+                                gradient_offload_receipt is None
+                                or gradient_offload_receipt_path is None
+                            ):
+                                raise RuntimeError(
+                                    "CPU gradient accumulation receipt is unavailable."
+                                )
+                            _record_gradient_accumulation_offload_spill(
+                                gradient_offload_receipt,
+                                global_step=state.global_step,
+                                microbatch_index=micro_index,
+                                statistics=spill_statistics,
+                            )
+                            _write_gradient_accumulation_offload_receipt(
+                                gradient_offload_receipt_path,
+                                gradient_offload_receipt,
+                            )
+                            if (
+                                context.is_main
+                                and config.train.log_memory
+                                and context.device.type == "cuda"
+                            ):
+                                _write_jsonl(
+                                    microbatch_memory_path,
+                                    {
+                                        "event": (
+                                            "post_gradient_accumulation_offload"
+                                        ),
+                                        "peak_scope": "run_since_process_start",
+                                        "run_id": state.run_id,
+                                        "step": state.global_step,
+                                        "microbatch_index": micro_index,
+                                        "accumulation_window_size": len(window),
+                                        "gradient_accumulation_offload": "cpu",
+                                        **spill_statistics,
+                                        **_memory_metrics(context.device),
+                                    },
+                                )
 
                     scalar = _scalar_workspace_metrics(output)
                     token_count = max(1.0, scalar["supervised_tokens"])
@@ -9659,6 +11368,56 @@ def train_experiment(config: ExperimentConfig) -> Path:
                         },
                     )
                     interval_tokens_local += int(token_count)
+
+                if active_gradient_accumulator is not None:
+                    if window_failed:
+                        active_gradient_accumulator.discard()
+                        offload_window_statistics = (
+                            active_gradient_accumulator.statistics()
+                        )
+                        active_gradient_accumulator = None
+                        offload_window_restored = False
+                    else:
+                        active_gradient_accumulator.restore()
+                        offload_window_statistics = (
+                            active_gradient_accumulator.statistics()
+                        )
+                        active_gradient_accumulator = None
+                        offload_window_restored = True
+                    if gradient_offload_receipt is None:
+                        raise RuntimeError(
+                            "CPU gradient accumulation receipt is unavailable."
+                        )
+                    _finish_gradient_accumulation_offload_window(
+                        gradient_offload_receipt,
+                        global_step=state.global_step,
+                        statistics=offload_window_statistics,
+                        restored=offload_window_restored,
+                    )
+                    if gradient_offload_receipt_path is None:
+                        raise RuntimeError(
+                            "CPU gradient accumulation receipt path is unavailable."
+                        )
+                    _write_gradient_accumulation_offload_receipt(
+                        gradient_offload_receipt_path,
+                        gradient_offload_receipt,
+                    )
+                elif gradient_offload_receipt is not None:
+                    _finish_gradient_accumulation_offload_window(
+                        gradient_offload_receipt,
+                        global_step=state.global_step,
+                        statistics=None,
+                        restored=False,
+                        single_microbatch=True,
+                    )
+                    if gradient_offload_receipt_path is None:
+                        raise RuntimeError(
+                            "CPU gradient accumulation receipt path is unavailable."
+                        )
+                    _write_gradient_accumulation_offload_receipt(
+                        gradient_offload_receipt_path,
+                        gradient_offload_receipt,
+                    )
 
                 state.next_batch_in_epoch = batch_cursor
                 if batch_cursor >= train_sampler.full_batches_per_epoch:
@@ -10144,6 +11903,26 @@ def train_experiment(config: ExperimentConfig) -> Path:
                     base_update_coverage=base_update_coverage,
                     distributed=context,
                 )
+            if gradient_offload_receipt is not None:
+                if active_gradient_accumulator is not None:
+                    raise RuntimeError(
+                        "CPU gradient accumulation preempted with an active accumulator."
+                    )
+                _mark_gradient_accumulation_offload_terminal(
+                    gradient_offload_receipt,
+                    status="preempted",
+                    global_step=state.global_step,
+                    checkpoint=last_checkpoint_path,
+                    output_dir=output_dir,
+                )
+                if gradient_offload_receipt_path is None:
+                    raise RuntimeError(
+                        "CPU gradient accumulation receipt path is unavailable."
+                    )
+                _write_gradient_accumulation_offload_receipt(
+                    gradient_offload_receipt_path,
+                    gradient_offload_receipt,
+                )
             _write_heartbeat(
                 output_dir,
                 state,
@@ -10231,6 +12010,27 @@ def train_experiment(config: ExperimentConfig) -> Path:
                     )
             context.barrier()
 
+        if gradient_offload_receipt is not None:
+            if active_gradient_accumulator is not None:
+                raise RuntimeError(
+                    "CPU gradient accumulation completed with an active accumulator."
+                )
+            if gradient_offload_receipt.get("active_window") is not None:
+                raise RuntimeError(
+                    "CPU gradient accumulation completed with an active receipt window."
+                )
+            if int(gradient_offload_receipt["live_cpu_buffer_count"]) != 0 or int(
+                gradient_offload_receipt["live_cpu_buffer_bytes"]
+            ) != 0:
+                raise RuntimeError(
+                    "CPU gradient accumulation completed with live host buffers."
+                )
+            if int(gradient_offload_receipt["windows_restored"]) < 1:
+                raise RuntimeError(
+                    "CPU gradient accumulation was configured but no multi-microbatch "
+                    "window executed the spill/restore path."
+                )
+
         final_path = save_bundle(
             output_dir / "final",
             model=training_model,
@@ -10249,6 +12049,20 @@ def train_experiment(config: ExperimentConfig) -> Path:
             base_update_coverage=base_update_coverage,
             distributed=context,
         )
+        if gradient_offload_receipt is not None:
+            _mark_gradient_accumulation_offload_terminal(
+                gradient_offload_receipt,
+                status="completed",
+                global_step=state.global_step,
+            )
+            if gradient_offload_receipt_path is None:
+                raise RuntimeError(
+                    "CPU gradient accumulation receipt path is unavailable."
+                )
+            _write_gradient_accumulation_offload_receipt(
+                gradient_offload_receipt_path,
+                gradient_offload_receipt,
+            )
         _write_heartbeat(
             output_dir,
             state,
@@ -10260,6 +12074,50 @@ def train_experiment(config: ExperimentConfig) -> Path:
 
     except Exception as exc:
         try:
+            failed_window_statistics: Optional[dict[str, int]] = None
+            if active_gradient_accumulator is not None:
+                active_gradient_accumulator.discard()
+                failed_window_statistics = active_gradient_accumulator.statistics()
+                active_gradient_accumulator = None
+            if (
+                gradient_offload_receipt is not None
+                and gradient_offload_receipt_path is not None
+            ):
+                try:
+                    current_segment = _current_gradient_offload_segment(
+                        gradient_offload_receipt
+                    )
+                    if current_segment.get("status") in {"initialized", "running"}:
+                        gradient_offload_receipt["failed_active_window"] = (
+                            copy.deepcopy(
+                                gradient_offload_receipt.get("active_window")
+                            )
+                        )
+                        gradient_offload_receipt["active_window"] = None
+                        gradient_offload_receipt["live_cpu_buffer_count"] = 0
+                        gradient_offload_receipt["live_cpu_buffer_bytes"] = 0
+                        gradient_offload_receipt["last_error_type"] = type(exc).__name__
+                        gradient_offload_receipt["last_error"] = str(exc)
+                        if failed_window_statistics is not None:
+                            gradient_offload_receipt["failed_window_statistics"] = (
+                                failed_window_statistics
+                            )
+                        _mark_gradient_accumulation_offload_terminal(
+                            gradient_offload_receipt,
+                            status="failed",
+                            global_step=int(
+                                gradient_offload_receipt.get(
+                                    "last_observed_global_step", 0
+                                )
+                            ),
+                        )
+                        _write_gradient_accumulation_offload_receipt(
+                            gradient_offload_receipt_path,
+                            gradient_offload_receipt,
+                        )
+                except Exception:
+                    # Preserve the training failure as the primary exception.
+                    pass
             if context.is_main:
                 output_dir = Path(config.train.output_dir)
                 output_dir.mkdir(parents=True, exist_ok=True)
@@ -10271,13 +12129,18 @@ def train_experiment(config: ExperimentConfig) -> Path:
                         "time": time.time(),
                         "hostname": socket.gethostname(),
                         "pid": os.getpid(),
+                        "allocator": allocator_runtime_environment(),
                     },
                 )
         finally:
             raise
     finally:
-        controller.restore()
-        context.close()
+        try:
+            if active_gradient_accumulator is not None:
+                active_gradient_accumulator.discard()
+        finally:
+            controller.restore()
+            context.close()
 
 
 # =============================================================================
@@ -14447,6 +16310,9 @@ def _doctor_smoke_step(
 
     model, tokenizer = build_workspace_model(config)
     model.to(device)
+    effective_allocator_environment = require_effective_cuda_allocator_policy(
+        config.train, device
+    )
     model.train()
     if config.model.train_mode == "workspace_only":
         model.base_model.eval()
@@ -14544,6 +16410,7 @@ def _doctor_smoke_step(
     if not bool(torch.isfinite(objective.detach()).item()):
         raise FloatingPointError("Smoke-step objective is non-finite.")
 
+    _release_unconsumed_training_logits(output)
     scaler.scale(objective).backward()
     scaler.unscale_(optimizer)
     grad_norm = torch.nn.utils.clip_grad_norm_(
@@ -14610,6 +16477,7 @@ def _doctor_smoke_step(
         "base_update_coverage": base_update_coverage,
         "cuda_phase_memory": cuda_phase_memory,
         "functional_split_equivalence": split_equivalence,
+        "allocator_environment": effective_allocator_environment,
     }
     optimizer.zero_grad(set_to_none=True)
     final_memory = _memory_metrics(device)
@@ -14681,6 +16549,7 @@ def _command_status(args: argparse.Namespace) -> None:
 
 def _command_doctor(args: argparse.Namespace) -> None:
     config = ExperimentConfig.from_json(args.config)
+    require_cuda_allocator_policy(config.train)
     output_dir = Path(config.train.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     _ensure_disk_space(

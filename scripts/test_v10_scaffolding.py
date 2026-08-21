@@ -141,6 +141,14 @@ class MatrixPreparationTests(unittest.TestCase):
             self.assertEqual(len(document["runs"]), run_count)
             self.assertEqual(document["seeds"], seeds)
             self.assertEqual(document["max_steps"], max_steps)
+            self.assertEqual(
+                document["runtime"]["cuda_allocator_conf"],
+                matrix.CUDA_ALLOCATOR_CONF,
+            )
+            self.assertEqual(
+                document["runtime"]["gradient_accumulation_offload"],
+                matrix.GRADIENT_ACCUMULATION_OFFLOAD,
+            )
             self.assertEqual(len({run["run_id"] for run in document["runs"]}), run_count)
             for run in document["runs"]:
                 self.assertFalse(Path(run["condition_config"]).is_absolute())
@@ -160,9 +168,27 @@ class MatrixPreparationTests(unittest.TestCase):
             self.assertEqual(config["train"]["device"], "cuda")
             self.assertEqual(config["train"]["mixed_precision"], "bf16")
             self.assertEqual(config["train"]["optimizer"], "adafactor")
+            self.assertEqual(
+                config["train"]["cuda_allocator_conf"],
+                matrix.CUDA_ALLOCATOR_CONF,
+            )
+            self.assertEqual(
+                config["train"]["gradient_accumulation_offload"],
+                matrix.GRADIENT_ACCUMULATION_OFFLOAD,
+            )
             self.assertEqual(config["train"]["resume_from"], "auto")
             self.assertTrue(config["train"]["strict_resume"])
             self.assertTrue(config["train"]["save_optimizer"])
+
+        contract = _json(ROOT / "configs" / "v10" / "CONTRACT.json")
+        self.assertEqual(
+            contract["runtime"]["cuda_allocator_conf"],
+            matrix.CUDA_ALLOCATOR_CONF,
+        )
+        self.assertEqual(
+            contract["runtime"]["gradient_accumulation_offload"],
+            matrix.GRADIENT_ACCUMULATION_OFFLOAD,
+        )
 
         for condition, expected_boundary in {
             "F2_raw_b3": 8,
@@ -181,6 +207,19 @@ class MatrixPreparationTests(unittest.TestCase):
             self.assertEqual(_sha(ROOT / relative), expected)
         for relative, expected in contract["source"]["preparation_scripts"].items():
             self.assertEqual(_sha(ROOT / relative), expected)
+        for relative, expected in contract["source"]["runtime_sources"].items():
+            self.assertEqual(_sha(ROOT / relative), expected)
+
+        source_manifest = _json(
+            ROOT / "src" / "latent_workspace_ft_v10" / "source_manifest.json"
+        )
+        patched_engine = source_manifest["patched_engine"]
+        engine_path = ROOT / patched_engine["path"]
+        self.assertEqual(_sha(engine_path), patched_engine["sha256"])
+        self.assertEqual(
+            len(engine_path.read_text(encoding="utf-8").splitlines()),
+            patched_engine["line_count"],
+        )
         self.assertEqual(
             _sha(ROOT / contract["data"]["manifest"]),
             contract["data"]["manifest_sha256"],
