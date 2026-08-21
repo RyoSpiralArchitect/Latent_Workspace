@@ -1,0 +1,70 @@
+{
+  "condition_order": [
+    "F0_query_only",
+    "B_local_invariance",
+    "F1_inline_upper",
+    "O3_slots4_k1_lw_cf"
+  ],
+  "expected_run_count": 4,
+  "format": "latent-workspace-v10-profile-matrix-v1",
+  "max_steps": 8,
+  "model": {
+    "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71"
+  },
+  "path_base": "repository_root",
+  "profile": "smoke",
+  "runs": [
+    {
+      "condition": "F0_query_only",
+      "condition_config": "configs/v10/conditions/config_F0_query_only.json",
+      "max_steps": 8,
+      "output_dir": "runs/v10/smoke/F0_query_only/seed_42",
+      "resolved_boundary_layer": 16,
+      "run_id": "F0_query_only/seed_42",
+      "seed": 42,
+      "source_boundary_layer": 6
+    },
+    {
+      "condition": "B_local_invariance",
+      "condition_config": "configs/v10/conditions/config_B_local_invariance.json",
+      "max_steps": 8,
+      "output_dir": "runs/v10/smoke/B_local_invariance/seed_42",
+      "resolved_boundary_layer": 16,
+      "run_id": "B_local_invariance/seed_42",
+      "seed": 42,
+      "source_boundary_layer": 6
+    },
+    {
+      "condition": "F1_inline_upper",
+      "condition_config": "configs/v10/conditions/config_F1_inline_upper.json",
+      "max_steps": 8,
+      "output_dir": "runs/v10/smoke/F1_inline_upper/seed_42",
+      "resolved_boundary_layer": 16,
+      "run_id": "F1_inline_upper/seed_42",
+      "seed": 42,
+      "source_boundary_layer": 6
+    },
+    {
+      "condition": "O3_slots4_k1_lw_cf",
+      "condition_config": "configs/v10/conditions/config_O3_slots4_k1_lw_cf.json",
+      "max_steps": 8,
+      "output_dir": "runs/v10/smoke/O3_slots4_k1_lw_cf/seed_42",
+      "resolved_boundary_layer": 16,
+      "run_id": "O3_slots4_k1_lw_cf/seed_42",
+      "seed": 42,
+      "source_boundary_layer": 6
+    }
+  ],
+  "runtime": {
+    "attention": "sdpa",
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "gradient_checkpointing": true,
+    "optimizer": "adafactor",
+    "trainability": "full"
+  },
+  "seeds": [
+    42
+  ]
+}

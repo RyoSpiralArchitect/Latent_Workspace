@@ -1,0 +1,63 @@
+{
+  "format": "latent-workspace-v10-resume-equivalence-failure-v1",
+  "status": "completed_training_failed_exact_equivalence",
+  "recorded_utc": "2026-08-21T18:53:09.138896434Z",
+  "attempt_root": "runs/v10/resume_equivalence/F0_query_only/seed_42_step4",
+  "design": {
+    "baseline": "runs/v10/smoke/F0_query_only/seed_42",
+    "split_step": 4,
+    "total_steps": 8,
+    "optimizer_steps_executed": 12,
+    "comparison": "bitwise_exact_zero_tolerance"
+  },
+  "execution": {
+    "control_completed": true,
+    "checkpoint_4_completed": true,
+    "control_final_completed": true,
+    "resumed_final_completed": true,
+    "run_id_preserved": true,
+    "run_id": "dba7a47209c343c6928617417cf379bf"
+  },
+  "failure": {
+    "gate": "base_resume_B_C",
+    "changed_tensor_count": 231,
+    "changed_element_count": 14519381,
+    "first_stable_metric_divergence_step": 6,
+    "workspace_state_exact": true,
+    "rng_exact": true,
+    "sampler_exact": true,
+    "scheduler_exact": true,
+    "optimizer_step_counters_exact": true,
+    "optimizer_moment_states_with_mismatch": 291
+  },
+  "localized_root_cause": {
+    "status": "reproduced",
+    "mechanism": "PyTorch Optimizer.load_state_dict casts floating optimizer state to the BF16 parameter dtype. Adafactor checkpoint moments are FP32, so resume quantized them to BF16 before the next step promoted the already-lossy values back to FP32.",
+    "excluded_by_evidence": [
+      "data order",
+      "sampler position",
+      "RNG restoration",
+      "scheduler restoration",
+      "workspace state restoration",
+      "run identity"
+    ]
+  },
+  "bindings": {
+    "engine_sha256": "9014173a602c03f98d11ba31681f95ebc83c5f2c2fc0acee83e4845df0e2034c",
+    "resume_harness_sha256": "eedbd6927956f8e9566ceb23a6ecff635da1e8b4379a2a6c00b1f22c0ed05e72",
+    "control_config_sha256": "1001743fe8200468cff20a21adc1e551a1475dee8a55667ae4b57443fcc8bcfb",
+    "resumed_config_sha256": "26c17bfcdbb99d1cfd39db876874329cbe677d82ec6a07f6257c2f063f8a6b67",
+    "control_metrics_sha256": "e13fa26bdd474eb16abb5d007eed6bada48daebe81893248b750445c37c4f57c",
+    "resumed_metrics_sha256": "d94f7f9c6f1d862430f0908fe7ea52b266f86cb138e009d79c63229f926a21e6",
+    "checkpoint_4_trainer_state_sha256": "cf95cd5bc62a71bda9dacdb9b94003e607ba9ccc766a5cafb88ec6015467ac8d",
+    "control_final_trainer_state_sha256": "0f7790a6c816eef107f185493ebdfa92e4176db4b72148938bc6e1a6dfaa9d7c",
+    "resumed_final_trainer_state_sha256": "2a1eb95728b2fe3e20a3718dc596119154b98fff1f573145425587a219d6579b",
+    "workspace_state_sha256": "1ccf4516289afef475d362d85348d6c84a87cbb52cc68d1aa087fab996b2cb45"
+  },
+  "successor_fix": {
+    "engine_sha256": "cd5e38335de7470f8d4f0bb5d59ac153da357c43b7f2bdddec574dcb58493d44",
+    "test_sha256": "63acdc7a9b0ce4d678c39372eadbe4a8ad22db56b602719b89ca2c6849713b87",
+    "unit_test": "Exact checkpoint dtype/value restore followed by another Adafactor step is bitwise identical."
+  },
+  "claim_boundary": "This is a failed exact-resume hypothesis and preserved negative engineering result. No RESUME_VERIFICATION was published, pruning is blocked, and this is not a scientific result."
+}

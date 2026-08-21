@@ -1,0 +1,71 @@
+{
+  "format": "latent-workspace-v10-failed-attempt-weight-prune-intent-v1",
+  "created_utc": "2026-08-21T19:16:19Z",
+  "authorized_by": "user",
+  "reason": "Remove only the obsolete base-weight shard bodies from the failed pre-fix resume-equivalence attempt after preserving the negative-result receipt, metrics, manifests, trainer state, workspace state, and successful fixed-engine successor evidence.",
+  "attempt_root": "runs/v10/_failed_attempts/resume_equivalence/F0_query_only/20260821T184536.977236317Z-optimizer-state-dtype-loss",
+  "preserved_failure_receipt": {
+    "path": "ATTEMPT_FAILURE.json",
+    "sha256": "05438d91af13dcdeb975bbf087df116a3907cc255e322e46580747e7e49bb4c0"
+  },
+  "verification": {
+    "target_file_count": 16,
+    "total_bytes": 57984323680,
+    "all_targets_regular_non_symlinks": true,
+    "all_targets_link_count_one": true,
+    "sha256_recomputed_before_delete": true
+  },
+  "bundles": [
+    {
+      "root": "resumed_from_split/final/base_model",
+      "bytes": 14496080920,
+      "files": [
+        {"path": "model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "38edc003beac5a8d5a2234d629aaa9001f86e71b8933213492bff9b6d59a9b48"},
+        {"path": "model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "fe73cf4ff604a596ef4745d2b9ef3c12fb4542457a680feeabd53ee8dc2eafa2"},
+        {"path": "model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "cc6805a574fc00c0cf8720980f4d806cfff0337abae3ddd6feb2d45e78a0b48a"},
+        {"path": "model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "d324a54116e5339782ff6e280e51792e79ba97e0e00ca63316058ba538ea9480"}
+      ]
+    },
+    {
+      "root": "control_uninterrupted/checkpoint-8/base_model",
+      "bytes": 14496080920,
+      "files": [
+        {"path": "model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"},
+        {"path": "model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"},
+        {"path": "model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"},
+        {"path": "model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"}
+      ]
+    },
+    {
+      "root": "control_uninterrupted/checkpoint-4/base_model",
+      "bytes": 14496080920,
+      "files": [
+        {"path": "model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "b710b7c1204f875035efcc6c0ac71444722867f870b24c82d706f397021a8f9a"},
+        {"path": "model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "9172f33813ec09ff1a399fbffc607899bde6b6899d5e7c62ebfbd236a13823db"},
+        {"path": "model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "26f5baed7a2a2768f5fe7b3e09194b5a202a8ebf093a577d23e96085019dd0de"},
+        {"path": "model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "688c4d80cbcc6480d38a090d370aeb7010e561b63fc33fd17f7e201b470c7f27"}
+      ]
+    },
+    {
+      "root": "control_uninterrupted/final/base_model",
+      "bytes": 14496080920,
+      "files": [
+        {"path": "model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"},
+        {"path": "model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"},
+        {"path": "model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"},
+        {"path": "model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"}
+      ]
+    }
+  ],
+  "retained_evidence": {
+    "metrics": true,
+    "manifests_and_indexes": true,
+    "trainer_states": true,
+    "workspace_states": true,
+    "optimizer_coverage": true,
+    "configs_and_logs": true,
+    "successful_fixed_engine_resume_receipt": "runs/v10/resume_equivalence/F0_query_only/seed_42_step4/RESUME_EQUIVALENCE.json"
+  },
+  "recoverability": "The deleted failed-attempt weight shard bodies are not guaranteed reconstructible from retained hashes. The failure mechanism remains reproducible from the retained source history, trainer states, metrics, manifests, and unit test; the corrected successor run is preserved separately.",
+  "scope_boundary": "Delete only the sixteen explicitly listed safetensors files. Preserve every directory, index, config, manifest, metric, log, trainer state, workspace state, and failure receipt."
+}

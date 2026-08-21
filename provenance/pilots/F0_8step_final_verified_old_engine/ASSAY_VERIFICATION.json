@@ -1,0 +1,116 @@
+{
+  "artifacts": [
+    {
+      "bytes": 7376,
+      "path": "LAUNCHED_CONFIG.json",
+      "sha256": "a45d8aa97492da0d316bbc7ec14d44de85ec0072a46fec548dc01bec71ed0079"
+    },
+    {
+      "bytes": 10384,
+      "path": "RUN_VERIFICATION.json",
+      "sha256": "46ef94522e104131fc6623e0a5b82caaf2b1016635b1f8875cc621331116ba22"
+    },
+    {
+      "bytes": 5322,
+      "path": "amputation_report.json",
+      "sha256": "05ae380960abe7254024317db2dfd85b6c8c60b7c69d8b02cc3a70ef36deecfd"
+    },
+    {
+      "bytes": 27890,
+      "path": "metrics.jsonl",
+      "sha256": "4db5d594b96b3cdec56379ac10d480072ffeddcfac7c03a5b9616af4a0a98d98"
+    }
+  ],
+  "claim_boundary": "PASS verifies only that this exact verified run has all assays required by its launched config, with structurally valid, provenance-bound artifacts. Scientific direction is recorded separately and is never an integrity gate. This receipt does not establish positive effect direction, model quality, causal memory, generalization beyond the recorded held-out data, or consciousness.",
+  "completed_assays": [
+    "heldout_eval",
+    "amputation"
+  ],
+  "execution_integrity": {
+    "assays": {
+      "amputation": {
+        "evidence": {
+          "artifact": "metrics.jsonl",
+          "functional_heldout_query_accuracy": 0.5,
+          "jsonl_line": 11,
+          "record_sha256": "ed214ad43f09270706539bfb3aa88fd5370e3658f098a41150591c4cbcad1f04",
+          "step": 8,
+          "task_loss": 8.5
+        },
+        "execution_integrity": "PASS",
+        "task_loss_delta_amputated_minus_full": 0.0
+      },
+      "heldout_eval": {
+        "evidence": {
+          "artifact": "metrics.jsonl",
+          "functional_heldout_query_accuracy": 0.5,
+          "jsonl_line": 10,
+          "record_sha256": "2a415f807fd061cc9473fa4b2fc1c03ec8190b2308c32f6bb9546aa04e37eb77",
+          "step": 8,
+          "task_loss": 8.5
+        },
+        "execution_integrity": "PASS"
+      }
+    },
+    "required_equals_completed": true,
+    "status": "PASS"
+  },
+  "format": "latent-workspace-v10-assay-verification-v1",
+  "input_bindings": {
+    "engine_run_id": "cadd66721f554a52b12675cf83c2032c",
+    "global_step": 8,
+    "launched_config_sha256": "a45d8aa97492da0d316bbc7ec14d44de85ec0072a46fec548dc01bec71ed0079",
+    "metrics_sha256": "4db5d594b96b3cdec56379ac10d480072ffeddcfac7c03a5b9616af4a0a98d98",
+    "run_verification_sha256": "46ef94522e104131fc6623e0a5b82caaf2b1016635b1f8875cc621331116ba22"
+  },
+  "provenance": {
+    "condition": "F0_query_only",
+    "condition_config": "configs/v10/conditions/config_F0_query_only.json",
+    "hashes": {
+      "condition_config_sha256": "915929dcd0d1860addaf9d33043c0082540dbe88e0e51d22131915ea3720d5f4",
+      "contract_data_sha256": {
+        "data/v10/functional_eval.jsonl": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+        "data/v10/functional_train.jsonl": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+      },
+      "contract_sha256": "5d8833304ceae1bd119c77ddcb3cd565442cf11eadb7ce1c34608911ea3725a0",
+      "materialized_config_sha256": "a45d8aa97492da0d316bbc7ec14d44de85ec0072a46fec548dc01bec71ed0079",
+      "matrix_sha256": "3e3548ec14e06a5684f4c8cc1699f2c2e1caf64f79f424db780451860d290e2d",
+      "model_receipt_sha256": "7973fa042164fd769b5056f29982e7090fcc0c4d75a54f41e54e001463ab2df2",
+      "model_snapshot_inventory_sha256": "3eff19c27bdc4e19491f61645eaf5216f3d05407ad8b4d7b83e11313a54448fd",
+      "model_snapshot_tensor_schema_sha256": "a0878052f562699b820f3981fa63631f2130174e71b1ccf29bb2fa290229ce2e",
+      "prefetch_script_sha256": "9d4b4f2b5374657d632bffa671eadc9b960a0d93070d05cbb5933bccd7001f3a",
+      "run_data_sha256": {
+        "data/v10/functional_eval.jsonl": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+        "data/v10/functional_train.jsonl": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+      },
+      "runner_sha256": "746b4692c11d5a7d0e471a6e832799462ea901bf48eaf2f1feda0217b698da39",
+      "source_files_sha256": {
+        "src/latent_workspace_ft_v10/__init__.py": "fd1c48552935645d302336d05bc133348f8466c62228c6c22dbe5f2b947803b0",
+        "src/latent_workspace_ft_v10/__main__.py": "71e2b8c807406881aa3d12a21323dc92682fe2b602fbe08b25460805793e0518",
+        "src/latent_workspace_ft_v10/engine.py": "9014173a602c03f98d11ba31681f95ebc83c5f2c2fc0acee83e4845df0e2034c",
+        "src/latent_workspace_ft_v10/source_manifest.json": "961ac9d4788d8edf7743464cc3b2c340483c546db2ef0acf121795d6f52e1f1d"
+      },
+      "source_tree_sha256": "a192f16e219f635062bd370c44e05ff49759c63fde4af97a6584d52bbf6077db"
+    },
+    "max_steps": 8,
+    "output_dir": "runs/v10/smoke/F0_query_only/seed_42",
+    "profile": "smoke",
+    "run_id": "F0_query_only/seed_42",
+    "seed": 42
+  },
+  "required_assays": [
+    "heldout_eval",
+    "amputation"
+  ],
+  "run_id": "F0_query_only/seed_42",
+  "scientific_direction": {
+    "authoritative": false,
+    "by_assay": {
+      "amputation": "neutral",
+      "heldout_eval": "reported_without_preregistered_threshold"
+    },
+    "not_an_integrity_gate": true
+  },
+  "verified": true,
+  "verified_utc": "2026-08-21T18:35:26.345957+00:00"
+}

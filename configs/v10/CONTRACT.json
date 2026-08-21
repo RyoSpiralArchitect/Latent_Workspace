@@ -1,0 +1,140 @@
+{
+  "data": {
+    "choices": [
+      " no",
+      " yes"
+    ],
+    "manifest": "data/v10/MANIFEST.json",
+    "manifest_sha256": "9548174061936ac04dd271fcde124ade7a557a06d4fedd1d495a4acce8a79ad4",
+    "remapped_output_sha256": {
+      "eval": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+      "train": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+    },
+    "source_input_sha256": {
+      "eval": "c50949f8e2618ef9b6159c5650a70a231008243433729d41f79b9482e977a156",
+      "train": "c7b012933a7a986e5cea80edf2ab87c45319a982bd500716206e71ee231ff855"
+    }
+  },
+  "execution": {
+    "training_launched_by_this_script": false
+  },
+  "format": "latent-workspace-v10-matrix-contract-v1",
+  "hash_algorithm": "sha256",
+  "matrix": {
+    "boundary_map": {
+      "3": 8,
+      "6": 16,
+      "9": 24
+    },
+    "canonical_order": [
+      "F0_query_only",
+      "B_local_invariance",
+      "F1_inline_upper",
+      "F2_raw_b3",
+      "F3_raw_b6",
+      "F4_raw_b9",
+      "F5_projected_b6",
+      "O0_slots4_k1",
+      "O1_slots4_k1_lw",
+      "O2_slots4_k1_cf",
+      "O3_slots4_k1_lw_cf",
+      "R_slots1_k1",
+      "R_slots1_k4",
+      "R_slots2_k1",
+      "R_slots2_k4",
+      "R_slots4_k4",
+      "R_slots4_k4_step1",
+      "R_slots8_k1",
+      "R_slots8_k4"
+    ],
+    "condition_count": 19,
+    "profiles": {
+      "n10": {
+        "max_steps": 512,
+        "run_count": 190,
+        "seeds": [
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51
+        ]
+      },
+      "n3": {
+        "max_steps": 512,
+        "run_count": 57,
+        "seeds": [
+          42,
+          43,
+          44
+        ]
+      },
+      "smoke": {
+        "max_steps": 8,
+        "run_count": 4,
+        "seeds": [
+          42
+        ]
+      }
+    }
+  },
+  "model": {
+    "attention_implementation": "sdpa",
+    "dtype": "bfloat16",
+    "gradient_checkpointing": true,
+    "layer_count": 32,
+    "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+    "pin_sha256": "860847cb1dd8b1f44bc0b7c53c6c792e4074ca11cccedf82e3a713c3ba40a888",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "train_mode": "full"
+  },
+  "path_policy": {
+    "absolute_paths_forbidden": true,
+    "all_persisted_paths_are_repository_relative": true
+  },
+  "runtime": {
+    "backend": "cuda",
+    "checkpoint_optimizer_state": true,
+    "optimizer": "adafactor",
+    "resume_from": "auto",
+    "strict_resume": true
+  },
+  "source": {
+    "preparation_scripts": {
+      "scripts/prepare_v10_matrix.py": "8f30f90b1bbe7c718c65176e946f0e716991837e42ec93e2da9bab34e7853e07",
+      "scripts/remap_functional_choices.py": "3b8c64e7775edd14f754b15e21f67cb5d956b9a34952ac56f8286a889f71a4b3"
+    },
+    "runtime_sources": {
+      "src/latent_workspace_ft_v10/engine.py": "3139c6edea71575310a2e6f245999e504318fedede202786fe2c949861ad2e1c",
+      "src/latent_workspace_ft_v10/source_manifest.json": "4abca530bd07ec77d54399d6f4ccdd6eaa5503d6832c1fcddd3a807436518e46"
+    },
+    "v9_reference_files": {
+      "configs/v9_reference/MATRIX.json": "02a77f5cf4c35a50610fc549899c4b44d124ee39f2bb4106f3499a72dea3f942",
+      "configs/v9_reference/config.json": "affe3bdb90b1238b69c58deb659f5905e9813a8a3a0c1768742f0e27e7b56b68",
+      "configs/v9_reference/config_B_local_invariance.json": "2cc01d6261f4d89dced74a5731376ae5c340cbf2375366761f81efa8378a94ee",
+      "configs/v9_reference/config_F0_query_only.json": "fb8e12803fddbad701851b703ea40094ac2dccc16b9651781230b688fda2ad60",
+      "configs/v9_reference/config_F1_inline_upper.json": "0a21b4e84bdfc56eca337f8d54f010a3f63348affa98f5f1eccb18de40f78ea7",
+      "configs/v9_reference/config_F2_raw_b3.json": "cd5841c5fe43319b771cbc1de90be4176fc40ca7bb1421d867d1e7f42ffd5267",
+      "configs/v9_reference/config_F3_raw_b6.json": "489f275d042f00aab346979730a30dfc3720c3484daa663b3d6ef034a0683607",
+      "configs/v9_reference/config_F4_raw_b9.json": "3b22a1e7b85b01ba4057aade0fa58c741038e5d7f3e13143892d913b17c95a2b",
+      "configs/v9_reference/config_F5_projected_b6.json": "01e8bfcfacfadd91e4f2cf64683f7b6e9945ce0e298a84b981c068158c94e735",
+      "configs/v9_reference/config_O0_slots4_k1.json": "47acd90adca0c9e628cf51cb9bf4c166f32888f4589cdce03e71626ee9aaef83",
+      "configs/v9_reference/config_O1_slots4_k1_lw.json": "f770f2d9e1a5905ca92283477d14142d74bdfd5bc847783dc143aa6eef856426",
+      "configs/v9_reference/config_O2_slots4_k1_cf.json": "6f178e26730ad73438d02edba7d357ce431d8bcffea2b7937c4b75ecc6638726",
+      "configs/v9_reference/config_O3_slots4_k1_lw_cf.json": "affe3bdb90b1238b69c58deb659f5905e9813a8a3a0c1768742f0e27e7b56b68",
+      "configs/v9_reference/config_R_slots1_k1.json": "75c7fa8d29e31a442dba758dedae3e9f5013cb9cbddbf0ceb29ffd12e83984c7",
+      "configs/v9_reference/config_R_slots1_k4.json": "99e2cb687ac3b9a9043be939dc9096a78ce0d8320ddb923ffa45789d531ddb3e",
+      "configs/v9_reference/config_R_slots2_k1.json": "5eb2093a881948f8eef6774420aa5f7ec45d765424ba0e257cad2a091f36e986",
+      "configs/v9_reference/config_R_slots2_k4.json": "fa1fc1bdccc32f2fc6d6257fb2e48b1d454a07ae6e525851ac0611f6d1f4b0dd",
+      "configs/v9_reference/config_R_slots4_k4.json": "59c7197e7a07838cf28cb7a83d693cb3cd680533ba316a59af3a411992736b2a",
+      "configs/v9_reference/config_R_slots4_k4_step1.json": "dab37a440ae0a8c7636950c90c8a87b36ef71f9418bc08ad762135b39abc42ed",
+      "configs/v9_reference/config_R_slots8_k1.json": "04d09a5b7a9e37ece30777dee394dd109d3db17e2f6b954468543b96009b4913",
+      "configs/v9_reference/config_R_slots8_k4.json": "0d86a407f5b55d230c311559dba68e1d8e159f3c6c7bf95798a0ced8962b916c"
+    }
+  }
+}

@@ -1,0 +1,4621 @@
+{
+  "format": "latent-workspace-ft-optimizer-coverage-v1",
+  "identity_method_runtime": "python_object_identity",
+  "identity_method_persistent": "canonical_name_alias_shape_dtype",
+  "train_mode": "full",
+  "checks": {
+    "unique_membership_exact": true,
+    "duplicate_membership_free": true,
+    "full_mode_base_all_trainable": true
+  },
+  "passed": true,
+  "model_trainable_unique_physical_parameters": 371,
+  "model_trainable_numel": 7322402570,
+  "optimizer_unique_physical_parameters": 371,
+  "optimizer_membership_occurrences": 371,
+  "optimizer_duplicate_memberships": 0,
+  "optimizer_unique_numel": 7322402570,
+  "base_unique_physical_parameters": 291,
+  "base_trainable_unique_physical_parameters": 291,
+  "base_all_trainable": true,
+  "base_optimizer_bindings": {
+    "lm_head.weight": {
+      "artifact_name": "lm_head.weight",
+      "aliases": [
+        "lm_head.weight"
+      ],
+      "shape": [
+        32768,
+        4096
+      ],
+      "numel": 134217728,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 225,
+      "optimizer_family": "base"
+    },
+    "model.embed_tokens.weight": {
+      "artifact_name": "model.embed_tokens.weight",
+      "aliases": [
+        "model.embed_tokens.weight"
+      ],
+      "shape": [
+        32768,
+        4096
+      ],
+      "numel": 134217728,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 0,
+      "optimizer_family": "base"
+    },
+    "model.layers.0.input_layernorm.weight": {
+      "artifact_name": "model.layers.0.input_layernorm.weight",
+      "aliases": [
+        "model.layers.0.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 0,
+      "optimizer_family": "base"
+    },
+    "model.layers.0.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.0.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.0.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 7,
+      "optimizer_family": "base"
+    },
+    "model.layers.0.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.0.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.0.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 5,
+      "optimizer_family": "base"
+    },
+    "model.layers.0.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.0.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.0.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 6,
+      "optimizer_family": "base"
+    },
+    "model.layers.0.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.0.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.0.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 1,
+      "optimizer_family": "base"
+    },
+    "model.layers.0.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.0.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.0.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 2,
+      "optimizer_family": "base"
+    },
+    "model.layers.0.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.0.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.0.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 4,
+      "optimizer_family": "base"
+    },
+    "model.layers.0.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.0.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.0.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 1,
+      "optimizer_family": "base"
+    },
+    "model.layers.0.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.0.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.0.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 3,
+      "optimizer_family": "base"
+    },
+    "model.layers.1.input_layernorm.weight": {
+      "artifact_name": "model.layers.1.input_layernorm.weight",
+      "aliases": [
+        "model.layers.1.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 2,
+      "optimizer_family": "base"
+    },
+    "model.layers.1.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.1.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.1.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 14,
+      "optimizer_family": "base"
+    },
+    "model.layers.1.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.1.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.1.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 12,
+      "optimizer_family": "base"
+    },
+    "model.layers.1.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.1.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.1.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 13,
+      "optimizer_family": "base"
+    },
+    "model.layers.1.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.1.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.1.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 3,
+      "optimizer_family": "base"
+    },
+    "model.layers.1.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.1.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.1.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 9,
+      "optimizer_family": "base"
+    },
+    "model.layers.1.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.1.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.1.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 11,
+      "optimizer_family": "base"
+    },
+    "model.layers.1.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.1.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.1.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 8,
+      "optimizer_family": "base"
+    },
+    "model.layers.1.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.1.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.1.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 10,
+      "optimizer_family": "base"
+    },
+    "model.layers.10.input_layernorm.weight": {
+      "artifact_name": "model.layers.10.input_layernorm.weight",
+      "aliases": [
+        "model.layers.10.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 20,
+      "optimizer_family": "base"
+    },
+    "model.layers.10.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.10.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.10.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 77,
+      "optimizer_family": "base"
+    },
+    "model.layers.10.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.10.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.10.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 75,
+      "optimizer_family": "base"
+    },
+    "model.layers.10.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.10.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.10.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 76,
+      "optimizer_family": "base"
+    },
+    "model.layers.10.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.10.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.10.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 21,
+      "optimizer_family": "base"
+    },
+    "model.layers.10.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.10.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.10.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 72,
+      "optimizer_family": "base"
+    },
+    "model.layers.10.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.10.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.10.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 74,
+      "optimizer_family": "base"
+    },
+    "model.layers.10.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.10.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.10.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 71,
+      "optimizer_family": "base"
+    },
+    "model.layers.10.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.10.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.10.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 73,
+      "optimizer_family": "base"
+    },
+    "model.layers.11.input_layernorm.weight": {
+      "artifact_name": "model.layers.11.input_layernorm.weight",
+      "aliases": [
+        "model.layers.11.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 22,
+      "optimizer_family": "base"
+    },
+    "model.layers.11.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.11.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.11.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 84,
+      "optimizer_family": "base"
+    },
+    "model.layers.11.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.11.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.11.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 82,
+      "optimizer_family": "base"
+    },
+    "model.layers.11.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.11.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.11.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 83,
+      "optimizer_family": "base"
+    },
+    "model.layers.11.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.11.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.11.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 23,
+      "optimizer_family": "base"
+    },
+    "model.layers.11.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.11.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.11.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 79,
+      "optimizer_family": "base"
+    },
+    "model.layers.11.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.11.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.11.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 81,
+      "optimizer_family": "base"
+    },
+    "model.layers.11.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.11.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.11.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 78,
+      "optimizer_family": "base"
+    },
+    "model.layers.11.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.11.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.11.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 80,
+      "optimizer_family": "base"
+    },
+    "model.layers.12.input_layernorm.weight": {
+      "artifact_name": "model.layers.12.input_layernorm.weight",
+      "aliases": [
+        "model.layers.12.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 24,
+      "optimizer_family": "base"
+    },
+    "model.layers.12.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.12.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.12.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 91,
+      "optimizer_family": "base"
+    },
+    "model.layers.12.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.12.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.12.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 89,
+      "optimizer_family": "base"
+    },
+    "model.layers.12.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.12.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.12.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 90,
+      "optimizer_family": "base"
+    },
+    "model.layers.12.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.12.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.12.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 25,
+      "optimizer_family": "base"
+    },
+    "model.layers.12.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.12.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.12.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 86,
+      "optimizer_family": "base"
+    },
+    "model.layers.12.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.12.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.12.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 88,
+      "optimizer_family": "base"
+    },
+    "model.layers.12.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.12.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.12.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 85,
+      "optimizer_family": "base"
+    },
+    "model.layers.12.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.12.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.12.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 87,
+      "optimizer_family": "base"
+    },
+    "model.layers.13.input_layernorm.weight": {
+      "artifact_name": "model.layers.13.input_layernorm.weight",
+      "aliases": [
+        "model.layers.13.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 26,
+      "optimizer_family": "base"
+    },
+    "model.layers.13.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.13.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.13.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 98,
+      "optimizer_family": "base"
+    },
+    "model.layers.13.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.13.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.13.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 96,
+      "optimizer_family": "base"
+    },
+    "model.layers.13.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.13.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.13.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 97,
+      "optimizer_family": "base"
+    },
+    "model.layers.13.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.13.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.13.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 27,
+      "optimizer_family": "base"
+    },
+    "model.layers.13.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.13.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.13.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 93,
+      "optimizer_family": "base"
+    },
+    "model.layers.13.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.13.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.13.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 95,
+      "optimizer_family": "base"
+    },
+    "model.layers.13.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.13.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.13.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 92,
+      "optimizer_family": "base"
+    },
+    "model.layers.13.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.13.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.13.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 94,
+      "optimizer_family": "base"
+    },
+    "model.layers.14.input_layernorm.weight": {
+      "artifact_name": "model.layers.14.input_layernorm.weight",
+      "aliases": [
+        "model.layers.14.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 28,
+      "optimizer_family": "base"
+    },
+    "model.layers.14.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.14.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.14.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 105,
+      "optimizer_family": "base"
+    },
+    "model.layers.14.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.14.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.14.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 103,
+      "optimizer_family": "base"
+    },
+    "model.layers.14.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.14.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.14.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 104,
+      "optimizer_family": "base"
+    },
+    "model.layers.14.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.14.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.14.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 29,
+      "optimizer_family": "base"
+    },
+    "model.layers.14.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.14.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.14.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 100,
+      "optimizer_family": "base"
+    },
+    "model.layers.14.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.14.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.14.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 102,
+      "optimizer_family": "base"
+    },
+    "model.layers.14.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.14.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.14.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 99,
+      "optimizer_family": "base"
+    },
+    "model.layers.14.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.14.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.14.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 101,
+      "optimizer_family": "base"
+    },
+    "model.layers.15.input_layernorm.weight": {
+      "artifact_name": "model.layers.15.input_layernorm.weight",
+      "aliases": [
+        "model.layers.15.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 30,
+      "optimizer_family": "base"
+    },
+    "model.layers.15.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.15.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.15.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 112,
+      "optimizer_family": "base"
+    },
+    "model.layers.15.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.15.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.15.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 110,
+      "optimizer_family": "base"
+    },
+    "model.layers.15.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.15.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.15.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 111,
+      "optimizer_family": "base"
+    },
+    "model.layers.15.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.15.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.15.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 31,
+      "optimizer_family": "base"
+    },
+    "model.layers.15.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.15.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.15.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 107,
+      "optimizer_family": "base"
+    },
+    "model.layers.15.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.15.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.15.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 109,
+      "optimizer_family": "base"
+    },
+    "model.layers.15.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.15.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.15.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 106,
+      "optimizer_family": "base"
+    },
+    "model.layers.15.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.15.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.15.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 108,
+      "optimizer_family": "base"
+    },
+    "model.layers.16.input_layernorm.weight": {
+      "artifact_name": "model.layers.16.input_layernorm.weight",
+      "aliases": [
+        "model.layers.16.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 32,
+      "optimizer_family": "base"
+    },
+    "model.layers.16.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.16.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.16.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 119,
+      "optimizer_family": "base"
+    },
+    "model.layers.16.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.16.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.16.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 117,
+      "optimizer_family": "base"
+    },
+    "model.layers.16.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.16.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.16.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 118,
+      "optimizer_family": "base"
+    },
+    "model.layers.16.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.16.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.16.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 33,
+      "optimizer_family": "base"
+    },
+    "model.layers.16.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.16.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.16.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 114,
+      "optimizer_family": "base"
+    },
+    "model.layers.16.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.16.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.16.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 116,
+      "optimizer_family": "base"
+    },
+    "model.layers.16.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.16.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.16.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 113,
+      "optimizer_family": "base"
+    },
+    "model.layers.16.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.16.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.16.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 115,
+      "optimizer_family": "base"
+    },
+    "model.layers.17.input_layernorm.weight": {
+      "artifact_name": "model.layers.17.input_layernorm.weight",
+      "aliases": [
+        "model.layers.17.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 34,
+      "optimizer_family": "base"
+    },
+    "model.layers.17.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.17.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.17.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 126,
+      "optimizer_family": "base"
+    },
+    "model.layers.17.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.17.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.17.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 124,
+      "optimizer_family": "base"
+    },
+    "model.layers.17.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.17.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.17.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 125,
+      "optimizer_family": "base"
+    },
+    "model.layers.17.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.17.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.17.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 35,
+      "optimizer_family": "base"
+    },
+    "model.layers.17.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.17.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.17.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 121,
+      "optimizer_family": "base"
+    },
+    "model.layers.17.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.17.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.17.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 123,
+      "optimizer_family": "base"
+    },
+    "model.layers.17.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.17.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.17.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 120,
+      "optimizer_family": "base"
+    },
+    "model.layers.17.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.17.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.17.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 122,
+      "optimizer_family": "base"
+    },
+    "model.layers.18.input_layernorm.weight": {
+      "artifact_name": "model.layers.18.input_layernorm.weight",
+      "aliases": [
+        "model.layers.18.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 36,
+      "optimizer_family": "base"
+    },
+    "model.layers.18.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.18.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.18.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 133,
+      "optimizer_family": "base"
+    },
+    "model.layers.18.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.18.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.18.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 131,
+      "optimizer_family": "base"
+    },
+    "model.layers.18.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.18.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.18.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 132,
+      "optimizer_family": "base"
+    },
+    "model.layers.18.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.18.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.18.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 37,
+      "optimizer_family": "base"
+    },
+    "model.layers.18.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.18.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.18.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 128,
+      "optimizer_family": "base"
+    },
+    "model.layers.18.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.18.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.18.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 130,
+      "optimizer_family": "base"
+    },
+    "model.layers.18.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.18.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.18.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 127,
+      "optimizer_family": "base"
+    },
+    "model.layers.18.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.18.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.18.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 129,
+      "optimizer_family": "base"
+    },
+    "model.layers.19.input_layernorm.weight": {
+      "artifact_name": "model.layers.19.input_layernorm.weight",
+      "aliases": [
+        "model.layers.19.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 38,
+      "optimizer_family": "base"
+    },
+    "model.layers.19.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.19.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.19.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 140,
+      "optimizer_family": "base"
+    },
+    "model.layers.19.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.19.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.19.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 138,
+      "optimizer_family": "base"
+    },
+    "model.layers.19.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.19.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.19.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 139,
+      "optimizer_family": "base"
+    },
+    "model.layers.19.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.19.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.19.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 39,
+      "optimizer_family": "base"
+    },
+    "model.layers.19.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.19.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.19.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 135,
+      "optimizer_family": "base"
+    },
+    "model.layers.19.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.19.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.19.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 137,
+      "optimizer_family": "base"
+    },
+    "model.layers.19.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.19.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.19.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 134,
+      "optimizer_family": "base"
+    },
+    "model.layers.19.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.19.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.19.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 136,
+      "optimizer_family": "base"
+    },
+    "model.layers.2.input_layernorm.weight": {
+      "artifact_name": "model.layers.2.input_layernorm.weight",
+      "aliases": [
+        "model.layers.2.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 4,
+      "optimizer_family": "base"
+    },
+    "model.layers.2.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.2.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.2.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 21,
+      "optimizer_family": "base"
+    },
+    "model.layers.2.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.2.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.2.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 19,
+      "optimizer_family": "base"
+    },
+    "model.layers.2.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.2.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.2.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 20,
+      "optimizer_family": "base"
+    },
+    "model.layers.2.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.2.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.2.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 5,
+      "optimizer_family": "base"
+    },
+    "model.layers.2.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.2.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.2.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 16,
+      "optimizer_family": "base"
+    },
+    "model.layers.2.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.2.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.2.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 18,
+      "optimizer_family": "base"
+    },
+    "model.layers.2.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.2.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.2.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 15,
+      "optimizer_family": "base"
+    },
+    "model.layers.2.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.2.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.2.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 17,
+      "optimizer_family": "base"
+    },
+    "model.layers.20.input_layernorm.weight": {
+      "artifact_name": "model.layers.20.input_layernorm.weight",
+      "aliases": [
+        "model.layers.20.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 40,
+      "optimizer_family": "base"
+    },
+    "model.layers.20.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.20.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.20.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 147,
+      "optimizer_family": "base"
+    },
+    "model.layers.20.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.20.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.20.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 145,
+      "optimizer_family": "base"
+    },
+    "model.layers.20.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.20.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.20.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 146,
+      "optimizer_family": "base"
+    },
+    "model.layers.20.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.20.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.20.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 41,
+      "optimizer_family": "base"
+    },
+    "model.layers.20.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.20.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.20.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 142,
+      "optimizer_family": "base"
+    },
+    "model.layers.20.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.20.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.20.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 144,
+      "optimizer_family": "base"
+    },
+    "model.layers.20.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.20.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.20.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 141,
+      "optimizer_family": "base"
+    },
+    "model.layers.20.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.20.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.20.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 143,
+      "optimizer_family": "base"
+    },
+    "model.layers.21.input_layernorm.weight": {
+      "artifact_name": "model.layers.21.input_layernorm.weight",
+      "aliases": [
+        "model.layers.21.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 42,
+      "optimizer_family": "base"
+    },
+    "model.layers.21.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.21.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.21.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 154,
+      "optimizer_family": "base"
+    },
+    "model.layers.21.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.21.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.21.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 152,
+      "optimizer_family": "base"
+    },
+    "model.layers.21.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.21.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.21.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 153,
+      "optimizer_family": "base"
+    },
+    "model.layers.21.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.21.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.21.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 43,
+      "optimizer_family": "base"
+    },
+    "model.layers.21.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.21.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.21.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 149,
+      "optimizer_family": "base"
+    },
+    "model.layers.21.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.21.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.21.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 151,
+      "optimizer_family": "base"
+    },
+    "model.layers.21.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.21.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.21.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 148,
+      "optimizer_family": "base"
+    },
+    "model.layers.21.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.21.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.21.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 150,
+      "optimizer_family": "base"
+    },
+    "model.layers.22.input_layernorm.weight": {
+      "artifact_name": "model.layers.22.input_layernorm.weight",
+      "aliases": [
+        "model.layers.22.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 44,
+      "optimizer_family": "base"
+    },
+    "model.layers.22.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.22.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.22.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 161,
+      "optimizer_family": "base"
+    },
+    "model.layers.22.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.22.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.22.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 159,
+      "optimizer_family": "base"
+    },
+    "model.layers.22.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.22.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.22.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 160,
+      "optimizer_family": "base"
+    },
+    "model.layers.22.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.22.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.22.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 45,
+      "optimizer_family": "base"
+    },
+    "model.layers.22.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.22.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.22.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 156,
+      "optimizer_family": "base"
+    },
+    "model.layers.22.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.22.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.22.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 158,
+      "optimizer_family": "base"
+    },
+    "model.layers.22.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.22.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.22.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 155,
+      "optimizer_family": "base"
+    },
+    "model.layers.22.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.22.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.22.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 157,
+      "optimizer_family": "base"
+    },
+    "model.layers.23.input_layernorm.weight": {
+      "artifact_name": "model.layers.23.input_layernorm.weight",
+      "aliases": [
+        "model.layers.23.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 46,
+      "optimizer_family": "base"
+    },
+    "model.layers.23.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.23.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.23.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 168,
+      "optimizer_family": "base"
+    },
+    "model.layers.23.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.23.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.23.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 166,
+      "optimizer_family": "base"
+    },
+    "model.layers.23.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.23.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.23.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 167,
+      "optimizer_family": "base"
+    },
+    "model.layers.23.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.23.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.23.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 47,
+      "optimizer_family": "base"
+    },
+    "model.layers.23.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.23.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.23.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 163,
+      "optimizer_family": "base"
+    },
+    "model.layers.23.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.23.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.23.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 165,
+      "optimizer_family": "base"
+    },
+    "model.layers.23.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.23.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.23.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 162,
+      "optimizer_family": "base"
+    },
+    "model.layers.23.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.23.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.23.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 164,
+      "optimizer_family": "base"
+    },
+    "model.layers.24.input_layernorm.weight": {
+      "artifact_name": "model.layers.24.input_layernorm.weight",
+      "aliases": [
+        "model.layers.24.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 48,
+      "optimizer_family": "base"
+    },
+    "model.layers.24.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.24.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.24.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 175,
+      "optimizer_family": "base"
+    },
+    "model.layers.24.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.24.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.24.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 173,
+      "optimizer_family": "base"
+    },
+    "model.layers.24.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.24.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.24.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 174,
+      "optimizer_family": "base"
+    },
+    "model.layers.24.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.24.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.24.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 49,
+      "optimizer_family": "base"
+    },
+    "model.layers.24.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.24.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.24.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 170,
+      "optimizer_family": "base"
+    },
+    "model.layers.24.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.24.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.24.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 172,
+      "optimizer_family": "base"
+    },
+    "model.layers.24.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.24.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.24.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 169,
+      "optimizer_family": "base"
+    },
+    "model.layers.24.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.24.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.24.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 171,
+      "optimizer_family": "base"
+    },
+    "model.layers.25.input_layernorm.weight": {
+      "artifact_name": "model.layers.25.input_layernorm.weight",
+      "aliases": [
+        "model.layers.25.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 50,
+      "optimizer_family": "base"
+    },
+    "model.layers.25.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.25.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.25.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 182,
+      "optimizer_family": "base"
+    },
+    "model.layers.25.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.25.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.25.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 180,
+      "optimizer_family": "base"
+    },
+    "model.layers.25.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.25.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.25.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 181,
+      "optimizer_family": "base"
+    },
+    "model.layers.25.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.25.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.25.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 51,
+      "optimizer_family": "base"
+    },
+    "model.layers.25.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.25.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.25.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 177,
+      "optimizer_family": "base"
+    },
+    "model.layers.25.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.25.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.25.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 179,
+      "optimizer_family": "base"
+    },
+    "model.layers.25.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.25.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.25.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 176,
+      "optimizer_family": "base"
+    },
+    "model.layers.25.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.25.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.25.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 178,
+      "optimizer_family": "base"
+    },
+    "model.layers.26.input_layernorm.weight": {
+      "artifact_name": "model.layers.26.input_layernorm.weight",
+      "aliases": [
+        "model.layers.26.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 52,
+      "optimizer_family": "base"
+    },
+    "model.layers.26.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.26.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.26.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 189,
+      "optimizer_family": "base"
+    },
+    "model.layers.26.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.26.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.26.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 187,
+      "optimizer_family": "base"
+    },
+    "model.layers.26.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.26.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.26.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 188,
+      "optimizer_family": "base"
+    },
+    "model.layers.26.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.26.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.26.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 53,
+      "optimizer_family": "base"
+    },
+    "model.layers.26.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.26.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.26.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 184,
+      "optimizer_family": "base"
+    },
+    "model.layers.26.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.26.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.26.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 186,
+      "optimizer_family": "base"
+    },
+    "model.layers.26.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.26.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.26.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 183,
+      "optimizer_family": "base"
+    },
+    "model.layers.26.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.26.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.26.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 185,
+      "optimizer_family": "base"
+    },
+    "model.layers.27.input_layernorm.weight": {
+      "artifact_name": "model.layers.27.input_layernorm.weight",
+      "aliases": [
+        "model.layers.27.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 54,
+      "optimizer_family": "base"
+    },
+    "model.layers.27.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.27.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.27.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 196,
+      "optimizer_family": "base"
+    },
+    "model.layers.27.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.27.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.27.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 194,
+      "optimizer_family": "base"
+    },
+    "model.layers.27.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.27.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.27.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 195,
+      "optimizer_family": "base"
+    },
+    "model.layers.27.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.27.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.27.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 55,
+      "optimizer_family": "base"
+    },
+    "model.layers.27.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.27.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.27.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 191,
+      "optimizer_family": "base"
+    },
+    "model.layers.27.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.27.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.27.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 193,
+      "optimizer_family": "base"
+    },
+    "model.layers.27.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.27.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.27.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 190,
+      "optimizer_family": "base"
+    },
+    "model.layers.27.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.27.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.27.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 192,
+      "optimizer_family": "base"
+    },
+    "model.layers.28.input_layernorm.weight": {
+      "artifact_name": "model.layers.28.input_layernorm.weight",
+      "aliases": [
+        "model.layers.28.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 56,
+      "optimizer_family": "base"
+    },
+    "model.layers.28.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.28.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.28.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 203,
+      "optimizer_family": "base"
+    },
+    "model.layers.28.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.28.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.28.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 201,
+      "optimizer_family": "base"
+    },
+    "model.layers.28.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.28.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.28.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 202,
+      "optimizer_family": "base"
+    },
+    "model.layers.28.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.28.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.28.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 57,
+      "optimizer_family": "base"
+    },
+    "model.layers.28.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.28.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.28.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 198,
+      "optimizer_family": "base"
+    },
+    "model.layers.28.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.28.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.28.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 200,
+      "optimizer_family": "base"
+    },
+    "model.layers.28.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.28.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.28.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 197,
+      "optimizer_family": "base"
+    },
+    "model.layers.28.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.28.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.28.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 199,
+      "optimizer_family": "base"
+    },
+    "model.layers.29.input_layernorm.weight": {
+      "artifact_name": "model.layers.29.input_layernorm.weight",
+      "aliases": [
+        "model.layers.29.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 58,
+      "optimizer_family": "base"
+    },
+    "model.layers.29.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.29.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.29.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 210,
+      "optimizer_family": "base"
+    },
+    "model.layers.29.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.29.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.29.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 208,
+      "optimizer_family": "base"
+    },
+    "model.layers.29.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.29.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.29.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 209,
+      "optimizer_family": "base"
+    },
+    "model.layers.29.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.29.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.29.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 59,
+      "optimizer_family": "base"
+    },
+    "model.layers.29.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.29.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.29.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 205,
+      "optimizer_family": "base"
+    },
+    "model.layers.29.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.29.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.29.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 207,
+      "optimizer_family": "base"
+    },
+    "model.layers.29.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.29.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.29.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 204,
+      "optimizer_family": "base"
+    },
+    "model.layers.29.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.29.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.29.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 206,
+      "optimizer_family": "base"
+    },
+    "model.layers.3.input_layernorm.weight": {
+      "artifact_name": "model.layers.3.input_layernorm.weight",
+      "aliases": [
+        "model.layers.3.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 6,
+      "optimizer_family": "base"
+    },
+    "model.layers.3.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.3.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.3.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 28,
+      "optimizer_family": "base"
+    },
+    "model.layers.3.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.3.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.3.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 26,
+      "optimizer_family": "base"
+    },
+    "model.layers.3.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.3.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.3.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 27,
+      "optimizer_family": "base"
+    },
+    "model.layers.3.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.3.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.3.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 7,
+      "optimizer_family": "base"
+    },
+    "model.layers.3.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.3.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.3.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 23,
+      "optimizer_family": "base"
+    },
+    "model.layers.3.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.3.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.3.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 25,
+      "optimizer_family": "base"
+    },
+    "model.layers.3.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.3.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.3.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 22,
+      "optimizer_family": "base"
+    },
+    "model.layers.3.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.3.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.3.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 24,
+      "optimizer_family": "base"
+    },
+    "model.layers.30.input_layernorm.weight": {
+      "artifact_name": "model.layers.30.input_layernorm.weight",
+      "aliases": [
+        "model.layers.30.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 60,
+      "optimizer_family": "base"
+    },
+    "model.layers.30.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.30.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.30.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 217,
+      "optimizer_family": "base"
+    },
+    "model.layers.30.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.30.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.30.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 215,
+      "optimizer_family": "base"
+    },
+    "model.layers.30.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.30.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.30.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 216,
+      "optimizer_family": "base"
+    },
+    "model.layers.30.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.30.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.30.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 61,
+      "optimizer_family": "base"
+    },
+    "model.layers.30.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.30.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.30.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 212,
+      "optimizer_family": "base"
+    },
+    "model.layers.30.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.30.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.30.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 214,
+      "optimizer_family": "base"
+    },
+    "model.layers.30.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.30.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.30.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 211,
+      "optimizer_family": "base"
+    },
+    "model.layers.30.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.30.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.30.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 213,
+      "optimizer_family": "base"
+    },
+    "model.layers.31.input_layernorm.weight": {
+      "artifact_name": "model.layers.31.input_layernorm.weight",
+      "aliases": [
+        "model.layers.31.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 62,
+      "optimizer_family": "base"
+    },
+    "model.layers.31.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.31.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.31.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 224,
+      "optimizer_family": "base"
+    },
+    "model.layers.31.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.31.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.31.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 222,
+      "optimizer_family": "base"
+    },
+    "model.layers.31.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.31.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.31.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 223,
+      "optimizer_family": "base"
+    },
+    "model.layers.31.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.31.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.31.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 63,
+      "optimizer_family": "base"
+    },
+    "model.layers.31.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.31.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.31.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 219,
+      "optimizer_family": "base"
+    },
+    "model.layers.31.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.31.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.31.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 221,
+      "optimizer_family": "base"
+    },
+    "model.layers.31.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.31.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.31.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 218,
+      "optimizer_family": "base"
+    },
+    "model.layers.31.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.31.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.31.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 220,
+      "optimizer_family": "base"
+    },
+    "model.layers.4.input_layernorm.weight": {
+      "artifact_name": "model.layers.4.input_layernorm.weight",
+      "aliases": [
+        "model.layers.4.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 8,
+      "optimizer_family": "base"
+    },
+    "model.layers.4.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.4.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.4.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 35,
+      "optimizer_family": "base"
+    },
+    "model.layers.4.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.4.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.4.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 33,
+      "optimizer_family": "base"
+    },
+    "model.layers.4.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.4.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.4.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 34,
+      "optimizer_family": "base"
+    },
+    "model.layers.4.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.4.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.4.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 9,
+      "optimizer_family": "base"
+    },
+    "model.layers.4.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.4.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.4.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 30,
+      "optimizer_family": "base"
+    },
+    "model.layers.4.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.4.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.4.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 32,
+      "optimizer_family": "base"
+    },
+    "model.layers.4.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.4.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.4.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 29,
+      "optimizer_family": "base"
+    },
+    "model.layers.4.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.4.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.4.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 31,
+      "optimizer_family": "base"
+    },
+    "model.layers.5.input_layernorm.weight": {
+      "artifact_name": "model.layers.5.input_layernorm.weight",
+      "aliases": [
+        "model.layers.5.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 10,
+      "optimizer_family": "base"
+    },
+    "model.layers.5.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.5.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.5.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 42,
+      "optimizer_family": "base"
+    },
+    "model.layers.5.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.5.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.5.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 40,
+      "optimizer_family": "base"
+    },
+    "model.layers.5.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.5.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.5.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 41,
+      "optimizer_family": "base"
+    },
+    "model.layers.5.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.5.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.5.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 11,
+      "optimizer_family": "base"
+    },
+    "model.layers.5.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.5.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.5.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 37,
+      "optimizer_family": "base"
+    },
+    "model.layers.5.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.5.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.5.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 39,
+      "optimizer_family": "base"
+    },
+    "model.layers.5.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.5.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.5.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 36,
+      "optimizer_family": "base"
+    },
+    "model.layers.5.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.5.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.5.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 38,
+      "optimizer_family": "base"
+    },
+    "model.layers.6.input_layernorm.weight": {
+      "artifact_name": "model.layers.6.input_layernorm.weight",
+      "aliases": [
+        "model.layers.6.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 12,
+      "optimizer_family": "base"
+    },
+    "model.layers.6.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.6.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.6.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 49,
+      "optimizer_family": "base"
+    },
+    "model.layers.6.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.6.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.6.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 47,
+      "optimizer_family": "base"
+    },
+    "model.layers.6.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.6.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.6.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 48,
+      "optimizer_family": "base"
+    },
+    "model.layers.6.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.6.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.6.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 13,
+      "optimizer_family": "base"
+    },
+    "model.layers.6.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.6.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.6.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 44,
+      "optimizer_family": "base"
+    },
+    "model.layers.6.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.6.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.6.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 46,
+      "optimizer_family": "base"
+    },
+    "model.layers.6.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.6.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.6.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 43,
+      "optimizer_family": "base"
+    },
+    "model.layers.6.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.6.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.6.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 45,
+      "optimizer_family": "base"
+    },
+    "model.layers.7.input_layernorm.weight": {
+      "artifact_name": "model.layers.7.input_layernorm.weight",
+      "aliases": [
+        "model.layers.7.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 14,
+      "optimizer_family": "base"
+    },
+    "model.layers.7.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.7.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.7.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 56,
+      "optimizer_family": "base"
+    },
+    "model.layers.7.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.7.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.7.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 54,
+      "optimizer_family": "base"
+    },
+    "model.layers.7.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.7.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.7.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 55,
+      "optimizer_family": "base"
+    },
+    "model.layers.7.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.7.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.7.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 15,
+      "optimizer_family": "base"
+    },
+    "model.layers.7.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.7.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.7.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 51,
+      "optimizer_family": "base"
+    },
+    "model.layers.7.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.7.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.7.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 53,
+      "optimizer_family": "base"
+    },
+    "model.layers.7.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.7.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.7.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 50,
+      "optimizer_family": "base"
+    },
+    "model.layers.7.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.7.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.7.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 52,
+      "optimizer_family": "base"
+    },
+    "model.layers.8.input_layernorm.weight": {
+      "artifact_name": "model.layers.8.input_layernorm.weight",
+      "aliases": [
+        "model.layers.8.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 16,
+      "optimizer_family": "base"
+    },
+    "model.layers.8.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.8.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.8.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 63,
+      "optimizer_family": "base"
+    },
+    "model.layers.8.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.8.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.8.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 61,
+      "optimizer_family": "base"
+    },
+    "model.layers.8.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.8.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.8.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 62,
+      "optimizer_family": "base"
+    },
+    "model.layers.8.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.8.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.8.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 17,
+      "optimizer_family": "base"
+    },
+    "model.layers.8.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.8.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.8.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 58,
+      "optimizer_family": "base"
+    },
+    "model.layers.8.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.8.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.8.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 60,
+      "optimizer_family": "base"
+    },
+    "model.layers.8.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.8.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.8.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 57,
+      "optimizer_family": "base"
+    },
+    "model.layers.8.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.8.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.8.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 59,
+      "optimizer_family": "base"
+    },
+    "model.layers.9.input_layernorm.weight": {
+      "artifact_name": "model.layers.9.input_layernorm.weight",
+      "aliases": [
+        "model.layers.9.input_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 18,
+      "optimizer_family": "base"
+    },
+    "model.layers.9.mlp.down_proj.weight": {
+      "artifact_name": "model.layers.9.mlp.down_proj.weight",
+      "aliases": [
+        "model.layers.9.mlp.down_proj.weight"
+      ],
+      "shape": [
+        4096,
+        14336
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 70,
+      "optimizer_family": "base"
+    },
+    "model.layers.9.mlp.gate_proj.weight": {
+      "artifact_name": "model.layers.9.mlp.gate_proj.weight",
+      "aliases": [
+        "model.layers.9.mlp.gate_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 68,
+      "optimizer_family": "base"
+    },
+    "model.layers.9.mlp.up_proj.weight": {
+      "artifact_name": "model.layers.9.mlp.up_proj.weight",
+      "aliases": [
+        "model.layers.9.mlp.up_proj.weight"
+      ],
+      "shape": [
+        14336,
+        4096
+      ],
+      "numel": 58720256,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 69,
+      "optimizer_family": "base"
+    },
+    "model.layers.9.post_attention_layernorm.weight": {
+      "artifact_name": "model.layers.9.post_attention_layernorm.weight",
+      "aliases": [
+        "model.layers.9.post_attention_layernorm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 19,
+      "optimizer_family": "base"
+    },
+    "model.layers.9.self_attn.k_proj.weight": {
+      "artifact_name": "model.layers.9.self_attn.k_proj.weight",
+      "aliases": [
+        "model.layers.9.self_attn.k_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 65,
+      "optimizer_family": "base"
+    },
+    "model.layers.9.self_attn.o_proj.weight": {
+      "artifact_name": "model.layers.9.self_attn.o_proj.weight",
+      "aliases": [
+        "model.layers.9.self_attn.o_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 67,
+      "optimizer_family": "base"
+    },
+    "model.layers.9.self_attn.q_proj.weight": {
+      "artifact_name": "model.layers.9.self_attn.q_proj.weight",
+      "aliases": [
+        "model.layers.9.self_attn.q_proj.weight"
+      ],
+      "shape": [
+        4096,
+        4096
+      ],
+      "numel": 16777216,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 64,
+      "optimizer_family": "base"
+    },
+    "model.layers.9.self_attn.v_proj.weight": {
+      "artifact_name": "model.layers.9.self_attn.v_proj.weight",
+      "aliases": [
+        "model.layers.9.self_attn.v_proj.weight"
+      ],
+      "shape": [
+        1024,
+        4096
+      ],
+      "numel": 4194304,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 0,
+      "optimizer_parameter_index": 66,
+      "optimizer_family": "base"
+    },
+    "model.norm.weight": {
+      "artifact_name": "model.norm.weight",
+      "aliases": [
+        "model.norm.weight"
+      ],
+      "shape": [
+        4096
+      ],
+      "numel": 4096,
+      "dtype": "torch.bfloat16",
+      "requires_grad": true,
+      "optimizer_group_index": 1,
+      "optimizer_parameter_index": 64,
+      "optimizer_family": "base"
+    }
+  },
+  "expected_membership_sha256": "ed6bedae638c6e99500ddedb786240e92e28196e2a3d8b3bc9436e7c60579c05",
+  "optimizer_membership_sha256": "ed6bedae638c6e99500ddedb786240e92e28196e2a3d8b3bc9436e7c60579c05",
+  "missing_parameters": [],
+  "unexpected_parameters": [],
+  "duplicate_parameters": [],
+  "frozen_base_parameters": [],
+  "report_sha256": "b0580411a46abb3e1e348b3f6bd612d3d86b7d083588cd8163ebe468b95ee90c"
+}

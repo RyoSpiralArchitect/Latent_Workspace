@@ -1,0 +1,791 @@
+{
+  "canonical_order": [
+    "F0_query_only",
+    "B_local_invariance",
+    "F1_inline_upper",
+    "F2_raw_b3",
+    "F3_raw_b6",
+    "F4_raw_b9",
+    "F5_projected_b6",
+    "O0_slots4_k1",
+    "O1_slots4_k1_lw",
+    "O2_slots4_k1_cf",
+    "O3_slots4_k1_lw_cf",
+    "R_slots1_k1",
+    "R_slots1_k4",
+    "R_slots2_k1",
+    "R_slots2_k4",
+    "R_slots4_k4",
+    "R_slots4_k4_step1",
+    "R_slots8_k1",
+    "R_slots8_k4"
+  ],
+  "condition_count": 19,
+  "conditions": [
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "F0_query_only",
+      "generated_config": "configs/v10/conditions/config_F0_query_only.json",
+      "source_config": "configs/v9_reference/config_F0_query_only.json",
+      "source_semantic_patch": [
+        {
+          "base": true,
+          "condition": false,
+          "path": "assays.necessity.enabled"
+        },
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.injection_scale"
+        },
+        {
+          "base": "deferred",
+          "condition": "query_only",
+          "path": "functional.route_mode"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/F0_query_only",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "B_local_invariance",
+      "generated_config": "configs/v10/conditions/config_B_local_invariance.json",
+      "source_config": "configs/v9_reference/config_B_local_invariance.json",
+      "source_semantic_patch": [
+        {
+          "base": true,
+          "condition": false,
+          "path": "assays.necessity.enabled"
+        },
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.injection_scale"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/B_local_invariance",
+          "path": "train.output_dir"
+        },
+        {
+          "base": true,
+          "condition": false,
+          "path": "workspace.aux_backprop_to_base"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "F1_inline_upper",
+      "generated_config": "configs/v10/conditions/config_F1_inline_upper.json",
+      "source_config": "configs/v9_reference/config_F1_inline_upper.json",
+      "source_semantic_patch": [
+        {
+          "base": true,
+          "condition": false,
+          "path": "assays.necessity.enabled"
+        },
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.injection_scale"
+        },
+        {
+          "base": "slots",
+          "condition": "raw_sequence",
+          "path": "functional.memory_mode"
+        },
+        {
+          "base": "deferred",
+          "condition": "inline",
+          "path": "functional.route_mode"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/F1_inline_upper",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/4",
+        "label": "b3",
+        "resolved_layer": 8,
+        "source_layer": 3,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "F2_raw_b3",
+      "generated_config": "configs/v10/conditions/config_F2_raw_b3.json",
+      "source_config": "configs/v9_reference/config_F2_raw_b3.json",
+      "source_semantic_patch": [
+        {
+          "base": 6,
+          "condition": 3,
+          "path": "functional.boundary_layer"
+        },
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": "slots",
+          "condition": "raw_sequence",
+          "path": "functional.memory_mode"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/F2_raw_b3",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "F3_raw_b6",
+      "generated_config": "configs/v10/conditions/config_F3_raw_b6.json",
+      "source_config": "configs/v9_reference/config_F3_raw_b6.json",
+      "source_semantic_patch": [
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": "slots",
+          "condition": "raw_sequence",
+          "path": "functional.memory_mode"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/F3_raw_b6",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "3/4",
+        "label": "b9",
+        "resolved_layer": 24,
+        "source_layer": 9,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "F4_raw_b9",
+      "generated_config": "configs/v10/conditions/config_F4_raw_b9.json",
+      "source_config": "configs/v9_reference/config_F4_raw_b9.json",
+      "source_semantic_patch": [
+        {
+          "base": 6,
+          "condition": 9,
+          "path": "functional.boundary_layer"
+        },
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": "slots",
+          "condition": "raw_sequence",
+          "path": "functional.memory_mode"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/F4_raw_b9",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "F5_projected_b6",
+      "generated_config": "configs/v10/conditions/config_F5_projected_b6.json",
+      "source_config": "configs/v9_reference/config_F5_projected_b6.json",
+      "source_semantic_patch": [
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": "slots",
+          "condition": "projected_sequence",
+          "path": "functional.memory_mode"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/F5_projected_b6",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "O0_slots4_k1",
+      "generated_config": "configs/v10/conditions/config_O0_slots4_k1.json",
+      "source_config": "configs/v9_reference/config_O0_slots4_k1.json",
+      "source_semantic_patch": [
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/O0_slots4_k1",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "O1_slots4_k1_lw",
+      "generated_config": "configs/v10/conditions/config_O1_slots4_k1_lw.json",
+      "source_config": "configs/v9_reference/config_O1_slots4_k1_lw.json",
+      "source_semantic_patch": [
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/O1_slots4_k1_lw",
+          "path": "train.output_dir"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "O2_slots4_k1_cf",
+      "generated_config": "configs/v10/conditions/config_O2_slots4_k1_cf.json",
+      "source_config": "configs/v9_reference/config_O2_slots4_k1_cf.json",
+      "source_semantic_patch": [
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/O2_slots4_k1_cf",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "O3_slots4_k1_lw_cf",
+      "generated_config": "configs/v10/conditions/config_O3_slots4_k1_lw_cf.json",
+      "source_config": "configs/v9_reference/config_O3_slots4_k1_lw_cf.json",
+      "source_semantic_patch": []
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "R_slots1_k1",
+      "generated_config": "configs/v10/conditions/config_R_slots1_k1.json",
+      "source_config": "configs/v9_reference/config_R_slots1_k1.json",
+      "source_semantic_patch": [
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": 4,
+          "condition": 1,
+          "path": "functional.slot_count"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/R_slots1_k1",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "R_slots1_k4",
+      "generated_config": "configs/v10/conditions/config_R_slots1_k4.json",
+      "source_config": "configs/v9_reference/config_R_slots1_k4.json",
+      "source_semantic_patch": [
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": 4,
+          "condition": 1,
+          "path": "functional.slot_count"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": 1,
+          "condition": 4,
+          "path": "functional.writer_steps"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/R_slots1_k4",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "R_slots2_k1",
+      "generated_config": "configs/v10/conditions/config_R_slots2_k1.json",
+      "source_config": "configs/v9_reference/config_R_slots2_k1.json",
+      "source_semantic_patch": [
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": 4,
+          "condition": 2,
+          "path": "functional.slot_count"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/R_slots2_k1",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "R_slots2_k4",
+      "generated_config": "configs/v10/conditions/config_R_slots2_k4.json",
+      "source_config": "configs/v9_reference/config_R_slots2_k4.json",
+      "source_semantic_patch": [
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": 4,
+          "condition": 2,
+          "path": "functional.slot_count"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": 1,
+          "condition": 4,
+          "path": "functional.writer_steps"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/R_slots2_k4",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "R_slots4_k4",
+      "generated_config": "configs/v10/conditions/config_R_slots4_k4.json",
+      "source_config": "configs/v9_reference/config_R_slots4_k4.json",
+      "source_semantic_patch": [
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": 1,
+          "condition": 4,
+          "path": "functional.writer_steps"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/R_slots4_k4",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "R_slots4_k4_step1",
+      "generated_config": "configs/v10/conditions/config_R_slots4_k4_step1.json",
+      "source_config": "configs/v9_reference/config_R_slots4_k4_step1.json",
+      "source_semantic_patch": [
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": -1,
+          "condition": 1,
+          "path": "functional.readout_step"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": 1,
+          "condition": 4,
+          "path": "functional.writer_steps"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/R_slots4_k4_step1",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "R_slots8_k1",
+      "generated_config": "configs/v10/conditions/config_R_slots8_k1.json",
+      "source_config": "configs/v9_reference/config_R_slots8_k1.json",
+      "source_semantic_patch": [
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": 4,
+          "condition": 8,
+          "path": "functional.slot_count"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/R_slots8_k1",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    },
+    {
+      "boundary": {
+        "fraction": "1/2",
+        "label": "b6",
+        "resolved_layer": 16,
+        "source_layer": 6,
+        "source_layer_count": 12,
+        "target_layer_count": 32
+      },
+      "condition": "R_slots8_k4",
+      "generated_config": "configs/v10/conditions/config_R_slots8_k4.json",
+      "source_config": "configs/v9_reference/config_R_slots8_k4.json",
+      "source_semantic_patch": [
+        {
+          "base": 1.0,
+          "condition": 0.0,
+          "path": "functional.counterfactual_weight"
+        },
+        {
+          "base": 4,
+          "condition": 8,
+          "path": "functional.slot_count"
+        },
+        {
+          "base": 0.25,
+          "condition": 0.0,
+          "path": "functional.stability_weight"
+        },
+        {
+          "base": 1,
+          "condition": 4,
+          "path": "functional.writer_steps"
+        },
+        {
+          "base": "runs/O3_slots4_k1_lw_cf",
+          "condition": "runs/R_slots8_k4",
+          "path": "train.output_dir"
+        },
+        {
+          "base": 0.02,
+          "condition": 0.0,
+          "path": "workspace.loss_weight"
+        }
+      ]
+    }
+  ],
+  "format": "latent-workspace-v10-condition-semantics-v1"
+}

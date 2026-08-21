@@ -1,0 +1,21 @@
+{
+  "format": "latent-workspace-v10-resume-attempt-failure-v1",
+  "status": "failed_before_training",
+  "failed_utc": "2026-08-21T18:38:31.917281600Z",
+  "attempt_root": "runs/v10/resume_equivalence/F0_query_only/seed_42_step4",
+  "stage": "control_model_load",
+  "optimizer_steps_executed": 0,
+  "error_type": "OSError",
+  "error": "mistralai/Mistral-7B-Instruct-v0.3 does not appear to have a file named pytorch_model.bin or model.safetensors.",
+  "root_cause": "The resume harness inherited offline mode but did not explicitly bind the child process to the repository's verified Hugging Face cache.",
+  "failed_source": {
+    "resume_harness_sha256": "e791b8f7114dfe43567221086543e1496b6dc31b2bfbf6928d95f36e361c957a",
+    "resume_test_sha256": "5d674f243c447fc28dd501ff69954102955425e538ff5e89d20a50a9b3968e2a"
+  },
+  "successor_fix": {
+    "resume_harness_sha256": "eedbd6927956f8e9566ceb23a6ecff635da1e8b4379a2a6c00b1f22c0ed05e72",
+    "resume_test_sha256": "c142f70c1435c5e1c12fe1266cb7c1f0682c4217d13aa1aac8a9059285b48e25",
+    "description": "Pin HF_HUB_CACHE and rehash the exact prefetch snapshot against baseline provenance before launch."
+  },
+  "claim_boundary": "This is preserved negative engineering evidence. It contains no completed training or resume-equivalence result."
+}

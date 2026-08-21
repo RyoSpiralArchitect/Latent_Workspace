@@ -1,0 +1,104 @@
+{
+  "format": "latent-workspace-v10-f0-pilot-verification-receipt-v2",
+  "status": "verified_engineering_run",
+  "run": {
+    "profile": "smoke",
+    "condition": "F0_query_only",
+    "seed": 42,
+    "contract_run_id": "F0_query_only/seed_42",
+    "engine_run_id": "456b695111d3437c877a8779be523501",
+    "global_step": 8,
+    "training_completed": true,
+    "final_bundle_completed": true,
+    "runner_state": "verified_completed",
+    "verified_utc": "2026-08-21T17:25:13.758828+00:00"
+  },
+  "frozen_design": {
+    "model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "train_mode": "full",
+    "optimizer": "adafactor",
+    "backend": "cuda",
+    "mixed_precision": "bf16",
+    "attention_implementation": "sdpa",
+    "gradient_accumulation_steps": 8,
+    "base_learning_rate": 0.00002
+  },
+  "source_bindings": {
+    "engine_sha256": "9014173a602c03f98d11ba31681f95ebc83c5f2c2fc0acee83e4845df0e2034c",
+    "source_manifest_sha256": "961ac9d4788d8edf7743464cc3b2c340483c546db2ef0acf121795d6f52e1f1d",
+    "source_tree_sha256": "a192f16e219f635062bd370c44e05ff49759c63fde4af97a6584d52bbf6077db",
+    "runner_sha256": "1c4d97dec7983e10bdba62a45822f4fb1b8b7efab1b084dc11c4fdd1d2897dd9",
+    "contract_sha256": "5d8833304ceae1bd119c77ddcb3cd565442cf11eadb7ce1c34608911ea3725a0",
+    "matrix_sha256": "3e3548ec14e06a5684f4c8cc1699f2c2e1caf64f79f424db780451860d290e2d",
+    "model_prefetch_receipt_sha256": "7973fa042164fd769b5056f29982e7090fcc0c4d75a54f41e54e001463ab2df2",
+    "model_snapshot_inventory_sha256": "3eff19c27bdc4e19491f61645eaf5216f3d05407ad8b4d7b83e11313a54448fd",
+    "model_tensor_schema_sha256": "a0878052f562699b820f3981fa63631f2130174e71b1ccf29bb2fa290229ce2e"
+  },
+  "resource_observation": {
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "peak_cuda_allocated_gib": 29.587164878845215,
+    "peak_cuda_reserved_gib": 30.181640625,
+    "maximum_observed_tokens_per_second": 88.26541460708906
+  },
+  "dynamic_update_coverage": {
+    "passed": true,
+    "base_parameter_count": 291,
+    "base_parameter_numel": 7248023552,
+    "optimizer_class": "transformers.optimization.Adafactor",
+    "all_base_parameters_trainable": true,
+    "optimizer_membership_exact": true,
+    "all_gradients_present": true,
+    "all_gradients_finite": true,
+    "all_gradients_nonzero": true,
+    "positive_base_learning_rate": true,
+    "optimizer_step_performed": true,
+    "optimizer_step_not_skipped": true,
+    "all_optimizer_states_advanced": true,
+    "coverage_file_sha256": "b3ab881274fda4a364707025a39c0126286492b59922f54e62b2044b6e2a51a9",
+    "coverage_report_sha256": "b302026410bb7affaac59d11f00ffc860a89eae31b76b8582bd541c1ff5a14d9",
+    "optimizer_coverage_file_sha256": "89ae35ea122c5100590f460f26aef6570a4b7cf164219a94439bca104298bc4d",
+    "optimizer_coverage_report_sha256": "b0580411a46abb3e1e348b3f6bd612d3d86b7d083588cd8163ebe468b95ee90c"
+  },
+  "persisted_delta": {
+    "v2_gate_passed": true,
+    "strict_all_base_weight_tensors_changed": false,
+    "base_tensor_count": 291,
+    "changed_tensor_count": 240,
+    "unchanged_tensor_count": 51,
+    "base_numel": 7248023552,
+    "changed_elements": 5956530573,
+    "changed_element_fraction": 0.8218144615929637,
+    "unchanged_tensor_numel": 208896,
+    "unchanged_family": "All 51 are BF16 one-dimensional Mistral RMSNorm scale tensors with shape [4096].",
+    "unchanged_classification": "verified_update_attempt_zero_persisted_net_delta",
+    "interpretation": "Every base tensor had a verified finite nonzero gradient and optimizer update attempt. Exact final BF16 storage still had zero net value delta for 51 norm-scale tensors, so the independent strict all-tensor persisted-delta hypothesis remains failed."
+  },
+  "evaluation": {
+    "final_task_loss": 8.5,
+    "final_functional_query_accuracy": 0.5,
+    "final_heldout_query_accuracy": 0.5,
+    "final_amputated_task_loss": 8.5,
+    "final_amputated_functional_query_accuracy": 0.5,
+    "interpretation": "F0 is a negative control and this short pilot shows no positive functional result. Passing the engineering gate is not a scientific success."
+  },
+  "artifact_sha256": {
+    "RUN_VERIFICATION.json": "eff68577966764efa557ab0f32c8b0d5d982f8e276f16b0ecfd642e06f5841a2",
+    "FULL_UPDATE_DELTA.json": "7f649ac40e51729c68a02d0d1299a08838566729182ee30e39bc267ad3a37763",
+    "base_update_coverage.json": "b3ab881274fda4a364707025a39c0126286492b59922f54e62b2044b6e2a51a9",
+    "optimizer_coverage.json": "89ae35ea122c5100590f460f26aef6570a4b7cf164219a94439bca104298bc4d",
+    "metrics.jsonl": "7e648f26c0421469b899c2fbbeb9542254ee1660c001e2114f940662831c44bf"
+  },
+  "publication_policy": {
+    "github_evidence": [
+      "RECEIPT.json",
+      "RUN_VERIFICATION.json",
+      "FULL_UPDATE_DELTA.json",
+      "base_update_coverage.json",
+      "optimizer_coverage.json",
+      "metrics.jsonl"
+    ],
+    "weights_and_runtime_state": "Excluded from Git. The furnace bundle remains the current durable raw artifact until an explicit verified-run prune receipt is implemented and exercised."
+  },
+  "claim_boundary": "This verifies one eight-step engineering run: artifact integrity, exact full-parameter optimizer membership, finite nonzero gradients and update attempts for every base tensor, and exact persisted-delta classification. It does not prove every stored tensor moved, checkpoint/resume equivalence, completion of the smoke or larger matrices, training quality, causal memory, generalization, or scientific success."
+}
