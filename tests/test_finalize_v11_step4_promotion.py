@@ -82,3 +82,25 @@ def test_learning_rate_chain_requires_exact_scheduler_continuity() -> None:
     assert finalize.learning_rate_chain(rows, 2e-7)["passed"] is True
     rows[2]["applied_lr_base"] = 9e-8
     assert finalize.learning_rate_chain(rows, 2e-7)["passed"] is False
+
+
+def test_exact_metric_sequence_accepts_only_one_leading_start_event() -> None:
+    rows: list[dict[str, object]] = [{"event": "start", "step": 0}]
+    rows.append({"split": "eval-step0", "step": 0})
+    for step in range(1, 5):
+        rows.extend(
+            (
+                {"split": "train", "step": step},
+                {"split": "eval", "step": step},
+            )
+        )
+    rows.append({"split": "eval-final", "step": 4})
+    finalize._exact_metric_sequence(rows)
+
+    rows.insert(1, {"event": "unexpected", "step": 0})
+    try:
+        finalize._exact_metric_sequence(rows)
+    except finalize.FinalizeError:
+        pass
+    else:
+        raise AssertionError("unknown telemetry must fail closed")

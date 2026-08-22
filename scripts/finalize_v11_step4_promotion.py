@@ -129,8 +129,16 @@ def _exact_metric_sequence(rows: list[dict[str, Any]]) -> None:
     for step in range(1, 5):
         expected.extend((("train", step), ("eval", step)))
     expected.append(("eval-final", 4))
+    event_rows = [row for row in rows if "split" not in row]
+    if (
+        len(event_rows) != 1
+        or rows[0] is not event_rows[0]
+        or event_rows[0].get("event") != "start"
+        or int(event_rows[0].get("step", -1)) != 0
+    ):
+        raise FinalizeError("Step-4 metrics do not have exactly one leading start event.")
     try:
-        observed = [(str(row["split"]), int(row["step"])) for row in rows]
+        observed = [(str(row["split"]), int(row["step"])) for row in rows if "split" in row]
     except (KeyError, TypeError, ValueError) as exc:
         raise FinalizeError("Step-4 metrics contain malformed split/step fields.") from exc
     if observed != expected:
