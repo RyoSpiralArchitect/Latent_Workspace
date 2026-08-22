@@ -1,0 +1,179 @@
+{
+  "artifacts": {
+    "lr_2e_5": {
+      "learning_rate": 2e-05,
+      "step1": {
+        "output_dir": "../../../runs/v11/update_response/F1_lr_2e_5_seed42_step1",
+        "path": "conditions/config_F1_update_response_lr_2e_5_step1.json",
+        "sha256": "44a3b4da7d889768c2899ce546a9bb6b2890326f58975cb72b1271c39978aaa5"
+      },
+      "step4": {
+        "output_dir": "../../../runs/v11/update_response/F1_lr_2e_5_seed42_step4",
+        "path": "conditions/config_F1_update_response_lr_2e_5_step4.json",
+        "sha256": "337a769f5a36b8eae362d271039946f210b882326485e7d008023cf7b301a04c"
+      }
+    },
+    "lr_2e_6": {
+      "learning_rate": 2e-06,
+      "step1": {
+        "output_dir": "../../../runs/v11/update_response/F1_lr_2e_6_seed42_step1",
+        "path": "conditions/config_F1_update_response_lr_2e_6_step1.json",
+        "sha256": "d14c9c3a273d4fecad6b31c146fe9298bd647bc24a423717909a4d68827b4428"
+      },
+      "step4": {
+        "output_dir": "../../../runs/v11/update_response/F1_lr_2e_6_seed42_step4",
+        "path": "conditions/config_F1_update_response_lr_2e_6_step4.json",
+        "sha256": "62755fd9b5f7acab0d7ea4e25806a95ec66e468eac5ecb3ba2bf2c1ba09b179c"
+      }
+    },
+    "lr_2e_7": {
+      "learning_rate": 2e-07,
+      "step1": {
+        "output_dir": "../../../runs/v11/update_response/F1_lr_2e_7_seed42_step1",
+        "path": "conditions/config_F1_update_response_lr_2e_7_step1.json",
+        "sha256": "bb5a47293e87861cd6249ec3a61c536dec5c6b0e5b4010af37d9a9f0392cc8d1"
+      },
+      "step4": {
+        "output_dir": "../../../runs/v11/update_response/F1_lr_2e_7_seed42_step4",
+        "path": "conditions/config_F1_update_response_lr_2e_7_step4.json",
+        "sha256": "7559978e8a82054ad52b14e97c6177757d8f171c9bd38ffb3af9513a689a6624"
+      }
+    },
+    "lr_6p324555e_6": {
+      "learning_rate": 6.324555320336759e-06,
+      "step1": {
+        "output_dir": "../../../runs/v11/update_response/F1_lr_6p324555e_6_seed42_step1",
+        "path": "conditions/config_F1_update_response_lr_6p324555e_6_step1.json",
+        "sha256": "5f2dc285fe03693e99dbf5546faa5fb24e19d8ce2f16dab1df457d70cf72b228"
+      },
+      "step4": {
+        "output_dir": "../../../runs/v11/update_response/F1_lr_6p324555e_6_seed42_step4",
+        "path": "conditions/config_F1_update_response_lr_6p324555e_6_step4.json",
+        "sha256": "5c34a098bf24943a5d2bd6708040d6225866b2f3d70ced4f4a08a354d95cc1a5"
+      }
+    },
+    "lr_6p324555e_7": {
+      "learning_rate": 6.324555320336759e-07,
+      "step1": {
+        "output_dir": "../../../runs/v11/update_response/F1_lr_6p324555e_7_seed42_step1",
+        "path": "conditions/config_F1_update_response_lr_6p324555e_7_step1.json",
+        "sha256": "9cd5ad81ec2c2f3936e3a1eb96dc80c8a22c23ce1aaf1312c18bce85c0efd216"
+      },
+      "step4": {
+        "output_dir": "../../../runs/v11/update_response/F1_lr_6p324555e_7_seed42_step4",
+        "path": "conditions/config_F1_update_response_lr_6p324555e_7_step4.json",
+        "sha256": "6164d6dad4b950c7f7afa53506c95b39b0eaad22adaceab8cd0276aa9c538a4a"
+      }
+    }
+  },
+  "behavior_veto": {
+    "maximum_single_token_run": 24,
+    "maximum_top_token_fraction": 0.75,
+    "minimum_distinct_task_choices": 2,
+    "minimum_task_subset_accuracy": 0.75,
+    "prompt_suite": {
+      "path": "../v10/behavior_prompt_suite_v1.json",
+      "sha256": "f3710a323b876fd42da19b2c4a97e6fd303b67c0db338da53c57209177979373"
+    }
+  },
+  "claim_boundary": "This one-seed response surface can identify a bounded update-scale region for the exact frozen harness. It cannot identify Adafactor, BF16 quantization, clipping, or learning rate as a unique general cause, and preservation after one update is not a training win.",
+  "deferred": [
+    "AdamW comparison until optimizer-state offload is implemented and validated",
+    "FP32 parameter update until a memory-safe master-weight path exists",
+    "O0 workspace route, 16-step promotion, 57-run matrix, and 14B scaling"
+  ],
+  "execution": {
+    "condition_order": [
+      "lr_2e_5",
+      "lr_6p324555e_6",
+      "lr_2e_6",
+      "lr_6p324555e_7",
+      "lr_2e_7"
+    ],
+    "eval_batches": 0,
+    "eval_every": 1,
+    "launch_optimizer_or_precision_surface": false,
+    "primary_optimizer_steps": 1,
+    "retain_all_weights_until_behavior_capture": true,
+    "save_periodic_checkpoints": false
+  },
+  "format": "latent-workspace-ft-v11-update-response-contract-v1",
+  "frozen_before_execution": true,
+  "held_fixed": [
+    "Mistral-7B model id, revision, and BF16 stored parameters",
+    "F1 inline route and train-selected symmetric elicitation",
+    "choice-normalized objective with zero full-vocabulary loss weight",
+    "functional train and eval bytes",
+    "seed 42 and deterministic first eight-record accumulation window",
+    "Adafactor settings, weight decay, and per-family gradient clipping",
+    "eight-microbatch cpu_accumulate transport",
+    "step-0 and post-update complete 1,024-case eval"
+  ],
+  "model": {
+    "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71"
+  },
+  "no_update_control": {
+    "condition": "F1_inline",
+    "optimizer_steps": 0,
+    "path": "../../provenance/pilots/v11_gate0_symmetric/GATE0_RECEIPT.json",
+    "sha256": "0b852e53bd65b51499571ce5d9b5c05699c06d44fdf32fd686a2c8666406e7c7"
+  },
+  "parent_commit": "c1b18818364fc42daa07cf2583b0593d484c6019",
+  "post_update_eligibility_gates": {
+    "maximum_choice_loss_increase": 0.02,
+    "maximum_full_vocab_loss_increase": 0.25,
+    "minimum_accuracy": 0.75,
+    "minimum_distinct_predicted_classes": 2,
+    "minimum_label_recall": 0.6,
+    "require_applied_learning_rate_match": true,
+    "require_exact_pre_update_window_metrics": true,
+    "require_exact_step0_parity": true,
+    "require_finite_decision_metrics": true,
+    "require_integrity_pass": true,
+    "require_nonzero_persisted_base_update": true
+  },
+  "preauthorized_followup": {
+    "action": "Run only the selected condition for four optimizer steps.",
+    "blocked_if_no_eligible_condition": true,
+    "step4_gates": {
+      "maximum_final_full_vocab_loss": 1.5,
+      "minimum_accuracy": 0.7,
+      "minimum_distinct_predicted_classes": 2,
+      "minimum_label_recall": 0.6,
+      "require_behavior_veto_pass": true,
+      "require_final_choice_loss_below_step0": true
+    }
+  },
+  "question": "At what Adafactor base learning-rate scale does one full-model BF16 update preserve the qualified F1 decision boundary while producing a non-zero persisted base-weight change?",
+  "schema_version": 1,
+  "selection_rule": [
+    "Exclude any condition failing integrity, post-update gates, or behavior veto.",
+    "Rank eligible conditions by lower post-update choice loss.",
+    "Then rank by higher accuracy and higher minimum label recall.",
+    "Then rank by lower full-vocabulary loss and larger changed-element fraction.",
+    "Break any remaining tie by the higher learning rate."
+  ],
+  "single_factor": {
+    "name": "train.learning_rate",
+    "scale": "half-decade logarithmic grid",
+    "values": [
+      2e-05,
+      6.324555320336759e-06,
+      2e-06,
+      6.324555320336759e-07,
+      2e-07
+    ]
+  },
+  "trigger": {
+    "blocked_f1_behavior": {
+      "path": "../../provenance/pilots/v11_f1_symmetric_choice_repair_seed42_step16/GENERATION_BEHAVIOR_V11.json",
+      "sha256": "e700959342c4c14f42b880b32d2a830b9e94c839a543101b89f9522e1c2c4d14"
+    },
+    "blocked_f1_receipt": {
+      "path": "../../provenance/pilots/v11_f1_symmetric_choice_repair_seed42_step16/V11_F1_PILOT_RECEIPT.json",
+      "sha256": "f06f12560539fe9c51ddae2dbb28a19b6dddaba316a56258f52e6ef713d8a79b"
+    },
+    "failed_hypothesis": "Choice-normalized CE alone is sufficient under the original 2e-5 full-update schedule."
+  }
+}
