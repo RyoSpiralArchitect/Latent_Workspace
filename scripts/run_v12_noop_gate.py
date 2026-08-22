@@ -134,8 +134,8 @@ def bitwise_equal(left: torch.Tensor, right: torch.Tensor) -> bool:
         left.shape == right.shape
         and left.dtype == right.dtype
         and torch.equal(
-            left.detach().contiguous().view(torch.uint8),
-            right.detach().contiguous().view(torch.uint8),
+            left.detach().reshape(-1).contiguous().view(torch.uint8),
+            right.detach().reshape(-1).contiguous().view(torch.uint8),
         )
     )
 

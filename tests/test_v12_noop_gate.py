@@ -15,8 +15,8 @@ gate = importlib.import_module("run_v12_noop_gate")
 
 
 def test_bitwise_equal_distinguishes_signed_zero() -> None:
-    positive = torch.tensor([0.0], dtype=torch.float32)
-    negative = torch.tensor([-0.0], dtype=torch.float32)
+    positive = torch.tensor(0.0, dtype=torch.float32)
+    negative = torch.tensor(-0.0, dtype=torch.float32)
     assert torch.equal(positive, negative)
     assert gate.bitwise_equal(positive, negative) is False
     assert gate.bitwise_equal(positive, positive.clone()) is True
