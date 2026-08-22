@@ -42,7 +42,7 @@ from typing import Any, Callable, Dict, Iterable, Iterator, List, Mapping, Mutab
 from torch.utils.data import BatchSampler, DataLoader, Dataset, Sampler, Subset
 
 
-__version__ = "12.0.0"
+__version__ = "12.0.1"
 
 
 class LatentWorkspaceLoss(nn.Module):
@@ -6043,10 +6043,17 @@ class LatentWorkspaceCausalLM(nn.Module):
                             "Inline-sidecar modules were not initialized."
                         )
                     if memory_intervention == "hard_bypass":
-                        routed_boundary = query_boundary
                         zero = inline_base_logits.detach().sum() * 0.0
                         gate_mean = zero
                         read_norm = zero
+                        # The adapter's LayerNorm is affine, so a zero routed
+                        # delta can still emit a learned context-independent
+                        # residual; hard amputation must bypass the adapter
+                        # entirely and restore the inline base exactly.
+                        sidecar_delta_logits = torch.zeros_like(
+                            inline_base_logits
+                        )
+                        logits = inline_base_logits
                     else:
                         with isolated_torch_rng(
                             isolate, route_seed, query_boundary.device
@@ -6061,13 +6068,13 @@ class LatentWorkspaceCausalLM(nn.Module):
                                 expanded_memory,
                                 expanded_memory_mask,
                             )
-                    routed_delta = routed_boundary - query_boundary
-                    sidecar_delta_logits = self.functional_sidecar_adapter(
-                        routed_delta
-                    )
-                    logits = inline_base_logits + sidecar_delta_logits.to(
-                        inline_base_logits.dtype
-                    )
+                        routed_delta = routed_boundary - query_boundary
+                        sidecar_delta_logits = self.functional_sidecar_adapter(
+                            routed_delta
+                        )
+                        logits = inline_base_logits + sidecar_delta_logits.to(
+                            inline_base_logits.dtype
+                        )
                 else:
                     logits, gate_mean, read_norm = self._functional_decode_with_memory(
                         query_boundary,

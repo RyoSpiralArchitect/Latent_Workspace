@@ -24,4 +24,4 @@ __all__ = [
     "resume_signature",
 ]
 
-__version__ = "12.0.0"
+__version__ = "12.0.1"

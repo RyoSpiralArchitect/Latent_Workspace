@@ -1317,6 +1317,32 @@ def test_v12_inline_sidecar_is_exact_noop_and_opens_at_adapter() -> None:
     assert torch.count_nonzero(adapter_gradient).item() > 0
 
 
+def test_v12_inline_sidecar_hard_bypass_ignores_affine_adapter_residual() -> None:
+    model = tiny_inline_sidecar_model().eval()
+    assert model.functional_sidecar_adapter is not None
+    with torch.no_grad():
+        model.functional_sidecar_adapter.norm.bias.add_(0.5)
+        model.functional_sidecar_adapter.up.weight.normal_(mean=0.0, std=0.02)
+        adapter_residual = model.functional_sidecar_adapter(
+            torch.zeros(1, model.functional_sidecar_adapter.norm.normalized_shape[0])
+        )
+    assert float(adapter_residual.abs().max().item()) > 0.0
+
+    kwargs = tiny_functional_sidecar_kwargs()
+    kwargs["memory_intervention"] = "hard_bypass"
+    with torch.no_grad():
+        bypassed = model._forward_functional_workspace(
+            **kwargs,
+            bypass_workspace=False,
+        )
+        amputated = model._forward_functional_workspace(
+            **kwargs,
+            bypass_workspace=True,
+        )
+    assert torch.equal(bypassed["logits"], amputated["logits"])
+    assert float(bypassed["delta_logit_norm"].item()) == 0.0
+
+
 def test_v12_frozen_base_step_drops_gradients_and_optimizer_state() -> None:
     model = tiny_workspace_model()
     optimizer = build_optimizer(
