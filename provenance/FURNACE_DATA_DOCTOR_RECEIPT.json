@@ -1,0 +1,39 @@
+{
+  "format": "latent-workspace-v10-furnace-data-doctor-receipt-v1",
+  "captured_utc": "2026-08-21T15:51:00Z",
+  "host": "SpiralReality-furnace",
+  "command": "python3 -m latent_workspace_ft_v10 doctor --config configs/v10/conditions/config_O3_slots4_k1_lw_cf.json --full-data-scan",
+  "offline": true,
+  "environment": {
+    "harness_version": "10.0.0",
+    "python": "3.14.4",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0",
+    "cuda_runtime": "13.2",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "gpu_total_memory_bytes": 33668268032,
+    "engine_sha256": "0a610ccc87800b1df46f11dc86051bbf1e259ecfc798152c3575780581f6684f"
+  },
+  "data": {
+    "train_records": 256,
+    "verified_train_records": 256,
+    "train_sha256": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3",
+    "eval_records": 64,
+    "verified_eval_records": 64,
+    "eval_sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e"
+  },
+  "functional_audit": {
+    "train_passed": true,
+    "eval_passed": true,
+    "queries_per_record": 8,
+    "affected_queries_per_record": 2,
+    "unaffected_queries_per_record": 6,
+    "unique_train_pair_ids": 256,
+    "unique_eval_pair_ids": 64,
+    "eval_heldout_query_total": 256,
+    "affected_query_only_bayes_ceiling": 0.5,
+    "errors": []
+  },
+  "passed": true,
+  "claim_boundary": "Passing proves full-file syntax, tokenization, paired-world structure, affected and unaffected coverage, and the declared query-only ceiling for the pinned data and tokenizer. It does not prove model loading, CUDA training, full-parameter updates, memory use, or scientific effect."
+}

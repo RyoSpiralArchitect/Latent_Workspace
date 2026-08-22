@@ -1,0 +1,75 @@
+{
+  "format": "latent-workspace-v9-matrix-v1",
+  "harness_version": "9.0.0",
+  "model": "openai-community/gpt2",
+  "train_world_pairs": 256,
+  "eval_world_pairs": 64,
+  "queries_per_world": 8,
+  "canonical_order": [
+    "F0_query_only",
+    "B_local_invariance",
+    "F1_inline_upper",
+    "F2_raw_b3",
+    "F3_raw_b6",
+    "F4_raw_b9",
+    "F5_projected_b6",
+    "O0_slots4_k1",
+    "O1_slots4_k1_lw",
+    "O2_slots4_k1_cf",
+    "O3_slots4_k1_lw_cf",
+    "R_slots1_k1",
+    "R_slots1_k4",
+    "R_slots2_k1",
+    "R_slots2_k4",
+    "R_slots4_k4",
+    "R_slots4_k4_step1",
+    "R_slots8_k1",
+    "R_slots8_k4"
+  ],
+  "attribution_pair": {
+    "left": "F0_query_only",
+    "right": "B_local_invariance",
+    "strict_base_equality": true
+  },
+  "condition_groups": {
+    "attribution": [
+      "F0_query_only",
+      "B_local_invariance"
+    ],
+    "localization": [
+      "F0_query_only",
+      "F1_inline_upper",
+      "F2_raw_b3",
+      "F3_raw_b6",
+      "F4_raw_b9",
+      "F5_projected_b6"
+    ],
+    "objective_matrix": [
+      "O0_slots4_k1",
+      "O1_slots4_k1_lw",
+      "O2_slots4_k1_cf",
+      "O3_slots4_k1_lw_cf"
+    ],
+    "frontier": [
+      "R_slots1_k1",
+      "R_slots1_k4",
+      "R_slots2_k1",
+      "R_slots2_k4",
+      "O0_slots4_k1",
+      "R_slots4_k4",
+      "R_slots4_k4_step1",
+      "R_slots8_k1",
+      "R_slots8_k4"
+    ]
+  },
+  "fixed_contract": {
+    "query_deferred": true,
+    "context_encoded_once_per_world_side": true,
+    "raw_context_query_bypass": false,
+    "affected_queries_per_pair": 2,
+    "unaffected_queries_per_pair": 6,
+    "counterfactual_direction_required": true,
+    "unaffected_stability_required": true
+  },
+  "primary_claim": "Test whether one query-independent memory can implement a reusable relation function across multiple future queries and whether a local counterfactual memory edit flips only affected answers."
+}

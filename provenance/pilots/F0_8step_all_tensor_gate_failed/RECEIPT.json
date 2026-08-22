@@ -1,0 +1,83 @@
+{
+  "format": "latent-workspace-v10-f0-pilot-failed-hypothesis-receipt-v1",
+  "status": "verification_incomplete",
+  "run": {
+    "profile": "smoke",
+    "condition": "F0_query_only",
+    "seed": 42,
+    "run_id": "a730c178782e42a5bf2bf5de20ab4d2b",
+    "global_step": 8,
+    "supervised_tokens": 1024,
+    "training_completed": true,
+    "final_bundle_completed": true,
+    "runner_state": "invalid_final"
+  },
+  "frozen_design": {
+    "model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "train_mode": "full",
+    "optimizer": "adafactor",
+    "backend": "cuda",
+    "mixed_precision": "bf16",
+    "attention_implementation": "sdpa",
+    "gradient_accumulation_steps": 8,
+    "base_learning_rate": 0.00002
+  },
+  "source_bindings": {
+    "engine_sha256": "5769bba1a122480818908b077eb8b82d2c52f2dd3b1fb078e69fb6ed33b69376",
+    "runner_sha256": "e9ee95e4d22c65a67715324ee3849bf6d981dded222158390b6be15a45382b56",
+    "contract_sha256": "a519e5f014390a173f7110285d725ec6580f1cb19d29107b43f9ebc57f3e71fb",
+    "model_prefetch_receipt_sha256": "7973fa042164fd769b5056f29982e7090fcc0c4d75a54f41e54e001463ab2df2"
+  },
+  "resource_observation": {
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "peak_cuda_allocated_gib": 29.587164878845215,
+    "peak_cuda_reserved_gib": 30.181640625,
+    "maximum_observed_tokens_per_second": 88.23355213385794
+  },
+  "failed_hypothesis": {
+    "question": "Does an eight-step BF16 pilot give every persisted base tensor at least one exact stored-element delta?",
+    "result": "failed",
+    "strict_all_base_weight_tensors_changed": false,
+    "base_tensor_count": 291,
+    "changed_tensor_count": 240,
+    "unchanged_tensor_count": 51,
+    "base_numel": 7248023552,
+    "changed_elements": 5956530573,
+    "changed_element_fraction": 0.8218144615929637,
+    "unchanged_tensor_numel": 208896,
+    "unchanged_tensor_numel_fraction": 0.000028821098400316016,
+    "unchanged_family": "All 51 are BF16 one-dimensional Mistral RMSNorm scale tensors with shape [4096]."
+  },
+  "interpretation": {
+    "optimizer_scope": "The bound optimizer coverage receipt reports exact, duplicate-free membership and all 291 base tensors trainable.",
+    "persisted_values": "Exact stored-byte comparison proves nonzero final delta in 240 tensors and zero net persisted delta in 51 tensors.",
+    "unverified": "This run did not persist name-bound finite nonzero-gradient and successful update-attempt evidence, so it is not retroactively accepted under the replacement dynamic-coverage contract.",
+    "next_test": "Repeat the fresh F0 pilot with per-base-tensor dynamic gradient and optimizer-processing coverage, while retaining all-tensor delta as an independent strict diagnostic."
+  },
+  "artifact_sha256": {
+    "FULL_UPDATE_DELTA.json": "caee88c403562fd4af530607391b7053178cce1cefe661f20f77d67cf8cfd45e",
+    "heartbeat.json": "ec065bf7596c9364583d6a25c1f1627bdd27621b72cf1174d145c884155c8cbf",
+    "manifest.json": "9aee1c8364171aa90da1fb7473cb6fcad00fe81cafacbf9e4d270a70de441a5f",
+    "metrics.jsonl": "13420b687ce3009ee369b3906f41ae1e8b5a8e0ad538378a9d2938ae3d80bd04",
+    "optimizer_coverage.json": "6c7583f9622bce207f528a0f8aa434cd389e09252e3364a7f3090cd9e5c6a877",
+    "subprocess.stderr.log": "59d25db09b19417d66fba553241002c1140ca3527978d19884532e7a04208bc4",
+    "subprocess.stdout.log": "587b11166aaa79bc25d811302b6465ee79ea72c9dcec3e2643b13b24e5f413b0"
+  },
+  "publication_policy": {
+    "github_evidence": [
+      "RECEIPT.json",
+      "FULL_UPDATE_DELTA.json",
+      "metrics.jsonl",
+      "optimizer_coverage.json"
+    ],
+    "raw_private_artifacts_not_for_git": [
+      "heartbeat.json",
+      "manifest.json",
+      "subprocess.stderr.log",
+      "subprocess.stdout.log"
+    ],
+    "reason": "The raw private snapshots are hash-bound above but contain furnace-local paths or runtime-only text. The published receipt does not rewrite them or claim that sanitized derivatives are byte-identical."
+  },
+  "claim_boundary": "This receipt preserves a completed engineering pilot and a failed all-tensor persisted-delta hypothesis. It is not a verified final matrix run, a training-quality result, evidence of causal memory, or a positive scientific result."
+}

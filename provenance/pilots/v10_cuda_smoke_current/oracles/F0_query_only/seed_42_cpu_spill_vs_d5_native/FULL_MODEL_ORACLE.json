@@ -1,0 +1,291 @@
+{
+  "claim_boundary": "PASS proves byte-exact equality of every indexed tensor name, dtype, shape, and element payload for these two bound model trees. When run-bundle mode is enabled, PASS additionally proves exact workspace and trainer state under its documented exclusions and exact split/step metrics after only the explicit dynamic-field exclusions. Each enabled bundle also binds its final manifest to the saved experiment config, trainer identity/signatures, and bound source identity evidence, with equal final global_step. Run-bundle state comparison was not requested. Current-source identity is claimed only in run-bundle mode when the two validated final-manifest source_sha256 values are equal and each is unambiguously bound by that side's source evidence. Source-evidence document-hash equality is reported separately and never substitutes for source identity; base-model-only mode leaves source identity unverified. It does not establish model quality, behavioral equivalence outside the bound artifacts, training-mechanism equivalence, or a scientific result. FAIL or ERROR must not be interpreted as a passing comparison.",
+  "claims": {
+    "comparison_mode": "base_model_only",
+    "source_evidence": {
+      "candidate_source_evidence_sha256": [
+        "3264d9ebc6307e0028e58ded03c2d36c38a3b1dc71958822a93b3eacc09a0ee2"
+      ],
+      "candidate_validated_source_sha256": null,
+      "current_source_matched": null,
+      "document_match_rule": "exact_multiset_equality_of_bound_source_evidence_sha256",
+      "identity_match_rule": "equality_of_each_run_bundle_validated_final_manifest_source_sha256",
+      "oracle_source_evidence_sha256": [
+        "cf2fe23e9a5a638b286c6710cf95d5976fe761d254db68df98dd4ba6cdfbde58"
+      ],
+      "oracle_validated_source_sha256": null,
+      "source_comparison_mode": "base_model_only_source_identity_unverified",
+      "source_evidence_documents_sha256_matched": false,
+      "source_identity_verified": false
+    }
+  },
+  "created_utc": "2026-08-21T23:05:15.044281+00:00",
+  "format": "latent-workspace-v10-full-model-oracle-comparison-v1",
+  "inputs": {
+    "candidate": {
+      "evidence": {
+        "config": [
+          {
+            "bytes": 7759,
+            "path": "runs/v10/smoke/F0_query_only/seed_42/final/experiment_config.json",
+            "sha256": "6296b37cee74e853fb7de97222f241d3d20d5ba9cf6cfe0b52ebf6cc37ff98c4"
+          }
+        ],
+        "run": [
+          {
+            "bytes": 16904,
+            "path": "runs/v10/smoke/F0_query_only/seed_42/RUN_VERIFICATION.json",
+            "sha256": "66af873fb8e7b6b01db19fdcf12ec00595fa467b24f1b19ce12ebea6aa1d5bfa"
+          }
+        ],
+        "source": [
+          {
+            "bytes": 572,
+            "path": "src/latent_workspace_ft_v10/source_manifest.json",
+            "sha256": "3264d9ebc6307e0028e58ded03c2d36c38a3b1dc71958822a93b3eacc09a0ee2"
+          }
+        ]
+      },
+      "indexed_safetensors": {
+        "index_path": "model.safetensors.index.json",
+        "index_sha256": "05eb48f2137c718b87bd2a7e1cab3960bc59283767bef62f9ef435c7374a9397",
+        "shard_count": 4,
+        "shards": [
+          {
+            "bytes": 3984728184,
+            "path": "model-00001-of-00004.safetensors",
+            "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c",
+            "tensor_count": 72
+          },
+          {
+            "bytes": 3967977000,
+            "path": "model-00002-of-00004.safetensors",
+            "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964",
+            "tensor_count": 84
+          },
+          {
+            "bytes": 3926025456,
+            "path": "model-00003-of-00004.safetensors",
+            "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d",
+            "tensor_count": 81
+          },
+          {
+            "bytes": 2617350280,
+            "path": "model-00004-of-00004.safetensors",
+            "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef",
+            "tensor_count": 54
+          }
+        ],
+        "tensor_count": 291,
+        "tensor_schema_sha256": "f5e6669fa6d03ef792745ad3aee18b543f2016b8d2b4baf83e14dc34b7da5f57",
+        "total_numel": 7248023552,
+        "weight_map_sha256": "49e989361851fdb47f1d94934f83499714e8afbcee73749a3dcc13a6459ec729"
+      },
+      "model_root": "runs/v10/smoke/F0_query_only/seed_42/final/base_model",
+      "tree_inventory": {
+        "algorithm": "Recursive regular files sorted by relative path; each record contains path, bytes, and SHA-256; inventory SHA-256 covers canonical JSON records.",
+        "directory_count_including_root": 1,
+        "file_count": 7,
+        "files": [
+          {
+            "bytes": 691,
+            "path": "config.json",
+            "sha256": "319adbaed9ef61ff0a2facce59adda34a3db46961bac31133e013ecca6d5c829"
+          },
+          {
+            "bytes": 111,
+            "path": "generation_config.json",
+            "sha256": "247edaf97bf0138bf58982cd101038dd55cc251f91b0682b1c349e773dc931b7"
+          },
+          {
+            "bytes": 3984728184,
+            "path": "model-00001-of-00004.safetensors",
+            "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"
+          },
+          {
+            "bytes": 3967977000,
+            "path": "model-00002-of-00004.safetensors",
+            "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"
+          },
+          {
+            "bytes": 3926025456,
+            "path": "model-00003-of-00004.safetensors",
+            "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"
+          },
+          {
+            "bytes": 2617350280,
+            "path": "model-00004-of-00004.safetensors",
+            "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"
+          },
+          {
+            "bytes": 23986,
+            "path": "model.safetensors.index.json",
+            "sha256": "05eb48f2137c718b87bd2a7e1cab3960bc59283767bef62f9ef435c7374a9397"
+          }
+        ],
+        "inventory_sha256": "cf0108cffa63cfed0825d4674864a964d01813f18701bd544fed0101faf3b72d",
+        "logical_bytes": 14496105708
+      }
+    },
+    "oracle": {
+      "evidence": {
+        "config": [
+          {
+            "bytes": 7754,
+            "path": "runs/v10/_historical_source/engine_d5f2ef1d137f5db1_runner_afd045c4dfa2c899_allocator_verified_successor_replacement/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/experiment_config.json",
+            "sha256": "4fcd61a9412130c8ab44c33f0132f03e9dfdbc0946a54fcb79595fb5187af41f"
+          }
+        ],
+        "run": [
+          {
+            "bytes": 1622,
+            "path": "runs/v10/_historical_source/engine_d5f2ef1d137f5db1_runner_afd045c4dfa2c899_allocator_verified_successor_replacement/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/manifest.json",
+            "sha256": "3708ffd16236a79fe7476519f71d29ac7a4814a2e2d9637b33a77624e48637ae"
+          }
+        ],
+        "source": [
+          {
+            "bytes": 572,
+            "path": "provenance/source_snapshots/engine_d5f2ef_allocator_verified/source_manifest.json",
+            "sha256": "cf2fe23e9a5a638b286c6710cf95d5976fe761d254db68df98dd4ba6cdfbde58"
+          }
+        ]
+      },
+      "indexed_safetensors": {
+        "index_path": "model.safetensors.index.json",
+        "index_sha256": "05eb48f2137c718b87bd2a7e1cab3960bc59283767bef62f9ef435c7374a9397",
+        "shard_count": 4,
+        "shards": [
+          {
+            "bytes": 3984728184,
+            "path": "model-00001-of-00004.safetensors",
+            "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c",
+            "tensor_count": 72
+          },
+          {
+            "bytes": 3967977000,
+            "path": "model-00002-of-00004.safetensors",
+            "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964",
+            "tensor_count": 84
+          },
+          {
+            "bytes": 3926025456,
+            "path": "model-00003-of-00004.safetensors",
+            "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d",
+            "tensor_count": 81
+          },
+          {
+            "bytes": 2617350280,
+            "path": "model-00004-of-00004.safetensors",
+            "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef",
+            "tensor_count": 54
+          }
+        ],
+        "tensor_count": 291,
+        "tensor_schema_sha256": "f5e6669fa6d03ef792745ad3aee18b543f2016b8d2b4baf83e14dc34b7da5f57",
+        "total_numel": 7248023552,
+        "weight_map_sha256": "49e989361851fdb47f1d94934f83499714e8afbcee73749a3dcc13a6459ec729"
+      },
+      "model_root": "runs/v10/_historical_source/engine_d5f2ef1d137f5db1_runner_afd045c4dfa2c899_allocator_verified_successor_replacement/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model",
+      "tree_inventory": {
+        "algorithm": "Recursive regular files sorted by relative path; each record contains path, bytes, and SHA-256; inventory SHA-256 covers canonical JSON records.",
+        "directory_count_including_root": 1,
+        "file_count": 7,
+        "files": [
+          {
+            "bytes": 691,
+            "path": "config.json",
+            "sha256": "319adbaed9ef61ff0a2facce59adda34a3db46961bac31133e013ecca6d5c829"
+          },
+          {
+            "bytes": 111,
+            "path": "generation_config.json",
+            "sha256": "247edaf97bf0138bf58982cd101038dd55cc251f91b0682b1c349e773dc931b7"
+          },
+          {
+            "bytes": 3984728184,
+            "path": "model-00001-of-00004.safetensors",
+            "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"
+          },
+          {
+            "bytes": 3967977000,
+            "path": "model-00002-of-00004.safetensors",
+            "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"
+          },
+          {
+            "bytes": 3926025456,
+            "path": "model-00003-of-00004.safetensors",
+            "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"
+          },
+          {
+            "bytes": 2617350280,
+            "path": "model-00004-of-00004.safetensors",
+            "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"
+          },
+          {
+            "bytes": 23986,
+            "path": "model.safetensors.index.json",
+            "sha256": "05eb48f2137c718b87bd2a7e1cab3960bc59283767bef62f9ef435c7374a9397"
+          }
+        ],
+        "inventory_sha256": "cf0108cffa63cfed0825d4674864a964d01813f18701bd544fed0101faf3b72d",
+        "logical_bytes": 14496105708
+      }
+    }
+  },
+  "result": {
+    "base_model": {
+      "comparison": "tensor_name_dtype_shape_and_all_element_bytes_exact",
+      "counts": {
+        "byte_compared_element_count": 7248023552,
+        "byte_compared_tensor_count": 291,
+        "byte_exact_tensor_count": 291,
+        "byte_mismatch_element_count": 0,
+        "byte_mismatch_tensor_count": 0,
+        "candidate_tensor_count": 291,
+        "dtype_mismatch_tensor_count": 0,
+        "missing_candidate_tensor_count": 0,
+        "oracle_tensor_count": 291,
+        "schema_mismatch_tensor_count": 0,
+        "shape_mismatch_tensor_count": 0,
+        "shared_tensor_count": 291,
+        "total_mismatch_tensor_count": 0,
+        "unexpected_candidate_tensor_count": 0
+      },
+      "first_mismatch": null,
+      "passed": true,
+      "tensor_buffer_budget": {
+        "first_mismatch_search": "binary_any_scalar_reductions_over_existing_mask_no_index_vector",
+        "max_estimated_tensor_buffer_bytes": 67088392,
+        "max_working_set_bytes": 67108864,
+        "scope": "comparison_tensor_payloads_and_byte_masks",
+        "within_budget": true,
+        "worst_case_equation": "elements * (2 * element_bytes input_slices + 2 * element_bytes contiguous_copies + element_bytes byte_inequality_mask + 1 per_element_changed_mask) + 8 scalar_reduction_bytes"
+      }
+    },
+    "first_mismatch": null,
+    "passed": true,
+    "run_bundle": {
+      "enabled": false,
+      "passed": null,
+      "reason": "not_requested_base_model_only"
+    }
+  },
+  "stability": {
+    "all_config_source_run_evidence_pre_post_hashes_equal": true,
+    "candidate_tree_pre_post_inventory_equal": true,
+    "oracle_tree_pre_post_inventory_equal": true,
+    "run_bundle_artifact_inventories_equal": null
+  },
+  "status": "PASS",
+  "verifier": {
+    "implementation": "scripts/compare_v10_full_model_oracle.py",
+    "implementation_pre_post_sha256_equal": true,
+    "implementation_sha256": "50ce2b7876b5d0ab46ee81ea5082dc3d5fc50f4a58e359c957c1255d15b4c040",
+    "max_working_set_bytes": 67108864,
+    "python": "3.14.4",
+    "safetensors": "0.8.0",
+    "streaming_axis": "tensor_dimension_0",
+    "torch": "2.13.0+cu132"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "artifacts": [
+    {
+      "bytes": 49378,
+      "path": "resume_equivalence_result.json",
+      "sha256": "c7ad72ece9e0dd408baff238ea322e43446bb05d749e73ffa655de70bdb59341"
+    },
+    {
+      "bytes": 1158,
+      "path": "resume_control_environment.json",
+      "sha256": "c091764fb3c11fc26a3636b673f1efc2b9c9d972ea553b47cf1aad03786c970e"
+    },
+    {
+      "bytes": 1158,
+      "path": "resume_resumed_environment.json",
+      "sha256": "dc0a4d57d9cb65ac337a85bf199ef5c0a8465a83368e96ed2ef272cd4d0a0b32"
+    },
+    {
+      "bytes": 3351,
+      "path": "resume_control_gradient_accumulation_offload.json",
+      "sha256": "fa908867411eaaa3b1281ff51bc5f1e71fe605aa69d476b39b1311880ba45d8c"
+    },
+    {
+      "bytes": 3999,
+      "path": "resume_resumed_gradient_accumulation_offload.json",
+      "sha256": "159f0885e09bca9d6781d8f18fab7275b17fb99cf61e2bffc54a16520104206b"
+    }
+  ],
+  "claim_boundary": "This bridges the hash-bound O3_slots4_k1_lw_cf resume-equivalence receipt for run 'O3_slots4_k1_lw_cf/seed_42' (seed=42, total_steps=8) into the verified run retention chain. It does not extend the same-host, single-GPU, fixed-schedule claim boundary of that receipt.",
+  "comparison": {
+    "baseline_run_verification_sha256": "9b3b193da0149ced0ffe7c1f3847e4fc04e44e1b48338595d93d1ff162f00635",
+    "equivalence_artifact": "resume_equivalence_result.json",
+    "equivalence_format": "latent-workspace-v10-resume-equivalence-v1",
+    "equivalence_sha256": "c7ad72ece9e0dd408baff238ea322e43446bb05d749e73ffa655de70bdb59341",
+    "mode": "bitwise_exact_zero_tolerance",
+    "passed": true
+  },
+  "created_utc": "2026-08-22T04:46:41.526491+00:00",
+  "format": "latent-workspace-v10-resume-verification-v1",
+  "provenance": {
+    "condition": "O3_slots4_k1_lw_cf",
+    "condition_config": "configs/v10/conditions/config_O3_slots4_k1_lw_cf.json",
+    "hashes": {
+      "condition_config_sha256": "091777cb79a80b19c986d8b1f2120b6eec8c38c0b70a19d3e748cc97c5d4f477",
+      "contract_data_sha256": {
+        "data/v10/functional_eval.jsonl": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+        "data/v10/functional_train.jsonl": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+      },
+      "contract_sha256": "156dc89c451db7c24eebf47eb851d1a9c26e398d8791f184cd126a551609fc20",
+      "materialized_config_sha256": "1a8478d2c6c7d0054d7d844ad52f170a715fef8b59dd8b57acee76ea02b030cd",
+      "matrix_sha256": "9731c165c66de333feb76b245f926bc127d62f1b00a418d9c124227377ff22e4",
+      "model_receipt_sha256": "7973fa042164fd769b5056f29982e7090fcc0c4d75a54f41e54e001463ab2df2",
+      "model_snapshot_inventory_sha256": "3eff19c27bdc4e19491f61645eaf5216f3d05407ad8b4d7b83e11313a54448fd",
+      "model_snapshot_tensor_schema_sha256": "a0878052f562699b820f3981fa63631f2130174e71b1ccf29bb2fa290229ce2e",
+      "prefetch_script_sha256": "9d4b4f2b5374657d632bffa671eadc9b960a0d93070d05cbb5933bccd7001f3a",
+      "run_data_sha256": {
+        "data/v10/functional_eval.jsonl": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+        "data/v10/functional_train.jsonl": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+      },
+      "runner_sha256": "07fdd920f76463f5996a5568447b940d41b8bce4675dd83594d3f68e54ecd68d",
+      "source_files_sha256": {
+        "src/latent_workspace_ft_v10/__init__.py": "fd1c48552935645d302336d05bc133348f8466c62228c6c22dbe5f2b947803b0",
+        "src/latent_workspace_ft_v10/__main__.py": "71e2b8c807406881aa3d12a21323dc92682fe2b602fbe08b25460805793e0518",
+        "src/latent_workspace_ft_v10/engine.py": "755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c",
+        "src/latent_workspace_ft_v10/source_manifest.json": "3264d9ebc6307e0028e58ded03c2d36c38a3b1dc71958822a93b3eacc09a0ee2"
+      },
+      "source_tree_sha256": "33851900abae227475a27ddafd409225f02a01354be6c13a1f6209ddf3f5e835"
+    },
+    "max_steps": 8,
+    "output_dir": "runs/v10/smoke/O3_slots4_k1_lw_cf/seed_42",
+    "profile": "smoke",
+    "run_id": "O3_slots4_k1_lw_cf/seed_42",
+    "runtime_policy": {
+      "environment_variable": "PYTORCH_ALLOC_CONF",
+      "forbidden_environment_variables": [
+        "PYTORCH_CUDA_ALLOC_CONF",
+        "PYTORCH_HIP_ALLOC_CONF",
+        "PYTORCH_NO_CUDA_MEMORY_CACHING"
+      ],
+      "gradient_accumulation_offload": "cpu",
+      "pytorch_alloc_conf": "backend:native,expandable_segments:True"
+    },
+    "seed": 42
+  },
+  "run_id": "O3_slots4_k1_lw_cf/seed_42",
+  "verified": true
+}

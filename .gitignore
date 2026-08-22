@@ -1,3 +1,91 @@
+# Operating-system and editor files
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.cache/
+**/cache/
+**/caches/
+huggingface/
+**/model_cache/
+
+# Model and optimizer weights
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.safetensors
+*.gguf
+*.onnx
+*.h5
+*.hdf5
+*.msgpack
+pytorch_model*
+adapter_model*
+optimizer_state*
+trainer_state*
+
+# Generated checkpoints and run trees
+**/checkpoint-*/
+**/checkpoints/
+**/run/
+**/runs/
+**/outputs/
+**/artifacts/
+**/matrix_runner/
+**/resume_gates/
+
+# Trainer and experiment trackers
+wandb/
+mlruns/
+lightning_logs/
+tensorboard/
+
+# Runtime logs and process state
+logs/
+*.log
+*.out
+*.err
+*.pid
+RUNNER.lock
+*.runner.lock
+
+# Raw pilot snapshots may contain furnace-local absolute paths. GitHub-bound
+# evidence uses sanitized receipts plus path-free metrics/delta summaries.
+provenance/raw/
+provenance/pilots/**/heartbeat.json
+provenance/pilots/**/manifest.json
+provenance/pilots/**/RUN_VERIFICATION.json
+provenance/pilots/F0_resume_attempt1_failed_model_cache/CONTROL_CONFIG.json
+provenance/pilots/F0_resume_attempt1_failed_model_cache/RESUME_CONFIG.json
+provenance/pilots/F0_resume_attempt1_failed_model_cache/FAILED.json
+provenance/pilots/F0_resume_attempt2_failed_optimizer_dtype/control/checkpoint4_manifest.json
+provenance/pilots/F0_resume_attempt2_failed_optimizer_dtype/control/final_manifest.json
+provenance/pilots/F0_resume_attempt2_failed_optimizer_dtype/resumed/final_manifest.json
+provenance/pilots/F0_resume_attempt2_failed_optimizer_dtype/resumed/metrics.jsonl
+
+# Generated archives must live in artifact storage, not Git history
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+# Generic Python exclusions retained from the GitHub bootstrap commit
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

@@ -1,0 +1,91 @@
+{
+  "schema_version": 2,
+  "mode": "cpu",
+  "algorithm": "pageable_cpu_storage_cuda_native_order_add_v1",
+  "claim_boundary": {
+    "execution_proof": "This receipt proves that the single-process CUDA spill/merge/restore path executed with exact schema accounting and no live host buffers after each recorded restore.",
+    "numerical_proof": "Additions run on each parameter's original CUDA device and dtype in microbatch order; model-level bitwise parity remains an external oracle comparison.",
+    "unsupported": "DDP, non-CUDA execution, and schedule-extension resumes are rejected."
+  },
+  "run_id": "f9e40513902845a19ef12b9fd4ddc351",
+  "source_sha256": "755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c",
+  "resume_signature": "49854b5fb5b6a51e9f8ea0fad7171477b9d9a4b86cd7ff15528142b52cf552f7",
+  "configured_gradient_accumulation_steps": 8,
+  "initial_global_step": 0,
+  "last_observed_global_step": 8,
+  "last_restored_global_step": 7,
+  "final_global_step": 8,
+  "trainable_parameter_count": 371,
+  "trainable_parameter_total_numel": 7322402570,
+  "trainable_gradient_capacity_bytes": 14793563176,
+  "trainable_parameter_schema_sha256": "d6379b2373de84c075bb1cf89833ac2b9353f01a4a3307d54c12d6bd721eb387",
+  "trainable_parameter_schema_fields": [
+    "name",
+    "shape",
+    "stride",
+    "dtype",
+    "device",
+    "numel",
+    "logical_bytes"
+  ],
+  "windows_started": 8,
+  "windows_restored": 8,
+  "windows_discarded": 0,
+  "single_microbatch_windows": 0,
+  "microbatch_spills": 64,
+  "parameter_first_spills": 2640,
+  "parameter_merges": 18480,
+  "cumulative_current_gradient_bytes": 945703616768,
+  "peak_cpu_accumulator_bytes": 14776619012,
+  "live_cpu_buffer_count": 0,
+  "live_cpu_buffer_bytes": 0,
+  "active_window": null,
+  "continuations": [],
+  "segments": [
+    {
+      "segment_index": 0,
+      "previous_receipt_sha256": null,
+      "resume_checkpoint": null,
+      "initial_global_step": 0,
+      "last_observed_global_step": 8,
+      "final_global_step": 8,
+      "initial_cumulative_counters": {
+        "windows_started": 0,
+        "windows_restored": 0,
+        "windows_discarded": 0,
+        "single_microbatch_windows": 0,
+        "microbatch_spills": 0,
+        "parameter_first_spills": 0,
+        "parameter_merges": 0,
+        "cumulative_current_gradient_bytes": 0,
+        "peak_cpu_accumulator_bytes": 0
+      },
+      "latest_cumulative_counters": {
+        "windows_started": 8,
+        "windows_restored": 8,
+        "windows_discarded": 0,
+        "single_microbatch_windows": 0,
+        "microbatch_spills": 64,
+        "parameter_first_spills": 2640,
+        "parameter_merges": 18480,
+        "cumulative_current_gradient_bytes": 945703616768,
+        "peak_cpu_accumulator_bytes": 14776619012
+      },
+      "final_cumulative_counters": {
+        "windows_started": 8,
+        "windows_restored": 8,
+        "windows_discarded": 0,
+        "single_microbatch_windows": 0,
+        "microbatch_spills": 64,
+        "parameter_first_spills": 2640,
+        "parameter_merges": 18480,
+        "cumulative_current_gradient_bytes": 945703616768,
+        "peak_cpu_accumulator_bytes": 14776619012
+      },
+      "status": "completed"
+    }
+  ],
+  "status": "completed",
+  "updated_at": 1787354825.2305694,
+  "receipt_sha256": "686699d7e19c86839892ccdda57dc0968351ad4fb066737ce169d7a347157d1b"
+}

@@ -1,0 +1,4144 @@
+{
+  "base_update_coverage": {
+    "base_parameter_count": 291,
+    "base_parameter_numel": 7248023552,
+    "file_sha256": "4c93ba5968b1df4beb473881eba5ddd4172fb8481bd8f00cd49a4e69b9dee240",
+    "passed": true,
+    "path": "final/base_update_coverage.json",
+    "report_sha256": "80fafde6b4b75b5a6872889d4815f53c3b03d01b1cd3e9c5b0f2483e3f8a155e"
+  },
+  "claim_boundary": "Passing mechanically proves exact initial/final base-model key/shape/dtype schemas, exact static optimizer membership, full-scope finite nonzero gradient and optimizer-step attempts for every persisted base tensor, and at least one exact stored-element change. An unchanged tensor is accepted only as a verified update attempt with zero persisted net delta. It does not prove that every stored parameter moved, training quality, causal memory, generalization, or scientific success.",
+  "comparison": {
+    "all_base_weight_tensors_changed": false,
+    "changed_tensor_count": 241,
+    "passed": false,
+    "performance": {
+      "complexity": "linear_in_total_persisted_weight_elements",
+      "elapsed_seconds": 84.80977429402992,
+      "estimated_bytes_per_compared_element": 32,
+      "max_estimated_working_set_bytes": 67108864,
+      "strategy": "cpu_exact_one_tensor_first_axis_chunks"
+    },
+    "tensor_count": 291,
+    "tensors": [
+      {
+        "changed": true,
+        "changed_elements": 109383092,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "lm_head.weight",
+        "numel": 134217728,
+        "shape": [
+          32768,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 151515,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.embed_tokens.weight",
+        "numel": 134217728,
+        "shape": [
+          32768,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 1885,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.0.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49095331,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.0.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48320814,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.0.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48921655,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.0.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 10,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.0.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3533828,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.0.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 15166265,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.0.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14597676,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.0.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3740882,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.0.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 998,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.1.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 45057071,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.1.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48425872,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.1.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49101895,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.1.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 5,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.1.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3417057,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.1.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14601919,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.1.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13690842,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.1.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3678748,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.1.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.10.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50132022,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.10.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49220409,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.10.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50022726,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.10.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.10.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3040498,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.10.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14741582,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.10.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13366120,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.10.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3712296,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.10.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.11.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50119654,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.11.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49320096,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.11.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50005647,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.11.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.11.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3133129,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.11.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14696726,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.11.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13545050,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.11.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3630882,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.11.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.12.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50099056,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.12.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49420645,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.12.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49977180,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.12.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.12.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3136690,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.12.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14718331,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.12.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13623989,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.12.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3648852,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.12.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.13.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50169769,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.13.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49568906,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.13.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50022714,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.13.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.13.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3066265,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.13.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14634064,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.13.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13461853,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.13.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3663618,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.13.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.14.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50241638,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.14.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49673263,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.14.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50115668,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.14.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.14.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3242018,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.14.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14524196,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.14.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13761710,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.14.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3557619,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.14.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.15.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50290965,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.15.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49646088,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.15.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50227537,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.15.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.15.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3280193,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.15.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14549141,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.15.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13815437,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.15.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3575009,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.15.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.16.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50348934,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.16.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49426750,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.16.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50362681,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.16.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.16.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3211845,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.16.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14509832,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.16.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13763608,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.16.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3597795,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.16.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.17.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50146337,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.17.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49083434,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.17.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50254068,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.17.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.17.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3240837,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.17.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14569410,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.17.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13745328,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.17.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3591909,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.17.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.18.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50031422,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.18.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48722487,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.18.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50199886,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.18.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.18.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3286024,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.18.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14568177,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.18.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13791522,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.18.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3607852,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.18.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.19.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49969683,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.19.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48381998,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.19.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49898247,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.19.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.19.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3315142,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.19.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14466493,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.19.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13818547,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.19.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3553482,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.19.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 6,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.2.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49591785,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.2.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48795477,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.2.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49548141,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.2.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 6,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.2.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 2969885,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.2.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14767385,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.2.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 12903471,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.2.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3650797,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.2.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.20.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49909749,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.20.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 47946685,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.20.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49793182,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.20.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.20.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3334996,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.20.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14328793,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.20.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13892258,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.20.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3541013,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.20.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.21.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49976470,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.21.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 47643033,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.21.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49927443,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.21.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.21.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3291059,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.21.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14219407,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.21.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13739454,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.21.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3525694,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.21.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.22.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49903065,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.22.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 47807351,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.22.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49912763,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.22.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.22.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3333315,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.22.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14203715,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.22.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13747958,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.22.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3403784,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00002-of-00003.safetensors",
+        "name": "model.layers.22.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.23.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49942174,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.23.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 47762387,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.23.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49865139,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.23.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.23.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3363126,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.23.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14489687,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.23.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13906493,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.23.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3469820,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.23.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.24.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49791949,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.24.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 47393680,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.24.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49918049,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.24.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.24.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3321110,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.24.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14306448,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.24.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13867422,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.24.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3427093,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.24.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.25.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49841092,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.25.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 47447712,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.25.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49504484,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.25.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 1,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.25.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3423400,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.25.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14246481,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.25.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14007147,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.25.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3450343,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.25.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 1,
+        "dtype": "BF16",
+        "final_file": "model-00003-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.26.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49755831,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.26.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 47837925,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.26.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49595755,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.26.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 1,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.26.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3396693,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.26.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14287660,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.26.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13953870,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.26.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3431412,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.26.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.27.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49943464,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.27.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48074907,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.27.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49700780,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.27.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.27.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3243852,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.27.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14287038,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.27.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13495227,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.27.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3446410,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.27.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.28.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50088893,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.28.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48272874,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.28.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49700646,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.28.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.28.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3461617,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.28.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14224640,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.28.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14053493,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.28.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3391281,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.28.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.29.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50307460,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.29.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48784932,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.29.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50036529,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.29.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.29.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3459409,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.29.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14160076,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.29.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13715575,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.29.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3318557,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.29.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.3.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49669132,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.3.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48796506,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.3.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49628323,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.3.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 4,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.3.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 2950085,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.3.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14492578,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.3.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 12892508,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.3.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3525814,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.3.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.30.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50587249,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.30.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48312865,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.30.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49834468,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.30.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.30.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3510543,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.30.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14113985,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.30.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14022910,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.30.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3289702,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.30.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.31.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 51121180,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.31.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48816247,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.31.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50253629,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.31.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.31.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3533745,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.31.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14040274,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.31.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14034595,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.31.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3274158,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.layers.31.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.4.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49757497,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.4.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48613021,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.4.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49814007,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.4.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 1,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.4.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3158827,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.4.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14729148,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.4.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13305984,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.4.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3634473,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.4.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.5.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49924651,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.5.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48510886,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.5.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49924085,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.5.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 1,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.5.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3061766,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.5.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14793084,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.5.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13251132,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.5.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3666258,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.5.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.6.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49985675,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.6.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48645108,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.6.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49880845,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.6.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 1,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.6.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3082808,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.6.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14736977,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.6.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13357638,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.6.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3660803,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.6.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.7.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50077185,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.7.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48610718,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.7.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49977549,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.7.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.7.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3101075,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.7.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14739320,
+        "dtype": "BF16",
+        "final_file": "model-00001-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.7.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13425080,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.7.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3666260,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.7.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.8.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50130719,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.8.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 48809497,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.8.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50051582,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.8.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.8.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3073036,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.8.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14705467,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.8.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13292260,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.8.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3646452,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.8.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.9.input_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 50141307,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.9.mlp.down_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          4096,
+          14336
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49016255,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.9.mlp.gate_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 49994610,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.9.mlp.up_proj.weight",
+        "numel": 58720256,
+        "shape": [
+          14336,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": false,
+        "changed_elements": 0,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.9.post_attention_layernorm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_zero_persisted_net_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3106825,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.9.self_attn.k_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 14719019,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.9.self_attn.o_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 13539004,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.9.self_attn.q_proj.weight",
+        "numel": 16777216,
+        "shape": [
+          4096,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 3686496,
+        "dtype": "BF16",
+        "final_file": "model-00002-of-00004.safetensors",
+        "initial_file": "model-00001-of-00003.safetensors",
+        "name": "model.layers.9.self_attn.v_proj.weight",
+        "numel": 4194304,
+        "shape": [
+          1024,
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      },
+      {
+        "changed": true,
+        "changed_elements": 1,
+        "dtype": "BF16",
+        "final_file": "model-00004-of-00004.safetensors",
+        "initial_file": "model-00003-of-00003.safetensors",
+        "name": "model.norm.weight",
+        "numel": 4096,
+        "shape": [
+          4096
+        ],
+        "update_evidence_class": "verified_update_attempt_persisted_delta"
+      }
+    ],
+    "total_changed_elements": 5976235422,
+    "unchanged_tensor_count": 50
+  },
+  "created_utc": "2026-08-21T23:38:18.129398+00:00",
+  "evaluation": {
+    "all_unchanged_tensors_classified": true,
+    "at_least_one_persisted_element_changed": true,
+    "dynamic_base_update_coverage_exact": true,
+    "full_scope_optimization_attempts_verified": true,
+    "optimizer_coverage_exact": true,
+    "passed": true,
+    "persisted_change_tensor_count": 241,
+    "schema_exact": true,
+    "verified_zero_net_delta_tensor_count": 50
+  },
+  "final": {
+    "base_model_file_count": 7,
+    "base_model_inventory_sha256": "283cbcc78fe59e2f896776e3d330bca77dba3f640e562e9274a55f191fb026d9",
+    "base_model_total_bytes": 14496105708,
+    "index_files": [
+      {
+        "path": "model.safetensors.index.json",
+        "shards": [
+          "model-00001-of-00004.safetensors",
+          "model-00002-of-00004.safetensors",
+          "model-00003-of-00004.safetensors",
+          "model-00004-of-00004.safetensors"
+        ],
+        "tensor_count": 291
+      }
+    ],
+    "tensor_count": 291,
+    "tensor_schema_sha256": "a0878052f562699b820f3981fa63631f2130174e71b1ccf29bb2fa290229ce2e",
+    "total_numel": 7248023552,
+    "weight_files": [
+      {
+        "indexed": true,
+        "path": "model-00001-of-00004.safetensors",
+        "tensor_count": 72
+      },
+      {
+        "indexed": true,
+        "path": "model-00002-of-00004.safetensors",
+        "tensor_count": 84
+      },
+      {
+        "indexed": true,
+        "path": "model-00003-of-00004.safetensors",
+        "tensor_count": 81
+      },
+      {
+        "indexed": true,
+        "path": "model-00004-of-00004.safetensors",
+        "tensor_count": 54
+      }
+    ]
+  },
+  "format": "latent-workspace-v10-full-update-delta-v2",
+  "initial": {
+    "index_files": [
+      {
+        "path": "model.safetensors.index.json",
+        "shards": [
+          "model-00001-of-00003.safetensors",
+          "model-00002-of-00003.safetensors",
+          "model-00003-of-00003.safetensors"
+        ],
+        "tensor_count": 291
+      }
+    ],
+    "snapshot_file_count": 11,
+    "snapshot_inventory_sha256": "3eff19c27bdc4e19491f61645eaf5216f3d05407ad8b4d7b83e11313a54448fd",
+    "snapshot_total_bytes": 14498796037,
+    "tensor_count": 291,
+    "tensor_schema_sha256": "a0878052f562699b820f3981fa63631f2130174e71b1ccf29bb2fa290229ce2e",
+    "total_numel": 7248023552,
+    "weight_files": [
+      {
+        "indexed": true,
+        "path": "model-00001-of-00003.safetensors",
+        "tensor_count": 97
+      },
+      {
+        "indexed": true,
+        "path": "model-00002-of-00003.safetensors",
+        "tensor_count": 106
+      },
+      {
+        "indexed": true,
+        "path": "model-00003-of-00003.safetensors",
+        "tensor_count": 88
+      }
+    ]
+  },
+  "model": {
+    "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "train_mode": "full"
+  },
+  "model_receipt_sha256": "7973fa042164fd769b5056f29982e7090fcc0c4d75a54f41e54e001463ab2df2",
+  "optimizer_coverage": {
+    "file_sha256": "e60d7d959c01b5441e5b7be0fff33cdca894fee4c73ba467032a11e0b684bfa1",
+    "passed": true,
+    "path": "final/optimizer_coverage.json",
+    "report_sha256": "d9cee53ff4bdbaae4a507a4bc189c8cccd9ebfd3395ab104de0bf25127fe2797",
+    "train_mode": "full"
+  },
+  "passed": true,
+  "performance_boundary": "The value comparison is one post-run O(total persisted weight elements) CPU pass using one tensor and bounded first-axis chunks at a time. Dry-run never performs this comparison; later receipt verification reopens headers and performs O(total artifact bytes) inventory hashing without repeating the elementwise initial-to-final value scan.",
+  "run_id": "F1_inline_upper/seed_42"
+}

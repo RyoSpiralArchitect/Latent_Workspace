@@ -1,0 +1,357 @@
+{
+  "format": "latent-workspace-v10-public-evidence-v1",
+  "evidence_root": "provenance/raw/F0_fixed_engine_verified_pruned/seed_42",
+  "identity": {
+    "profile": "smoke",
+    "condition": "F0_query_only",
+    "seed": 42,
+    "logical_run_id": "F0_query_only/seed_42",
+    "engine_run_id": "e6c7f549d9b049d189e30055f3dc4a30",
+    "global_step": 8,
+    "resume_signature": "1afb12d4f761efce71654df5c0cd6dc7e6123510d7360cddac4d44af2bc7573f",
+    "prune_transaction_id": "7518cc202d864741a52a07183a4e405d"
+  },
+  "implementation": {
+    "backend": "pytorch_cuda",
+    "custom_triton_kernel": false,
+    "attention_implementation": "sdpa",
+    "dtype": "bfloat16",
+    "mixed_precision": "bf16",
+    "gradient_checkpointing": true,
+    "optimizer": "adafactor",
+    "train_mode": "full",
+    "torch_version": "2.13.0+cu132",
+    "world_size": 1
+  },
+  "model": {
+    "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "model_receipt_sha256": "7973fa042164fd769b5056f29982e7090fcc0c4d75a54f41e54e001463ab2df2",
+    "initial_snapshot_inventory_sha256": "3eff19c27bdc4e19491f61645eaf5216f3d05407ad8b4d7b83e11313a54448fd",
+    "tensor_schema_sha256": "a0878052f562699b820f3981fa63631f2130174e71b1ccf29bb2fa290229ce2e",
+    "tensor_count": 291,
+    "total_numel": 7248023552
+  },
+  "source_and_contract_bindings": {
+    "engine_sha256": "3139c6edea71575310a2e6f245999e504318fedede202786fe2c949861ad2e1c",
+    "source_manifest_sha256": "4abca530bd07ec77d54399d6f4ccdd6eaa5503d6832c1fcddd3a807436518e46",
+    "source_tree_sha256": "c4b85cc6f48a77485afa8b69dd480bf10c9c4f036642b3c06756c2ff8054815d",
+    "matrix_runner_sha256": "746b4692c11d5a7d0e471a6e832799462ea901bf48eaf2f1feda0217b698da39",
+    "contract_sha256": "d0720b3a90a6c94eaf20f41a83152f00733b02359dff2ba305b8934f20e774c0",
+    "matrix_sha256": "3e3548ec14e06a5684f4c8cc1699f2c2e1caf64f79f424db780451860d290e2d",
+    "condition_config_sha256": "915929dcd0d1860addaf9d33043c0082540dbe88e0e51d22131915ea3720d5f4",
+    "launched_config_sha256": "a45d8aa97492da0d316bbc7ec14d44de85ec0072a46fec548dc01bec71ed0079",
+    "train_data_sha256": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3",
+    "eval_data_sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e"
+  },
+  "frozen_design": {
+    "max_steps": 8,
+    "batch_size": 1,
+    "gradient_accumulation_steps": 8,
+    "learning_rate": 0.00002,
+    "strict_resume": true,
+    "functional_route_mode": "query_only",
+    "functional_injection_scale": 0.0,
+    "induction_enabled": false,
+    "workspace_route_topology": "functional_workspace"
+  },
+  "engineering_results": {
+    "run_verification_passed": true,
+    "full_update_contract_passed": true,
+    "optimizer_membership_exact": true,
+    "dynamic_base_update_coverage_exact": true,
+    "finite_nonzero_gradient_and_optimizer_step_attempts": {
+      "passed": true,
+      "covered_base_tensors": 291,
+      "expected_base_tensors": 291,
+      "covered_base_numel": 7248023552
+    },
+    "persisted_delta": {
+      "schema_exact": true,
+      "at_least_one_persisted_element_changed": true,
+      "changed_tensor_count": 240,
+      "unchanged_tensor_count": 51,
+      "all_base_weight_tensors_changed": false,
+      "changed_element_count": 5956530573,
+      "total_element_count": 7248023552,
+      "changed_element_fraction": 0.8218144615929637,
+      "all_unchanged_tensors_classified_as_verified_zero_net_delta": true,
+      "strict_all_tensor_change_diagnostic_passed": false
+    },
+    "coverage_receipts": {
+      "optimizer_coverage_file_sha256": "89ae35ea122c5100590f460f26aef6570a4b7cf164219a94439bca104298bc4d",
+      "optimizer_coverage_report_sha256": "b0580411a46abb3e1e348b3f6bd612d3d86b7d083588cd8163ebe468b95ee90c",
+      "base_update_coverage_file_sha256": "b3ab881274fda4a364707025a39c0126286492b59922f54e62b2044b6e2a51a9",
+      "base_update_coverage_report_sha256": "b302026410bb7affaac59d11f00ffc860a89eae31b76b8582bd541c1ff5a14d9",
+      "full_update_delta_sha256": "e21125b3ca7a88990ab904862e9603a7c0df8b7b68c257a4f80272b13c6da246",
+      "run_verification_sha256": "ba5d5a524565a9e59e6bfc207b861d786ea9e21514008318db63e1f6d8ed1191"
+    }
+  },
+  "assays": {
+    "execution_integrity": "PASS",
+    "required_equals_completed": true,
+    "required": [
+      "heldout_eval",
+      "amputation"
+    ],
+    "completed": [
+      "heldout_eval",
+      "amputation"
+    ],
+    "heldout_eval": {
+      "task_loss": 8.5,
+      "functional_heldout_query_accuracy": 0.5,
+      "scientific_direction": "reported_without_preregistered_threshold"
+    },
+    "amputation": {
+      "full_task_loss": 8.5,
+      "amputated_task_loss": 8.5,
+      "task_loss_delta_amputated_minus_full": 0.0,
+      "full_functional_heldout_query_accuracy": 0.5,
+      "amputated_functional_heldout_query_accuracy": 0.5,
+      "scientific_direction": "neutral"
+    },
+    "scientific_direction_authoritative": false,
+    "positive_scientific_result": false,
+    "assay_verification_sha256": "410b295534e25f7d24faa1fd988cf86ef85bef06d2b77dff210572571ef2480a",
+    "metrics_sha256": "114d34ecf11ca5b32f7660aea17ba8960cc9fe567414065ee5028e9999e291e0",
+    "amputation_report_sha256": "05ae380960abe7254024317db2dfd85b6c8c60b7c69d8b02cc3a70ef36deecfd"
+  },
+  "resume_equivalence": {
+    "passed": true,
+    "mode": "bitwise_exact_zero_tolerance",
+    "comparison_scope": "same_host_same_single_gpu_same_source_and_runtime",
+    "split_step": 4,
+    "total_steps": 8,
+    "scheduler_horizon_held_fixed": true,
+    "training_optimizer_steps_executed": 12,
+    "resume_event": {
+      "step": 4,
+      "run_id_preserved": true
+    },
+    "durable_state_scope": [
+      "base_weights",
+      "workspace_state",
+      "optimizer_state",
+      "scheduler_state",
+      "scaler_state",
+      "sampler_state",
+      "rng_state",
+      "run_state"
+    ],
+    "base_resume_control_vs_resumed": {
+      "bitwise_exact": true,
+      "changed_tensor_count": 0,
+      "changed_element_count": 0,
+      "tensor_count": 291,
+      "total_numel": 7248023552
+    },
+    "base_save_non_perturbation_baseline_vs_control": {
+      "bitwise_exact": true,
+      "changed_tensor_count": 0,
+      "changed_element_count": 0,
+      "tensor_count": 291,
+      "total_numel": 7248023552
+    },
+    "workspace_resume_control_vs_resumed": {
+      "exact": true,
+      "sha256": "1ccf4516289afef475d362d85348d6c84a87cbb52cc68d1aa087fab996b2cb45"
+    },
+    "trainer_resume_control_vs_resumed": {
+      "exact": true,
+      "excluded_paths": [],
+      "sha256": "923129e673a1ab8796b114635789fb6a914acbda0669a3292136a416dbea7b4a"
+    },
+    "stable_metrics": {
+      "train_control_vs_resumed_exact": true,
+      "train_record_count": 4,
+      "final_control_vs_resumed_exact": true,
+      "final_record_count": 2,
+      "excluded_runtime_fields": [
+        "cuda_allocated_gb",
+        "cuda_max_allocated_gb",
+        "cuda_max_reserved_gb",
+        "cuda_peak_allocated_gb",
+        "cuda_reserved_gb",
+        "time",
+        "tokens_per_second"
+      ]
+    },
+    "resume_equivalence_result_sha256": "5e5b4178005a89beacfb5742edd307e15401a49d1af33543da5f36374330a645",
+    "resume_verification_sha256": "2aaf2b819f8147d2ab45fb85126f7086368cb44e1063326208384bbea105ded0"
+  },
+  "retention_transition": {
+    "state": "verified_pruned",
+    "completed": true,
+    "explicit_opt_in": true,
+    "scope": "baseline_run_final_base_model_only",
+    "deleted_target": "final/base_model",
+    "deleted_target_count": 1,
+    "trained_weight_file_count": 4,
+    "trained_weight_bytes": 14496080920,
+    "logical_bytes_removed": 14496105708,
+    "observed_free_disk_delta_bytes": 14496153600,
+    "pre_prune_final_inventory_sha256": "d650f716ad04f7de5b60b469ecd31e98c6d8114a9662a592fe0d8414da67ed6f",
+    "deleted_base_model_inventory_sha256": "cf0108cffa63cfed0825d4674864a964d01813f18701bd544fed0101faf3b72d",
+    "deleted_weight_shards": [
+      {
+        "path": "final/base_model/model-00001-of-00004.safetensors",
+        "bytes": 3984728184,
+        "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"
+      },
+      {
+        "path": "final/base_model/model-00002-of-00004.safetensors",
+        "bytes": 3967977000,
+        "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"
+      },
+      {
+        "path": "final/base_model/model-00003-of-00004.safetensors",
+        "bytes": 3926025456,
+        "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"
+      },
+      {
+        "path": "final/base_model/model-00004-of-00004.safetensors",
+        "bytes": 2617350280,
+        "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"
+      }
+    ],
+    "compact_evidence": {
+      "file_count": 16,
+      "total_bytes": 575752,
+      "inventory_sha256": "aaff5109e0e991e1cea5c14d15c6919613cd2d6cabb169e69386e4ae0d4ddfc3",
+      "export_receipt_sha256": "65d679e28242d6c78a0a33df59cafc8f9a605c578ddf7f91b1d1a932c058ab37",
+      "reverified": true
+    },
+    "post_prune_checks": {
+      "all_derived_targets_absent": true,
+      "compact_export_rehashed": true,
+      "quarantine_absent": true,
+      "retained_directories_rehashed": true,
+      "retained_inventory_rehashed": true
+    },
+    "retained_inventory_sha256": "239b1271e1afe3c95ae3865e62a0175efcb2c2fabc91f01e848e2862623abb4a",
+    "prune_intent_file_sha256": "d13c1d3dbf0df412dd7e3d94d81c75913a3d201ff5b9cff01ecf3dd2eada6dba",
+    "prune_receipt_file_sha256": "962148f5a64ba456b35f7a58c1a2e18b0ceb85ea33659fef0f13ea01fce467fb",
+    "prune_receipt_report_sha256": "5701f2306d07402c2ef4ec91e2f4dc413f89a6d51779fb271304b32357c42461",
+    "recoverability": {
+      "pinned_initial_model": "recoverable_from_pinned_model_revision",
+      "integrity_evidence_is_a_backup": false,
+      "loadable_trained_weights_retained_in_compact_evidence": false,
+      "baseline_run_final_base_model": "pruned_from_the_baseline_run",
+      "exact_loadable_copies_currently_present": "successful_resume_equivalence_pilot",
+      "successful_resume_equivalence_copies_are_declared_durable_backup": false,
+      "successful_resume_equivalence_copies_are_within_this_prune_scope": false
+    }
+  },
+  "failed_hypothesis_lineage": [
+    {
+      "evidence": "provenance/pilots/F0_8step_all_tensor_gate_failed/RECEIPT.json",
+      "evidence_sha256": "ee64111c8384e1d8c0498e14a27fcea48bfa53aea0958eae3504f5794c79a0e4",
+      "status": "verification_incomplete",
+      "failed_question": "Does an eight-step BF16 pilot give every persisted base tensor at least one exact stored-element delta?",
+      "result": {
+        "changed_tensor_count": 240,
+        "tensor_count": 291,
+        "changed_element_count": 5956530573,
+        "total_element_count": 7248023552,
+        "unchanged_tensor_count": 51,
+        "unchanged_family": "BF16 one-dimensional Mistral RMSNorm scale tensors with shape [4096]"
+      },
+      "successor_contract": "Require exact optimizer membership plus name-bound finite nonzero-gradient and optimizer-step-attempt coverage for every persisted base tensor; retain all-tensor persisted change as an independent strict diagnostic."
+    },
+    {
+      "evidence": "provenance/pilots/F0_resume_attempt1_failed_model_cache/ATTEMPT_FAILURE.json",
+      "evidence_sha256": "67a4122fab269da03a3b1a20a48e326354af29a60e336815653cd7a083bf1789",
+      "status": "failed_before_training",
+      "optimizer_steps_executed": 0,
+      "root_cause": "The resume harness inherited offline mode without explicitly binding its child process to the verified model cache.",
+      "successor_fix": "Pin the model cache and rehash the exact prefetched snapshot against baseline provenance before launch."
+    },
+    {
+      "evidence": "provenance/pilots/F0_resume_attempt2_failed_optimizer_dtype/ATTEMPT_FAILURE.json",
+      "evidence_sha256": "05438d91af13dcdeb975bbf087df116a3907cc255e322e46580747e7e49bb4c0",
+      "status": "completed_training_failed_exact_equivalence",
+      "failed_gate": "base_resume_control_vs_resumed",
+      "changed_tensor_count": 231,
+      "changed_element_count": 14519381,
+      "first_stable_metric_divergence_step": 6,
+      "optimizer_moment_states_with_mismatch": 291,
+      "root_cause": "Optimizer.load_state_dict cast FP32 Adafactor moment tensors to BF16 parameter dtype during resume, irreversibly quantizing them before the next step.",
+      "successor_fix": "Restore checkpoint optimizer tensors with their saved dtype and exact values after structural mapping validation.",
+      "validated_successor_engine_sha256": "3139c6edea71575310a2e6f245999e504318fedede202786fe2c949861ad2e1c",
+      "closed_by_resume_equivalence_sha256": "5e5b4178005a89beacfb5742edd307e15401a49d1af33543da5f36374330a645",
+      "bounded_failed_attempt_weight_prune": {
+        "intent": {
+          "evidence": "provenance/pruning/F0_resume_attempt2_failed_optimizer_dtype_weights/PRUNE_INTENT.json",
+          "sha256": "fa3c8a58a61015a1d99df997fe9825c33a295085decd007375d2ceb59c5154cd"
+        },
+        "receipt": {
+          "evidence": "provenance/pruning/F0_resume_attempt2_failed_optimizer_dtype_weights/PRUNE_RECEIPT.json",
+          "sha256": "2e1d0015e595c5d98aaef893cef12de9904126c2e60e8521a54991853df88871"
+        },
+        "status": "completed",
+        "deleted_scope": "failed_attempt_safetensors_shard_bodies_only",
+        "deleted_file_count": 16,
+        "deleted_bytes": 57984323680,
+        "target_safetensors_remaining": 0,
+        "retained_evidence": {
+          "ATTEMPT_FAILURE.json": {
+            "retained": true,
+            "sha256": "05438d91af13dcdeb975bbf087df116a3907cc255e322e46580747e7e49bb4c0"
+          },
+          "metrics": true,
+          "manifests_and_indexes": true,
+          "trainer_state_count": 4,
+          "workspace_state_count": 4
+        },
+        "verification": {
+          "pre_delete_size_and_sha256_recomputed": true,
+          "post_delete_target_absence_checked": true,
+          "post_delete_failure_receipt_rehashed": true,
+          "post_delete_metrics_rehashed": true,
+          "post_delete_trainer_and_workspace_states_present": true
+        },
+        "deleted_shard_bodies_guaranteed_reconstructible": false,
+        "claim_boundary": "This proves only bounded deletion of sixteen obsolete safetensors bodies from the failed pre-fix resume attempt after retaining its diagnostic evidence. It is not a successful resume, training-quality, or scientific claim."
+      }
+    }
+  ],
+  "raw_artifact_sha256": {
+    "ASSAY_VERIFICATION.json": "410b295534e25f7d24faa1fd988cf86ef85bef06d2b77dff210572571ef2480a",
+    "EXPORT_RECEIPT.json": "65d679e28242d6c78a0a33df59cafc8f9a605c578ddf7f91b1d1a932c058ab37",
+    "FULL_UPDATE_DELTA.json": "e21125b3ca7a88990ab904862e9603a7c0df8b7b68c257a4f80272b13c6da246",
+    "LAUNCHED_CONFIG.json": "a45d8aa97492da0d316bbc7ec14d44de85ec0072a46fec548dc01bec71ed0079",
+    "PRUNE_INTENT.json": "d13c1d3dbf0df412dd7e3d94d81c75913a3d201ff5b9cff01ecf3dd2eada6dba",
+    "PRUNE_RECEIPT.json": "962148f5a64ba456b35f7a58c1a2e18b0ceb85ea33659fef0f13ea01fce467fb",
+    "RESUME_VERIFICATION.json": "2aaf2b819f8147d2ab45fb85126f7086368cb44e1063326208384bbea105ded0",
+    "RUN_VERIFICATION.json": "ba5d5a524565a9e59e6bfc207b861d786ea9e21514008318db63e1f6d8ed1191",
+    "amputation_report.json": "05ae380960abe7254024317db2dfd85b6c8c60b7c69d8b02cc3a70ef36deecfd",
+    "metrics.jsonl": "114d34ecf11ca5b32f7660aea17ba8960cc9fe567414065ee5028e9999e291e0",
+    "resume_equivalence_result.json": "5e5b4178005a89beacfb5742edd307e15401a49d1af33543da5f36374330a645",
+    "final/COMPLETED": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+    "final/base_model/config.json": "319adbaed9ef61ff0a2facce59adda34a3db46961bac31133e013ecca6d5c829",
+    "final/base_model/generation_config.json": "247edaf97bf0138bf58982cd101038dd55cc251f91b0682b1c349e773dc931b7",
+    "final/base_model/model.safetensors.index.json": "05eb48f2137c718b87bd2a7e1cab3960bc59283767bef62f9ef435c7374a9397",
+    "final/base_update_coverage.json": "b3ab881274fda4a364707025a39c0126286492b59922f54e62b2044b6e2a51a9",
+    "final/experiment_config.json": "a43747abf116b4527dd3e4b974a0c29aa0b47b6ab7353f8587dfc1747a185ee5",
+    "final/manifest.json": "20630b5df5da1a978fbdf7ebaf02ba6084a789c99c0c15708eae36358a515b83",
+    "final/optimizer_coverage.json": "89ae35ea122c5100590f460f26aef6570a4b7cf164219a94439bca104298bc4d"
+  },
+  "claim_boundary": {
+    "verified": "Engineering integrity for one eight-step F0_query_only seed-42 Mistral-7B full-parameter CUDA run, its required assay execution, its same-host single-GPU fixed-schedule exact resume comparison, the baseline run's explicit verified-pruned final/base_model transition, and bounded deletion of obsolete weight bodies from the failed pre-fix resume attempt.",
+    "not_verified": [
+      "a positive scientific effect",
+      "training quality or model improvement",
+      "causal memory or workspace necessity",
+      "generalization beyond the recorded held-out data",
+      "the active stochastic workspace route because F0 bypasses it",
+      "signal-preemption resume",
+      "multi-GPU resume",
+      "schedule extension",
+      "cross-hardware or cross-runtime reproducibility",
+      "larger matrix conditions or seeds",
+      "consciousness"
+    ],
+    "retention_limit": "Only the baseline run's final/base_model directory was pruned by its verified-pruned transition. Exact loadable copies currently remain in the successful resume-equivalence pilot, but those copies are not declared a durable backup. The compact baseline evidence is not a weight backup. Separately, sixteen failed-attempt shard bodies were deleted and are not guaranteed reconstructible; that failed attempt's metrics, manifests and indexes, four trainer states, four workspace states, and ATTEMPT_FAILURE receipt remain preserved."
+  }
+}

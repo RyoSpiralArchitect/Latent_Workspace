@@ -1,0 +1,236 @@
+{
+  "format": "latent-workspace-v10-historical-failed-run-move-v2",
+  "status": "moved_and_byte_verified",
+  "recorded_utc": "2026-08-21T21:15:42Z",
+  "moved_utc": "2026-08-21T21:15:13.318011826Z",
+  "source": "runs/v10/smoke/B_local_invariance/seed_42",
+  "destination": "runs/v10/_historical_source/engine_d5f2ef1d137f5db1_runner_afd045c4dfa2c899_failed_b_microbatch1_capacity_oom/smoke/B_local_invariance/seed_42",
+  "move": {
+    "method": "same-filesystem atomic directory rename",
+    "no_clobber": true,
+    "no_delete": true,
+    "same_filesystem_precondition_passed": true,
+    "directory_identity_preserved": true,
+    "source_exists_after": false,
+    "canonical_condition_root_entries_after": 0,
+    "canonical_condition_root_empty_after": true,
+    "destination_exists_after": true,
+    "post_move_inventory_matches_pre_move": true
+  },
+  "run": {
+    "profile": "smoke",
+    "condition": "B_local_invariance",
+    "seed": 42,
+    "engine_run_id": "afd957ca245f482f99266a82e0a362a5",
+    "global_step": 0,
+    "configured_max_steps": 8,
+    "gradient_accumulation_steps": 8,
+    "optimizer_steps_executed": 0,
+    "failure_timestamp_utc": "2026-08-21T21:12:25.940703Z",
+    "failure_operation": "scaled_objective_backward",
+    "failure_microbatch_index": 1,
+    "exact_microbatch_known": true,
+    "completed_backward_microbatches_before_failure": 1,
+    "last_completed_microbatch_index": 0
+  },
+  "source_and_contract_bindings": {
+    "engine_sha256": "d5f2ef1d137f5db1a4746a370758f39b62d7d128d7d0bf0101948226186be69b",
+    "source_manifest_sha256": "cf2fe23e9a5a638b286c6710cf95d5976fe761d254db68df98dd4ba6cdfbde58",
+    "source_tree_sha256": "841a21092d2e51d26e2168b92fce10d64bf8ab0c07bd07ba9d57df1d0ced2cad",
+    "package_init_sha256": "fd1c48552935645d302336d05bc133348f8466c62228c6c22dbe5f2b947803b0",
+    "package_main_sha256": "71e2b8c807406881aa3d12a21323dc92682fe2b602fbe08b25460805793e0518",
+    "matrix_runner_sha256": "afd045c4dfa2c899b38dfba85eaeee95d6fff683e875911db3740d07b6a47732",
+    "prefetch_script_sha256": "9d4b4f2b5374657d632bffa671eadc9b960a0d93070d05cbb5933bccd7001f3a",
+    "contract_sha256": "0f8ba7972be3b4b34d6cb6ba0bcb3b6768c1173a5f115b83a334237b74c550b0",
+    "smoke_matrix_sha256": "1d5b6a2f7453ed1637ea0f0687a7092232e83d12ce64e0ded7a738a0bb9b81f8",
+    "condition_config_sha256": "2a4d72531a6c5988f1b9b091f13305c341cd26ae4bbcceffafd437a1305ced1b",
+    "launched_config_sha256": "5fe1c856818fc45d9638ba359ab7852163b763312ee7b03ca97a97847d4dafe2",
+    "model_prefetch_receipt_sha256": "7973fa042164fd769b5056f29982e7090fcc0c4d75a54f41e54e001463ab2df2",
+    "model_snapshot_inventory_sha256": "3eff19c27bdc4e19491f61645eaf5216f3d05407ad8b4d7b83e11313a54448fd",
+    "model_snapshot_tensor_schema_sha256": "a0878052f562699b820f3981fa63631f2130174e71b1ccf29bb2fa290229ce2e",
+    "train_data_sha256": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3",
+    "eval_data_sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+    "runner_status_sha256": "8df3f60c5ac059e689da32eae5d857243a60673b59480cc8055b8b85602e31bc"
+  },
+  "effective_allocator": {
+    "verified_effective": true,
+    "primary_environment_variable": "PYTORCH_ALLOC_CONF",
+    "configured": "backend:native,expandable_segments:True",
+    "active_backend": "native",
+    "active_settings": "backend:native,expandable_segments:True",
+    "allocator_initialized": true,
+    "legacy_cuda_alias_observed": null,
+    "legacy_hip_alias_observed": null,
+    "no_cuda_memory_caching_override_observed": null,
+    "effective_snapshot": {
+      "expandable_segments": true,
+      "max_split_size": -1,
+      "garbage_collection_threshold": 0.0
+    },
+    "environment_snapshot_memory": {
+      "cuda_memory_allocated_bytes": 14793566720,
+      "cuda_memory_reserved_bytes": 14795407360
+    },
+    "failure_snapshot_memory": {
+      "cuda_memory_allocated_bytes": 29660606976,
+      "cuda_memory_reserved_bytes": 32742834176
+    },
+    "evidence": [
+      {
+        "artifact": "environment.json",
+        "sha256": "854ae221ae92c5feba6f14790e72f676453b89f4e5b798df31931eeae76ccfa3"
+      },
+      {
+        "artifact": "FAILED.json",
+        "sha256": "4db79f8f793d633700f248ac74e42e7a61b9c909f4cddc3b9c68ec7ac99078d2"
+      }
+    ]
+  },
+  "failure": {
+    "type": "torch.OutOfMemoryError",
+    "classification": "physical_device_capacity_oom_with_effective_expandable_segments",
+    "requested_allocation": {
+      "reported": "32.00 MiB",
+      "bytes": 33554432
+    },
+    "device_capacity_reported": "31.36 GiB",
+    "device_total_bytes": 33668268032,
+    "device_free_reported": "23.31 MiB",
+    "process_memory_in_use_reported": "31.32 GiB",
+    "pytorch_allocated_reported": "30.40 GiB",
+    "pytorch_reserved_unallocated_reported": "101.06 MiB",
+    "expandable_segment_mapping_failures": [
+      {
+        "requested_mapping_bytes": 20971520,
+        "physical_device_free_bytes": 1376256,
+        "device_total_bytes": 33668268032
+      },
+      {
+        "requested_mapping_bytes": 20971520,
+        "physical_device_free_bytes": 3473408,
+        "device_total_bytes": 33668268032
+      }
+    ],
+    "localization": {
+      "step": 0,
+      "accumulation_window_size": 8,
+      "completed_microbatch_0_post_backward": true,
+      "microbatch_1_pre_backward_recorded": true,
+      "microbatch_1_post_backward_recorded": false,
+      "traceback_operation": "scaled_objective_backward",
+      "microbatch_1_pre_backward_cuda_allocated_gb": 27.799461841583252,
+      "microbatch_1_pre_backward_cuda_reserved_gb": 28.171875,
+      "run_peak_cuda_allocated_gb_before_failure": 27.854031562805176
+    },
+    "interpretation": "The effective allocator snapshot shows native expandable segments enabled. Both recorded expandable-segment mapping attempts requested 20 MiB while only a few physical-device MiB were free, and the final 32 MiB request exceeded the reported physical free capacity. The evidence therefore bounds this attempt as physical-capacity exhaustion, not proof that the allocator policy was absent or ineffective."
+  },
+  "optimizer_coverage_before_failure": {
+    "scope": "static_membership_only",
+    "passed": true,
+    "train_mode": "full",
+    "model_trainable_unique_physical_parameters": 371,
+    "model_trainable_numel": 7322402570,
+    "optimizer_unique_physical_parameters": 371,
+    "optimizer_membership_occurrences": 371,
+    "optimizer_duplicate_memberships": 0,
+    "base_unique_physical_parameters": 291,
+    "base_trainable_unique_physical_parameters": 291,
+    "base_all_trainable": true,
+    "report_sha256": "b0580411a46abb3e1e348b3f6bd612d3d86b7d083588cd8163ebe468b95ee90c",
+    "file_sha256": "89ae35ea122c5100590f460f26aef6570a4b7cf164219a94439bca104298bc4d",
+    "dynamic_update_coverage_observed": false
+  },
+  "outputs": {
+    "metrics_record_count": 1,
+    "metrics_events": [
+      "start"
+    ],
+    "configured_total_optimizer_steps_reported_at_launch": 8,
+    "configured_total_optimizer_steps_is_not_executed_step_count": true,
+    "optimizer_steps_executed": 0,
+    "weight_or_state_files_observed": 0,
+    "trained_weight_files_written": 0,
+    "optimizer_state_written": false,
+    "final_bundle_created": false,
+    "assays_completed": [],
+    "scientific_result_available": false
+  },
+  "key_artifact_sha256": {
+    "FAILED.json": "4db79f8f793d633700f248ac74e42e7a61b9c909f4cddc3b9c68ec7ac99078d2",
+    "environment.json": "854ae221ae92c5feba6f14790e72f676453b89f4e5b798df31931eeae76ccfa3",
+    "subprocess.stderr.log": "7506d44c23800baf024c14dc9ec3c8045184fb6445da490c26a6ebd54adc8e4e",
+    "microbatch_memory.jsonl": "ea81f195752783f18d19e24bc44b722017a592edf716a77138aa89600b0a1944",
+    "metrics.jsonl": "0380e476c1aa49f719a07efed45a5f5a061907f474e3ec5cf6e8785028c80dc0",
+    "LAUNCHED_CONFIG.json": "5fe1c856818fc45d9638ba359ab7852163b763312ee7b03ca97a97847d4dafe2"
+  },
+  "inventory": {
+    "algorithm": "Recursive regular files sorted by relative path; each entry records path, byte length, and SHA-256. The inventory SHA-256 covers the two-space-indented, key-sorted UTF-8 JSON array with a trailing newline.",
+    "file_count": 10,
+    "directory_count_including_root": 1,
+    "logical_bytes": 152770,
+    "symlink_count": 0,
+    "weight_or_state_file_count": 0,
+    "pre_move_inventory_sha256": "70cf23ec6d2ae8a898bb35dba23a3abf423487c5b18930c2fb9d8d0dfe3332fb",
+    "post_move_inventory_sha256": "70cf23ec6d2ae8a898bb35dba23a3abf423487c5b18930c2fb9d8d0dfe3332fb",
+    "files": [
+      {
+        "path": "FAILED.json",
+        "bytes": 1317,
+        "sha256": "4db79f8f793d633700f248ac74e42e7a61b9c909f4cddc3b9c68ec7ac99078d2"
+      },
+      {
+        "path": "LAUNCHED_CONFIG.json",
+        "bytes": 7446,
+        "sha256": "5fe1c856818fc45d9638ba359ab7852163b763312ee7b03ca97a97847d4dafe2"
+      },
+      {
+        "path": "data_fingerprint.json",
+        "bytes": 472,
+        "sha256": "bfb750e3bbde3619162915504a7c03b4a24e2420f79f4358197b6572e68c0c87"
+      },
+      {
+        "path": "environment.json",
+        "bytes": 1158,
+        "sha256": "854ae221ae92c5feba6f14790e72f676453b89f4e5b798df31931eeae76ccfa3"
+      },
+      {
+        "path": "metrics.jsonl",
+        "bytes": 124,
+        "sha256": "0380e476c1aa49f719a07efed45a5f5a061907f474e3ec5cf6e8785028c80dc0"
+      },
+      {
+        "path": "microbatch_memory.jsonl",
+        "bytes": 1483,
+        "sha256": "ea81f195752783f18d19e24bc44b722017a592edf716a77138aa89600b0a1944"
+      },
+      {
+        "path": "optimizer_coverage.json",
+        "bytes": 129112,
+        "sha256": "89ae35ea122c5100590f460f26aef6570a4b7cf164219a94439bca104298bc4d"
+      },
+      {
+        "path": "resolved_config.json",
+        "bytes": 7720,
+        "sha256": "6de7b3c2c824310fd739fdfa36f08851bcf105208fce72a99c3556162a9919b4"
+      },
+      {
+        "path": "subprocess.stderr.log",
+        "bytes": 3446,
+        "sha256": "7506d44c23800baf024c14dc9ec3c8045184fb6445da490c26a6ebd54adc8e4e"
+      },
+      {
+        "path": "subprocess.stdout.log",
+        "bytes": 492,
+        "sha256": "063f7dee325a59519108877191f0e27e67a8f22054716c901996e4e13ebfaf77"
+      }
+    ]
+  },
+  "recoverability": {
+    "trained_weights": "none_were_created",
+    "optimizer_state": "none_was_created",
+    "raw_failure_evidence": "retained_at_destination",
+    "integrity_hashes_are_a_backup": false,
+    "deleted_files": 0
+  },
+  "claim_boundary": "This receipt proves one no-clobber same-filesystem atomic relocation with exact pre/post byte-inventory equality for the failed canonical B_local_invariance run bound to engine d5f2ef1d and runner afd045c4. The retained artifacts establish that the native expandable allocator was configured, initialized, and effective; microbatch 0 backward completed, then physical device capacity was exhausted during microbatch 1 backward before the first optimizer step. No trained weights, optimizer state, final bundle, completed assay, condition comparison, or scientific result exists. Static optimizer membership PASS is not dynamic update evidence. This negative engineering result does not show that expandable segments had no benefit, establish a scientific result for or against the Latent Workspace hypothesis, or create a durable backup. Non-portable runtime identity fields and private filesystem paths present in raw artifacts are intentionally omitted."
+}

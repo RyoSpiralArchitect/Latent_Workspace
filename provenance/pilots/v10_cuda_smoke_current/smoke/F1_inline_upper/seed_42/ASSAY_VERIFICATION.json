@@ -1,0 +1,126 @@
+{
+  "artifacts": [
+    {
+      "bytes": 7493,
+      "path": "LAUNCHED_CONFIG.json",
+      "sha256": "4bacb3ee63ba5d7f6136146e972dbf6cb512a2c913c3e28b0dc5a179d537cba8"
+    },
+    {
+      "bytes": 16912,
+      "path": "RUN_VERIFICATION.json",
+      "sha256": "ea1469f3c33c9d7d35f3f07ae4d2b84ed1fd480029ea4ef8ff315786eef9ae9b"
+    },
+    {
+      "bytes": 5428,
+      "path": "amputation_report.json",
+      "sha256": "6b9c7a2f134963aa7d4f4368c89c0b9c381024d69ccc69c190f616f9689e33c0"
+    },
+    {
+      "bytes": 28027,
+      "path": "metrics.jsonl",
+      "sha256": "378058e45d95182b21c662f03bd3332b7c59d223efd69fc46e15034502852b9e"
+    }
+  ],
+  "claim_boundary": "PASS verifies only that this exact verified run has all assays required by its launched config, with structurally valid, provenance-bound artifacts. Scientific direction is recorded separately and is never an integrity gate. This receipt does not establish positive effect direction, model quality, causal memory, generalization beyond the recorded held-out data, or consciousness.",
+  "completed_assays": [
+    "heldout_eval",
+    "amputation"
+  ],
+  "execution_integrity": {
+    "assays": {
+      "amputation": {
+        "evidence": {
+          "artifact": "metrics.jsonl",
+          "functional_heldout_query_accuracy": 0.5,
+          "jsonl_line": 11,
+          "record_sha256": "e5fc1569a4d9ca146e9596dc931a4abfbb3fba3922a38fb388415f2d50d053c7",
+          "step": 8,
+          "task_loss": 4.22186279296875
+        },
+        "execution_integrity": "PASS",
+        "task_loss_delta_amputated_minus_full": 0.0
+      },
+      "heldout_eval": {
+        "evidence": {
+          "artifact": "metrics.jsonl",
+          "functional_heldout_query_accuracy": 0.5,
+          "jsonl_line": 10,
+          "record_sha256": "4326d208d5ee04e5cf6598c888927e8c24ff81dfb66980315cc3f1d2adc5077a",
+          "step": 8,
+          "task_loss": 4.22186279296875
+        },
+        "execution_integrity": "PASS"
+      }
+    },
+    "required_equals_completed": true,
+    "status": "PASS"
+  },
+  "format": "latent-workspace-v10-assay-verification-v1",
+  "input_bindings": {
+    "engine_run_id": "3a8c6f45548744299df31f9e14caae72",
+    "global_step": 8,
+    "launched_config_sha256": "4bacb3ee63ba5d7f6136146e972dbf6cb512a2c913c3e28b0dc5a179d537cba8",
+    "metrics_sha256": "378058e45d95182b21c662f03bd3332b7c59d223efd69fc46e15034502852b9e",
+    "run_verification_sha256": "ea1469f3c33c9d7d35f3f07ae4d2b84ed1fd480029ea4ef8ff315786eef9ae9b"
+  },
+  "provenance": {
+    "condition": "F1_inline_upper",
+    "condition_config": "configs/v10/conditions/config_F1_inline_upper.json",
+    "hashes": {
+      "condition_config_sha256": "1d695f4301c00eb37f146f342f4b17b7ff22b8e1888ffa96f47ed3bb990d762c",
+      "contract_data_sha256": {
+        "data/v10/functional_eval.jsonl": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+        "data/v10/functional_train.jsonl": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+      },
+      "contract_sha256": "156dc89c451db7c24eebf47eb851d1a9c26e398d8791f184cd126a551609fc20",
+      "materialized_config_sha256": "4bacb3ee63ba5d7f6136146e972dbf6cb512a2c913c3e28b0dc5a179d537cba8",
+      "matrix_sha256": "9731c165c66de333feb76b245f926bc127d62f1b00a418d9c124227377ff22e4",
+      "model_receipt_sha256": "7973fa042164fd769b5056f29982e7090fcc0c4d75a54f41e54e001463ab2df2",
+      "model_snapshot_inventory_sha256": "3eff19c27bdc4e19491f61645eaf5216f3d05407ad8b4d7b83e11313a54448fd",
+      "model_snapshot_tensor_schema_sha256": "a0878052f562699b820f3981fa63631f2130174e71b1ccf29bb2fa290229ce2e",
+      "prefetch_script_sha256": "9d4b4f2b5374657d632bffa671eadc9b960a0d93070d05cbb5933bccd7001f3a",
+      "run_data_sha256": {
+        "data/v10/functional_eval.jsonl": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+        "data/v10/functional_train.jsonl": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+      },
+      "runner_sha256": "07fdd920f76463f5996a5568447b940d41b8bce4675dd83594d3f68e54ecd68d",
+      "source_files_sha256": {
+        "src/latent_workspace_ft_v10/__init__.py": "fd1c48552935645d302336d05bc133348f8466c62228c6c22dbe5f2b947803b0",
+        "src/latent_workspace_ft_v10/__main__.py": "71e2b8c807406881aa3d12a21323dc92682fe2b602fbe08b25460805793e0518",
+        "src/latent_workspace_ft_v10/engine.py": "755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c",
+        "src/latent_workspace_ft_v10/source_manifest.json": "3264d9ebc6307e0028e58ded03c2d36c38a3b1dc71958822a93b3eacc09a0ee2"
+      },
+      "source_tree_sha256": "33851900abae227475a27ddafd409225f02a01354be6c13a1f6209ddf3f5e835"
+    },
+    "max_steps": 8,
+    "output_dir": "runs/v10/smoke/F1_inline_upper/seed_42",
+    "profile": "smoke",
+    "run_id": "F1_inline_upper/seed_42",
+    "runtime_policy": {
+      "environment_variable": "PYTORCH_ALLOC_CONF",
+      "forbidden_environment_variables": [
+        "PYTORCH_CUDA_ALLOC_CONF",
+        "PYTORCH_HIP_ALLOC_CONF",
+        "PYTORCH_NO_CUDA_MEMORY_CACHING"
+      ],
+      "gradient_accumulation_offload": "cpu",
+      "pytorch_alloc_conf": "backend:native,expandable_segments:True"
+    },
+    "seed": 42
+  },
+  "required_assays": [
+    "heldout_eval",
+    "amputation"
+  ],
+  "run_id": "F1_inline_upper/seed_42",
+  "scientific_direction": {
+    "authoritative": false,
+    "by_assay": {
+      "amputation": "neutral",
+      "heldout_eval": "reported_without_preregistered_threshold"
+    },
+    "not_an_integrity_gate": true
+  },
+  "verified": true,
+  "verified_utc": "2026-08-21T23:38:41.180485+00:00"
+}

@@ -1,0 +1,153 @@
+{
+  "format": "latent-workspace-v10-b-local-invariance-attempt-failure-v1",
+  "status": "failed_before_first_optimizer_step",
+  "attempt": 2,
+  "failure_class": "cuda_allocator_oom",
+  "failure_timestamp_utc": "2026-08-21T19:29:22Z",
+  "run": {
+    "profile": "smoke",
+    "condition": "B_local_invariance",
+    "seed": 42,
+    "engine_run_id": "dae03efe1d3c4695beda3d892b49f8ba",
+    "global_step": 0,
+    "configured_max_steps": 8,
+    "optimizer_steps_executed": 0,
+    "failure_stage": "within_first_gradient_accumulation_window",
+    "exact_microbatch_unknown": true,
+    "failure_operation": "scaled_objective_backward"
+  },
+  "frozen_design": {
+    "model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "model_revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "train_mode": "full",
+    "backend": "cuda",
+    "mixed_precision": "bf16",
+    "attention_implementation": "sdpa",
+    "gradient_checkpointing": true,
+    "optimizer": "adafactor",
+    "batch_size": 1,
+    "gradient_accumulation_steps": 8,
+    "base_learning_rate": 0.00002,
+    "workspace_learning_rate": 0.0003,
+    "workspace_loss_weight": 0.02,
+    "workspace_steps": 4,
+    "workspace_tokens_per_example": 32,
+    "workspace_max_tokens_per_batch": 256,
+    "functional_route_mode": "deferred",
+    "functional_injection_scale": 0.0,
+    "induction_enabled": false,
+    "aux_backprop_to_base": false
+  },
+  "allocator_environment": {
+    "variable": "PYTORCH_CUDA_ALLOC_CONF",
+    "value": "expandable_segments:True",
+    "provenance": "launch_command_in_current_execution_turn",
+    "captured_by_environment_json": false,
+    "artifact_observation": "The stderr allocator warnings independently show that expandable_segments was active and failed while mapping additional segments."
+  },
+  "environment": {
+    "harness_version": "10.0.0",
+    "python": "3.14.4",
+    "platform": "Linux-7.0.0-29-generic-x86_64-with-glibc2.43",
+    "torch": "2.13.0+cu132",
+    "cuda_runtime": "13.2",
+    "cudnn": 92000,
+    "transformers": "5.15.0",
+    "safetensors": "0.8.0",
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 5090",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 33668268032
+    },
+    "engine_source_sha256": "3139c6edea71575310a2e6f245999e504318fedede202786fe2c949861ad2e1c"
+  },
+  "oom": {
+    "error_type": "OutOfMemoryError",
+    "requested_allocation": {
+      "reported": "112.00 MiB",
+      "bytes": 117440512
+    },
+    "device_capacity_reported": "31.36 GiB",
+    "device_free_reported": "107.31 MiB",
+    "process_memory_in_use_reported": "31.23 GiB",
+    "pytorch_allocated_reported": "30.35 GiB",
+    "pytorch_reserved_unallocated_reported": "60.07 MiB",
+    "expandable_segment_mapping_failures": [
+      {
+        "requested_mapping_bytes": 20971520,
+        "allocator_free_bytes": 5570560,
+        "device_total_bytes": 33668268032
+      },
+      {
+        "requested_mapping_bytes": 20971520,
+        "allocator_free_bytes": 7667712,
+        "device_total_bytes": 33668268032
+      }
+    ]
+  },
+  "optimizer_coverage_before_failure": {
+    "scope": "static_membership_only",
+    "passed": true,
+    "train_mode": "full",
+    "model_trainable_unique_physical_parameters": 371,
+    "model_trainable_numel": 7322402570,
+    "optimizer_unique_physical_parameters": 371,
+    "optimizer_membership_occurrences": 371,
+    "optimizer_duplicate_memberships": 0,
+    "base_unique_physical_parameters": 291,
+    "base_trainable_unique_physical_parameters": 291,
+    "base_all_trainable": true,
+    "expected_membership_sha256": "ed6bedae638c6e99500ddedb786240e92e28196e2a3d8b3bc9436e7c60579c05",
+    "optimizer_membership_sha256": "ed6bedae638c6e99500ddedb786240e92e28196e2a3d8b3bc9436e7c60579c05",
+    "report_sha256": "b0580411a46abb3e1e348b3f6bd612d3d86b7d083588cd8163ebe468b95ee90c",
+    "dynamic_update_coverage_observed": false,
+    "interpretation": "Static exact membership was established before training, but a backward within the first gradient accumulation window failed. The exact microbatch is unknown; no optimizer step or dynamic update coverage occurred."
+  },
+  "outputs": {
+    "metrics_record_count": 1,
+    "metrics_events": [
+      "start"
+    ],
+    "safetensors_files_observed_in_run_directory": 0,
+    "trained_weight_files_written": 0,
+    "final_bundle_created": false,
+    "assays_completed": [],
+    "scientific_result_available": false
+  },
+  "raw_artifacts": [
+    {
+      "name": "FAILED.json",
+      "bytes": 714,
+      "sha256": "7bf2041719421eb31f5704bfa2d2983aacd34b2cf642d3d43199872048ad7375"
+    },
+    {
+      "name": "LAUNCHED_CONFIG.json",
+      "bytes": 7376,
+      "sha256": "89b3da0bc46674da69ed57e9e8f54bbca2dffa9f83cb9031c082642c9a8559aa"
+    },
+    {
+      "name": "environment.json",
+      "bytes": 603,
+      "sha256": "bbf3b2c9a8b8ee277fef8fa91de08383092da7db9cd8e5ec97bbd93f9dfa67cc"
+    },
+    {
+      "name": "metrics.jsonl",
+      "bytes": 124,
+      "sha256": "9ad9c9a4b11bdf52aca1dfffc1924082747d14ac124fdfc3d6e13a6bcf60a962"
+    },
+    {
+      "name": "optimizer_coverage.json",
+      "bytes": 129112,
+      "sha256": "89ae35ea122c5100590f460f26aef6570a4b7cf164219a94439bca104298bc4d"
+    },
+    {
+      "name": "subprocess.stderr.log",
+      "bytes": 3447,
+      "sha256": "719e7b15ab2e0c2bf6292e1c8f73af870d4aadd4ea97c885a92404cd3ebb2c46"
+    }
+  ],
+  "claim_boundary": "This is path-free negative engineering evidence for B_local_invariance attempt 2. It establishes a CUDA allocator OOM during a backward within the first gradient accumulation window, before any optimizer step; the exact microbatch is unknown. No trained weights, final bundle, completed assay, condition comparison, or scientific result exists. Static optimizer membership PASS is not training completion or dynamic update evidence. The allocator environment value comes from the launch command; the environment artifact did not capture it, while stderr independently records expandable-segment mapping failures. The source raw failure artifact contains non-portable runtime identity fields that are intentionally omitted here."
+}

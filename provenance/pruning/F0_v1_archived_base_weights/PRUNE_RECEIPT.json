@@ -1,0 +1,64 @@
+{
+  "format": "latent-workspace-v10-failed-run-weight-prune-receipt-v1",
+  "status": "completed",
+  "explicit_operator_authorization": true,
+  "reason": "The superseded invalid F0 v1 bundle was automatically archived before the fresh verified F0 v2 run. Its four final base-model shards are byte-identical to the retained verified F0 v2 shards and consume duplicate storage.",
+  "archive": {
+    "repository_relative_path": "runs/v10/_archived_incomplete/smoke/F0_query_only/seed_42/20260821T172414.449654Z-aa6ad246af57",
+    "classification": "invalid_final_archived",
+    "pre_prune_total_bytes": 14809592671
+  },
+  "preconditions": {
+    "archive_realpath_exact": true,
+    "base_model_directory_exists": true,
+    "target_symlinks_absent": true,
+    "target_file_count": 4,
+    "target_bytes": 14496080920,
+    "compact_failed_hypothesis_receipt_sha256": "ee64111c8384e1d8c0498e14a27fcea48bfa53aea0958eae3504f5794c79a0e4",
+    "compact_failed_delta_receipt_sha256": "caee88c403562fd4af530607391b7053178cce1cefe661f20f77d67cf8cfd45e",
+    "replacement_verified_run_receipt_sha256": "eff68577966764efa557ab0f32c8b0d5d982f8e276f16b0ecfd642e06f5841a2",
+    "replacement_shards_byte_identical_by_size_and_sha256": true
+  },
+  "targets": [
+    {
+      "path": "final/base_model/model-00001-of-00004.safetensors",
+      "bytes": 3984728184,
+      "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"
+    },
+    {
+      "path": "final/base_model/model-00002-of-00004.safetensors",
+      "bytes": 3967977000,
+      "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"
+    },
+    {
+      "path": "final/base_model/model-00003-of-00004.safetensors",
+      "bytes": 3926025456,
+      "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"
+    },
+    {
+      "path": "final/base_model/model-00004-of-00004.safetensors",
+      "bytes": 2617350280,
+      "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"
+    }
+  ],
+  "retained": [
+    "final/base_model/config.json",
+    "final/base_model/generation_config.json",
+    "final/base_model/model.safetensors.index.json",
+    "all non-weight archived runtime and compact diagnostic artifacts"
+  ],
+  "recoverability": {
+    "classification": "duplicate_copy_removed",
+    "exact_bytes_currently_recoverable_from": "runs/v10/smoke/F0_query_only/seed_42/final/base_model",
+    "boundary": "The replacement verified bundle is not a permanent backup. If it is later pruned, these trained final bytes will no longer be reconstructible from hashes alone."
+  },
+  "operation": {
+    "planned_utc": "2026-08-21T17:30:33Z",
+    "completed_utc": "2026-08-21T17:31:51Z",
+    "deleted_file_count": 4,
+    "deleted_bytes": 14496080920,
+    "all_targets_absent_after": true,
+    "non_target_files_retained_after": true,
+    "post_prune_archive_total_bytes": 313514609
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "format": "latent-workspace-v10-smoke-attempt-failure-v1",
+  "status": "failed_before_first_optimizer_step",
+  "recorded_utc": "2026-08-21T19:24:00.641658Z",
+  "condition": "B_local_invariance",
+  "seed": 42,
+  "profile": "smoke",
+  "engine_run_id": "6fc5355398f74ea5bc3d68ca0c9a3b0d",
+  "design": {
+    "model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "model_revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "backend": "pytorch_cuda_bf16_sdpa",
+    "train_mode": "full",
+    "optimizer": "adafactor",
+    "route_mode": "deferred",
+    "workspace_loss_weight": 0.02,
+    "max_steps": 8
+  },
+  "execution": {
+    "optimizer_coverage_passed": true,
+    "base_tensor_count": 291,
+    "optimizer_steps_completed": 0,
+    "total_trainable_parameters": 7322402570,
+    "workspace_parameters": 74379018,
+    "final_bundle_created": false,
+    "scientific_assays_completed": false
+  },
+  "failure": {
+    "type": "torch.OutOfMemoryError",
+    "phase": "within_first_gradient_accumulation_window",
+    "exact_microbatch_unknown": true,
+    "operation": "scaled_objective_backward",
+    "requested_bytes": 117440512,
+    "device_total_bytes": 33668268032,
+    "device_free_bytes_at_failure": 85262336,
+    "process_memory_in_use_bytes_approx": 33565169418,
+    "pytorch_allocated_bytes_approx": 32491427594,
+    "pytorch_reserved_unallocated_bytes_approx": 195108536,
+    "failed_hypothesis": "The active deferred-workspace B condition fits unchanged inside the memory envelope established by the workspace-bypassed F0 pilot."
+  },
+  "bindings": {
+    "engine_sha256": "3139c6edea71575310a2e6f245999e504318fedede202786fe2c949861ad2e1c",
+    "source_manifest_sha256": "4abca530bd07ec77d54399d6f4ccdd6eaa5503d6832c1fcddd3a807436518e46",
+    "source_tree_sha256": "c4b85cc6f48a77485afa8b69dd480bf10c9c4f036642b3c06756c2ff8054815d",
+    "runner_sha256": "746b4692c11d5a7d0e471a6e832799462ea901bf48eaf2f1feda0217b698da39",
+    "contract_sha256": "d0720b3a90a6c94eaf20f41a83152f00733b02359dff2ba305b8934f20e774c0",
+    "launched_config_sha256": "89b3da0bc46674da69ed57e9e8f54bbca2dffa9f83cb9031c082642c9a8559aa",
+    "optimizer_coverage_sha256": "89ae35ea122c5100590f460f26aef6570a4b7cf164219a94439bca104298bc4d"
+  },
+  "raw_artifact_sha256": {
+    "FAILED.json": "f32602cd12faf937ccc527a20cd945fe1b2a7e8c9c1713891d756b8655b3dacc",
+    "LAUNCHED_CONFIG.json": "89b3da0bc46674da69ed57e9e8f54bbca2dffa9f83cb9031c082642c9a8559aa",
+    "environment.json": "bbf3b2c9a8b8ee277fef8fa91de08383092da7db9cd8e5ec97bbd93f9dfa67cc",
+    "metrics.jsonl": "1da64eabb759615f1d0bf53f602c1a81f7a032fdd6a0132f84cea8c2c7fa2ab1",
+    "optimizer_coverage.json": "89ae35ea122c5100590f460f26aef6570a4b7cf164219a94439bca104298bc4d",
+    "subprocess.stderr.log": "fde47855c1c5b05ca6e8fde825edf71a549a53264ddf5df4db7f9ff1955c286f"
+  },
+  "next_gate": "Demonstrate a semantics-preserving memory intervention on the same frozen condition, record it explicitly, and rerun from a clean output root before continuing the smoke profile.",
+  "claim_boundary": "This is a resource-envelope failure before any optimizer step and a useful negative engineering result. It is not a completed training run, assay result, comparison result, or evidence for or against the Latent Workspace hypothesis."
+}

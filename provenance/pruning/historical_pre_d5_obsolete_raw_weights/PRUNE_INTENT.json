@@ -1,0 +1,152 @@
+{
+  "format": "latent-workspace-v10-historical-obsolete-raw-weight-prune-intent-v1",
+  "status": "intent_recorded_no_deletion_yet",
+  "recorded_utc": "2026-08-21T22:22:44Z",
+  "authorization": {
+    "source": "explicit_user_instruction",
+    "summary": "Record and delete obsolete historical weights while retaining the d5 native-accumulation oracle."
+  },
+  "scope": {
+    "furnace_worktree": "/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-workspace-ft-cuda",
+    "historical_root": "runs/v10/_historical_source",
+    "delete_only_listed_regular_safetensors": true,
+    "preserve_directories_indexes_configs_trainer_workspace_and_receipts": true,
+    "target_file_count": 52,
+    "expected_logical_bytes": 188449051960,
+    "expected_allocated_bytes": 188449411072
+  },
+  "evidence_bindings": [
+    {
+      "name": "engine_3139_resume_equivalence",
+      "location": "furnace",
+      "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/RESUME_EQUIVALENCE.json",
+      "sha256": "5e5b4178005a89beacfb5742edd307e15401a49d1af33543da5f36374330a645",
+      "recorded_status": "passed"
+    },
+    {
+      "name": "engine_b217_resume_equivalence",
+      "location": "furnace",
+      "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/RESUME_EQUIVALENCE.json",
+      "sha256": "b0230bc3f58669e38e7d4936762ef1d5c9a57ee022c307f57d98fc8d3e906386",
+      "recorded_status": "passed"
+    },
+    {
+      "name": "engine_e894_resume_equivalence",
+      "location": "furnace",
+      "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/RESUME_EQUIVALENCE.json",
+      "sha256": "2b14d7a14d8031304020502ff7d8aeb6a8e220e153d5833fc34fbe5a69c7890b",
+      "recorded_status": "passed"
+    },
+    {
+      "name": "engine_abbc_run_verification",
+      "location": "furnace",
+      "path": "runs/v10/_historical_source/engine_abbc61efb784d2c8_runner_1b61fd151a177289_pre_effective_allocator_snapshot/smoke/F0_query_only/seed_42/RUN_VERIFICATION.json",
+      "sha256": "7725d3795993b368b2ce13c3b305bd76ff49f4ff5950a86639f80bc7216ead86",
+      "recorded_status": "verified"
+    },
+    {
+      "name": "engine_d5_protected_oracle_historical_move",
+      "location": "local_git_worktree",
+      "path": "provenance/migrations/F0_engine_d5f2ef_verified_pruned_compact_resume_oracle_historical_moves/MOVE_RECEIPT.json",
+      "sha256": "4bf6bd9d9b3d089c15853d9bc71417503e7d22c465b3fdefdfd3edceeb47e1c1",
+      "recorded_status": "moved_and_byte_verified"
+    }
+  ],
+  "classification_summary": {
+    "protected_oracle_duplicates": {
+      "file_count": 40,
+      "logical_bytes": 144960809200,
+      "meaning": "Recorded final or freshly rehashed step-8 shards equal the retained d5 oracle shard hashes."
+    },
+    "obsolete_step4_resume_checkpoints": {
+      "file_count": 12,
+      "logical_bytes": 43488242760,
+      "meaning": "Three mutually identical superseded split checkpoints are hash-bound by successful resume-equivalence receipts but differ from the retained final oracle."
+    }
+  },
+  "target_inventory_algorithm": "SHA-256 over the two-space-indented, key-sorted UTF-8 JSON serialization of the targets array with a trailing newline.",
+  "target_inventory_sha256": "e243a11a6208a04bf2e137a1257ce61629de3a0a3be44d35e073b25a0c077d61",
+  "targets": [
+    {"classification": "obsolete_step4_resume_checkpoint", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-4/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "b710b7c1204f875035efcc6c0ac71444722867f870b24c82d706f397021a8f9a"},
+    {"classification": "obsolete_step4_resume_checkpoint", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-4/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "9172f33813ec09ff1a399fbffc607899bde6b6899d5e7c62ebfbd236a13823db"},
+    {"classification": "obsolete_step4_resume_checkpoint", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-4/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "26f5baed7a2a2768f5fe7b3e09194b5a202a8ebf093a577d23e96085019dd0de"},
+    {"classification": "obsolete_step4_resume_checkpoint", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-4/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "688c4d80cbcc6480d38a090d370aeb7010e561b63fc33fd17f7e201b470c7f27"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-8/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-8/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-8/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-8/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/resumed_from_split/final/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/resumed_from_split/final/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/resumed_from_split/final/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_3139c6edea715753/resume_equivalence/F0_query_only/seed_42_step4/resumed_from_split/final/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_abbc61efb784d2c8_runner_1b61fd151a177289_pre_effective_allocator_snapshot/smoke/F0_query_only/seed_42/final/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_abbc61efb784d2c8_runner_1b61fd151a177289_pre_effective_allocator_snapshot/smoke/F0_query_only/seed_42/final/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_abbc61efb784d2c8_runner_1b61fd151a177289_pre_effective_allocator_snapshot/smoke/F0_query_only/seed_42/final/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_abbc61efb784d2c8_runner_1b61fd151a177289_pre_effective_allocator_snapshot/smoke/F0_query_only/seed_42/final/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"},
+    {"classification": "obsolete_step4_resume_checkpoint", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-4/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "b710b7c1204f875035efcc6c0ac71444722867f870b24c82d706f397021a8f9a"},
+    {"classification": "obsolete_step4_resume_checkpoint", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-4/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "9172f33813ec09ff1a399fbffc607899bde6b6899d5e7c62ebfbd236a13823db"},
+    {"classification": "obsolete_step4_resume_checkpoint", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-4/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "26f5baed7a2a2768f5fe7b3e09194b5a202a8ebf093a577d23e96085019dd0de"},
+    {"classification": "obsolete_step4_resume_checkpoint", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-4/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "688c4d80cbcc6480d38a090d370aeb7010e561b63fc33fd17f7e201b470c7f27"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-8/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-8/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-8/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-8/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/resumed_from_split/final/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/resumed_from_split/final/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/resumed_from_split/final/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_b217188f66130e10/resume_equivalence/F0_query_only/seed_42_step4/resumed_from_split/final/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"},
+    {"classification": "obsolete_step4_resume_checkpoint", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-4/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "b710b7c1204f875035efcc6c0ac71444722867f870b24c82d706f397021a8f9a"},
+    {"classification": "obsolete_step4_resume_checkpoint", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-4/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "9172f33813ec09ff1a399fbffc607899bde6b6899d5e7c62ebfbd236a13823db"},
+    {"classification": "obsolete_step4_resume_checkpoint", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-4/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "26f5baed7a2a2768f5fe7b3e09194b5a202a8ebf093a577d23e96085019dd0de"},
+    {"classification": "obsolete_step4_resume_checkpoint", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-4/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "688c4d80cbcc6480d38a090d370aeb7010e561b63fc33fd17f7e201b470c7f27"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-8/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-8/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-8/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/checkpoint-8/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/resumed_from_split/final/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/resumed_from_split/final/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/resumed_from_split/final/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"},
+    {"classification": "protected_oracle_duplicate", "path": "runs/v10/_historical_source/engine_e894b9939b003cc7_runner_89d88d09/resume_equivalence/F0_query_only/seed_42_step4/resumed_from_split/final/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"}
+  ],
+  "protected_oracle": {
+    "base_model_path": "runs/v10/_historical_source/engine_d5f2ef1d137f5db1_runner_afd045c4dfa2c899_allocator_verified_successor_replacement/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model",
+    "file_count": 4,
+    "logical_bytes": 14496080920,
+    "allocated_bytes": 14496108544,
+    "manifest_sha256": "f8c5206db1a9fb19f77e9021430a3dcff63550d37962736006836ee97101c8e5",
+    "inventory_sha256": "b3d31548ddb0f2354b65b8e0a9d8043579ec9be0ba6ab4904df9f119f7e0df22",
+    "files": [
+      {"path": "runs/v10/_historical_source/engine_d5f2ef1d137f5db1_runner_afd045c4dfa2c899_allocator_verified_successor_replacement/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00001-of-00004.safetensors", "bytes": 3984728184, "sha256": "50f6c16224981910ab2b9520607376fa16ba16bdf56e3961dd30ced52a556a3c"},
+      {"path": "runs/v10/_historical_source/engine_d5f2ef1d137f5db1_runner_afd045c4dfa2c899_allocator_verified_successor_replacement/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00002-of-00004.safetensors", "bytes": 3967977000, "sha256": "3d8c8924e5ddceb1bddb27b429c284e6e7a9e15b18693aa319757faf61da4964"},
+      {"path": "runs/v10/_historical_source/engine_d5f2ef1d137f5db1_runner_afd045c4dfa2c899_allocator_verified_successor_replacement/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00003-of-00004.safetensors", "bytes": 3926025456, "sha256": "ce8b5488f6399f853a40400688fc9be4a24da3119956c713d6018714e77b977d"},
+      {"path": "runs/v10/_historical_source/engine_d5f2ef1d137f5db1_runner_afd045c4dfa2c899_allocator_verified_successor_replacement/resume_equivalence/F0_query_only/seed_42_step4/control_uninterrupted/final/base_model/model-00004-of-00004.safetensors", "bytes": 2617350280, "sha256": "c6177d379a70d76c33b477fec460dafc0b78ee15715af753fccc1aec99a431ef"}
+    ],
+    "must_remain_present_and_full_sha256_exact_before_and_after": true
+  },
+  "transaction": {
+    "phase_1": "Fail closed on exact target count, paths, sizes, link counts, evidence hashes, and protected-oracle full hashes.",
+    "phase_2": "No-clobber same-filesystem rename each literal target to a transaction-specific quarantine preserving its relative path.",
+    "phase_3": "Verify every source absent, historical safetensor count exactly four, quarantine inventory exact, and protected oracle unchanged.",
+    "phase_4": "Unlink only the exact quarantined regular files and verify quarantine contains no remaining regular files.",
+    "forbidden": "No wildcard deletion and no directory, index, config, tokenizer, trainer, workspace, log, metric, manifest, or receipt deletion."
+  },
+  "recoverability": {
+    "protected_d5_oracle": "retained_and_loadable_at_the_recorded_path",
+    "target_weights_after_final_unlink": "not_recoverable_without_external_weight_backup",
+    "integrity_hashes_are_a_backup": false,
+    "pinned_initial_model": "recoverable_from_the_pinned_upstream_revision_but_not_equivalent_to_the_deleted_trained_states"
+  },
+  "claim_boundary": "This intent authorizes a bounded storage cleanup of explicitly listed obsolete historical raw-weight shards. It does not authorize deletion of the retained d5 oracle or any non-weight evidence, make deleted weights reconstructible, revalidate old runs under new source, or establish training quality or scientific success."
+}

@@ -1,0 +1,196 @@
+{
+  "format": "latent-workspace-v10-b-local-invariance-attempt-failure-v1",
+  "status": "failed_before_first_optimizer_step",
+  "attempt": 3,
+  "failure_class": "cuda_oom_after_logits_release_patch",
+  "failure_timestamp_utc": "2026-08-21T19:50:07Z",
+  "run": {
+    "profile": "smoke",
+    "condition": "B_local_invariance",
+    "seed": 42,
+    "engine_run_id": "914095de30bc446ab3a0597d02b5acfe",
+    "global_step": 0,
+    "configured_max_steps": 8,
+    "optimizer_steps_executed": 0,
+    "failure_stage": "within_first_gradient_accumulation_window",
+    "exact_microbatch_unknown": true,
+    "failure_operation": "scaled_objective_backward"
+  },
+  "frozen_design": {
+    "model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "model_revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "train_mode": "full",
+    "backend": "cuda",
+    "mixed_precision": "bf16",
+    "attention_implementation": "sdpa",
+    "gradient_checkpointing": true,
+    "optimizer": "adafactor",
+    "batch_size": 1,
+    "gradient_accumulation_steps": 8,
+    "base_learning_rate": 0.00002,
+    "workspace_learning_rate": 0.0003,
+    "workspace_loss_weight": 0.02,
+    "workspace_steps": 4,
+    "workspace_tokens_per_example": 32,
+    "workspace_max_tokens_per_batch": 256,
+    "functional_route_mode": "deferred",
+    "functional_injection_scale": 0.0,
+    "induction_enabled": false,
+    "aux_backprop_to_base": false
+  },
+  "source_and_contract_bindings": {
+    "engine_sha256": "b217188f66130e10400bbdc3ebafbe49e20de9bc80a4e7368e70141df05621d9",
+    "source_manifest_sha256": "bbf977965bff05c24bc06fb5e7635e814f89bfcd821ff5c610566fb197db49d5",
+    "package_init_sha256": "fd1c48552935645d302336d05bc133348f8466c62228c6c22dbe5f2b947803b0",
+    "package_main_sha256": "71e2b8c807406881aa3d12a21323dc92682fe2b602fbe08b25460805793e0518",
+    "matrix_runner_sha256": "746b4692c11d5a7d0e471a6e832799462ea901bf48eaf2f1feda0217b698da39",
+    "contract_sha256": "06d542299af02df81a7c57b0827924874079e0f0c96f401ff7b3001df82b0467",
+    "conditions_matrix_sha256": "ded86362f65236cccfd3162b758d20133030fbf53a4cae128d66bdc47cb2f8fd",
+    "condition_config_sha256": "405cd240ec05decd189e5c29d113932d7e8d0ca44fe4a100f9c1bb1a0af138e3",
+    "launched_config_sha256": "89b3da0bc46674da69ed57e9e8f54bbca2dffa9f83cb9031c082642c9a8559aa",
+    "model_prefetch_receipt_sha256": "7973fa042164fd769b5056f29982e7090fcc0c4d75a54f41e54e001463ab2df2",
+    "train_data_sha256": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3",
+    "eval_data_sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e"
+  },
+  "logits_release_patch": {
+    "present": true,
+    "engine_sha256": "b217188f66130e10400bbdc3ebafbe49e20de9bc80a4e7368e70141df05621d9",
+    "unit_test_file_sha256": "98ef21be714cb657eb03ab81cbecf1989521abe75f5c8bf73230e732d3a50837",
+    "mechanism": "Release the full training logits entry after all objective terms are derived and before backward when no later consumer requires that entry.",
+    "bounded_result": "The patch was present, but this exact formal B_local_invariance run still exceeded available device memory during a backward within its first gradient accumulation window without an allocator override. The exact microbatch is unknown. This does not establish that the patch had zero memory benefit."
+  },
+  "allocator_environment": {
+    "override_present": false,
+    "variable": "PYTORCH_CUDA_ALLOC_CONF",
+    "value": null,
+    "provenance": "launch_command_in_current_execution_turn",
+    "captured_by_environment_json": false,
+    "artifact_observation": "The stderr artifact records ordinary caching-allocator allocation failures and does not record expandable-segment mapping warnings."
+  },
+  "environment": {
+    "harness_version": "10.0.0",
+    "python": "3.14.4",
+    "platform": "Linux-7.0.0-29-generic-x86_64-with-glibc2.43",
+    "torch": "2.13.0+cu132",
+    "cuda_runtime": "13.2",
+    "cudnn": 92000,
+    "transformers": "5.15.0",
+    "safetensors": "0.8.0",
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 5090",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 33668268032
+    }
+  },
+  "oom": {
+    "error_type": "OutOfMemoryError",
+    "requested_allocation": {
+      "reported": "112.00 MiB",
+      "bytes": 117440512
+    },
+    "device_capacity_reported": "31.36 GiB",
+    "device_free_reported": "101.31 MiB",
+    "process_memory_in_use_reported": "31.24 GiB",
+    "pytorch_allocated_reported": "30.24 GiB",
+    "pytorch_reserved_unallocated_reported": "182.07 MiB",
+    "allocator_failure_observations": [
+      {
+        "requested_allocation_bytes": 117440512,
+        "allocator_free_bytes": 104136704,
+        "device_total_bytes": 33668268032
+      },
+      {
+        "requested_allocation_bytes": 117440512,
+        "allocator_free_bytes": 106233856,
+        "device_total_bytes": 33668268032
+      }
+    ]
+  },
+  "one_step_doctor_observation": {
+    "evidence_class": "launch_turn_observation",
+    "artifact_bound": false,
+    "stdout_persisted": false,
+    "condition": "B_local_invariance",
+    "arguments": {
+      "load_model": true,
+      "full_data_scan": true,
+      "smoke_step": true,
+      "smoke_batch_size": 1
+    },
+    "allocator_override_present": false,
+    "exit_code": 0,
+    "engine_sha256": "b217188f66130e10400bbdc3ebafbe49e20de9bc80a4e7368e70141df05621d9",
+    "split_logits_max_abs_difference": 0.0,
+    "peak_cuda_allocated_gib": 29.831950187683105,
+    "optimizer_update_performed": true,
+    "base_update_coverage_passed": true,
+    "proves_only": "one_doctor_backward_and_optimizer_update",
+    "formal_failure_may_be_a_later_accumulation_backward": true,
+    "interpretation": "The one-step doctor observation passed one backward and optimizer update, but its stdout was not persisted as a hash-bound artifact. The formal run can execute multiple backwards before its first optimizer step, so the OOM may have occurred on a later accumulation backward. The doctor does not identify the formal failure microbatch or override the formal matrix failure evidence."
+  },
+  "optimizer_coverage_before_failure": {
+    "scope": "static_membership_only",
+    "passed": true,
+    "train_mode": "full",
+    "model_trainable_unique_physical_parameters": 371,
+    "model_trainable_numel": 7322402570,
+    "optimizer_unique_physical_parameters": 371,
+    "optimizer_membership_occurrences": 371,
+    "optimizer_duplicate_memberships": 0,
+    "base_unique_physical_parameters": 291,
+    "base_trainable_unique_physical_parameters": 291,
+    "base_all_trainable": true,
+    "expected_membership_sha256": "ed6bedae638c6e99500ddedb786240e92e28196e2a3d8b3bc9436e7c60579c05",
+    "optimizer_membership_sha256": "ed6bedae638c6e99500ddedb786240e92e28196e2a3d8b3bc9436e7c60579c05",
+    "report_sha256": "b0580411a46abb3e1e348b3f6bd612d3d86b7d083588cd8163ebe468b95ee90c",
+    "dynamic_update_coverage_observed": false,
+    "interpretation": "Static exact membership was established before training, but a formal-run backward within the first gradient accumulation window failed. The exact microbatch is unknown; no formal-run optimizer step or dynamic update coverage occurred."
+  },
+  "outputs": {
+    "metrics_record_count": 1,
+    "metrics_events": [
+      "start"
+    ],
+    "safetensors_files_observed_in_run_directory": 0,
+    "trained_weight_files_written": 0,
+    "final_bundle_created": false,
+    "assays_completed": [],
+    "scientific_result_available": false
+  },
+  "raw_artifacts": [
+    {
+      "name": "FAILED.json",
+      "bytes": 715,
+      "sha256": "d6c18920d35fb90f21ced6cfa4355e889c479f893cd0819bed55bdace95af3e3"
+    },
+    {
+      "name": "LAUNCHED_CONFIG.json",
+      "bytes": 7376,
+      "sha256": "89b3da0bc46674da69ed57e9e8f54bbca2dffa9f83cb9031c082642c9a8559aa"
+    },
+    {
+      "name": "environment.json",
+      "bytes": 603,
+      "sha256": "3159c29f9f08317290be54c9d049977e14ffa1ee4957ee959e110fd8a1ea4ce6"
+    },
+    {
+      "name": "metrics.jsonl",
+      "bytes": 124,
+      "sha256": "228d0608002035b96c9fee26a7105e753c63caeb14e047d62e68a5941ba6b91e"
+    },
+    {
+      "name": "optimizer_coverage.json",
+      "bytes": 129112,
+      "sha256": "89ae35ea122c5100590f460f26aef6570a4b7cf164219a94439bca104298bc4d"
+    },
+    {
+      "name": "subprocess.stderr.log",
+      "bytes": 3430,
+      "sha256": "6a652b211428be5068edf84c86dfb1dec604399189f0a8d2c171b8f8cdf59e64"
+    }
+  ],
+  "claim_boundary": "This is path-free negative engineering evidence for B_local_invariance attempt 3 with the logits-release engine patch. It establishes a CUDA OOM during a formal-run backward within the first gradient accumulation window, before any formal-run optimizer step; the exact microbatch is unknown. No trained weights, final bundle, completed assay, condition comparison, or scientific result exists. Static optimizer membership PASS is not training completion or dynamic update evidence. The passing one-step doctor proves only one doctor backward and optimizer update and is an unpersisted launch-turn observation, not a hash-bound substitute for the failed formal run; the formal failure may have occurred on a later accumulation backward. The result shows only that this patch and exact no-allocator-override launch were insufficient to complete the formal run's first gradient accumulation window; it does not quantify the patch's memory benefit or establish that B_local_invariance is scientifically negative. Non-portable runtime identity fields from raw artifacts are intentionally omitted."
+}
