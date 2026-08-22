@@ -24,6 +24,7 @@ from latent_workspace_ft_v10.engine import (
     LatentWorkspaceLoss,
     TrainConfig,
     WorkspaceConfig,
+    _clear_parameter_family_gradients,
     _continue_gradient_accumulation_offload_receipt,
     _CPUGradientAccumulator,
     _cuda_base_activation_offload,
@@ -32,12 +33,14 @@ from latent_workspace_ft_v10.engine import (
     _functional_split_equivalence_check,
     _mark_gradient_accumulation_offload_terminal,
     _new_gradient_accumulation_offload_receipt,
+    _optimizer_family_state_entries,
     _record_gradient_accumulation_offload_spill,
     _release_unconsumed_training_logits,
     _require_exact_gradient_offload_resume_signature,
     _require_gradient_accumulation_offload_context,
     _require_resume_optimizer_mapping,
     _restore_optimizer_state_exact,
+    _set_optimizer_family_learning_rate,
     _start_gradient_accumulation_offload_window,
     _write_gradient_accumulation_offload_receipt,
     base_update_coverage_report,
@@ -104,14 +107,10 @@ def test_v11_choice_objective_is_normalized_over_declared_choices() -> None:
 
     torch.testing.assert_close(result["task_loss"], expected_choice)
     torch.testing.assert_close(result["functional_choice_loss"], expected_choice)
-    torch.testing.assert_close(
-        result["functional_full_vocab_loss"], expected_full_vocab
-    )
+    torch.testing.assert_close(result["functional_full_vocab_loss"], expected_full_vocab)
     assert result["functional_label_0_recall"].item() == 1.0
     assert result["functional_label_1_recall"].item() == 1.0
-    assert result["functional_prediction_entropy_nats"].item() == pytest.approx(
-        0.6931471805599453
-    )
+    assert result["functional_prediction_entropy_nats"].item() == pytest.approx(0.6931471805599453)
 
     result["task_loss"].backward()
     assert logits.grad is not None
@@ -134,8 +133,7 @@ def test_v11_full_vocab_default_and_hybrid_objectives_remain_explicit() -> None:
     )
     torch.testing.assert_close(
         hybrid["task_loss"],
-        hybrid["functional_choice_loss"]
-        + 0.125 * hybrid["functional_full_vocab_loss"],
+        hybrid["functional_choice_loss"] + 0.125 * hybrid["functional_full_vocab_loss"],
     )
 
 
@@ -149,6 +147,29 @@ def test_v11_functional_objective_config_validation_fails_closed() -> None:
     config.functional.full_vocab_loss_weight = 0.0
     with pytest.raises(ValueError, match="positive full_vocab_loss_weight"):
         config.validate()
+
+
+def test_v12_inline_sidecar_and_base_release_validation_fail_closed() -> None:
+    config = ExperimentConfig()
+    config.functional.route_mode = "inline_sidecar"
+    config.validate()
+
+    invalid_route = copy.deepcopy(config)
+    invalid_route.functional.route_mode = "sidecar-ish"
+    with pytest.raises(ValueError, match="inline_sidecar"):
+        invalid_route.validate()
+
+    invalid_release = copy.deepcopy(config)
+    invalid_release.model.train_mode = "workspace_only"
+    invalid_release.train.base_release_step = 1
+    with pytest.raises(ValueError, match="supported only"):
+        invalid_release.validate()
+
+    beyond_horizon = copy.deepcopy(config)
+    beyond_horizon.train.max_steps = 4
+    beyond_horizon.train.base_release_step = 5
+    with pytest.raises(ValueError, match="cannot exceed"):
+        beyond_horizon.validate()
 
 
 @pytest.mark.parametrize(
@@ -223,25 +244,19 @@ def test_cpu_base_activation_offload_is_a_noop() -> None:
 def test_runtime_environment_records_cuda_allocator_policy(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setenv(
-        "PYTORCH_ALLOC_CONF", "backend:native,expandable_segments:True"
-    )
+    monkeypatch.setenv("PYTORCH_ALLOC_CONF", "backend:native,expandable_segments:True")
     monkeypatch.delenv("PYTORCH_CUDA_ALLOC_CONF", raising=False)
     monkeypatch.delenv("PYTORCH_HIP_ALLOC_CONF", raising=False)
     monkeypatch.delenv("PYTORCH_NO_CUDA_MEMORY_CACHING", raising=False)
     environment = runtime_environment()
-    assert environment["pytorch_alloc_conf"] == (
-        "backend:native,expandable_segments:True"
-    )
+    assert environment["pytorch_alloc_conf"] == ("backend:native,expandable_segments:True")
     assert environment["pytorch_cuda_alloc_conf_legacy"] is None
 
 
 def test_cuda_allocator_policy_rejects_missing_or_legacy_environment(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    config = TrainConfig(
-        cuda_allocator_conf="backend:native,expandable_segments:True"
-    )
+    config = TrainConfig(cuda_allocator_conf="backend:native,expandable_segments:True")
     monkeypatch.delenv("PYTORCH_ALLOC_CONF", raising=False)
     monkeypatch.delenv("PYTORCH_CUDA_ALLOC_CONF", raising=False)
     monkeypatch.delenv("PYTORCH_HIP_ALLOC_CONF", raising=False)
@@ -249,9 +264,7 @@ def test_cuda_allocator_policy_rejects_missing_or_legacy_environment(
     with pytest.raises(RuntimeError, match="policy mismatch"):
         require_cuda_allocator_policy(config)
 
-    monkeypatch.setenv(
-        "PYTORCH_ALLOC_CONF", "backend:native,expandable_segments:True"
-    )
+    monkeypatch.setenv("PYTORCH_ALLOC_CONF", "backend:native,expandable_segments:True")
     monkeypatch.setenv("PYTORCH_CUDA_ALLOC_CONF", "backend:cudaMallocAsync")
     with pytest.raises(RuntimeError, match="forbids compatibility"):
         require_cuda_allocator_policy(config)
@@ -273,9 +286,7 @@ def test_cuda_allocator_policy_rejects_missing_or_legacy_environment(
 def test_effective_cuda_allocator_policy_requires_snapshot_and_live_allocation(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    config = TrainConfig(
-        cuda_allocator_conf="backend:native,expandable_segments:True"
-    )
+    config = TrainConfig(cuda_allocator_conf="backend:native,expandable_segments:True")
     observation = {
         "pytorch_alloc_conf": config.cuda_allocator_conf,
         "pytorch_cuda_alloc_conf_legacy": None,
@@ -291,9 +302,7 @@ def test_effective_cuda_allocator_policy_requires_snapshot_and_live_allocation(
         "latent_workspace_ft_v10.engine.allocator_runtime_environment",
         lambda: observation,
     )
-    assert require_effective_cuda_allocator_policy(
-        config, torch.device("cuda")
-    ) == observation
+    assert require_effective_cuda_allocator_policy(config, torch.device("cuda")) == observation
 
     broken = {**observation, "allocator_snapshot_settings": {"expandable_segments": False}}
     monkeypatch.setattr(
@@ -409,9 +418,7 @@ def test_cpu_gradient_accumulator_preserves_order_and_receipt(
             torch.tensor([-0.125, 0.75], dtype=torch.bfloat16),
         ),
     )
-    for microbatch_index, (weight_gradient, bias_gradient) in enumerate(
-        microbatch_gradients
-    ):
+    for microbatch_index, (weight_gradient, bias_gradient) in enumerate(microbatch_gradients):
         for reference, candidate, gradient in (
             (reference_weight, candidate_weight, weight_gradient),
             (reference_bias, candidate_bias, bias_gradient),
@@ -435,10 +442,7 @@ def test_cpu_gradient_accumulator_preserves_order_and_receipt(
         assert candidate_bias.grad is None
         assert spill["cpu_accumulator_bytes"] > 0
         assert all(buffer.device.type == "cpu" for buffer in accumulator._buffers.values())
-        assert all(
-            buffer.dtype == torch.bfloat16
-            for buffer in accumulator._buffers.values()
-        )
+        assert all(buffer.dtype == torch.bfloat16 for buffer in accumulator._buffers.values())
 
     restored = accumulator.restore()
     assert restored["spill_count"] == 3
@@ -502,9 +506,7 @@ def test_cpu_gradient_accumulator_fails_closed_on_duplicate_and_missing_state() 
 
 
 def test_cpu_gradient_accumulator_cpu_merge_preserves_dtype_order() -> None:
-    reference = torch.nn.Parameter(
-        torch.tensor([0.0, 1.0, -1.0, 3.0], dtype=torch.bfloat16)
-    )
+    reference = torch.nn.Parameter(torch.tensor([0.0, 1.0, -1.0, 3.0], dtype=torch.bfloat16))
     candidate = torch.nn.Parameter(reference.detach().clone())
     gradients = [
         torch.tensor(values, dtype=torch.bfloat16)
@@ -690,8 +692,8 @@ def make_preempted_gradient_offload_test_receipt(
 def test_gradient_offload_receipt_hash_chains_same_output_resume(
     tmp_path: Path,
 ) -> None:
-    schema, receipt_path, checkpoint, preempted = (
-        make_preempted_gradient_offload_test_receipt(tmp_path)
+    schema, receipt_path, checkpoint, preempted = make_preempted_gradient_offload_test_receipt(
+        tmp_path
     )
     previous_digest = preempted["receipt_sha256"]
     previous_counters = preempted["segments"][0]["final_cumulative_counters"]
@@ -772,8 +774,8 @@ def test_gradient_offload_same_output_resume_rejects_bundle_payload_substitution
     tmp_path: Path,
     relative_payload: str,
 ) -> None:
-    schema, receipt_path, checkpoint, preempted = (
-        make_preempted_gradient_offload_test_receipt(tmp_path)
+    schema, receipt_path, checkpoint, preempted = make_preempted_gradient_offload_test_receipt(
+        tmp_path
     )
     manifest_before = (checkpoint / "manifest.json").read_bytes()
     stored_descriptor = preempted["preempted_checkpoint"]
@@ -795,16 +797,14 @@ def test_gradient_offload_same_output_resume_rejects_bundle_payload_substitution
             resume_step=1,
             configured_accumulation_steps=2,
         )
-    assert preempted["preempted_checkpoint"]["bundle_inventory_sha256"] == (
-        stored_inventory
-    )
+    assert preempted["preempted_checkpoint"]["bundle_inventory_sha256"] == (stored_inventory)
 
 
 def test_gradient_offload_same_output_resume_rejects_tamper_stale_and_wrong_checkpoint(
     tmp_path: Path,
 ) -> None:
-    schema, receipt_path, checkpoint, preempted = (
-        make_preempted_gradient_offload_test_receipt(tmp_path)
+    schema, receipt_path, checkpoint, preempted = make_preempted_gradient_offload_test_receipt(
+        tmp_path
     )
     arguments = {
         "run_id": "run-chain-test",
@@ -997,10 +997,7 @@ def test_cuda_gradient_accumulation_offload_is_bitwise_native(
     initial_bias = torch.randn(32, 64, dtype=torch.bfloat16).to(device)
     reference = Probe(initial_weight, initial_bias).to(device)
     candidate = copy.deepcopy(reference)
-    microbatches = [
-        torch.randn(32, 64, dtype=torch.bfloat16).to(device)
-        for _ in range(4)
-    ]
+    microbatches = [torch.randn(32, 64, dtype=torch.bfloat16).to(device) for _ in range(4)]
 
     for inputs in microbatches:
         reference(inputs).backward()
@@ -1044,10 +1041,7 @@ def test_cuda_base_offload_preserves_accumulated_gradients() -> None:
         torch.nn.Linear(64, 32, bias=False),
     ).to(device=device, dtype=torch.bfloat16)
     candidate = copy.deepcopy(reference)
-    microbatches = [
-        torch.randn(4, 8, 32, device=device, dtype=torch.bfloat16)
-        for _ in range(3)
-    ]
+    microbatches = [torch.randn(4, 8, 32, device=device, dtype=torch.bfloat16) for _ in range(3)]
 
     for inputs in microbatches:
         expected = reference(inputs)
@@ -1190,6 +1184,179 @@ def tiny_workspace_model() -> LatentWorkspaceCausalLM:
     )
     configure_trainability(model, "full")
     return model
+
+
+def tiny_inline_sidecar_model() -> LatentWorkspaceCausalLM:
+    base_model = tiny_mistral()
+    workspace = WorkspaceConfig(
+        steps=1,
+        workspace_dim=16,
+        ff_multiplier=1.0,
+        architecture="token_local",
+        attention_heads=4,
+        bridge_heads=4,
+        logit_rank=4,
+        dropout=0.0,
+        route_topology="functional_workspace",
+    )
+    functional = FunctionalWorkspaceConfig(
+        enabled=True,
+        route_mode="inline_sidecar",
+        boundary_layer=2,
+        memory_mode="slots",
+        slot_count=2,
+        writer_steps=1,
+        reader_steps=1,
+        writer_heads=4,
+        reader_heads=4,
+        dropout=0.0,
+        task_objective="choice_normalized",
+    )
+    model = LatentWorkspaceCausalLM(
+        base_model,
+        hidden_dim=base_model.config.hidden_size,
+        vocab_size=base_model.config.vocab_size,
+        config=workspace,
+        functional_config=functional,
+    )
+    configure_trainability(model, "full")
+    return model
+
+
+def tiny_functional_sidecar_kwargs() -> dict[str, object]:
+    batch_size, sides, queries = 1, 2, 2
+    context_ids = torch.tensor([[[1, 4, 5, 6], [1, 7, 8, 9]]], dtype=torch.long)
+    query_ids = torch.tensor(
+        [
+            [
+                [[1, 30, 31, 10, 11], [1, 32, 33, 10, 11]],
+                [[1, 30, 31, 10, 11], [1, 32, 33, 10, 11]],
+            ]
+        ],
+        dtype=torch.long,
+    )
+    inline_ids = torch.tensor(
+        [
+            [
+                [
+                    [1, 4, 5, 6, 30, 31, 10, 11],
+                    [1, 4, 5, 6, 32, 33, 10, 11],
+                ],
+                [
+                    [1, 7, 8, 9, 30, 31, 10, 11],
+                    [1, 7, 8, 9, 32, 33, 10, 11],
+                ],
+            ]
+        ],
+        dtype=torch.long,
+    )
+    answers = torch.tensor([[[0, 1], [1, 0]]], dtype=torch.long)
+    choice_ids = torch.tensor(
+        [[[[20, 21], [20, 21]], [[20, 21], [20, 21]]]],
+        dtype=torch.long,
+    )
+
+    query_labels = torch.full_like(query_ids, -100)
+    inline_labels = torch.full_like(inline_ids, -100)
+    for side in range(sides):
+        for query in range(queries):
+            target = int(choice_ids[0, side, query, answers[0, side, query]].item())
+            query_labels[0, side, query, -1] = target
+            inline_labels[0, side, query, -1] = target
+
+    return {
+        "functional_context_input_ids": context_ids,
+        "functional_context_attention_mask": torch.ones_like(context_ids),
+        "functional_query_input_ids": query_ids,
+        "functional_query_attention_mask": torch.ones_like(query_ids),
+        "functional_query_labels": query_labels,
+        "functional_inline_input_ids": inline_ids,
+        "functional_inline_attention_mask": torch.ones_like(inline_ids),
+        "functional_inline_labels": inline_labels,
+        "functional_query_choice_ids": choice_ids,
+        "functional_inline_choice_ids": choice_ids.clone(),
+        "functional_answer_classes": answers,
+        "functional_query_valid_mask": torch.ones((batch_size, queries), dtype=torch.bool),
+        "functional_affected_mask": torch.tensor([[True, False]]),
+        "functional_heldout_mask": torch.tensor([[False, True]]),
+        "functional_hop_distances": torch.tensor([[1, 2]], dtype=torch.long),
+        "functional_pair_ids": torch.tensor([17], dtype=torch.long),
+        "compute_workspace_loss": False,
+        "compute_spectral": False,
+        "rng_streams": None,
+        "memory_intervention": "intact",
+        "memory_intervention_seed": 123,
+    }
+
+
+def test_v12_inline_sidecar_is_exact_noop_and_opens_at_adapter() -> None:
+    model = tiny_inline_sidecar_model().eval()
+    kwargs = tiny_functional_sidecar_kwargs()
+    with torch.no_grad():
+        routed = model._forward_functional_workspace(
+            **kwargs,
+            bypass_workspace=False,
+        )
+        amputated = model._forward_functional_workspace(
+            **kwargs,
+            bypass_workspace=True,
+        )
+    assert torch.equal(routed["logits"], amputated["logits"])
+    assert float(routed["delta_logit_norm"].item()) == 0.0
+
+    model.train()
+    model.zero_grad(set_to_none=True)
+    output = model._forward_functional_workspace(
+        **kwargs,
+        bypass_workspace=False,
+    )
+    output["task_loss"].backward()
+    assert model.functional_sidecar_adapter is not None
+    adapter_gradient = model.functional_sidecar_adapter.up.weight.grad
+    assert adapter_gradient is not None
+    assert torch.count_nonzero(adapter_gradient).item() > 0
+
+
+def test_v12_frozen_base_step_drops_gradients_and_optimizer_state() -> None:
+    model = tiny_workspace_model()
+    optimizer = build_optimizer(
+        model,
+        TrainConfig(
+            optimizer="adafactor",
+            fused_adamw="false",
+            learning_rate=1e-3,
+            workspace_learning_rate=2e-3,
+        ),
+        torch.device("cpu"),
+    )
+    base_parameters = [
+        parameter for name, parameter in model.named_parameters() if name.startswith("base_model.")
+    ]
+    workspace_parameters = [
+        parameter
+        for name, parameter in model.named_parameters()
+        if not name.startswith("base_model.")
+    ]
+    base_before = [parameter.detach().clone() for parameter in base_parameters]
+    workspace_before = [parameter.detach().clone() for parameter in workspace_parameters]
+    for parameter in [*base_parameters, *workspace_parameters]:
+        parameter.grad = torch.ones_like(parameter)
+
+    assert _clear_parameter_family_gradients(model, "base") == len(base_parameters)
+    _set_optimizer_family_learning_rate(optimizer, "base", 0.0)
+    optimizer.step()
+
+    assert all(
+        torch.equal(before, after)
+        for before, after in zip(base_before, base_parameters, strict=True)
+    )
+    assert any(
+        not torch.equal(before, after)
+        for before, after in zip(workspace_before, workspace_parameters, strict=True)
+    )
+    assert all(parameter not in optimizer.state for parameter in base_parameters)
+    assert _optimizer_family_state_entries(optimizer)["base"] == 0
+    assert _optimizer_family_state_entries(optimizer)["workspace"] > 0
 
 
 @pytest.fixture(params=["unpadded", "right_padded"])
@@ -1433,9 +1600,7 @@ def test_exact_optimizer_restore_preserves_fp32_adafactor_state_for_bf16() -> No
         warmup_init=False,
     )
     resumed_optimizer.load_state_dict(saved)
-    assert resumed_optimizer.state[resumed_parameter]["exp_avg_sq_row"].dtype == (
-        torch.bfloat16
-    )
+    assert resumed_optimizer.state[resumed_parameter]["exp_avg_sq_row"].dtype == (torch.bfloat16)
 
     _restore_optimizer_state_exact(resumed_optimizer, saved)
     restored_state = resumed_optimizer.state[resumed_parameter]
@@ -1447,9 +1612,7 @@ def test_exact_optimizer_restore_preserves_fp32_adafactor_state_for_bf16() -> No
         else:
             assert actual == expected
 
-    next_gradient = torch.tensor(
-        [[0.125, -0.375], [0.5, -0.625]], dtype=torch.bfloat16
-    )
+    next_gradient = torch.tensor([[0.125, -0.375], [0.5, -0.625]], dtype=torch.bfloat16)
     parameter.grad = next_gradient.clone()
     resumed_parameter.grad = next_gradient.clone()
     optimizer.step()
@@ -1516,9 +1679,7 @@ def test_optimizer_coverage_hash_and_resume_mapping_are_fail_closed(
     report = optimizer_coverage_report(model, optimizer, train_mode="full")
     checkpoint = tmp_path / "checkpoint-1"
     checkpoint.mkdir()
-    (checkpoint / "optimizer_coverage.json").write_text(
-        json.dumps(report), encoding="utf-8"
-    )
+    (checkpoint / "optimizer_coverage.json").write_text(json.dumps(report), encoding="utf-8")
     _require_resume_optimizer_mapping(checkpoint, report)
 
     tampered = copy.deepcopy(report)

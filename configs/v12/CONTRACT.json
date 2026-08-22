@@ -1,0 +1,674 @@
+{
+  "behavior_veto": {
+    "maximum_single_token_run": 24,
+    "maximum_top_token_fraction": 0.75,
+    "minimum_distinct_task_choices": 2,
+    "minimum_task_subset_accuracy": 0.75,
+    "prompt_suite": {
+      "path": "../v10/behavior_prompt_suite_v1.json",
+      "sha256": "f3710a323b876fd42da19b2c4a97e6fd303b67c0db338da53c57209177979373"
+    }
+  },
+  "claim_boundary": "This contract can establish no-op initialization, update ownership, bounded task robustness, and controlled memory-intervention effects on the pinned Mistral-7B task. It cannot establish broad capability gains, intrinsic workspace necessity, transfer to 14B, or a general global workspace.",
+  "data": {
+    "eval": {
+      "path": "../../data/v10/functional_eval.jsonl",
+      "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e"
+    },
+    "train": {
+      "path": "../../data/v10/functional_train.jsonl",
+      "sha256": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+    }
+  },
+  "decision_rules": [
+    {
+      "id": "promote_semantic_sidecar",
+      "when": "semantic is robust and F3/F4 replicate in at least two seeds"
+    },
+    {
+      "id": "stable_redundant_sidecar",
+      "when": "semantic is robust but content-specific necessity does not replicate"
+    },
+    {
+      "id": "task_only_survives",
+      "when": "task-only is robust while semantic is not"
+    },
+    {
+      "id": "revisit_route",
+      "when": "no sidecar branch is robust"
+    }
+  ],
+  "execution_boundaries": {
+    "no_14b_scale_up_authorized": true,
+    "retain_weights_until_generation_and_necessity_complete": true,
+    "run_only_selected_lr_after_step1": true,
+    "run_refinement_only_for_stage4_promoted_branches": true
+  },
+  "format": "latent-workspace-ft-v12-calibrated-route-contract-v1",
+  "frozen_before_execution": true,
+  "model": {
+    "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71"
+  },
+  "ownership": {
+    "base_learning_rate_after_release": 1e-07,
+    "base_max_grad_norm": 1.0,
+    "clip_mode": "per_family",
+    "frozen_semantics": "Base gradients are measured and clipped, then cleared before Adafactor; applied base LR is zero and no base optimizer state may be created before release.",
+    "refinement16_base_release_step": 4,
+    "stage4_base_release_step": 4,
+    "step1_base_release_step": 1,
+    "workspace_max_grad_norm": 0.25
+  },
+  "parent_commit": "a76459c2853fe9fd03bd0e7d0c774c50633d4edd",
+  "question": "Can a zero-initialized inline sidecar preserve the qualified base boundary, separate workspace/base update ownership, and acquire replicated content-specific counterfactual behavior without the V11 active-route collapse?",
+  "route_design": {
+    "amputation_restores": "inline",
+    "gate_init_bias": -2.0,
+    "injection_scale": 1.0,
+    "inline_base_is_authoritative": true,
+    "memory_mode": "slots",
+    "reader_steps": 1,
+    "route_mode": "inline_sidecar",
+    "sidecar_input_detached_from_base": true,
+    "sidecar_logit_up_projection_zero_initialized": true,
+    "slot_count": 4,
+    "writer_steps": 1
+  },
+  "schema_version": 1,
+  "v11_control": {
+    "behavior": {
+      "path": "../../provenance/pilots/v11_f1_o0_refinement/refinement16/GENERATION_BEHAVIOR.json",
+      "sha256": "6cfb8c5feade382f67d0ea0ba93f76280bc80fbc8c816d120b41504eeb2a4a3e"
+    },
+    "contract": {
+      "path": "../v11/F1_O0_REFINEMENT_CONTRACT.json",
+      "sha256": "5491e6c46d7982b6f9cda80e831b921179573d03fd060800aa01005d38b8eec3"
+    },
+    "f1_mean_accuracy": 0.7692057291666666,
+    "original_behavior_accuracy": 0.875,
+    "receipt": {
+      "path": "../../provenance/pilots/v11_f1_o0_refinement/REFINEMENT_RECEIPT.json",
+      "sha256": "2c7a08f00a0800e18c51e8b9e44be2c43c16ddef13e82d8d6a7a4d92a9467f55"
+    }
+  },
+  "v12_0_noop_gate": {
+    "complete_eval_cases": 1024,
+    "config": {
+      "base_learning_rate": 1e-07,
+      "base_release_step": 1,
+      "branch": "task",
+      "condition_id": "task_lr_1e_5_seed43_step1",
+      "max_steps": 1,
+      "output_dir": "../../../runs/v12/calibrated_route/step1/task_lr_1e_5_seed43_step1",
+      "path": "conditions/config_task_lr_1e_5_seed43_step1.json",
+      "seed": 43,
+      "sha256": "67101dd8b0458ffcfd3d821eace22de2c1baa71b86660f500d8d8e6a66da8334",
+      "workspace_learning_rate": 1e-05
+    },
+    "optimizer_steps": 0,
+    "requirements": {
+      "bitwise_choice_logits": true,
+      "exact_complete_metrics": true,
+      "exact_predictions": true,
+      "routed_amputated_exact": true,
+      "zero_sidecar_delta_logit_norm": true
+    }
+  },
+  "v12_1_step1_response": {
+    "artifacts": {
+      "1e_4": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 1,
+        "branch": "task",
+        "condition_id": "task_lr_1e_4_seed43_step1",
+        "max_steps": 1,
+        "output_dir": "../../../runs/v12/calibrated_route/step1/task_lr_1e_4_seed43_step1",
+        "path": "conditions/config_task_lr_1e_4_seed43_step1.json",
+        "seed": 43,
+        "sha256": "a76070473fb1fc591ba0a3adcbdc8cc1c7a97691dd9a44f28506297ce5bf2657",
+        "workspace_learning_rate": 0.0001
+      },
+      "1e_5": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 1,
+        "branch": "task",
+        "condition_id": "task_lr_1e_5_seed43_step1",
+        "max_steps": 1,
+        "output_dir": "../../../runs/v12/calibrated_route/step1/task_lr_1e_5_seed43_step1",
+        "path": "conditions/config_task_lr_1e_5_seed43_step1.json",
+        "seed": 43,
+        "sha256": "67101dd8b0458ffcfd3d821eace22de2c1baa71b86660f500d8d8e6a66da8334",
+        "workspace_learning_rate": 1e-05
+      },
+      "3e_5": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 1,
+        "branch": "task",
+        "condition_id": "task_lr_3e_5_seed43_step1",
+        "max_steps": 1,
+        "output_dir": "../../../runs/v12/calibrated_route/step1/task_lr_3e_5_seed43_step1",
+        "path": "conditions/config_task_lr_3e_5_seed43_step1.json",
+        "seed": 43,
+        "sha256": "1715b1ee6bac6e7648d870730a952cecf5bff3d1db1f6cfe5a5f8ab7adb60bc1",
+        "workspace_learning_rate": 3e-05
+      }
+    },
+    "condition_order": [
+      "1e_5",
+      "3e_5",
+      "1e_4"
+    ],
+    "gates": {
+      "maximum_full_vocab_loss": 1.0,
+      "minimum_accuracy": 0.75,
+      "minimum_distinct_predicted_classes": 2,
+      "minimum_label_recall": 0.65,
+      "require_base_sentinel_unchanged": true,
+      "require_integrity_pass": true,
+      "require_no_base_optimizer_state": true,
+      "require_workspace_sentinel_updated": true,
+      "require_zero_applied_base_lr": true
+    },
+    "selection_rule": "Among passing cells, maximize final complete-eval accuracy, then minimize choice loss, then choose the lower workspace LR."
+  },
+  "v12_2_stage4": {
+    "artifacts": {
+      "semantic_1e_4_seed43": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_1e_4_seed43_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/semantic_lr_1e_4_seed43_step4",
+        "path": "conditions/config_semantic_lr_1e_4_seed43_step4.json",
+        "seed": 43,
+        "sha256": "5395a5f9282c7a28916ee3951e0c1b558e78f25c958261d484ab0521feb4d17c",
+        "workspace_learning_rate": 0.0001
+      },
+      "semantic_1e_4_seed44": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_1e_4_seed44_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/semantic_lr_1e_4_seed44_step4",
+        "path": "conditions/config_semantic_lr_1e_4_seed44_step4.json",
+        "seed": 44,
+        "sha256": "b35575b8238828de90eaeb996f494650589ab8730f4db206ca3fd732eddd86cb",
+        "workspace_learning_rate": 0.0001
+      },
+      "semantic_1e_4_seed45": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_1e_4_seed45_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/semantic_lr_1e_4_seed45_step4",
+        "path": "conditions/config_semantic_lr_1e_4_seed45_step4.json",
+        "seed": 45,
+        "sha256": "d168d9d713dfef644cf210c097f7a04f0d961dc3397cbeb446ac47777b44e59d",
+        "workspace_learning_rate": 0.0001
+      },
+      "semantic_1e_5_seed43": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_1e_5_seed43_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/semantic_lr_1e_5_seed43_step4",
+        "path": "conditions/config_semantic_lr_1e_5_seed43_step4.json",
+        "seed": 43,
+        "sha256": "c8156487a6ced406b00023185b201811436c3e7485f55cd010a5b5119fed9d5e",
+        "workspace_learning_rate": 1e-05
+      },
+      "semantic_1e_5_seed44": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_1e_5_seed44_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/semantic_lr_1e_5_seed44_step4",
+        "path": "conditions/config_semantic_lr_1e_5_seed44_step4.json",
+        "seed": 44,
+        "sha256": "18d79e5e9c32f639d97162572952e2bf5bb7ead7bfa735e9de1fa7f6ead9fec3",
+        "workspace_learning_rate": 1e-05
+      },
+      "semantic_1e_5_seed45": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_1e_5_seed45_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/semantic_lr_1e_5_seed45_step4",
+        "path": "conditions/config_semantic_lr_1e_5_seed45_step4.json",
+        "seed": 45,
+        "sha256": "271fc73b7c72bb93fa62c4459244a91a7d4681a3eb6dfeea5a43a9d625eb5dbb",
+        "workspace_learning_rate": 1e-05
+      },
+      "semantic_3e_5_seed43": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_3e_5_seed43_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/semantic_lr_3e_5_seed43_step4",
+        "path": "conditions/config_semantic_lr_3e_5_seed43_step4.json",
+        "seed": 43,
+        "sha256": "a1aefe24e907d5d4ea9cf6a543f5e844f04d7df24bc5e50002251cc5de5b1086",
+        "workspace_learning_rate": 3e-05
+      },
+      "semantic_3e_5_seed44": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_3e_5_seed44_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/semantic_lr_3e_5_seed44_step4",
+        "path": "conditions/config_semantic_lr_3e_5_seed44_step4.json",
+        "seed": 44,
+        "sha256": "7dfbad8c60962a65db2513a246f38034cfe39a48c1462e621d7a307cfdadc705",
+        "workspace_learning_rate": 3e-05
+      },
+      "semantic_3e_5_seed45": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_3e_5_seed45_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/semantic_lr_3e_5_seed45_step4",
+        "path": "conditions/config_semantic_lr_3e_5_seed45_step4.json",
+        "seed": 45,
+        "sha256": "1cc30cdc1bb188fd02d42acc1cdcca740a6fd2635157e20758b9cdf0e085048d",
+        "workspace_learning_rate": 3e-05
+      },
+      "task_1e_4_seed43": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_1e_4_seed43_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/task_lr_1e_4_seed43_step4",
+        "path": "conditions/config_task_lr_1e_4_seed43_step4.json",
+        "seed": 43,
+        "sha256": "fd590802c5953b3cfe6c9a73aae70576409da68ec88cd9464d3e390815950424",
+        "workspace_learning_rate": 0.0001
+      },
+      "task_1e_4_seed44": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_1e_4_seed44_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/task_lr_1e_4_seed44_step4",
+        "path": "conditions/config_task_lr_1e_4_seed44_step4.json",
+        "seed": 44,
+        "sha256": "cfdf579fa885b8cb7abd8c97c811c4a3ac308405722c52597079834a778c3375",
+        "workspace_learning_rate": 0.0001
+      },
+      "task_1e_4_seed45": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_1e_4_seed45_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/task_lr_1e_4_seed45_step4",
+        "path": "conditions/config_task_lr_1e_4_seed45_step4.json",
+        "seed": 45,
+        "sha256": "c00153f31e24a51b8c8efa71777e8c3e10cb35fd38265de67b709d9e6b455554",
+        "workspace_learning_rate": 0.0001
+      },
+      "task_1e_5_seed43": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_1e_5_seed43_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/task_lr_1e_5_seed43_step4",
+        "path": "conditions/config_task_lr_1e_5_seed43_step4.json",
+        "seed": 43,
+        "sha256": "f005c71b765ddcd67cb58b8764f9070b134f4cd99e6b07923b676335b3901207",
+        "workspace_learning_rate": 1e-05
+      },
+      "task_1e_5_seed44": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_1e_5_seed44_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/task_lr_1e_5_seed44_step4",
+        "path": "conditions/config_task_lr_1e_5_seed44_step4.json",
+        "seed": 44,
+        "sha256": "adb1a323ba251b1c7ec8cb3f80c2e9757c84a807da9351cdffa89bd428d0d109",
+        "workspace_learning_rate": 1e-05
+      },
+      "task_1e_5_seed45": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_1e_5_seed45_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/task_lr_1e_5_seed45_step4",
+        "path": "conditions/config_task_lr_1e_5_seed45_step4.json",
+        "seed": 45,
+        "sha256": "12961dae1a0212b0949fd626f50c54f24282479777c50eacbad0f690dc31d71a",
+        "workspace_learning_rate": 1e-05
+      },
+      "task_3e_5_seed43": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_3e_5_seed43_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/task_lr_3e_5_seed43_step4",
+        "path": "conditions/config_task_lr_3e_5_seed43_step4.json",
+        "seed": 43,
+        "sha256": "cb59c5f039e026c63ad7bdbdb4e13c246517a81065b5de1f756b5d45f4a5ab3e",
+        "workspace_learning_rate": 3e-05
+      },
+      "task_3e_5_seed44": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_3e_5_seed44_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/task_lr_3e_5_seed44_step4",
+        "path": "conditions/config_task_lr_3e_5_seed44_step4.json",
+        "seed": 44,
+        "sha256": "56075fae2bdb3cdfc9f77d39c3d97c86d375e7426c8ea30c3879c0564a227053",
+        "workspace_learning_rate": 3e-05
+      },
+      "task_3e_5_seed45": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_3e_5_seed45_step4",
+        "max_steps": 4,
+        "output_dir": "../../../runs/v12/calibrated_route/stage4/task_lr_3e_5_seed45_step4",
+        "path": "conditions/config_task_lr_3e_5_seed45_step4.json",
+        "seed": 45,
+        "sha256": "1bdb7acfb24c52217fe0e5c94d156ecdc0b76a0427844137059d8bf23b192403",
+        "workspace_learning_rate": 3e-05
+      }
+    },
+    "branches": {
+      "semantic": {
+        "counterfactual_weight": 1.0,
+        "stability_weight": 0.25
+      },
+      "task": {
+        "counterfactual_weight": 0.0,
+        "stability_weight": 0.0
+      }
+    },
+    "gates": {
+      "maximum_full_vocab_loss": 1.0,
+      "minimum_accuracy": 0.75,
+      "minimum_behavior_task_accuracy": 0.75,
+      "minimum_distinct_predicted_classes": 2,
+      "minimum_label_recall": 0.65,
+      "require_base_exactly_unchanged": true,
+      "require_every_seed_integrity_pass": true,
+      "require_four_frozen_ownership_records": true
+    },
+    "promotion_rule": "Promote each branch independently only if every seed passes.",
+    "required_seeds": [
+      43,
+      44,
+      45
+    ]
+  },
+  "v12_3_refinement16": {
+    "artifacts": {
+      "semantic_1e_4_seed43": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_1e_4_seed43_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/semantic_lr_1e_4_seed43_step16",
+        "path": "conditions/config_semantic_lr_1e_4_seed43_step16.json",
+        "seed": 43,
+        "sha256": "397fb6f2fc5c5d843d1e45474ac63137f5477b4cb7da23658e05460c56c4fd44",
+        "workspace_learning_rate": 0.0001
+      },
+      "semantic_1e_4_seed44": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_1e_4_seed44_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/semantic_lr_1e_4_seed44_step16",
+        "path": "conditions/config_semantic_lr_1e_4_seed44_step16.json",
+        "seed": 44,
+        "sha256": "544ecea7ef01c794bb460e4af55a624e9c36f9aa42df2c08959c1211a41bc211",
+        "workspace_learning_rate": 0.0001
+      },
+      "semantic_1e_4_seed45": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_1e_4_seed45_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/semantic_lr_1e_4_seed45_step16",
+        "path": "conditions/config_semantic_lr_1e_4_seed45_step16.json",
+        "seed": 45,
+        "sha256": "3ad3a5917be05ceca8a317db4374489035840bbd1046dc05e72c09795b1c96c7",
+        "workspace_learning_rate": 0.0001
+      },
+      "semantic_1e_5_seed43": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_1e_5_seed43_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/semantic_lr_1e_5_seed43_step16",
+        "path": "conditions/config_semantic_lr_1e_5_seed43_step16.json",
+        "seed": 43,
+        "sha256": "7f85ee514da2a67fb3239f20a30066784700778faca5ef30f6549d1c187ee177",
+        "workspace_learning_rate": 1e-05
+      },
+      "semantic_1e_5_seed44": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_1e_5_seed44_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/semantic_lr_1e_5_seed44_step16",
+        "path": "conditions/config_semantic_lr_1e_5_seed44_step16.json",
+        "seed": 44,
+        "sha256": "a4346dedb2299a9e4d5b8dd3d8afc73ce640a9f169efa0ccb7ba20e7b125335b",
+        "workspace_learning_rate": 1e-05
+      },
+      "semantic_1e_5_seed45": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_1e_5_seed45_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/semantic_lr_1e_5_seed45_step16",
+        "path": "conditions/config_semantic_lr_1e_5_seed45_step16.json",
+        "seed": 45,
+        "sha256": "9affa72662a6a2b4189c1833f28cd9ccaf26c5e24d38f93c3c1d1e0d17ec8f8f",
+        "workspace_learning_rate": 1e-05
+      },
+      "semantic_3e_5_seed43": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_3e_5_seed43_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/semantic_lr_3e_5_seed43_step16",
+        "path": "conditions/config_semantic_lr_3e_5_seed43_step16.json",
+        "seed": 43,
+        "sha256": "60f7d0bbe2e373c36af89dcc02ff9b0a6414bc861ea56ef7e8334711a534db33",
+        "workspace_learning_rate": 3e-05
+      },
+      "semantic_3e_5_seed44": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_3e_5_seed44_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/semantic_lr_3e_5_seed44_step16",
+        "path": "conditions/config_semantic_lr_3e_5_seed44_step16.json",
+        "seed": 44,
+        "sha256": "40f024e76d7d25af8c5d1cbd2639af56a7f663978a63e27ca757321b8a6e4d3d",
+        "workspace_learning_rate": 3e-05
+      },
+      "semantic_3e_5_seed45": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "semantic",
+        "condition_id": "semantic_lr_3e_5_seed45_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/semantic_lr_3e_5_seed45_step16",
+        "path": "conditions/config_semantic_lr_3e_5_seed45_step16.json",
+        "seed": 45,
+        "sha256": "9dcbd647ab82f3bb3267851d995fa22d338f9dbfcf411ebd079b03835f35f661",
+        "workspace_learning_rate": 3e-05
+      },
+      "task_1e_4_seed43": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_1e_4_seed43_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/task_lr_1e_4_seed43_step16",
+        "path": "conditions/config_task_lr_1e_4_seed43_step16.json",
+        "seed": 43,
+        "sha256": "cc2ad85cb1450afe195d95e3729fe41ef8fd62fe388b70cdf754b3abbcef1f5c",
+        "workspace_learning_rate": 0.0001
+      },
+      "task_1e_4_seed44": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_1e_4_seed44_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/task_lr_1e_4_seed44_step16",
+        "path": "conditions/config_task_lr_1e_4_seed44_step16.json",
+        "seed": 44,
+        "sha256": "553dc91cdc9b05678e874d97ab7f06a72533ed61bf465ae5e8df1d8f36b0c869",
+        "workspace_learning_rate": 0.0001
+      },
+      "task_1e_4_seed45": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_1e_4_seed45_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/task_lr_1e_4_seed45_step16",
+        "path": "conditions/config_task_lr_1e_4_seed45_step16.json",
+        "seed": 45,
+        "sha256": "4c9998078773afd4eb39158b244baeee565492653a4dd0eb8ad693a1501aa734",
+        "workspace_learning_rate": 0.0001
+      },
+      "task_1e_5_seed43": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_1e_5_seed43_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/task_lr_1e_5_seed43_step16",
+        "path": "conditions/config_task_lr_1e_5_seed43_step16.json",
+        "seed": 43,
+        "sha256": "2cf35b4aec69f53a26a2d1db7fac2fdece5d305a87f3f893c79a34e881ee5b6d",
+        "workspace_learning_rate": 1e-05
+      },
+      "task_1e_5_seed44": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_1e_5_seed44_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/task_lr_1e_5_seed44_step16",
+        "path": "conditions/config_task_lr_1e_5_seed44_step16.json",
+        "seed": 44,
+        "sha256": "a0f8a4197025b5e827437d8df35b9da66a7b3dc8193db169a705e7f072b2d729",
+        "workspace_learning_rate": 1e-05
+      },
+      "task_1e_5_seed45": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_1e_5_seed45_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/task_lr_1e_5_seed45_step16",
+        "path": "conditions/config_task_lr_1e_5_seed45_step16.json",
+        "seed": 45,
+        "sha256": "71d6cc000e64b1bc51ed6c0b9f665447f61bb2dc6c86bac268016fa78a355b94",
+        "workspace_learning_rate": 1e-05
+      },
+      "task_3e_5_seed43": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_3e_5_seed43_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/task_lr_3e_5_seed43_step16",
+        "path": "conditions/config_task_lr_3e_5_seed43_step16.json",
+        "seed": 43,
+        "sha256": "cc44910dc255b840849fb364071dc881901efd04a6d74e357f2d28d412a68811",
+        "workspace_learning_rate": 3e-05
+      },
+      "task_3e_5_seed44": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_3e_5_seed44_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/task_lr_3e_5_seed44_step16",
+        "path": "conditions/config_task_lr_3e_5_seed44_step16.json",
+        "seed": 44,
+        "sha256": "cb9e980008cafdab3fbffc02c9f80f78a1060a4e6acea3e8d6c05b3720f6e53a",
+        "workspace_learning_rate": 3e-05
+      },
+      "task_3e_5_seed45": {
+        "base_learning_rate": 1e-07,
+        "base_release_step": 4,
+        "branch": "task",
+        "condition_id": "task_lr_3e_5_seed45_step16",
+        "max_steps": 16,
+        "output_dir": "../../../runs/v12/calibrated_route/refinement16/task_lr_3e_5_seed45_step16",
+        "path": "conditions/config_task_lr_3e_5_seed45_step16.json",
+        "seed": 45,
+        "sha256": "f1491adb9455fe0ea99e8fc08dec6bfb0fe46a9ba325e3fbb4e1a9d4c759113b",
+        "workspace_learning_rate": 3e-05
+      }
+    },
+    "base_frozen_updates": 4,
+    "fresh_from_pinned_model": true,
+    "gates": {
+      "maximum_full_vocab_loss": 1.5,
+      "minimum_accuracy": 0.7,
+      "minimum_behavior_task_accuracy": 0.75,
+      "minimum_distinct_predicted_classes": 2,
+      "minimum_label_recall": 0.6,
+      "require_base_release_at_step5": true,
+      "require_every_promoted_seed_integrity_pass": true,
+      "require_nonzero_persisted_base_update": true
+    },
+    "joint_updates": 12,
+    "necessity": {
+      "content_specific_replication_requires": [
+        "F3",
+        "F4"
+      ],
+      "minimum_replicating_seeds": 2,
+      "required_levels": [
+        "F0",
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5"
+      ]
+    },
+    "required_seeds": [
+      43,
+      44,
+      45
+    ]
+  }
+}

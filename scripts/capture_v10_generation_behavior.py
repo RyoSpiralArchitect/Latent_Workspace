@@ -442,11 +442,7 @@ def capture_original_task_views(
             prompt = (
                 elicited_query
                 if view == "query_only"
-                else (
-                    f"{case['context']}"
-                    f"{data_config.prompt_separator}"
-                    f"{elicited_query}"
-                )
+                else (f"{case['context']}{data_config.prompt_separator}{elicited_query}")
             )
             prompts.append(prompt)
         encoded = tokenizer(
@@ -563,7 +559,7 @@ def capture_functional_task_trace(
     batch_size, _sides, query_count = answers.shape
     valid_grid = valid[:, None, :].expand(batch_size, 2, query_count)
     positions = torch.nonzero(valid_grid.reshape(-1), as_tuple=False).flatten()
-    if config.functional.route_mode == "inline":
+    if config.functional.route_mode in {"inline", "inline_sidecar"}:
         labels = batch["functional_inline_labels"]
         choices = batch["functional_inline_choice_ids"]
     else:
@@ -891,9 +887,7 @@ def capture(args: argparse.Namespace) -> dict[str, Any]:
         for config in checkpoint_configs.values()
     }
     if len(prompt_contracts) != 1:
-        raise BehaviorCaptureError(
-            "All checkpoints must share one task-native prompt contract."
-        )
+        raise BehaviorCaptureError("All checkpoints must share one task-native prompt contract.")
     reference_config = checkpoint_configs[labels[0]]
 
     model_results: dict[str, dict[str, Any]] = {}
