@@ -1,0 +1,42 @@
+{
+  "artifacts": {
+    "F1_inline": {
+      "path": "conditions/config_F1_inline_symmetric_choice_repair.json",
+      "sha256": "863560fec80f5aaf5fb3a8d9e202394ac5473f0efd92bebb98a0ae56e90f25ff"
+    },
+    "O0_slots4_k1": {
+      "path": "conditions/config_O0_slots4_k1_symmetric_choice_repair.json",
+      "sha256": "cf2e9a7d8418613cef6f9a52f974217ef1f98fbe25586cedcb9eab77cf5c991f"
+    },
+    "gate": {
+      "path": "GATE0_SYMMETRIC_CONTRACT.json",
+      "sha256": "6052a7d5347d90fe836261361e89e29ad75dadf78ba169e56c0228d39fb2eebb"
+    }
+  },
+  "calibration": {
+    "path": "../../provenance/pilots/v11_elicitation_calibration/CALIBRATION_RECEIPT.json",
+    "selected_style": "symmetric_instruction",
+    "sha256": "f47878065a3c5f3c55ba9df3247069d55fef75bd3717c7cada3091acf5776da1"
+  },
+  "claim_boundary": "The prompt was selected only on a frozen train subset. The next eval run is qualification, not training evidence; no further prompt selection on eval is permitted in this continuation.",
+  "format": "latent-workspace-ft-v11-gate0-continuation-contract-v1",
+  "frozen_before_eval_rerun": true,
+  "next_sequence": [
+    "Run GATE0_SYMMETRIC_CONTRACT.json once on eval.",
+    "Launch F1 16-step objective repair only on Gate PASS.",
+    "Launch O0 16-step active route only on F1 pilot PASS.",
+    "Capture generation behavior before any pruning."
+  ],
+  "schema_version": 1,
+  "single_prompt_change": {
+    "choice_tokens_changed": false,
+    "dataset_bytes_changed": false,
+    "from": "legacy",
+    "instruction": "Use the world facts to decide whether the ranking statement is true. If it is false, answer no; if it is true, answer yes. Output exactly one lowercase word: no or yes.",
+    "to": "symmetric_instruction"
+  },
+  "trigger": {
+    "blocked_gate_receipt": "../../provenance/pilots/v11_gate0_attempt1/GATE0_RECEIPT.json",
+    "failed_check": "f1_minimum_label_recall"
+  }
+}

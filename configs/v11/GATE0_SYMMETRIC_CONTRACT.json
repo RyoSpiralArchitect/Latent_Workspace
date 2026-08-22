@@ -1,0 +1,60 @@
+{
+  "conditions": [
+    {
+      "id": "F0_query_only",
+      "route_mode": "query_only"
+    },
+    {
+      "id": "F1_inline",
+      "route_mode": "inline"
+    }
+  ],
+  "config": {
+    "path": "conditions/config_F1_inline_symmetric_choice_repair.json",
+    "sha256": "863560fec80f5aaf5fb3a8d9e202394ac5473f0efd92bebb98a0ae56e90f25ff"
+  },
+  "dataset": {
+    "path": "../../data/v10/functional_eval.jsonl",
+    "record_count": 64,
+    "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e"
+  },
+  "elicitation": {
+    "choices": [
+      " no",
+      " yes"
+    ],
+    "functional_elicitation": "symmetric_instruction",
+    "instruction": "Use the world facts to decide whether the ranking statement is true. If it is false, answer no; if it is true, answer yes. Output exactly one lowercase word: no or yes.",
+    "prompt_separator": "\n\n",
+    "use_chat_template": false
+  },
+  "execution": {
+    "max_batches": 0,
+    "optimizer_steps": 0
+  },
+  "failure_action": "Do not launch V11 training. Preserve this second blocked gate and revisit task or scoring design without another eval prompt search.",
+  "format": "latent-workspace-ft-v11-gate0-contract-v1",
+  "frozen_before_execution": true,
+  "gates": {
+    "minimum_f1_distinct_predicted_classes": 2,
+    "minimum_f1_hop1_wilson_lower_bound": 0.5,
+    "minimum_f1_label_recall": 0.55,
+    "minimum_f1_minus_f0_accuracy": 0.05,
+    "minimum_f1_overall_wilson_lower_bound": 0.5,
+    "require_balanced_targets": true,
+    "require_exact_direct_wrapper_logits": true,
+    "require_exact_direct_wrapper_predictions": true,
+    "wilson_z": 1.959963984540054
+  },
+  "model": {
+    "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71"
+  },
+  "parent_calibration": {
+    "path": "../../provenance/pilots/v11_elicitation_calibration/CALIBRATION_RECEIPT.json",
+    "selected_style": "symmetric_instruction",
+    "sha256": "f47878065a3c5f3c55ba9df3247069d55fef75bd3717c7cada3091acf5776da1"
+  },
+  "question": "Does the train-selected symmetric instruction qualify on the untouched eval corpus through exact F0/F1 wrapper paths?",
+  "schema_version": 1
+}

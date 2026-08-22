@@ -624,6 +624,11 @@ def run_gate(args: argparse.Namespace) -> dict[str, Any]:
         raise Gate0Error("Gate-0 must qualify the legacy non-chat elicitation.")
     if config.data.prompt_separator != contract["elicitation"]["prompt_separator"]:
         raise Gate0Error("Gate-0 prompt separator differs from the frozen contract.")
+    expected_elicitation = str(
+        contract["elicitation"].get("functional_elicitation", "legacy")
+    )
+    if config.data.functional_elicitation != expected_elicitation:
+        raise Gate0Error("Gate-0 functional elicitation differs from the contract.")
     resolved_eval_files = [Path(path).resolve() for path in config.data.eval_files]
     if resolved_eval_files != [dataset_path]:
         raise Gate0Error("Gate-0 config does not point only to the frozen eval corpus.")
