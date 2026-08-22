@@ -23,6 +23,11 @@ The prune receipt must bind:
 Invalid or interrupted runs require a separate failed-run prune receipt and
 must retain enough compact evidence to explain the failure.
 
+One-step transport engineering pilots are not formal verified runs. Their
+target-bounded cleanup uses the separate `transport_pilot_weights_pruned` state,
+and only after its generation receipt, human observation note, tensor/state
+oracles, exact shard inventory, and GitHub-published prune intent are all bound.
+
 ## Verified smoke transitions
 
 The seed-42 smoke runs for F0, B, F1, and O3 each satisfied

@@ -67,7 +67,7 @@ python3 scripts/capture_v10_generation_behavior.py \
   --device cuda \
   --max-new-tokens 96 \
   --seed 20260822 \
-  --output provenance/pilots/transport_v2/GENERATION_BEHAVIOR_V1.json
+  --output provenance/pilots/transport_v2_cpu_accumulate/GENERATION_BEHAVIOR_V1.json
 ```
 
 Existing output is never replaced unless `--overwrite` is explicit. An error
@@ -104,6 +104,13 @@ following are durable and rehashed:
 Hashes and decoded outputs are evidence, not a trained-weight backup. Pruning
 remains explicit, target-bounded, and non-recoverable unless a separate weight
 archive is named.
+
+The first transport-pilot cleanup uses
+[`scripts/prune_transport_v2_weights.py`](../scripts/prune_transport_v2_weights.py).
+It freezes an exact intent, requires that intent to be published before any
+unlink, rehashes every target and bound behavior artifact, and uses the distinct
+state `transport_pilot_weights_pruned`. It must not relabel one-step engineering
+pilots as `verified_pruned`.
 
 ## Claim boundary
 
