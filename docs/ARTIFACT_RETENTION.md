@@ -19,35 +19,29 @@ The prune receipt must bind:
 Invalid or interrupted runs require a separate failed-run prune receipt and
 must retain enough compact evidence to explain the failure.
 
-## Verified F0 transition
+## Verified smoke transitions
 
-The fixed-engine F0 seed-42 run satisfied the run, assay, and exact-resume
-preconditions and was transitioned from `verified_completed` to
-`verified_pruned`. The retained bindings include:
+The current-engine seed-42 smoke runs for F0, B, F1, and O3 each satisfied
+their run, configured assay, and exact-resume preconditions before moving from
+`verified_completed` to `verified_pruned`. The active engine SHA-256 is
+`755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c`.
 
-- engine SHA-256
-  `3139c6edea71575310a2e6f245999e504318fedede202786fe2c949861ad2e1c`;
-- run-verification SHA-256
-  `ba5d5a524565a9e59e6bfc207b861d786ea9e21514008318db63e1f6d8ed1191`;
-- assay-verification SHA-256
-  `410b295534e25f7d24faa1fd988cf86ef85bef06d2b77dff210572571ef2480a`;
-- resume-equivalence SHA-256
-  `5e5b4178005a89beacfb5742edd307e15401a49d1af33543da5f36374330a645`.
+For each run, the exact derived deletion target was `final/base_model`, with a
+recorded logical size of 14,496,105,708 bytes. The four transactions removed
+57,984,422,832 logical bytes in total. Every compact export was rehashed before
+deletion and retains the manifests, coverage, metrics, configured assay,
+resume, export, intent, and prune receipts selected by the policy. Post-prune
+checks prove each target and quarantine are absent and the retained/exported
+inventories still match their receipts.
 
-The path-free public summary is
-[`PUBLIC_EVIDENCE.json`](../provenance/pilots/F0_fixed_engine_verified_pruned/PUBLIC_EVIDENCE.json),
-SHA-256
-`d787e5ac95fc355c1397d4bff2e6bcda95e41065b722ac2ac482447d35686fcb`.
+The compact evidence is under
+[`provenance/pilots/v10_cuda_smoke_current/smoke/`](../provenance/pilots/v10_cuda_smoke_current/smoke/).
+The full research result and condition-specific receipt hashes are in
+[`docs/CUDA_SMOKE_STATUS.md`](CUDA_SMOKE_STATUS.md).
 
-The compact export was rehashed before deletion and retains manifests,
-coverage, metrics, assay, resume, export, intent, and prune receipts. The exact
-deleted target was `final/base_model`, with a recorded logical size of
-14,496,105,708 bytes. Post-prune checks prove the target and quarantine are
-absent and the retained/exported inventories still match their receipts.
-
-This is a tested per-run retention transition, not authorization to prune
-failed attempts automatically and not yet a profile-level n=3/n=10 retention
-schedule.
+These are tested per-run retention transitions, not authorization to prune
+failed attempts automatically and not yet a complete n=3/n=10 profile-level
+retention schedule.
 
 ## Failed resume attempt cleanup
 
@@ -64,6 +58,29 @@ This explicit cleanup is negative-result retention, not a successful-resume
 claim and not authorization for automatic pruning of failed or interrupted
 runs.
 
+## Current CUDA duplicate cleanup
+
+After the current F0 oracle and all four same-spill resume comparisons passed,
+an independent intent-bound transaction removed the remaining experimental
+trained-weight bodies outside the protected model cache. The exact scope was 76
+regular, single-link safetensor shards across 19 d5-oracle, current-native,
+noncanonical B diagnostic, and resume checkpoint/final bundles.
+
+The transaction revalidated every target SHA-256 twice, moved each exact inode
+to a same-filesystem `renameat2(RENAME_NOREPLACE)` quarantine, revalidated the
+complete quarantine, and then unlinked only the literal intent paths. It removed
+275,425,537,480 logical bytes / 275,426,062,336 allocated bytes; the observed
+unlink free-space delta exactly matched the allocated-byte total. Independent
+postflight found zero trained safetensors outside the pinned model cache and
+reverified all 17 bound evidence artifacts.
+
+The receipt is
+[`PRUNE_RECEIPT.json`](../provenance/pruning/current_cuda_oracle_and_resume_raw_weights/PRUNE_RECEIPT.json),
+SHA-256
+`98572e528ebb9b15475ce9f16a586363ebd026c3b468421662f5a434c1f0b0c8`.
+It also records one earlier schema mismatch that failed closed before target
+hashing, rename, or unlink.
+
 ## Capacity gate
 
 The measured Mistral-7B final base-model bundle selected for pruning was
@@ -72,19 +89,19 @@ The measured Mistral-7B final base-model bundle selected for pruning was
 artifacts. That does not fit the
 observed approximately 1.4 TB of free furnace storage.
 
-The F0 transition proves the opt-in path, destructive-action target checks, and
-`verified_pruned` classification for one run. The runner still must not start
-n=10 until smoke and n=3 are complete and a profile-level export/prune schedule
-has been frozen, tested, and capacity-checked without weakening fail-closed
-matrix accounting.
+The four smoke transitions prove the opt-in path, destructive-action target
+checks, and `verified_pruned` classification across every smoke condition. The
+runner still must not start n=10 until n=3 is complete and a profile-level
+export/prune schedule has been frozen, tested, and capacity-checked without
+weakening fail-closed matrix accounting.
 
 ## Recoverability boundary
 
 Pinned initial model weights remain recoverable from their immutable model
 revision. A pruned trained final weight is not reconstructible from hashes or
 aggregate delta counts. The prune receipt must say so explicitly; integrity
-evidence is not a backup. For the current F0 transition, the baseline run's
-`final/base_model` is absent and cannot be reconstructed from its compact
-evidence. Exact loadable copies currently remain in the successful
-resume-equivalence pilot, but those experimental outputs are not declared or
-managed as a durable backup and must not be described as one.
+evidence is not a backup. The four formal runs' `final/base_model` directories
+are absent and cannot be reconstructed from their compact evidence. The bounded
+duplicate cleanup also removed every scoped loadable trained base-model copy;
+postflight found none outside the protected model cache. That cache reconstructs
+only the pinned initial model, not any deleted trained state.

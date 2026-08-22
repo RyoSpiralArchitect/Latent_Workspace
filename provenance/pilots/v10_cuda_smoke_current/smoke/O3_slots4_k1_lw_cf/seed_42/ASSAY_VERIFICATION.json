@@ -1,0 +1,139 @@
+{
+  "artifacts": [
+    {
+      "bytes": 7489,
+      "path": "LAUNCHED_CONFIG.json",
+      "sha256": "1a8478d2c6c7d0054d7d844ad52f170a715fef8b59dd8b57acee76ea02b030cd"
+    },
+    {
+      "bytes": 16923,
+      "path": "RUN_VERIFICATION.json",
+      "sha256": "9b3b193da0149ced0ffe7c1f3847e4fc04e44e1b48338595d93d1ff162f00635"
+    },
+    {
+      "bytes": 5940,
+      "path": "amputation_report.json",
+      "sha256": "d8d57c451e964b2851d9f08b8382cde4516f1db554494db5246d78f8c4c269db"
+    },
+    {
+      "bytes": 31858,
+      "path": "metrics.jsonl",
+      "sha256": "6db7c37a8e667ff7e543ec468ed0a9957bed297265f3618a7ff731448fef70c3"
+    },
+    {
+      "bytes": 30262,
+      "path": "necessity_result.json",
+      "sha256": "cfdeadf01695f0107caafc44c4ca76aa410028c3d91a320d3d24e7fda8102dd5"
+    }
+  ],
+  "claim_boundary": "PASS verifies only that this exact verified run has all assays required by its launched config, with structurally valid, provenance-bound artifacts. Scientific direction is recorded separately and is never an integrity gate. This receipt does not establish positive effect direction, model quality, causal memory, generalization beyond the recorded held-out data, or consciousness.",
+  "completed_assays": [
+    "heldout_eval",
+    "amputation",
+    "necessity"
+  ],
+  "execution_integrity": {
+    "assays": {
+      "amputation": {
+        "evidence": {
+          "artifact": "metrics.jsonl",
+          "functional_heldout_query_accuracy": 0.5,
+          "jsonl_line": 11,
+          "record_sha256": "48fb61a14db70dad95b8ce2f9db11ce8c74dc7a1acbf64c12ed0d8dbced9d964",
+          "step": 8,
+          "task_loss": 3.095033645629883
+        },
+        "execution_integrity": "PASS",
+        "task_loss_delta_amputated_minus_full": -0.5533065795898438
+      },
+      "heldout_eval": {
+        "evidence": {
+          "artifact": "metrics.jsonl",
+          "functional_heldout_query_accuracy": 0.5,
+          "jsonl_line": 10,
+          "record_sha256": "e63339f6377baade86e0efd432eaa8421ccd4c57c7add522d45a8da67ceaba59",
+          "step": 8,
+          "task_loss": 3.6483402252197266
+        },
+        "execution_integrity": "PASS"
+      },
+      "necessity": {
+        "artifact": "necessity_result.json",
+        "execution_integrity": "PASS",
+        "format": "latent-workspace-v9-functional-necessity-v1"
+      }
+    },
+    "required_equals_completed": true,
+    "status": "PASS"
+  },
+  "format": "latent-workspace-v10-assay-verification-v1",
+  "input_bindings": {
+    "engine_run_id": "4d7a3af039834841b6d3ba8fb3c5e855",
+    "global_step": 8,
+    "launched_config_sha256": "1a8478d2c6c7d0054d7d844ad52f170a715fef8b59dd8b57acee76ea02b030cd",
+    "metrics_sha256": "6db7c37a8e667ff7e543ec468ed0a9957bed297265f3618a7ff731448fef70c3",
+    "run_verification_sha256": "9b3b193da0149ced0ffe7c1f3847e4fc04e44e1b48338595d93d1ff162f00635"
+  },
+  "provenance": {
+    "condition": "O3_slots4_k1_lw_cf",
+    "condition_config": "configs/v10/conditions/config_O3_slots4_k1_lw_cf.json",
+    "hashes": {
+      "condition_config_sha256": "091777cb79a80b19c986d8b1f2120b6eec8c38c0b70a19d3e748cc97c5d4f477",
+      "contract_data_sha256": {
+        "data/v10/functional_eval.jsonl": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+        "data/v10/functional_train.jsonl": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+      },
+      "contract_sha256": "156dc89c451db7c24eebf47eb851d1a9c26e398d8791f184cd126a551609fc20",
+      "materialized_config_sha256": "1a8478d2c6c7d0054d7d844ad52f170a715fef8b59dd8b57acee76ea02b030cd",
+      "matrix_sha256": "9731c165c66de333feb76b245f926bc127d62f1b00a418d9c124227377ff22e4",
+      "model_receipt_sha256": "7973fa042164fd769b5056f29982e7090fcc0c4d75a54f41e54e001463ab2df2",
+      "model_snapshot_inventory_sha256": "3eff19c27bdc4e19491f61645eaf5216f3d05407ad8b4d7b83e11313a54448fd",
+      "model_snapshot_tensor_schema_sha256": "a0878052f562699b820f3981fa63631f2130174e71b1ccf29bb2fa290229ce2e",
+      "prefetch_script_sha256": "9d4b4f2b5374657d632bffa671eadc9b960a0d93070d05cbb5933bccd7001f3a",
+      "run_data_sha256": {
+        "data/v10/functional_eval.jsonl": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+        "data/v10/functional_train.jsonl": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+      },
+      "runner_sha256": "07fdd920f76463f5996a5568447b940d41b8bce4675dd83594d3f68e54ecd68d",
+      "source_files_sha256": {
+        "src/latent_workspace_ft_v10/__init__.py": "fd1c48552935645d302336d05bc133348f8466c62228c6c22dbe5f2b947803b0",
+        "src/latent_workspace_ft_v10/__main__.py": "71e2b8c807406881aa3d12a21323dc92682fe2b602fbe08b25460805793e0518",
+        "src/latent_workspace_ft_v10/engine.py": "755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c",
+        "src/latent_workspace_ft_v10/source_manifest.json": "3264d9ebc6307e0028e58ded03c2d36c38a3b1dc71958822a93b3eacc09a0ee2"
+      },
+      "source_tree_sha256": "33851900abae227475a27ddafd409225f02a01354be6c13a1f6209ddf3f5e835"
+    },
+    "max_steps": 8,
+    "output_dir": "runs/v10/smoke/O3_slots4_k1_lw_cf/seed_42",
+    "profile": "smoke",
+    "run_id": "O3_slots4_k1_lw_cf/seed_42",
+    "runtime_policy": {
+      "environment_variable": "PYTORCH_ALLOC_CONF",
+      "forbidden_environment_variables": [
+        "PYTORCH_CUDA_ALLOC_CONF",
+        "PYTORCH_HIP_ALLOC_CONF",
+        "PYTORCH_NO_CUDA_MEMORY_CACHING"
+      ],
+      "gradient_accumulation_offload": "cpu",
+      "pytorch_alloc_conf": "backend:native,expandable_segments:True"
+    },
+    "seed": 42
+  },
+  "required_assays": [
+    "heldout_eval",
+    "amputation",
+    "necessity"
+  ],
+  "run_id": "O3_slots4_k1_lw_cf/seed_42",
+  "scientific_direction": {
+    "authoritative": false,
+    "by_assay": {
+      "amputation": "opposes_load_bearing",
+      "heldout_eval": "reported_without_preregistered_threshold",
+      "necessity": "does_not_support_gate"
+    },
+    "not_an_integrity_gate": true
+  },
+  "verified": true,
+  "verified_utc": "2026-08-22T04:39:38.009546+00:00"
+}

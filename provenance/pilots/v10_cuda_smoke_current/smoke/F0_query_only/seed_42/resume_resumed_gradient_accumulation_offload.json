@@ -1,0 +1,104 @@
+{
+  "schema_version": 2,
+  "mode": "cpu",
+  "algorithm": "pageable_cpu_storage_cuda_native_order_add_v1",
+  "claim_boundary": {
+    "execution_proof": "This receipt proves that the single-process CUDA spill/merge/restore path executed with exact schema accounting and no live host buffers after each recorded restore.",
+    "numerical_proof": "Additions run on each parameter's original CUDA device and dtype in microbatch order; model-level bitwise parity remains an external oracle comparison.",
+    "unsupported": "DDP, non-CUDA execution, and schedule-extension resumes are rejected."
+  },
+  "run_id": "69805b688cc641b98f1e1a92d0f8e0b8",
+  "source_sha256": "755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c",
+  "resume_signature": "6c9d12583b2eefb9a160782a35aba58306349b9b74694bf5b1e81c53edcdcd86",
+  "configured_gradient_accumulation_steps": 8,
+  "initial_global_step": 4,
+  "last_observed_global_step": 8,
+  "last_restored_global_step": 7,
+  "final_global_step": 8,
+  "trainable_parameter_count": 371,
+  "trainable_parameter_total_numel": 7322402570,
+  "trainable_gradient_capacity_bytes": 14793563176,
+  "trainable_parameter_schema_sha256": "d6379b2373de84c075bb1cf89833ac2b9353f01a4a3307d54c12d6bd721eb387",
+  "trainable_parameter_schema_fields": [
+    "name",
+    "shape",
+    "stride",
+    "dtype",
+    "device",
+    "numel",
+    "logical_bytes"
+  ],
+  "windows_started": 4,
+  "windows_restored": 4,
+  "windows_discarded": 0,
+  "single_microbatch_windows": 0,
+  "microbatch_spills": 32,
+  "parameter_first_spills": 1164,
+  "parameter_merges": 8148,
+  "cumulative_current_gradient_bytes": 463873507328,
+  "peak_cpu_accumulator_bytes": 14496047104,
+  "live_cpu_buffer_count": 0,
+  "live_cpu_buffer_bytes": 0,
+  "active_window": null,
+  "continuations": [],
+  "segments": [
+    {
+      "segment_index": 0,
+      "previous_receipt_sha256": null,
+      "resume_checkpoint": {
+        "scope": "external",
+        "basename": "checkpoint-4",
+        "manifest_sha256": "ac39045839d67c63ee6e889845a01a4d23968ed036e57ca6b9dbe27d31f9ce40",
+        "manifest_identity": {
+          "run_id": "69805b688cc641b98f1e1a92d0f8e0b8",
+          "global_step": 4,
+          "source_sha256": "755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c",
+          "resume_signature": "6c9d12583b2eefb9a160782a35aba58306349b9b74694bf5b1e81c53edcdcd86"
+        },
+        "bundle_inventory_sha256": "63e8a83c9444e6f03ba37e03d2eddb2cb07fe3cc33b2b6b581bdb4e1d60850db",
+        "file_count": 17,
+        "logical_bytes": 14809750471
+      },
+      "initial_global_step": 4,
+      "last_observed_global_step": 8,
+      "final_global_step": 8,
+      "initial_cumulative_counters": {
+        "windows_started": 0,
+        "windows_restored": 0,
+        "windows_discarded": 0,
+        "single_microbatch_windows": 0,
+        "microbatch_spills": 0,
+        "parameter_first_spills": 0,
+        "parameter_merges": 0,
+        "cumulative_current_gradient_bytes": 0,
+        "peak_cpu_accumulator_bytes": 0
+      },
+      "latest_cumulative_counters": {
+        "windows_started": 4,
+        "windows_restored": 4,
+        "windows_discarded": 0,
+        "single_microbatch_windows": 0,
+        "microbatch_spills": 32,
+        "parameter_first_spills": 1164,
+        "parameter_merges": 8148,
+        "cumulative_current_gradient_bytes": 463873507328,
+        "peak_cpu_accumulator_bytes": 14496047104
+      },
+      "final_cumulative_counters": {
+        "windows_started": 4,
+        "windows_restored": 4,
+        "windows_discarded": 0,
+        "single_microbatch_windows": 0,
+        "microbatch_spills": 32,
+        "parameter_first_spills": 1164,
+        "parameter_merges": 8148,
+        "cumulative_current_gradient_bytes": 463873507328,
+        "peak_cpu_accumulator_bytes": 14496047104
+      },
+      "status": "completed"
+    }
+  ],
+  "status": "completed",
+  "updated_at": 1787353892.0540838,
+  "receipt_sha256": "426960a2913a99e8532a810937d4dc8ca731683daab08a83f39f15df9fe97cc9"
+}

@@ -28,46 +28,41 @@ uses Adafactor, activation checkpointing, and short sequences.
 
 ## Measured 7B execution envelope
 
-A native full-parameter Adafactor F0 pilot completed eight steps on the single
-RTX 5090, peaking at 29.587 GiB allocated and 30.182 GiB reserved. This proves
-only that this short-sequence, eight-step F0 configuration executes and saves
-on the observed furnace environment.
+The current CPU-spill engine completed all four eight-step smoke conditions on
+the single RTX 5090. Peak CUDA allocation ranged from 29.572 to 29.833 GiB.
+Every condition verified a finite nonzero gradient and optimizer update attempt
+for all 291 base tensors / 7,248,023,552 elements. Persisted BF16 change remained
+a stricter, separate diagnostic: F0, B, and O3 changed 240 of 291 tensors, while
+F1 changed 241.
 
-It does not prove that the 512-step F0 or workspace conditions remain stable,
-or that AdamW or a 14B-class model fits. The fixed-engine eight-step F0 verified
-a finite nonzero gradient and optimizer update attempt for all 291 base
-tensors. The independent strict claim that every tensor retains an exact
-persisted BF16 delta remains false: 51 RMSNorm scales had a verified update
-attempt but zero net stored delta.
+For all four fixed-schedule seed-42 runs, step-four checkpoint/resume equivalence
+is bitwise verified. Each comparison used an eight-step uninterrupted control
+and a four-step post-checkpoint resumed branch. Base model, workspace, trainer
+state, and stable metrics were exact under only the receipt-declared dynamic
+field exclusions. This covers active workspace routes in F1 and O3, but not
+signal preemption, schedule extension, multi-GPU execution, or another runtime.
 
-For this fixed-schedule F0 seed, step-four checkpoint/resume equivalence is now
-bitwise verified. The uninterrupted control ran eight optimizer steps and the
-resumed branch ran four post-checkpoint steps, for 12 executed optimizer steps
-across the comparison. All 291 tensors / 7,248,023,552 elements had zero
-differences, and workspace and trainer state were exact. The bound resume
-receipt SHA-256 is
-`5e5b4178005a89beacfb5742edd307e15401a49d1af33543da5f36374330a645`.
+Current-source F0 also has an exact native-versus-CPU-spill oracle across the
+base model, workspace, trainer state, and stable metrics. The eight-step mean
+throughput was 83.950 supervised tokens/s for native accumulation and 5.895 for
+CPU spill, an observed 14.24x slowdown. This is one matched short pilot, not a
+replicated performance benchmark. B native multi-microbatch equivalence remains
+capacity-blocked: its matched gradient-accumulation-two route OOMed during the
+first backward pass near the 32 GiB limit.
 
-The first strict resume attempt exposed a backend-specific correctness issue:
-PyTorch's standard optimizer reload cast saved FP32 Adafactor moment tensors to
-the BF16 parameter dtype. The current engine validates the name-bound optimizer
-mapping and restores checkpoint tensor state with its original dtype and exact
-value. That fix, under engine SHA-256
-`3139c6edea71575310a2e6f245999e504318fedede202786fe2c949861ad2e1c`,
-is what the bitwise rerun verifies. It does not establish signal-preemption,
-schedule-extension, multi-GPU, cross-runtime, or active stochastic-workspace
-resume equivalence.
+The active engine SHA-256 is
+`755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c`.
+The earlier optimizer-state dtype failure and its correction remain useful
+historical evidence, but they are not the active source identity. Current smoke
+evidence is under
+[`provenance/pilots/v10_cuda_smoke_current/`](../provenance/pilots/v10_cuda_smoke_current/).
 
-The path-free fixed-engine evidence is
-[`PUBLIC_EVIDENCE.json`](../provenance/pilots/F0_fixed_engine_verified_pruned/PUBLIC_EVIDENCE.json),
-SHA-256
-`d787e5ac95fc355c1397d4bff2e6bcda95e41065b722ac2ac482447d35686fcb`.
-The baseline run's final base-model bundle has been pruned and cannot be
-reconstructed from compact hashes. Bitwise-identical loadable copies currently
-remain in the successful resume-equivalence pilot, but they are not a declared
-durable backup. The obsolete failed attempt's 16 weight shards were separately
-pruned under a bounded receipt while its diagnostic states and manifests were
-retained; this does not establish an automatic failed-run retention policy.
+All four formal base-model bundles have been explicitly pruned after compact
+export. Compact hashes prove recorded identity and history but cannot reconstruct
+trained weights. A separate bounded cleanup removed all 76 scoped experimental
+trained shards; independent postflight found no trained safetensors outside the
+protected pinned initial-model cache. No loadable trained base-model copy
+remains in the scoped Furnace worktree.
 
 ## Why 14B comes later
 
@@ -75,10 +70,10 @@ A 14B-class run approximately doubles parameter-side storage before activations.
 It should be scheduled only after the 7B pilot and three-seed cut provide measured
 VRAM, host-RAM, I/O, and wall-time envelopes.
 
-The phrase “14B instruct” is also not a sufficiently frozen model identity. Some
-current Mistral 14B offerings include a vision tower and a different model class.
-On text-only data, an untouched vision tower cannot honestly be described as a
-whole-model full update. Before a 14B replication, freeze:
+The phrase “14B instruct” is not a sufficiently frozen model identity. A
+candidate may be multimodal or use a different model class; on text-only data,
+an untouched vision tower cannot honestly be described as a whole-model full
+update. Before a 14B replication, freeze:
 
 - exact repository, immutable revision, license, and tokenizer;
 - text-only versus multimodal architecture;

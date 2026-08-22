@@ -7,53 +7,48 @@ data, and explicit decision boundaries.
 ## Status
 
 - Canonical source is staged locally on branch
-  `SpiralReality/cuda-full-update`. The GitHub remote and initial commit are
-  pending the repository URL.
+  `SpiralReality/cuda-full-update`. The implementation is committed at
+  `b6f8e85`; the GitHub remote and push are pending the repository URL.
 - The runtime contract is PyTorch CUDA, BF16, SDPA, gradient checkpointing,
   and full-parameter Adafactor. Custom Triton kernels remain deferred until a
   measured bottleneck and forward/backward parity test justify them.
 - The starting model is `mistralai/Mistral-7B-Instruct-v0.3`, pinned to
   revision `c170c708c41dac9275d15a8fff4eca08d52bab71`.
-- Furnace dependency, tokenizer, data, and immutable model-cache gates pass
-  for the pinned receipts.
-- The v1 pilot remains `invalid_final` and preserves the failed strict
-  all-tensor persisted-delta hypothesis. The later v2 pilot verified dynamic
-  optimization attempts, but predates the current engine and is retained as
-  historical evidence rather than the active baseline.
-- The fixed-engine `F0_query_only`, seed 42 pilot completed eight steps under
-  engine SHA-256
-  `3139c6edea71575310a2e6f245999e504318fedede202786fe2c949861ad2e1c`.
-  Its run-verification receipt
-  (`ba5d5a524565a9e59e6bfc207b861d786ea9e21514008318db63e1f6d8ed1191`)
-  binds exact, duplicate-free optimizer membership and dynamic update evidence
-  for all 291 base tensors.
-- Exact persisted comparison again found a nonzero stored delta in 240 tensors.
-  The other 51 BF16 Mistral RMSNorm scales had verified update attempts but zero
-  net persisted BF16 delta. Peak CUDA allocation was 29.587 GiB and peak
-  reservation was 30.182 GiB.
-- The required held-out and amputation assays passed execution-integrity checks
-  under receipt
-  `410b295534e25f7d24faa1fd988cf86ef85bef06d2b77dff210572571ef2480a`.
-  Both accuracies were 0.5 and the amputation delta was 0.0, so the scientific
-  direction is neutral, not positive.
-- Fixed-schedule checkpoint/resume equivalence passed. Across the equivalence
-  harness, the uninterrupted control executed eight optimizer steps and the
-  resumed branch executed four post-checkpoint steps (12 executed steps total).
-  The resulting 291 tensors / 7,248,023,552 elements had zero bitwise
-  differences, and workspace and trainer state were exact. The bound receipt is
-  `5e5b4178005a89beacfb5742edd307e15401a49d1af33543da5f36374330a645`.
-- The verified F0 final is now `verified_pruned`: a rehashed compact export was
-  retained and 14,496,105,708 bytes of trained base-model bundle were removed
-  from the baseline run's `final/base_model` under an explicit prune receipt.
-  The compact hashes cannot reconstruct that deleted bundle. Exact loadable
-  copies currently remain in the successful resume-equivalence pilot, but they
-  are not declared or managed as a durable backup.
-- The obsolete failed optimizer-dtype resume attempt was pruned under a separate
-  bounded receipt: 16 safetensors totaling 57,984,323,680 bytes were deleted,
-  while compact diagnostics, trainer/workspace states, and manifests were
-  retained. This does not authorize automatic failed-run pruning.
-- The remaining three smoke conditions are pending. n=3 and n=10 remain blocked
-  behind smoke completion and profile-level retention gates.
+- Furnace dependency, tokenizer, full-data, immutable model-cache, and source
+  gates pass for the pinned receipts. The active engine SHA-256 is
+  `755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c`.
+- The four-condition seed-42 smoke cut is complete. `F0_query_only`,
+  `B_local_invariance`, `F1_inline_upper`, and `O3_slots4_k1_lw_cf` each ran
+  eight optimizer steps, passed run and assay integrity verification, passed an
+  exact step-4 resume comparison, and transitioned to `verified_pruned`.
+- Every formal run covered all 291 base tensors / 7,248,023,552 elements and
+  recorded 64 CPU gradient spills, eight restored windows, zero discarded
+  windows, and zero single-microbatch windows. Peak CUDA allocation ranged from
+  29.572 to 29.833 GiB.
+- Current-source F0 spill-versus-native comparison is byte exact for the base
+  model, workspace, trainer state, and stable metrics under the receipt's
+  explicit exclusions. The matched last-step throughput was 5.902 versus
+  88.003 supervised tokens/s, an observed 14.9x spill slowdown for this pilot.
+- Native B multi-microbatch equivalence is not verified. The matched native
+  gradient-accumulation-two route OOMed on its first backward pass; the reduced
+  one-microbatch pair was correctly rejected because it never exercised a spill
+  window.
+- Assay integrity passed, but all four held-out query accuracies were 0.5. O3's
+  amputation direction opposes load-bearing and its necessity gate is false.
+  This cut is an engineering success and a negative/inconclusive scientific
+  result.
+- The four formal pruning transactions retained rehashed compact evidence and
+  removed 57,984,422,832 logical bytes of trained base-model bundles. Hashes and
+  compact metadata cannot reconstruct the deleted trained weights.
+- A separate intent-bound cleanup then removed 76 duplicate/oracle/resume shards
+  across 19 bundles: 275,425,537,480 logical bytes. Independent postflight found
+  zero trained safetensors outside the protected pinned model cache. No loadable
+  trained base-model copy remains; the hashes are evidence, not backups.
+- n=3 and n=10 have not run. The n=3 profile contains 57 runs at 512 optimizer
+  steps each and is machine-blocked by the intentionally absent smoke
+  `QUALIFICATION.json`. Issue that operator receipt only after GitHub publication,
+  a frozen per-run retention cadence, and explicit acceptance of the measured
+  spill-throughput cost.
 - Legacy v9 remains frozen as a structurally valid `partial_nonfinal`
   snapshot: 28/190 training runs, no final validation, and no scientific final.
 - Model weights, optimizer state, checkpoints, and run directories are excluded
@@ -65,60 +60,31 @@ Verified engineering evidence:
 
 - immutable Mistral-7B model and tokenizer identity;
 - full-file functional-data integrity;
-- CUDA/BF16 execution and eight-step F0 training feasibility;
-- exact, duplicate-free optimizer membership for every base tensor;
-- finite nonzero gradients and optimizer update attempts for every base tensor;
-- a verified, assay-complete F0 run under the dynamic-coverage contract;
-- exact persisted deltas in 240 tensors and evidence-backed zero net persisted
-  deltas in the other 51 tensors;
-- bitwise-exact fixed-schedule resume for all 291 base tensors and exact
-  workspace, optimizer, scheduler, scaler, sampler, RNG, RunState, and stable
-  metric state for this F0 seed on the recorded single-GPU runtime;
-- a tested explicit compact-export and prune transition that remains
+- CUDA/BF16 execution for all four smoke conditions on the recorded 32 GiB GPU;
+- exact, duplicate-free optimizer membership plus finite nonzero-gradient and
+  optimizer-step attempts for every base tensor in every formal run;
+- skip-free CPU-spill accumulation with 64 spills and eight restored windows per
+  run;
+- current-source F0 spill-versus-native byte equivalence for base, workspace,
+  trainer, and stable metrics under explicit exclusions;
+- bitwise-exact fixed-schedule resume for all four conditions, including active
+  workspace routes; and
+- assay-complete, compact-exported, explicitly pruned formal runs that remain
   distinguishable as `verified_pruned`.
 
 Not yet verified:
 
-- completion of the four-condition smoke profile, n=3, or n=10;
-- signal-preemption, schedule-extension, multi-GPU, cross-runtime, or active
-  stochastic-workspace resume equivalence (F0 bypasses the workspace route);
+- native multi-microbatch equivalence for B, F1, or O3;
+- n=3, n=10, a 14B full update, signal preemption, schedule extension,
+  multi-GPU execution, or cross-runtime reproduction;
 - training quality, causal memory, content-specific memory, generalization,
   model superiority, or comparability with GPT-2 v9.
 
-The v1 artifacts cannot distinguish sub-quantization updates, later
-cancellation, or missing dynamic processing. The fresh v2 run resolves that
-evidence gap: every base tensor had a verified update attempt, while 51 still
-had zero net BF16 persisted delta. This does not imply that every stored value
-moved.
-
-### Current pilot result
-
-The first F0 run preserves a failed strict all-tensor persisted-delta
-hypothesis. Its compact evidence and exact claim boundary are recorded in
-[`provenance/pilots/F0_8step_all_tensor_gate_failed/RECEIPT.json`](provenance/pilots/F0_8step_all_tensor_gate_failed/RECEIPT.json).
-
-The fresh v2 run verifies full-scope optimization attempts while retaining
-that all-tensor persisted-delta result as an independent failed diagnostic.
-Its compact evidence is recorded in
-[`provenance/pilots/F0_8step_v2_verified/RECEIPT.json`](provenance/pilots/F0_8step_v2_verified/RECEIPT.json).
-
-The current fixed-engine F0 adds assay, exact resume, compact-export, and prune
-receipts. Its path-free publication record is
-[`PUBLIC_EVIDENCE.json`](provenance/pilots/F0_fixed_engine_verified_pruned/PUBLIC_EVIDENCE.json),
-SHA-256
-`d787e5ac95fc355c1397d4bff2e6bcda95e41065b722ac2ac482447d35686fcb`.
-
-One earlier resume attempt is retained as negative evidence. PyTorch's standard
-optimizer reload cast saved FP32 Adafactor moments to the BF16 parameter dtype,
-causing resumed weights and optimizer moments to diverge. The engine now
-replaces loaded optimizer tensor state from the checkpoint with exact
-dtype-preserving tensors after validating the name-bound optimizer mapping;
-the fixed rerun is the bitwise PASS reported above.
-
-The old failed resume attempt's bounded weight cleanup is recorded in
-[`PRUNE_RECEIPT.json`](provenance/pruning/F0_resume_attempt2_failed_optimizer_dtype_weights/PRUNE_RECEIPT.json).
-Its deleted shards are not guaranteed reconstructible, but the negative result,
-root-cause evidence, trainer/workspace states, metrics, and manifests remain.
+The exact current result, failed hypotheses, negative B parity attempt, evidence
+paths, and handoff are recorded in
+[`docs/CUDA_SMOKE_STATUS.md`](docs/CUDA_SMOKE_STATUS.md). Historical F0 pilots
+remain preserved separately and must not be substituted for the current engine
+or current-source oracle.
 
 ## Staged comparison plan
 
@@ -160,16 +126,16 @@ These are strict lower bounds: optimizer state, workspace state, checkpoints,
 logs, archived failures, and assay artifacts are excluded. The observed
 furnace snapshot had approximately 1.4 TB free, so naive n=10 retention cannot
 fit. The per-run compact-export and opt-in pruning path has now been tested on
-F0, but n=10 remains blocked until smoke and n=3 complete and a profile-level
-retention schedule is frozen and capacity-checked. See
+all four smoke conditions, but n=10 remains blocked until n=3 completes and a
+profile-level retention schedule is frozen and capacity-checked. See
 [`docs/ARTIFACT_RETENTION.md`](docs/ARTIFACT_RETENTION.md).
 
 ## Runtime choice
 
-The first implementation should use PyTorch CUDA. PyTorch SDPA and
-`torch.compile` may select optimized CUDA/Triton kernels internally. Hand-written
-Triton kernels are deferred until profiling identifies a specific bottleneck and
-a numerical-parity test exists.
+The current implementation uses PyTorch CUDA and SDPA. Framework internals may
+select optimized CUDA/Triton kernels; there is no hand-written Triton code in
+this harness. A custom kernel remains deferred until profiling identifies a
+specific bottleneck and a numerical-parity test exists.
 
 ## Repository layout
 

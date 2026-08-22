@@ -65,9 +65,9 @@ result.
 Compact, byte-verified v2 evidence is under
 [`provenance/pilots/F0_8step_v2_verified/`](../provenance/pilots/F0_8step_v2_verified/).
 
-## Fixed-engine result: run and assays verified
+## Historical pre-spill fixed-engine result
 
-The current pilot was rerun under engine SHA-256
+The pre-spill pilot was rerun under engine SHA-256
 `3139c6edea71575310a2e6f245999e504318fedede202786fe2c949861ad2e1c`.
 Its `RUN_VERIFICATION.json` SHA-256 is
 `ba5d5a524565a9e59e6bfc207b861d786ea9e21514008318db63e1f6d8ed1191`.
@@ -82,7 +82,7 @@ Held-out accuracy was 0.5, amputated accuracy was 0.5, and the amputation task-
 loss delta was 0.0. This is an integrity PASS with neutral scientific direction,
 not a positive functional result.
 
-## Resume failure, cause, and fixed rerun
+## Historical resume failure, cause, and fixed rerun
 
 An earlier strict resume comparison failed despite exact RNG, sampler,
 scheduler, scaler, RunState, and optimizer step counters. PyTorch's standard
@@ -122,19 +122,48 @@ After run, assay, and resume receipts passed, the F0 run was exported to a
 rehashed compact evidence bundle and transitioned to `verified_pruned`.
 Exactly 14,496,105,708 bytes of the final trained base-model bundle were
 removed from the baseline run's `final/base_model`. The retained hashes prove
-identity and history but cannot reconstruct that deleted bundle. Exact loadable
-copies currently remain in the successful resume-equivalence pilot; they are
-not declared or managed as a durable backup.
+identity and history but cannot reconstruct that deleted bundle. The successful
+resume-equivalence pilot originally left exact experimental copies, but they
+were never declared or managed as a durable backup. Current retention state is
+reported by the newer CUDA smoke evidence and bounded cleanup receipts.
 
 The path-free publication record is
 [`PUBLIC_EVIDENCE.json`](../provenance/pilots/F0_fixed_engine_verified_pruned/PUBLIC_EVIDENCE.json),
 SHA-256
 `d787e5ac95fc355c1397d4bff2e6bcda95e41065b722ac2ac482447d35686fcb`.
 
+## Current spill-engine F0
+
+The active CPU-spill F0 rerun uses engine SHA-256
+`755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c`.
+It again verified optimizer membership and dynamic update attempts for all 291
+base tensors / 7,248,023,552 elements; 240 tensors retained a persisted change
+and 51 retained zero net BF16 change. Its held-out and amputated accuracies were
+both 0.5, so assay execution passed with neutral direction.
+
+The current-source CPU-spill and native CUDA bundles are byte exact for all base
+tensors, all 81 workspace tensors / 74,379,022 elements, all 810 trainer tensors
+/ 2,966,771 elements under declared identity exclusions, and stable metrics
+under declared telemetry exclusions. The exact step-four resume comparison also
+passes. Mean eight-step throughput was 5.895 supervised tokens/s for spill and
+83.950 for native, an observed 14.24x slowdown for this matched pilot.
+
+Current evidence is under
+[`provenance/pilots/v10_cuda_smoke_current/`](../provenance/pilots/v10_cuda_smoke_current/).
+The current-source native oracle file SHA-256 is
+`90ec14d5dee00750e25c5f93f5af33d31f7fae188266dfe2e7bfd1a4bb1c8a02`;
+the current resume receipt file SHA-256 is
+`0e4d066223783be0b7a272f9eb8e76dbda9f8efdf092ccbddcf95bd680d2cbe8`.
+
+The later bounded duplicate cleanup removed the current native shadow, retained
+d5 oracle body, and resume checkpoint/final weight copies after their receipts
+were preserved. Independent postflight found no trained safetensors outside the
+pinned initial-model cache. No loadable trained F0 copy is declared or remains
+in the scoped Furnace worktree; hashes and comparison receipts are not backups.
+
 ## Current handoff
 
-Resume equivalence and one-run retention are now verified for F0 only. The
-other three smoke conditions have not run, so the smoke profile is incomplete.
-n=3 and n=10 remain blocked; n=10 additionally requires a frozen, tested
-profile-level retention schedule. The GitHub repository URL and remote are
-still pending.
+The four-condition seed-42 smoke profile is engineering-complete and retained
+as compact evidence. n=3 and n=10 have not run. F0 has current-source native
+equivalence; B native multi-microbatch equivalence remains capacity-blocked.
+The GitHub repository URL and remote are still pending.

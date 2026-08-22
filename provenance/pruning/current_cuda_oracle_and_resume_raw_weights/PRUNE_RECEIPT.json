@@ -1,0 +1,140 @@
+{
+  "format": "latent-workspace-v10-current-cuda-oracle-and-resume-raw-weight-prune-receipt-v1",
+  "status": "verified_pruned",
+  "completed": true,
+  "recorded_utc": "2026-08-22T05:14:26Z",
+  "started_utc": "2026-08-22T05:09:43.883245Z",
+  "quarantine_verified_utc": "2026-08-22T05:13:41.655766Z",
+  "completed_utc": "2026-08-22T05:13:42.893681Z",
+  "authorization": {
+    "source": "explicit_user_instruction",
+    "summary": "Record and delete obsolete raw weights after their exact comparison and resume-equivalence evidence is preserved."
+  },
+  "intent": {
+    "path": "provenance/pruning/current_cuda_oracle_and_resume_raw_weights/PRUNE_INTENT.json",
+    "sha256": "3ea1f1cc58b029e8241cac0074d32460e152f91ef72f6d0603afec43516ad636",
+    "target_inventory_sha256": "6e6ac9eec344f34cad0e54f77caa92ddfc158ab186c0a6d5ad6049bceab0e3ca",
+    "remote_copy": "runs/v10/_prune_quarantine/current_cuda_oracle_and_resume_raw_weights_20260822T050722Z/PRUNE_INTENT.json",
+    "remote_copy_sha256_verified": true
+  },
+  "transaction_driver": {
+    "path": "provenance/pruning/current_cuda_oracle_and_resume_raw_weights/transaction_driver.py",
+    "sha256": "f9883e22400456dd4a91dd2d7bd840869554df7bf637296ec66ed459395c101a",
+    "syntax_and_lint_passed": true
+  },
+  "failed_closed_preflight": {
+    "attempted_utc": "2026-08-22T05:05:57Z",
+    "status": "failed_closed_before_target_hash_or_mutation",
+    "intent_sha256": "70d9d543c9370d43b194b1197f18720a5603cece693f1b04d50b7c7b6e521d67",
+    "driver_sha256": "b4805c05e7eaa5d608c15f3547c18766a54993b1938d094110b3f4c496f9ea02",
+    "quarantine_root": "runs/v10/_prune_quarantine/current_cuda_oracle_and_resume_raw_weights_20260822T045341Z",
+    "reason": "The first driver expected nonexistent status fields in the compact verification and formal prune schemas. The semantic mismatch stopped before target hashing, rename, or unlink; the failed intent copy remains as evidence."
+  },
+  "transaction": {
+    "furnace_worktree": "/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-workspace-ft-cuda",
+    "quarantine_root": "runs/v10/_prune_quarantine/current_cuda_oracle_and_resume_raw_weights_20260822T050722Z",
+    "payload_root": "runs/v10/_prune_quarantine/current_cuda_oracle_and_resume_raw_weights_20260822T050722Z/payload",
+    "rename_method": "Linux renameat2(RENAME_NOREPLACE), same filesystem",
+    "second_full_sha256_revalidation_before_rename": true,
+    "all_target_paths_sizes_hashes_regular_file_types_and_single_link_counts_exact": true,
+    "all_rename_inode_identities_preserved": true,
+    "quarantine_manifest_and_inode_identity_verified_before_unlink": true,
+    "unlink_method": "One os.unlink call per literal, intent-bound quarantined path",
+    "deleted_bundle_count": 19,
+    "deleted_file_count": 76,
+    "deleted_logical_bytes": 275425537480,
+    "deleted_allocated_bytes": 275426062336,
+    "no_directory_removal": true,
+    "no_unlisted_file_removal": true,
+    "payload_file_count_after": 0
+  },
+  "deleted_manifest": {
+    "source": "PRUNE_INTENT.json#targets",
+    "target_inventory_algorithm": "SHA-256 over the two-space-indented, key-sorted UTF-8 JSON serialization of the targets array with a trailing newline.",
+    "target_inventory_sha256": "6e6ac9eec344f34cad0e54f77caa92ddfc158ab186c0a6d5ad6049bceab0e3ca",
+    "file_count": 76,
+    "logical_bytes": 275425537480,
+    "allocated_bytes": 275426062336,
+    "categories": {
+      "retired_d5_native_oracle_after_exact_current_match": {"file_count": 4, "logical_bytes": 14496080920},
+      "current_f0_native_shadow_after_cross_offload_pass": {"file_count": 4, "logical_bytes": 14496080920},
+      "b_gradacc1_native_noncanonical_diagnostic": {"file_count": 4, "logical_bytes": 14496080920},
+      "f0_resume_equivalence_raw_weight_copies": {"file_count": 16, "logical_bytes": 57984323680},
+      "b_resume_equivalence_raw_weight_copies": {"file_count": 16, "logical_bytes": 57984323680},
+      "f1_resume_equivalence_raw_weight_copies": {"file_count": 16, "logical_bytes": 57984323680},
+      "o3_resume_equivalence_raw_weight_copies": {"file_count": 16, "logical_bytes": 57984323680}
+    },
+    "all_listed_source_paths_absent_after": true,
+    "all_listed_quarantine_paths_absent_after": true
+  },
+  "storage": {
+    "filesystem": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+    "available_bytes_before_transaction": 1207140515840,
+    "available_bytes_after_quarantine_rename": 1207140233216,
+    "available_bytes_after_unlink": 1482566295552,
+    "observed_unlink_free_delta_bytes": 275426062336,
+    "observed_net_transaction_free_delta_bytes": 275425779712,
+    "transaction_metadata_allocation_bytes": 282624,
+    "expected_target_allocated_bytes": 275426062336,
+    "observed_unlink_delta_matches_expected_target_allocation": true
+  },
+  "evidence_preservation": {
+    "all_17_bound_artifact_hashes_and_semantic_predicates_reverified_before_and_after": true,
+    "full_model_oracles": [
+      {"path": "runs/v10/oracles/F0_query_only/seed_42_cpu_spill_vs_d5_native/FULL_MODEL_ORACLE.json", "sha256": "6201053f5b361689e9578e99cb0821b29082fc3484d037ef68195648f074e8bf", "status": "PASS"},
+      {"path": "runs/v10/oracles/F0_query_only/seed_42_cpu_spill_vs_native_current/FULL_MODEL_ORACLE.json", "sha256": "90ec14d5dee00750e25c5f93f5af33d31f7fae188266dfe2e7bfd1a4bb1c8a02", "status": "PASS"}
+    ],
+    "resume_equivalence_receipts": [
+      {"path": "runs/v10/resume_equivalence/F0_query_only/seed_42_step4/RESUME_EQUIVALENCE.json", "sha256": "0e4d066223783be0b7a272f9eb8e76dbda9f8efdf092ccbddcf95bd680d2cbe8", "passed": true},
+      {"path": "runs/v10/resume_equivalence/B_local_invariance/seed_42_step4/RESUME_EQUIVALENCE.json", "sha256": "db6b3da981b3b59e959639d45ca36696160efa33729b8df9d2459f00e02b6ea5", "passed": true},
+      {"path": "runs/v10/resume_equivalence/F1_inline_upper/seed_42_step4/RESUME_EQUIVALENCE.json", "sha256": "ab0ac7c2281437a0f0e2a3f941a7074a30661ef102b3b78e5fa9dde963027ec3", "passed": true},
+      {"path": "runs/v10/resume_equivalence/O3_slots4_k1_lw_cf/seed_42_step4/RESUME_EQUIVALENCE.json", "sha256": "c7ad72ece9e0dd408baff238ea322e43446bb05d749e73ffa655de70bdb59341", "passed": true}
+    ],
+    "compact_run_verifications": [
+      {"path": "runs/v10/compact_exports/smoke/F0_query_only/seed_42/RUN_VERIFICATION.json", "sha256": "66af873fb8e7b6b01db19fdcf12ec00595fa467b24f1b19ce12ebea6aa1d5bfa", "verified": true},
+      {"path": "runs/v10/compact_exports/smoke/B_local_invariance/seed_42/RUN_VERIFICATION.json", "sha256": "fe5f2fd61e7a31c51b2965d064913bb842c0406ec77c46eae83a2b922d8913d6", "verified": true},
+      {"path": "runs/v10/compact_exports/smoke/F1_inline_upper/seed_42/RUN_VERIFICATION.json", "sha256": "ea1469f3c33c9d7d35f3f07ae4d2b84ed1fd480029ea4ef8ff315786eef9ae9b", "verified": true},
+      {"path": "runs/v10/compact_exports/smoke/O3_slots4_k1_lw_cf/seed_42/smoke/O3_slots4_k1_lw_cf/seed_42/RUN_VERIFICATION.json", "sha256": "9b3b193da0149ced0ffe7c1f3847e4fc04e44e1b48338595d93d1ff162f00635", "verified": true}
+    ],
+    "formal_prune_receipts": [
+      {"path": "runs/v10/smoke/F0_query_only/seed_42/PRUNE_RECEIPT.json", "sha256": "0b0cae2fef38d63ffe486d0451d9460096d7bc3542af8d75bc6924089db26474", "state": "verified_pruned"},
+      {"path": "runs/v10/smoke/B_local_invariance/seed_42/PRUNE_RECEIPT.json", "sha256": "63b32bb215efccb799acdcff80e23bbd45fa1d4daa5de4a29d6e8f9c2b6aa0e0", "state": "verified_pruned"},
+      {"path": "runs/v10/smoke/F1_inline_upper/seed_42/PRUNE_RECEIPT.json", "sha256": "277db8e709167c2e288dd2376ebb1a636844333304701a44305e3b2ec463a7a9", "state": "verified_pruned"},
+      {"path": "runs/v10/smoke/O3_slots4_k1_lw_cf/seed_42/PRUNE_RECEIPT.json", "sha256": "8768c0fe242cda3369242c4a8e91166886b13bc76c6aab7174290ade8d302029", "state": "verified_pruned"}
+    ],
+    "b_gradacc1_diagnostic_manifest_config_and_completion_hashes_reverified": true,
+    "failed_parity_attempts_have_no_weights_or_loadable_final": true,
+    "directories_indexes_configs_tokenizers_trainer_workspace_metrics_manifests_logs_receipts_and_compact_exports_retained": true
+  },
+  "independent_postflight": {
+    "verified_utc": "2026-08-22T05:14:26Z",
+    "all_76_target_paths_absent": true,
+    "outside_model_cache_safetensor_file_count": 0,
+    "retained_bundle_index_config_manifest_trainer_workspace_group_count": 19,
+    "oracle_and_resume_receipt_hashes_reverified": true,
+    "quarantine_payload_file_count": 0,
+    "available_bytes": 1482566295552
+  },
+  "remaining_safetensors": {
+    "trained_weight_shards_outside_model_cache": {"entry_count": 0, "loadable_copy_count": 0},
+    "protected_pinned_model_cache": {
+      "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+      "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+      "named_safetensor_entry_count": 4,
+      "weight_symlink_count": 3,
+      "weight_target_bytes": 14496080928,
+      "zero_byte_no_exist_marker_count": 1,
+      "metadata_unchanged_during_transaction": true
+    }
+  },
+  "recoverability": {
+    "loadable_trained_base_model_copy_remaining": false,
+    "deleted_trained_weight_bodies": "not_recoverable_without_an_external_weight_backup",
+    "hashes_and_receipts_are_a_backup": false,
+    "formal_compact_exports": "retain auditable evidence but do not contain loadable base-model weight bodies",
+    "pinned_initial_model_cache": "retained upstream initial model; not equivalent to any deleted trained state",
+    "resume_non_weight_state": "retained for audit, but each deleted checkpoint/control/resumed bundle is no longer loadable",
+    "b_gradacc1_native_diagnostic": "its unique raw trained weights are not recoverable without an external backup"
+  },
+  "claim_boundary": "This receipt proves that 76 explicitly listed raw trained-weight shards were fully rehashed, quarantined by same-filesystem no-clobber rename with inode identity preserved, and individually unlinked while their comparison/resume evidence, compact exports, non-weight bundle artifacts, and pinned model cache remained present. It does not make deleted weights reconstructible, turn the noncanonical B gradacc1 diagnostic into a parity result, improve any model, or establish training quality or scientific success."
+}

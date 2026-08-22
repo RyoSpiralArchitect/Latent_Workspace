@@ -1,0 +1,87 @@
+{
+  "artifacts": [
+    {
+      "bytes": 49298,
+      "path": "resume_equivalence_result.json",
+      "sha256": "0e4d066223783be0b7a272f9eb8e76dbda9f8efdf092ccbddcf95bd680d2cbe8"
+    },
+    {
+      "bytes": 1158,
+      "path": "resume_control_environment.json",
+      "sha256": "c091764fb3c11fc26a3636b673f1efc2b9c9d972ea553b47cf1aad03786c970e"
+    },
+    {
+      "bytes": 1158,
+      "path": "resume_resumed_environment.json",
+      "sha256": "6853d164239216f3c1d3889692f2e21e1659f9e730a47e5bb7a1e380681dd009"
+    },
+    {
+      "bytes": 3353,
+      "path": "resume_control_gradient_accumulation_offload.json",
+      "sha256": "0203e118519bd0c9e3da4884611952a442bef873a6fc49e1b79c91e9c57f5fd0"
+    },
+    {
+      "bytes": 3999,
+      "path": "resume_resumed_gradient_accumulation_offload.json",
+      "sha256": "10845dde4263551101ac0a6f31a772af3df134653d18ddee8d97061d0f31f49a"
+    }
+  ],
+  "claim_boundary": "This bridges the hash-bound F0_query_only resume-equivalence receipt for run 'F0_query_only/seed_42' (seed=42, total_steps=8) into the verified run retention chain. It does not extend the same-host, single-GPU, fixed-schedule claim boundary of that receipt.",
+  "comparison": {
+    "baseline_run_verification_sha256": "66af873fb8e7b6b01db19fdcf12ec00595fa467b24f1b19ce12ebea6aa1d5bfa",
+    "equivalence_artifact": "resume_equivalence_result.json",
+    "equivalence_format": "latent-workspace-v10-resume-equivalence-v1",
+    "equivalence_sha256": "0e4d066223783be0b7a272f9eb8e76dbda9f8efdf092ccbddcf95bd680d2cbe8",
+    "mode": "bitwise_exact_zero_tolerance",
+    "passed": true
+  },
+  "created_utc": "2026-08-21T23:12:24.468600+00:00",
+  "format": "latent-workspace-v10-resume-verification-v1",
+  "provenance": {
+    "condition": "F0_query_only",
+    "condition_config": "configs/v10/conditions/config_F0_query_only.json",
+    "hashes": {
+      "condition_config_sha256": "cd1f37f2c9639ffacdd766d6dc1b8e4d8adf89f519b836f9d4c123642210909e",
+      "contract_data_sha256": {
+        "data/v10/functional_eval.jsonl": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+        "data/v10/functional_train.jsonl": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+      },
+      "contract_sha256": "156dc89c451db7c24eebf47eb851d1a9c26e398d8791f184cd126a551609fc20",
+      "materialized_config_sha256": "ba5f62142ed387b446c29ca3a5e5ba66e83f52e8bcb30b9185a567b432ac00fa",
+      "matrix_sha256": "9731c165c66de333feb76b245f926bc127d62f1b00a418d9c124227377ff22e4",
+      "model_receipt_sha256": "7973fa042164fd769b5056f29982e7090fcc0c4d75a54f41e54e001463ab2df2",
+      "model_snapshot_inventory_sha256": "3eff19c27bdc4e19491f61645eaf5216f3d05407ad8b4d7b83e11313a54448fd",
+      "model_snapshot_tensor_schema_sha256": "a0878052f562699b820f3981fa63631f2130174e71b1ccf29bb2fa290229ce2e",
+      "prefetch_script_sha256": "9d4b4f2b5374657d632bffa671eadc9b960a0d93070d05cbb5933bccd7001f3a",
+      "run_data_sha256": {
+        "data/v10/functional_eval.jsonl": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+        "data/v10/functional_train.jsonl": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+      },
+      "runner_sha256": "07fdd920f76463f5996a5568447b940d41b8bce4675dd83594d3f68e54ecd68d",
+      "source_files_sha256": {
+        "src/latent_workspace_ft_v10/__init__.py": "fd1c48552935645d302336d05bc133348f8466c62228c6c22dbe5f2b947803b0",
+        "src/latent_workspace_ft_v10/__main__.py": "71e2b8c807406881aa3d12a21323dc92682fe2b602fbe08b25460805793e0518",
+        "src/latent_workspace_ft_v10/engine.py": "755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c",
+        "src/latent_workspace_ft_v10/source_manifest.json": "3264d9ebc6307e0028e58ded03c2d36c38a3b1dc71958822a93b3eacc09a0ee2"
+      },
+      "source_tree_sha256": "33851900abae227475a27ddafd409225f02a01354be6c13a1f6209ddf3f5e835"
+    },
+    "max_steps": 8,
+    "output_dir": "runs/v10/smoke/F0_query_only/seed_42",
+    "profile": "smoke",
+    "run_id": "F0_query_only/seed_42",
+    "runtime_policy": {
+      "environment_variable": "PYTORCH_ALLOC_CONF",
+      "forbidden_environment_variables": [
+        "PYTORCH_CUDA_ALLOC_CONF",
+        "PYTORCH_HIP_ALLOC_CONF",
+        "PYTORCH_NO_CUDA_MEMORY_CACHING"
+      ],
+      "gradient_accumulation_offload": "cpu",
+      "pytorch_alloc_conf": "backend:native,expandable_segments:True"
+    },
+    "seed": 42
+  },
+  "run_id": "F0_query_only/seed_42",
+  "verified": true
+}
