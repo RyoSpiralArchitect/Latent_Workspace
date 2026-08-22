@@ -4,13 +4,17 @@ Pruning is never automatic. It requires an explicit operator flag and a
 `PRUNE_RECEIPT.json`.
 
 Verified-run weights may be pruned only after all contracted post-training
-assays have completed and compact receipts have been exported and rehashed.
+assays have completed, the pre-prune generation behavior workflow has passed,
+its human observation note preserves negative results, and compact receipts
+have been exported and rehashed. See
+[`GENERATION_BEHAVIOR_WORKFLOW.md`](GENERATION_BEHAVIOR_WORKFLOW.md).
 The prune receipt must bind:
 
 - run ID, model revision, contract/source/data hashes;
 - explicit opt-in and pruning reason;
 - pre-prune file inventory, hashes, and byte counts;
 - required verification and assay receipts with their hashes;
+- the generation behavior receipt and human observation note hashes;
 - every deleted or migrated path and bytes reclaimed;
 - durable destination, if migrated;
 - recoverability classification;
@@ -21,9 +25,10 @@ must retain enough compact evidence to explain the failure.
 
 ## Verified smoke transitions
 
-The current-engine seed-42 smoke runs for F0, B, F1, and O3 each satisfied
+The seed-42 smoke runs for F0, B, F1, and O3 each satisfied
 their run, configured assay, and exact-resume preconditions before moving from
-`verified_completed` to `verified_pruned`. The active engine SHA-256 is
+`verified_completed` to `verified_pruned`. The engine SHA-256 used by those
+historical transitions is
 `755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c`.
 
 For each run, the exact derived deletion target was `final/base_model`, with a

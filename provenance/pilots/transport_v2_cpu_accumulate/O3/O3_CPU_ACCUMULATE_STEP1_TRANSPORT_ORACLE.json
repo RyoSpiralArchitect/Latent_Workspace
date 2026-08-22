@@ -1,0 +1,610 @@
+{
+  "claim_boundary": "PASS proves byte-exact equality of every indexed tensor name, dtype, shape, and element payload for these two bound model trees. When run-bundle mode is enabled, PASS additionally proves exact workspace and trainer state under its documented exclusions and exact split/step metrics after only the explicit dynamic-field exclusions. Each enabled bundle also binds its final manifest to the saved experiment config, trainer identity/signatures, and bound source identity evidence, with equal final global_step. Cross-transport bundle PASS excludes run_id, resume_signature, and structural_resume_signature from trainer-state equality; both signatures remain explicitly bound, and final experiment-config differences are limited to the receipt-listed transport paths. Current-source identity is claimed only in run-bundle mode when the two validated final-manifest source_sha256 values are equal and each is unambiguously bound by that side's source evidence. Source-evidence document-hash equality is reported separately and never substitutes for source identity; base-model-only mode leaves source identity unverified. It does not establish model quality, behavioral equivalence outside the bound artifacts, training-mechanism equivalence, or a scientific result. FAIL or ERROR must not be interpreted as a passing comparison.",
+  "claims": {
+    "comparison_mode": "cross_transport_parity",
+    "source_evidence": {
+      "candidate_source_evidence_sha256": [
+        "ca9000ebf9a71e8d78a2e800c329f5b974b5d80a4e8022c5e3134702f82f7d24"
+      ],
+      "candidate_validated_source_sha256": "967f49b9d54b23a4c2382608e318b1e63974aef3ea1bf9c4c4f20c22ef4df494",
+      "current_source_matched": true,
+      "document_match_rule": "exact_multiset_equality_of_bound_source_evidence_sha256",
+      "identity_match_rule": "equality_of_each_run_bundle_validated_final_manifest_source_sha256",
+      "oracle_source_evidence_sha256": [
+        "4111108304ee1bc4dd7488e006d41580a90428af394f1416a3bdd0239f5d6d5b"
+      ],
+      "oracle_validated_source_sha256": "967f49b9d54b23a4c2382608e318b1e63974aef3ea1bf9c4c4f20c22ef4df494",
+      "source_comparison_mode": "current_source_matched",
+      "source_evidence_documents_sha256_matched": false,
+      "source_identity_verified": true
+    }
+  },
+  "created_utc": "2026-08-22T09:29:59.088252+00:00",
+  "format": "latent-workspace-v10-full-model-oracle-comparison-v1",
+  "inputs": {
+    "candidate": {
+      "evidence": {
+        "config": [
+          {
+            "bytes": 7598,
+            "path": "configs/v10/conditions/pilot_transport_v2_O3_cpu_accumulate.json",
+            "sha256": "074f9832d092b4f9cba0eb1cce522671e1be80bd9606f12ae7f8a272fd8973e5"
+          }
+        ],
+        "run": [
+          {
+            "bytes": 1622,
+            "path": "runs/v10/transport_v2/O3_cpu_accumulate_seed42_step1/final/manifest.json",
+            "sha256": "ca9000ebf9a71e8d78a2e800c329f5b974b5d80a4e8022c5e3134702f82f7d24"
+          }
+        ],
+        "source": [
+          {
+            "bytes": 1622,
+            "path": "runs/v10/transport_v2/O3_cpu_accumulate_seed42_step1/final/manifest.json",
+            "sha256": "ca9000ebf9a71e8d78a2e800c329f5b974b5d80a4e8022c5e3134702f82f7d24"
+          }
+        ]
+      },
+      "indexed_safetensors": {
+        "index_path": "model.safetensors.index.json",
+        "index_sha256": "05eb48f2137c718b87bd2a7e1cab3960bc59283767bef62f9ef435c7374a9397",
+        "shard_count": 4,
+        "shards": [
+          {
+            "bytes": 3984728184,
+            "path": "model-00001-of-00004.safetensors",
+            "sha256": "ebdbf772225301c712e9e72f7014c2b4393756748d767841d17124999eeafcff",
+            "tensor_count": 72
+          },
+          {
+            "bytes": 3967977000,
+            "path": "model-00002-of-00004.safetensors",
+            "sha256": "7e38293cd86c927a5489ce116c6d437c40310094136b5e41c8130db5a298b2bb",
+            "tensor_count": 84
+          },
+          {
+            "bytes": 3926025456,
+            "path": "model-00003-of-00004.safetensors",
+            "sha256": "10feba31bdf1ef52821dafd06b9fc0f714c88a5c3161d2447c8c1a70571b7438",
+            "tensor_count": 81
+          },
+          {
+            "bytes": 2617350280,
+            "path": "model-00004-of-00004.safetensors",
+            "sha256": "676b516a70cad925d97740fbdad790ab8ae68353edd9a6d116f32f95db43aee9",
+            "tensor_count": 54
+          }
+        ],
+        "tensor_count": 291,
+        "tensor_schema_sha256": "f5e6669fa6d03ef792745ad3aee18b543f2016b8d2b4baf83e14dc34b7da5f57",
+        "total_numel": 7248023552,
+        "weight_map_sha256": "49e989361851fdb47f1d94934f83499714e8afbcee73749a3dcc13a6459ec729"
+      },
+      "model_root": "runs/v10/transport_v2/O3_cpu_accumulate_seed42_step1/final/base_model",
+      "tree_inventory": {
+        "algorithm": "Recursive regular files sorted by relative path; each record contains path, bytes, and SHA-256; inventory SHA-256 covers canonical JSON records.",
+        "directory_count_including_root": 1,
+        "file_count": 7,
+        "files": [
+          {
+            "bytes": 691,
+            "path": "config.json",
+            "sha256": "319adbaed9ef61ff0a2facce59adda34a3db46961bac31133e013ecca6d5c829"
+          },
+          {
+            "bytes": 111,
+            "path": "generation_config.json",
+            "sha256": "247edaf97bf0138bf58982cd101038dd55cc251f91b0682b1c349e773dc931b7"
+          },
+          {
+            "bytes": 3984728184,
+            "path": "model-00001-of-00004.safetensors",
+            "sha256": "ebdbf772225301c712e9e72f7014c2b4393756748d767841d17124999eeafcff"
+          },
+          {
+            "bytes": 3967977000,
+            "path": "model-00002-of-00004.safetensors",
+            "sha256": "7e38293cd86c927a5489ce116c6d437c40310094136b5e41c8130db5a298b2bb"
+          },
+          {
+            "bytes": 3926025456,
+            "path": "model-00003-of-00004.safetensors",
+            "sha256": "10feba31bdf1ef52821dafd06b9fc0f714c88a5c3161d2447c8c1a70571b7438"
+          },
+          {
+            "bytes": 2617350280,
+            "path": "model-00004-of-00004.safetensors",
+            "sha256": "676b516a70cad925d97740fbdad790ab8ae68353edd9a6d116f32f95db43aee9"
+          },
+          {
+            "bytes": 23986,
+            "path": "model.safetensors.index.json",
+            "sha256": "05eb48f2137c718b87bd2a7e1cab3960bc59283767bef62f9ef435c7374a9397"
+          }
+        ],
+        "inventory_sha256": "b0592cf36a5e902aa0ed31adfac0b15815d6db948f0c0dca53f674c499163f34",
+        "logical_bytes": 14496105708
+      }
+    },
+    "oracle": {
+      "evidence": {
+        "config": [
+          {
+            "bytes": 7593,
+            "path": "configs/v10/conditions/pilot_transport_v2_O3_cuda_merge_reference.json",
+            "sha256": "b9e1fa7e162033493b890e37b267168ea6b03b6b83c017a58aae9393ebf93461"
+          }
+        ],
+        "run": [
+          {
+            "bytes": 1622,
+            "path": "runs/v10/transport_v2/O3_cuda_merge_reference_seed42_step1/final/manifest.json",
+            "sha256": "4111108304ee1bc4dd7488e006d41580a90428af394f1416a3bdd0239f5d6d5b"
+          }
+        ],
+        "source": [
+          {
+            "bytes": 1622,
+            "path": "runs/v10/transport_v2/O3_cuda_merge_reference_seed42_step1/final/manifest.json",
+            "sha256": "4111108304ee1bc4dd7488e006d41580a90428af394f1416a3bdd0239f5d6d5b"
+          }
+        ]
+      },
+      "indexed_safetensors": {
+        "index_path": "model.safetensors.index.json",
+        "index_sha256": "05eb48f2137c718b87bd2a7e1cab3960bc59283767bef62f9ef435c7374a9397",
+        "shard_count": 4,
+        "shards": [
+          {
+            "bytes": 3984728184,
+            "path": "model-00001-of-00004.safetensors",
+            "sha256": "ebdbf772225301c712e9e72f7014c2b4393756748d767841d17124999eeafcff",
+            "tensor_count": 72
+          },
+          {
+            "bytes": 3967977000,
+            "path": "model-00002-of-00004.safetensors",
+            "sha256": "7e38293cd86c927a5489ce116c6d437c40310094136b5e41c8130db5a298b2bb",
+            "tensor_count": 84
+          },
+          {
+            "bytes": 3926025456,
+            "path": "model-00003-of-00004.safetensors",
+            "sha256": "10feba31bdf1ef52821dafd06b9fc0f714c88a5c3161d2447c8c1a70571b7438",
+            "tensor_count": 81
+          },
+          {
+            "bytes": 2617350280,
+            "path": "model-00004-of-00004.safetensors",
+            "sha256": "676b516a70cad925d97740fbdad790ab8ae68353edd9a6d116f32f95db43aee9",
+            "tensor_count": 54
+          }
+        ],
+        "tensor_count": 291,
+        "tensor_schema_sha256": "f5e6669fa6d03ef792745ad3aee18b543f2016b8d2b4baf83e14dc34b7da5f57",
+        "total_numel": 7248023552,
+        "weight_map_sha256": "49e989361851fdb47f1d94934f83499714e8afbcee73749a3dcc13a6459ec729"
+      },
+      "model_root": "runs/v10/transport_v2/O3_cuda_merge_reference_seed42_step1/final/base_model",
+      "tree_inventory": {
+        "algorithm": "Recursive regular files sorted by relative path; each record contains path, bytes, and SHA-256; inventory SHA-256 covers canonical JSON records.",
+        "directory_count_including_root": 1,
+        "file_count": 7,
+        "files": [
+          {
+            "bytes": 691,
+            "path": "config.json",
+            "sha256": "319adbaed9ef61ff0a2facce59adda34a3db46961bac31133e013ecca6d5c829"
+          },
+          {
+            "bytes": 111,
+            "path": "generation_config.json",
+            "sha256": "247edaf97bf0138bf58982cd101038dd55cc251f91b0682b1c349e773dc931b7"
+          },
+          {
+            "bytes": 3984728184,
+            "path": "model-00001-of-00004.safetensors",
+            "sha256": "ebdbf772225301c712e9e72f7014c2b4393756748d767841d17124999eeafcff"
+          },
+          {
+            "bytes": 3967977000,
+            "path": "model-00002-of-00004.safetensors",
+            "sha256": "7e38293cd86c927a5489ce116c6d437c40310094136b5e41c8130db5a298b2bb"
+          },
+          {
+            "bytes": 3926025456,
+            "path": "model-00003-of-00004.safetensors",
+            "sha256": "10feba31bdf1ef52821dafd06b9fc0f714c88a5c3161d2447c8c1a70571b7438"
+          },
+          {
+            "bytes": 2617350280,
+            "path": "model-00004-of-00004.safetensors",
+            "sha256": "676b516a70cad925d97740fbdad790ab8ae68353edd9a6d116f32f95db43aee9"
+          },
+          {
+            "bytes": 23986,
+            "path": "model.safetensors.index.json",
+            "sha256": "05eb48f2137c718b87bd2a7e1cab3960bc59283767bef62f9ef435c7374a9397"
+          }
+        ],
+        "inventory_sha256": "b0592cf36a5e902aa0ed31adfac0b15815d6db948f0c0dca53f674c499163f34",
+        "logical_bytes": 14496105708
+      }
+    }
+  },
+  "result": {
+    "base_model": {
+      "comparison": "tensor_name_dtype_shape_and_all_element_bytes_exact",
+      "counts": {
+        "byte_compared_element_count": 7248023552,
+        "byte_compared_tensor_count": 291,
+        "byte_exact_tensor_count": 291,
+        "byte_mismatch_element_count": 0,
+        "byte_mismatch_tensor_count": 0,
+        "candidate_tensor_count": 291,
+        "dtype_mismatch_tensor_count": 0,
+        "missing_candidate_tensor_count": 0,
+        "oracle_tensor_count": 291,
+        "schema_mismatch_tensor_count": 0,
+        "shape_mismatch_tensor_count": 0,
+        "shared_tensor_count": 291,
+        "total_mismatch_tensor_count": 0,
+        "unexpected_candidate_tensor_count": 0
+      },
+      "first_mismatch": null,
+      "passed": true,
+      "tensor_buffer_budget": {
+        "first_mismatch_search": "binary_any_scalar_reductions_over_existing_mask_no_index_vector",
+        "max_estimated_tensor_buffer_bytes": 67088392,
+        "max_working_set_bytes": 67108864,
+        "scope": "comparison_tensor_payloads_and_byte_masks",
+        "within_budget": true,
+        "worst_case_equation": "elements * (2 * element_bytes input_slices + 2 * element_bytes contiguous_copies + element_bytes byte_inequality_mask + 1 per_element_changed_mask) + 8 scalar_reduction_bytes"
+      }
+    },
+    "first_mismatch": null,
+    "passed": true,
+    "run_bundle": {
+      "artifact_inventories_stable": true,
+      "bundle_provenance": {
+        "candidate": {
+          "experiment_config": {
+            "computed_config_sha256": "75d4f72e589967be2c0261cc3079570160760c9f29e81f70d98eb72d556ba9be",
+            "computed_resume_signature": "f168331e7f4efb68a6756045998b35570bb4061abeb2d0b0321c599bababd364",
+            "computed_structural_resume_signature": "bbaacfbc72155ec7a1af5d4d20c84bab8d6849459a4977cf554108a908d279d3",
+            "manifest_config_sha256_exact": true,
+            "manifest_resume_signature_exact": true,
+            "manifest_structural_resume_signature_exact": true,
+            "semantic_hash_algorithm": "sha256(json.dumps(object,sort_keys=True,ensure_ascii=False).utf8)"
+          },
+          "manifest": {
+            "complete": true,
+            "config_sha256": "75d4f72e589967be2c0261cc3079570160760c9f29e81f70d98eb72d556ba9be",
+            "data_fingerprint_sha256": "18fc58e54b1456620eface6eecd6db94031096e86f63c888f8ac4dcf0a8e7894",
+            "data_fingerprint_sha256_algorithm": "sha256(json.dumps(object,sort_keys=True,ensure_ascii=False).utf8)",
+            "format": "latent-workspace-ft-bundle-v4",
+            "global_step": 1,
+            "resume_signature": "f168331e7f4efb68a6756045998b35570bb4061abeb2d0b0321c599bababd364",
+            "run_id": "b11ac9f7c43d4e3ea6f3a9985a2ab516",
+            "source_identity_evidence_bindings": [
+              {
+                "engine_sha256": "967f49b9d54b23a4c2382608e318b1e63974aef3ea1bf9c4c4f20c22ef4df494",
+                "evidence_path": "runs/v10/transport_v2/O3_cpu_accumulate_seed42_step1/final/manifest.json",
+                "json_path": "$.source_sha256"
+              }
+            ],
+            "source_sha256": "967f49b9d54b23a4c2382608e318b1e63974aef3ea1bf9c4c4f20c22ef4df494",
+            "structural_resume_signature": "bbaacfbc72155ec7a1af5d4d20c84bab8d6849459a4977cf554108a908d279d3",
+            "world_size": 1
+          },
+          "trainer_manifest_binding": {
+            "checks": {
+              "data_fingerprint_exact": true,
+              "global_step_exact": true,
+              "resume_signature_exact": true,
+              "run_state_run_id_exact": true,
+              "structural_resume_signature_exact": true,
+              "world_size_exact": true
+            },
+            "passed": true
+          }
+        },
+        "intended_global_step": {
+          "candidate": 1,
+          "equal": true,
+          "oracle": 1,
+          "source": "each_final_manifest.global_step"
+        },
+        "oracle": {
+          "experiment_config": {
+            "computed_config_sha256": "da71bdbecd0a50bbb11d8c5b0aae41569b206f72be00fa0e4049ac0557b5581b",
+            "computed_resume_signature": "cdf9f33da5df3b9cc363408eb62467b8af8f3e387dc3793edd880271a949398c",
+            "computed_structural_resume_signature": "d986651cd85c9cd7da6cb070a753e81a69bf6fd944ccd5dc257825284f32cde1",
+            "manifest_config_sha256_exact": true,
+            "manifest_resume_signature_exact": true,
+            "manifest_structural_resume_signature_exact": true,
+            "semantic_hash_algorithm": "sha256(json.dumps(object,sort_keys=True,ensure_ascii=False).utf8)"
+          },
+          "manifest": {
+            "complete": true,
+            "config_sha256": "da71bdbecd0a50bbb11d8c5b0aae41569b206f72be00fa0e4049ac0557b5581b",
+            "data_fingerprint_sha256": "18fc58e54b1456620eface6eecd6db94031096e86f63c888f8ac4dcf0a8e7894",
+            "data_fingerprint_sha256_algorithm": "sha256(json.dumps(object,sort_keys=True,ensure_ascii=False).utf8)",
+            "format": "latent-workspace-ft-bundle-v4",
+            "global_step": 1,
+            "resume_signature": "cdf9f33da5df3b9cc363408eb62467b8af8f3e387dc3793edd880271a949398c",
+            "run_id": "978e5cb731214265b26096dab64e10bd",
+            "source_identity_evidence_bindings": [
+              {
+                "engine_sha256": "967f49b9d54b23a4c2382608e318b1e63974aef3ea1bf9c4c4f20c22ef4df494",
+                "evidence_path": "runs/v10/transport_v2/O3_cuda_merge_reference_seed42_step1/final/manifest.json",
+                "json_path": "$.source_sha256"
+              }
+            ],
+            "source_sha256": "967f49b9d54b23a4c2382608e318b1e63974aef3ea1bf9c4c4f20c22ef4df494",
+            "structural_resume_signature": "d986651cd85c9cd7da6cb070a753e81a69bf6fd944ccd5dc257825284f32cde1",
+            "world_size": 1
+          },
+          "trainer_manifest_binding": {
+            "checks": {
+              "data_fingerprint_exact": true,
+              "global_step_exact": true,
+              "resume_signature_exact": true,
+              "run_state_run_id_exact": true,
+              "structural_resume_signature_exact": true,
+              "world_size_exact": true
+            },
+            "passed": true
+          }
+        }
+      },
+      "candidate_artifact_inventory": {
+        "file_count": 6,
+        "files": [
+          {
+            "bytes": 3,
+            "path": "runs/v10/transport_v2/O3_cpu_accumulate_seed42_step1/final/COMPLETED",
+            "sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+          },
+          {
+            "bytes": 1622,
+            "path": "runs/v10/transport_v2/O3_cpu_accumulate_seed42_step1/final/manifest.json",
+            "sha256": "ca9000ebf9a71e8d78a2e800c329f5b974b5d80a4e8022c5e3134702f82f7d24"
+          },
+          {
+            "bytes": 7835,
+            "path": "runs/v10/transport_v2/O3_cpu_accumulate_seed42_step1/final/experiment_config.json",
+            "sha256": "fca97b2af885f9194ee581a2456e5067d5515eab735366588ffeb5e40d760840"
+          },
+          {
+            "bytes": 297542184,
+            "path": "runs/v10/transport_v2/O3_cpu_accumulate_seed42_step1/final/workspace_state.pt",
+            "sha256": "354439578f46621f2e3ee65e640fbb67cf2dabc4616312071e3395810bc85e37"
+          },
+          {
+            "bytes": 12412799,
+            "path": "runs/v10/transport_v2/O3_cpu_accumulate_seed42_step1/final/trainer_state.pt",
+            "sha256": "30739aa81eede91dbbfd0383620b493923b2e25234d0228d98a3af6e246620dc"
+          },
+          {
+            "bytes": 11289,
+            "path": "runs/v10/transport_v2/O3_cpu_accumulate_seed42_step1/metrics.jsonl",
+            "sha256": "65538cb349b8f40735bee2901d5134e11f1d2f4807867f8cee7c8f480a024280"
+          }
+        ],
+        "inventory_sha256": "4287d05c318fc04dd99374ea39d27371039f5da10417b9892d84317f98db1548",
+        "logical_bytes": 309975732
+      },
+      "candidate_run_root": "runs/v10/transport_v2/O3_cpu_accumulate_seed42_step1",
+      "comparisons": {
+        "stable_metrics": {
+          "comparison": "split_step_records_exact_after_explicit_dynamic_field_exclusion",
+          "counts": {
+            "candidate_raw_record_count": 5,
+            "candidate_stable_record_count": 4,
+            "missing_candidate_record_count": 0,
+            "oracle_raw_record_count": 5,
+            "oracle_stable_record_count": 4,
+            "total_mismatch_record_count": 0,
+            "unexpected_candidate_record_count": 0,
+            "value_mismatch_record_count": 0
+          },
+          "first_mismatch": null,
+          "ignored_dynamic_fields": [
+            "checkpoint",
+            "cuda_allocated_gb",
+            "cuda_max_allocated_gb",
+            "cuda_max_reserved_gb",
+            "cuda_peak_allocated_gb",
+            "cuda_reserved_gb",
+            "elapsed_seconds",
+            "output_dir",
+            "path",
+            "resume_from",
+            "run_id",
+            "time",
+            "tokens_per_second"
+          ],
+          "passed": true
+        },
+        "trainer_state": {
+          "comparison": "recursive_type_schema_and_tensor_bytes_exact",
+          "counts": {
+            "excluded_path_count": 3,
+            "mapping_key_mismatch_count": 0,
+            "scalar_mismatch_count": 0,
+            "sequence_length_mismatch_count": 0,
+            "tensor_byte_mismatch_count": 0,
+            "tensor_count": 903,
+            "tensor_element_count": 3040928,
+            "tensor_schema_mismatch_count": 0,
+            "total_mismatch_count": 0,
+            "type_mismatch_count": 0,
+            "visited_node_count": 2684
+          },
+          "excluded_paths": [
+            "$.resume_signature",
+            "$.run_state.run_id",
+            "$.structural_resume_signature"
+          ],
+          "first_mismatch": null,
+          "passed": true,
+          "required_stable_fields": [
+            "data_fingerprint",
+            "global_step",
+            "optimizer",
+            "resume_signature",
+            "rng_by_rank",
+            "run_state",
+            "sampler_state",
+            "scaler",
+            "scheduler",
+            "structural_resume_signature",
+            "world_size"
+          ],
+          "scope": "optimizer_including_adafactor_state_scheduler_scaler_rng_sampler_and_run_state"
+        },
+        "workspace_state": {
+          "comparison": "recursive_type_schema_and_tensor_bytes_exact",
+          "counts": {
+            "excluded_path_count": 0,
+            "mapping_key_mismatch_count": 0,
+            "scalar_mismatch_count": 0,
+            "sequence_length_mismatch_count": 0,
+            "tensor_byte_mismatch_count": 0,
+            "tensor_count": 81,
+            "tensor_element_count": 74379022,
+            "tensor_schema_mismatch_count": 0,
+            "total_mismatch_count": 0,
+            "type_mismatch_count": 0,
+            "visited_node_count": 82
+          },
+          "excluded_paths": [],
+          "first_mismatch": null,
+          "passed": true
+        }
+      },
+      "cross_offload_config_comparison": null,
+      "cross_offload_trainer_signature_bindings": null,
+      "enabled": true,
+      "first_mismatch": null,
+      "mode": "cross_transport_parity",
+      "oracle_artifact_inventory": {
+        "file_count": 6,
+        "files": [
+          {
+            "bytes": 3,
+            "path": "runs/v10/transport_v2/O3_cuda_merge_reference_seed42_step1/final/COMPLETED",
+            "sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+          },
+          {
+            "bytes": 1622,
+            "path": "runs/v10/transport_v2/O3_cuda_merge_reference_seed42_step1/final/manifest.json",
+            "sha256": "4111108304ee1bc4dd7488e006d41580a90428af394f1416a3bdd0239f5d6d5b"
+          },
+          {
+            "bytes": 7830,
+            "path": "runs/v10/transport_v2/O3_cuda_merge_reference_seed42_step1/final/experiment_config.json",
+            "sha256": "25ab5fad4b8fd5966aaffaea61b55332ea6616f2fa64389be97114d60d315bed"
+          },
+          {
+            "bytes": 297542184,
+            "path": "runs/v10/transport_v2/O3_cuda_merge_reference_seed42_step1/final/workspace_state.pt",
+            "sha256": "354439578f46621f2e3ee65e640fbb67cf2dabc4616312071e3395810bc85e37"
+          },
+          {
+            "bytes": 12412799,
+            "path": "runs/v10/transport_v2/O3_cuda_merge_reference_seed42_step1/final/trainer_state.pt",
+            "sha256": "7629c4d88eee198f4a8d22d3792c17b2206b8b27bc572fd4fa1feb21eb2897a1"
+          },
+          {
+            "bytes": 11289,
+            "path": "runs/v10/transport_v2/O3_cuda_merge_reference_seed42_step1/metrics.jsonl",
+            "sha256": "3ae1d2531e7edd853cd2ac0a5e4eb0164601ced2a4ad7154ff24ee48ceffaeec"
+          }
+        ],
+        "inventory_sha256": "4fac9657197d17a1c5778b6bbe6ca34951a0c013973e9e3339802a17415842d7",
+        "logical_bytes": 309975727
+      },
+      "oracle_run_root": "runs/v10/transport_v2/O3_cuda_merge_reference_seed42_step1",
+      "passed": true,
+      "transport_config_comparison": {
+        "allowed_difference_paths": [
+          "train.base_activation_offload",
+          "train.gradient_accumulation_offload",
+          "train.output_dir",
+          "train.resume_from"
+        ],
+        "candidate_base_activation_offload": "legacy_functional",
+        "candidate_gradient_accumulation_offload": "cpu_accumulate",
+        "comparison": "semantic_exact_except_explicit_cross_transport_allowlist",
+        "observed_difference_count": 2,
+        "observed_differences": [
+          {
+            "candidate": {
+              "canonical_json_sha256": "03e24732b7e23c4787c5d9d93ab6922e2dfb7cabcd419a05f23319dd378043d0",
+              "present": true,
+              "value": "cpu_accumulate"
+            },
+            "oracle": {
+              "canonical_json_sha256": "0b40f1694b02928474078d429eaeeb4cb517664591ce3cc7c00809994027cfe5",
+              "present": true,
+              "value": "cpu"
+            },
+            "path": "train.gradient_accumulation_offload"
+          },
+          {
+            "candidate": {
+              "canonical_json_sha256": "7f8ab97efc8ff41f20d81dcf0152d449e107779b246fcfd3b75a5804f17e1558",
+              "present": true,
+              "value_disclosure": "sha256_only_to_keep_receipt_path_free"
+            },
+            "oracle": {
+              "canonical_json_sha256": "99b20caeaa79c2e6dfce0bf8e3f8b77e8be293298df0a099728e2f789f0c67f9",
+              "present": true,
+              "value_disclosure": "sha256_only_to_keep_receipt_path_free"
+            },
+            "path": "train.output_dir"
+          }
+        ],
+        "oracle_base_activation_offload": "legacy_functional",
+        "oracle_gradient_accumulation_offload": "cpu",
+        "passed": true
+      },
+      "transport_trainer_signature_bindings": {
+        "resume_signature": {
+          "candidate_value": "f168331e7f4efb68a6756045998b35570bb4061abeb2d0b0321c599bababd364",
+          "candidate_value_utf8_sha256": "af3a95f3ff2ad2ac906e13a4196c2ca14a864ea3f2b8f01145621716380f1d2a",
+          "oracle_value": "cdf9f33da5df3b9cc363408eb62467b8af8f3e387dc3793edd880271a949398c",
+          "oracle_value_utf8_sha256": "be9af93f47e74f2218bf4288e8a75eee64e3a25c9cfba72542a760c1fd315d07",
+          "values_equal": false
+        },
+        "structural_resume_signature": {
+          "candidate_value": "bbaacfbc72155ec7a1af5d4d20c84bab8d6849459a4977cf554108a908d279d3",
+          "candidate_value_utf8_sha256": "281bb5aa14a3770b84114d7d9ad925ba95676a4ffe5eb9209447893b8cd0d2dc",
+          "oracle_value": "d986651cd85c9cd7da6cb070a753e81a69bf6fd944ccd5dc257825284f32cde1",
+          "oracle_value_utf8_sha256": "1d3856511b4a797ef2afe6dcf742c2f0f48681575eaba09766f17456078daaf9",
+          "values_equal": false
+        }
+      }
+    }
+  },
+  "stability": {
+    "all_config_source_run_evidence_pre_post_hashes_equal": true,
+    "candidate_tree_pre_post_inventory_equal": true,
+    "oracle_tree_pre_post_inventory_equal": true,
+    "run_bundle_artifact_inventories_equal": true
+  },
+  "status": "PASS",
+  "verifier": {
+    "implementation": "scripts/compare_v10_full_model_oracle.py",
+    "implementation_pre_post_sha256_equal": true,
+    "implementation_sha256": "1759da5d79b1faf5d06581847da9f73a4c239aac7dd4af0022039e32716744d0",
+    "max_working_set_bytes": 67108864,
+    "python": "3.14.4",
+    "safetensors": "0.8.0",
+    "streaming_axis": "tensor_dimension_0",
+    "torch": "2.13.0+cu132"
+  }
+}

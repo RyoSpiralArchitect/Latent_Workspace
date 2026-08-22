@@ -102,6 +102,14 @@ CROSS_OFFLOAD_CONFIG_DIFF_ALLOWLIST = frozenset(
         "train.resume_from",
     }
 )
+CROSS_TRANSPORT_CONFIG_DIFF_ALLOWLIST = frozenset(
+    {
+        "train.base_activation_offload",
+        "train.gradient_accumulation_offload",
+        "train.output_dir",
+        "train.resume_from",
+    }
+)
 TRAINER_REQUIRED_KEYS = frozenset(
     {
         "optimizer",
@@ -1337,6 +1345,95 @@ def _cross_offload_config_comparison(
     }
 
 
+def _cross_transport_config_comparison(
+    candidate_path: Path,
+    oracle_path: Path,
+) -> dict[str, Any]:
+    candidate = read_json_object(candidate_path, label="candidate experiment config")
+    oracle = read_json_object(oracle_path, label="oracle experiment config")
+    candidate_train = candidate.get("train")
+    oracle_train = oracle.get("train")
+    if not isinstance(candidate_train, Mapping):
+        raise OracleVerificationError("Candidate experiment config train must be an object.")
+    if not isinstance(oracle_train, Mapping):
+        raise OracleVerificationError("Oracle experiment config train must be an object.")
+
+    candidate_activation = candidate_train.get("base_activation_offload", _MISSING)
+    oracle_activation = oracle_train.get("base_activation_offload", _MISSING)
+    if candidate_activation not in {"legacy_functional", "all_base"}:
+        raise OracleVerificationError(
+            "Cross-transport parity requires candidate "
+            "train.base_activation_offload to be 'legacy_functional' or 'all_base'."
+        )
+    if oracle_activation != "legacy_functional":
+        raise OracleVerificationError(
+            "Cross-transport parity requires oracle "
+            "train.base_activation_offload='legacy_functional'."
+        )
+
+    candidate_gradient = candidate_train.get("gradient_accumulation_offload", _MISSING)
+    oracle_gradient = oracle_train.get("gradient_accumulation_offload", _MISSING)
+    if candidate_gradient not in {"none", "cpu_accumulate"}:
+        raise OracleVerificationError(
+            "Cross-transport parity requires candidate "
+            "train.gradient_accumulation_offload to be 'none' or 'cpu_accumulate'."
+        )
+    if oracle_gradient not in {"none", "cpu"}:
+        raise OracleVerificationError(
+            "Cross-transport parity requires oracle gradient accumulation "
+            "offload to be 'none' or 'cpu'."
+        )
+
+    raw_differences = _semantic_json_differences(candidate, oracle)
+    observed_paths = {".".join(path) for path, _, _ in raw_differences}
+    unexpected = sorted(observed_paths - CROSS_TRANSPORT_CONFIG_DIFF_ALLOWLIST)
+    if unexpected:
+        raise OracleVerificationError(
+            "Cross-transport experiment configs contain "
+            f"{len(unexpected)} non-allowlisted semantic difference(s); "
+            f"first={unexpected[0]}."
+        )
+    required_alternatives = {
+        "train.base_activation_offload",
+        "train.gradient_accumulation_offload",
+    }
+    if not observed_paths.intersection(required_alternatives):
+        raise OracleVerificationError(
+            "Cross-transport experiment configs do not exercise the required "
+            "activation or gradient transport difference."
+        )
+
+    disclosed = {
+        "train.base_activation_offload",
+        "train.gradient_accumulation_offload",
+    }
+    differences = [
+        {
+            "path": ".".join(path),
+            "candidate": _json_value_binding(
+                candidate_value,
+                disclose=".".join(path) in disclosed,
+            ),
+            "oracle": _json_value_binding(
+                oracle_value,
+                disclose=".".join(path) in disclosed,
+            ),
+        }
+        for path, candidate_value, oracle_value in raw_differences
+    ]
+    return {
+        "passed": True,
+        "comparison": "semantic_exact_except_explicit_cross_transport_allowlist",
+        "allowed_difference_paths": sorted(CROSS_TRANSPORT_CONFIG_DIFF_ALLOWLIST),
+        "observed_difference_count": len(differences),
+        "observed_differences": differences,
+        "candidate_base_activation_offload": candidate_activation,
+        "oracle_base_activation_offload": oracle_activation,
+        "candidate_gradient_accumulation_offload": candidate_gradient,
+        "oracle_gradient_accumulation_offload": oracle_gradient,
+    }
+
+
 def _trainer_signature_bindings(
     candidate: Mapping[str, Any], oracle: Mapping[str, Any]
 ) -> dict[str, Any]:
@@ -1362,9 +1459,11 @@ def compare_run_bundles(
     candidate_model_root: Path,
     oracle_model_root: Path,
     cross_offload_parity: bool,
+    cross_transport_parity: bool,
     candidate_source_evidence_paths: Sequence[Path],
     oracle_source_evidence_paths: Sequence[Path],
 ) -> dict[str, Any]:
+    transport_parity = cross_offload_parity or cross_transport_parity
     candidate = _bundle_paths(repo_root, candidate_run, label="candidate")
     oracle = _bundle_paths(repo_root, oracle_run, label="oracle")
     if candidate["root"] == oracle["root"]:
@@ -1423,6 +1522,11 @@ def compare_run_bundles(
         config_comparison["oracle_legacy_d5_engine_evidence_bindings"] = list(
             oracle_source_bindings if oracle_manifest_is_legacy_d5 else []
         )
+    elif cross_transport_parity:
+        config_comparison = _cross_transport_config_comparison(
+            candidate["experiment_config"],
+            oracle["experiment_config"],
+        )
     else:
         config_comparison = None
     candidate_workspace = _load_torch_state(
@@ -1460,11 +1564,11 @@ def compare_run_bundles(
     oracle_provenance.pop("_manifest_data_fingerprint")
     signature_bindings = (
         _trainer_signature_bindings(candidate_trainer, oracle_trainer)
-        if cross_offload_parity
+        if transport_parity
         else None
     )
     excluded_paths = {"$.run_state.run_id"}
-    if cross_offload_parity:
+    if transport_parity:
         excluded_paths.update({"$.resume_signature", "$.structural_resume_signature"})
     trainer = compare_nested_state(
         candidate_trainer,
@@ -1500,7 +1604,11 @@ def compare_run_bundles(
     return {
         "enabled": True,
         "passed": all(value["passed"] for value in comparisons.values()),
-        "mode": "cross_offload_parity" if cross_offload_parity else "strict_general",
+        "mode": (
+            "cross_offload_parity"
+            if cross_offload_parity
+            else ("cross_transport_parity" if cross_transport_parity else "strict_general")
+        ),
         "candidate_run_root": _relative(repo_root, candidate["root"], label="candidate run"),
         "oracle_run_root": _relative(repo_root, oracle["root"], label="oracle run"),
         "candidate_artifact_inventory": candidate_inventory_after,
@@ -1516,8 +1624,18 @@ def compare_run_bundles(
                 "equal": True,
             },
         },
-        "cross_offload_config_comparison": config_comparison,
-        "cross_offload_trainer_signature_bindings": signature_bindings,
+        "cross_offload_config_comparison": (
+            config_comparison if cross_offload_parity else None
+        ),
+        "cross_offload_trainer_signature_bindings": (
+            signature_bindings if cross_offload_parity else None
+        ),
+        "transport_config_comparison": (
+            config_comparison if cross_transport_parity else None
+        ),
+        "transport_trainer_signature_bindings": (
+            signature_bindings if cross_transport_parity else None
+        ),
         "comparisons": comparisons,
         "first_mismatch": first_mismatch,
     }
@@ -1689,6 +1807,7 @@ def run_verification(
     candidate_run: str | Path | None,
     oracle_run: str | Path | None,
     cross_offload_parity: bool,
+    cross_transport_parity: bool,
     output: Path,
     max_working_set_bytes: int,
 ) -> dict[str, Any]:
@@ -1746,9 +1865,9 @@ def run_verification(
 
     if (candidate_run is None) != (oracle_run is None):
         raise OracleVerificationError("--candidate-run and --oracle-run must be supplied together.")
-    if cross_offload_parity and candidate_run is None:
+    if (cross_offload_parity or cross_transport_parity) and candidate_run is None:
         raise OracleVerificationError(
-            "--cross-offload-parity requires --candidate-run and --oracle-run."
+            "Cross-transport parity requires --candidate-run and --oracle-run."
         )
     candidate_inventory_before = model_tree_inventory(candidate_root)
     oracle_inventory_before = model_tree_inventory(oracle_root)
@@ -1773,6 +1892,7 @@ def run_verification(
             candidate_model_root=candidate_root,
             oracle_model_root=oracle_root,
             cross_offload_parity=cross_offload_parity,
+            cross_transport_parity=cross_transport_parity,
             candidate_source_evidence_paths=evidence_paths["candidate"]["source"],
             oracle_source_evidence_paths=evidence_paths["oracle"]["source"],
         )
@@ -1835,16 +1955,20 @@ def run_verification(
     comparison_mode = (
         "cross_offload_parity"
         if cross_offload_parity
-        else ("strict_general_bundle" if bundle_result["enabled"] else "base_model_only")
+        else (
+            "cross_transport_parity"
+            if cross_transport_parity
+            else ("strict_general_bundle" if bundle_result["enabled"] else "base_model_only")
+        )
     )
     if not bundle_result["enabled"]:
         bundle_claim = "Run-bundle state comparison was not requested."
-    elif cross_offload_parity:
+    elif cross_offload_parity or cross_transport_parity:
         bundle_claim = (
-            "Cross-offload bundle PASS excludes run_id, resume_signature, and "
+            "Cross-transport bundle PASS excludes run_id, resume_signature, and "
             "structural_resume_signature from trainer-state equality; both signatures remain "
             "explicitly bound, and final experiment-config differences are limited to the "
-            "three receipt-listed paths."
+            "receipt-listed transport paths."
         )
     else:
         bundle_claim = (
@@ -1959,12 +2083,22 @@ def build_parser() -> argparse.ArgumentParser:
         "--oracle-run",
         help="Optional run root containing final/ and metrics.jsonl; requires --candidate-run.",
     )
-    parser.add_argument(
+    parity_group = parser.add_mutually_exclusive_group()
+    parity_group.add_argument(
         "--cross-offload-parity",
         action="store_true",
         help=(
             "Compare a candidate cpu-offload run against a native oracle, allowing only "
             "the documented config and trainer-signature differences. Requires both run roots."
+        ),
+    )
+    parity_group.add_argument(
+        "--cross-transport-parity",
+        action="store_true",
+        help=(
+            "Compare an all-base activation-offload candidate against a legacy-functional "
+            "reference, allowing only documented transport and trainer-signature differences. "
+            "Requires both run roots."
         ),
     )
     parser.add_argument("--candidate-config-evidence", action="append", required=True)
@@ -2070,6 +2204,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             candidate_run=args.candidate_run,
             oracle_run=args.oracle_run,
             cross_offload_parity=args.cross_offload_parity,
+            cross_transport_parity=args.cross_transport_parity,
             output=output,
             max_working_set_bytes=args.max_working_set_bytes,
         )
