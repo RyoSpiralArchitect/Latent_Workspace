@@ -1,0 +1,53 @@
+{
+  "conditions": [
+    {
+      "id": "F0_query_only",
+      "route_mode": "query_only"
+    },
+    {
+      "id": "F1_inline",
+      "route_mode": "inline"
+    }
+  ],
+  "config": {
+    "path": "conditions/config_F1_inline_choice_repair.json",
+    "sha256": "0006a47d43985cdfd31febc0c4a3f1424f72454cc1cc6da13cd4fe36ada0f60c"
+  },
+  "dataset": {
+    "path": "../../data/v10/functional_eval.jsonl",
+    "record_count": 64,
+    "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e"
+  },
+  "elicitation": {
+    "choices": [
+      " no",
+      " yes"
+    ],
+    "prompt_separator": "\n\n",
+    "use_chat_template": false
+  },
+  "execution": {
+    "max_batches": 0,
+    "optimizer_steps": 0
+  },
+  "failure_action": "Do not launch v11 training. Repair elicitation or wrapper parity, freeze a new contract, and rerun Gate-0.",
+  "format": "latent-workspace-ft-v11-gate0-contract-v1",
+  "frozen_before_execution": true,
+  "gates": {
+    "minimum_f1_distinct_predicted_classes": 2,
+    "minimum_f1_hop1_wilson_lower_bound": 0.5,
+    "minimum_f1_label_recall": 0.55,
+    "minimum_f1_minus_f0_accuracy": 0.05,
+    "minimum_f1_overall_wilson_lower_bound": 0.5,
+    "require_balanced_targets": true,
+    "require_exact_direct_wrapper_logits": true,
+    "require_exact_direct_wrapper_predictions": true,
+    "wilson_z": 1.959963984540054
+  },
+  "model": {
+    "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71"
+  },
+  "question": "Does the pinned base model exceed chance on exact F1 inline and one-hop constrained evaluation before any update?",
+  "schema_version": 1
+}

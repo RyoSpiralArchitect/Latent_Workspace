@@ -1,10 +1,18 @@
 from __future__ import annotations
 
+import importlib
 import json
+import sys
 from pathlib import Path
 
-import capture_v10_generation_behavior as behavior
 import pytest
+
+REPO = Path(__file__).resolve().parents[1]
+SCRIPTS = REPO / "scripts"
+if str(SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS))
+
+behavior = importlib.import_module("capture_v10_generation_behavior")
 
 
 def test_labeled_paths_and_pairs_fail_closed() -> None:

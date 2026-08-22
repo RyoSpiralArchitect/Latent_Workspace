@@ -1,4 +1,4 @@
-"""Portable LatentWorkspace FT v10 package."""
+"""Portable LatentWorkspace FT v11 package with v10 import compatibility."""
 
 from .engine import (
     ExperimentConfig,
@@ -24,4 +24,4 @@ __all__ = [
     "resume_signature",
 ]
 
-__version__ = "10.0.0"
+__version__ = "11.0.0"
