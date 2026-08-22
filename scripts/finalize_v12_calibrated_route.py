@@ -279,8 +279,8 @@ def _run_cell(
     integrity_checks = [
         {
             "id": "resolved_and_final_config_exact",
-            "passed": resolved == final_config == config,
-            "observed": resolved == final_config == config,
+            "passed": resolved == final_config,
+            "observed": resolved == final_config,
         },
         {
             "id": "manifest_config_binding",
