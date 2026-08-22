@@ -706,11 +706,7 @@ def run_gate(args: argparse.Namespace) -> dict[str, Any]:
         "passed": passed,
         "started_at": started_at,
         "completed_at": utc_now(),
-        "question": (
-            "Does the pinned base model, under the exact current grouped-world "
-            "F0/F1 wrapper path and legacy raw elicitation, show usable inline "
-            "one-hop discrimination before any optimizer update?"
-        ),
+        "question": str(contract["question"]),
         "contract": {
             "path": str(contract_path),
             "sha256": sha256_file(contract_path),
