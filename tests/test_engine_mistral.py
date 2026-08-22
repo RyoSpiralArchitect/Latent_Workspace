@@ -15,6 +15,7 @@ from transformers import GPT2Config, GPT2LMHeadModel, MistralConfig, MistralForC
 from transformers.optimization import Adafactor
 
 from latent_workspace_ft_v10.engine import (
+    DataConfig,
     DistributedContext,
     ExperimentConfig,
     FunctionalBoundaryAdapter,
@@ -27,6 +28,7 @@ from latent_workspace_ft_v10.engine import (
     _CPUGradientAccumulator,
     _cuda_base_activation_offload,
     _finish_gradient_accumulation_offload_window,
+    _functional_elicitation_query,
     _functional_split_equivalence_check,
     _mark_gradient_accumulation_offload_terminal,
     _new_gradient_accumulation_offload_receipt,
@@ -147,6 +149,34 @@ def test_v11_functional_objective_config_validation_fails_closed() -> None:
     config.functional.full_vocab_loss_weight = 0.0
     with pytest.raises(ValueError, match="positive full_vocab_loss_weight"):
         config.validate()
+
+
+@pytest.mark.parametrize(
+    ("style", "expected"),
+    [
+        ("legacy", "Is Aster ranked above Beryl? Answer:"),
+        ("explicit_labels", "Is Aster ranked above Beryl? Answer no or yes:"),
+    ],
+)
+def test_v11_functional_elicitation_preserves_dataset_bytes(
+    style: str,
+    expected: str,
+) -> None:
+    config = DataConfig(functional_elicitation=style)
+    query = "Is Aster ranked above Beryl? Answer:"
+    assert _functional_elicitation_query(query, config) == expected
+    assert query == "Is Aster ranked above Beryl? Answer:"
+
+
+def test_v11_symmetric_elicitation_defines_both_labels() -> None:
+    config = DataConfig(functional_elicitation="symmetric_instruction")
+    rendered = _functional_elicitation_query(
+        "Is Aster ranked above Beryl? Answer:",
+        config,
+    )
+    assert "If it is false, answer no" in rendered
+    assert "if it is true, answer yes" in rendered
+    assert rendered.endswith("Is Aster ranked above Beryl? Answer:")
 
 
 def test_releasing_unconsumed_logits_preserves_indexed_loss_gradients() -> None:

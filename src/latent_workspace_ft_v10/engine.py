@@ -644,6 +644,7 @@ class DataConfig:
     functional_inline_max_length: int = 256
     functional_max_queries: int = 8
     functional_require_one_token_answer: bool = True
+    functional_elicitation: str = "legacy"
 
 
 @dataclass
@@ -1235,6 +1236,13 @@ class ExperimentConfig:
             raise ValueError("functional_inline_max_length must be at least 2.")
         if self.data.functional_max_queries < 1:
             raise ValueError("functional_max_queries must be positive.")
+        if self.data.functional_elicitation not in {
+            "legacy",
+            "explicit_labels",
+            "symmetric_instruction",
+            "symmetric_instruction_explicit_labels",
+        }:
+            raise ValueError("Unsupported data.functional_elicitation.")
         if self.functional.route_mode not in {"query_only", "deferred", "inline"}:
             raise ValueError("functional.route_mode must be query_only, deferred, or inline.")
         if self.functional.memory_mode not in {
@@ -2420,6 +2428,34 @@ def _truncate_encoded(
             mask[-1] = False
     return input_ids, labels, prompt_mask, masks
 
+_FUNCTIONAL_SYMMETRIC_INSTRUCTION = (
+    "Use the world facts to decide whether the ranking statement is true. "
+    "If it is false, answer no; if it is true, answer yes. "
+    "Output exactly one lowercase word: no or yes."
+)
+
+
+def _functional_elicitation_query(query: str, config: DataConfig) -> str:
+    """Render a frozen functional prompt style without mutating dataset bytes."""
+    style = config.functional_elicitation
+    rendered = str(query).strip()
+    if style in {"explicit_labels", "symmetric_instruction_explicit_labels"}:
+        marker = "Answer:"
+        if not rendered.endswith(marker):
+            raise ValueError(
+                "Explicit-label functional elicitation requires queries ending "
+                "with 'Answer:'."
+            )
+        rendered = rendered[: -len(marker)] + "Answer no or yes:"
+    if style in {
+        "symmetric_instruction",
+        "symmetric_instruction_explicit_labels",
+    }:
+        rendered = (
+            f"{_FUNCTIONAL_SYMMETRIC_INSTRUCTION}"
+            f"{config.prompt_separator}{rendered}"
+        )
+    return rendered
 
 
 def _functional_suffix_token_ids(
@@ -2550,10 +2586,11 @@ def _encode_functional_world_pair(
     require_one = bool(config.functional_require_one_token_answer)
     for side in range(2):
         for query_index, query in enumerate(queries):
+            elicited_query = _functional_elicitation_query(query, config)
             answer_suffix = choices[answers[side][query_index]]
             ids, labels, answer_token_ids = _functional_suffix_token_ids(
                 tokenizer,
-                query,
+                elicited_query,
                 answer_suffix,
                 require_one=require_one,
             )
@@ -2572,7 +2609,7 @@ def _encode_functional_world_pair(
                 _candidate_full, _candidate_labels, candidate_answer = (
                     _functional_suffix_token_ids(
                         tokenizer,
-                        query,
+                        elicited_query,
                         choice,
                         require_one=require_one,
                     )
@@ -2580,7 +2617,9 @@ def _encode_functional_world_pair(
                 candidates.append(candidate_answer)
             query_choice_ids[side].append(candidates)
 
-            inline_prefix = f"{contexts[side]}{config.prompt_separator}{query}"
+            inline_prefix = (
+                f"{contexts[side]}{config.prompt_separator}{elicited_query}"
+            )
             full_inline, labels_inline, _ = _functional_suffix_token_ids(
                 tokenizer,
                 inline_prefix,
