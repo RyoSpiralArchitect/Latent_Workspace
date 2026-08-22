@@ -38,6 +38,11 @@ data, and explicit decision boundaries.
   trained base trunk, complete functional-workspace task traces, exact transport
   sentinels, and a human observation note. Its first run passed integrity but
   found constant-`no` task behavior in all four one-step trained conditions.
+- After that observation was durably recorded, a GitHub-published exact intent gated the
+  first transport-pilot cleanup. It removed 80 checkpoint/final shards totaling
+  289,921,618,400 logical bytes and retained the distinct
+  `transport_pilot_weights_pruned` state; the weights are not recoverable from
+  hashes or decoded generations.
 - Native B multi-microbatch equivalence is not verified. The matched native
   gradient-accumulation-two route OOMed on its first backward pass; the reduced
   one-microbatch pair was correctly rejected because it never exercised a spill
@@ -80,6 +85,8 @@ Verified engineering evidence:
   equivalence at gradient accumulation 8;
 - deterministic pre-prune free-form and task-native behavior capture, including
   exact B/B-reference completion tokens and task choice logits;
+- behavior-gated, intent-published removal of the exact 80 transport-v2 shard
+  bodies while preserving the pinned model cache and non-weight evidence;
 - bitwise-exact fixed-schedule resume for all four conditions, including active
   workspace routes; and
 - assay-complete, compact-exported, explicitly pruned formal runs that remain

@@ -61,6 +61,25 @@ See
 and the reusable
 [`GENERATION_BEHAVIOR_WORKFLOW.md`](GENERATION_BEHAVIOR_WORKFLOW.md).
 
+## Behavior-gated retention result
+
+After that capture and human review were durable, the first behavior-gated
+cleanup passed. A GitHub-published intent bound 80 exact safetensor shards, all
+current transport oracles, the balanced generation receipt, the rejected
+unbalanced capture, the human observation note, the engine, and the pruning
+implementation. The transaction removed 289,921,618,400 logical bytes /
+289,922,170,880 allocated bytes, with an observed unlink free-space delta equal
+to the allocation total.
+
+Postflight found zero transport-v2 safetensors and retained 386 non-weight run
+files. The protected original-model cache metadata was unchanged. This is a
+`transport_pilot_weights_pruned` retention transition, not scientific
+verification, and the deleted trained weights are not reconstructible from the
+retained hashes or generations.
+
+The durable intent and receipt are under
+[`provenance/pruning/transport_v2_step1_raw_weights/`](../provenance/pruning/transport_v2_step1_raw_weights/).
+
 ## Claim boundary
 
 Verified: bounded single-step transport execution, exact candidate/reference

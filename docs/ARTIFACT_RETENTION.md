@@ -91,6 +91,40 @@ SHA-256
 It also records one earlier schema mismatch that failed closed before target
 hashing, rename, or unlink.
 
+## Behavior-gated transport-v2 cleanup
+
+The first generation-behavior-gated transition is complete. Its exact intent
+was published at GitHub commit
+`a80c9539280b51537bb294e1518b9d486efea0f5` before unlink. The transaction then
+rehashed all targets and nine compact evidence artifacts, verified the pinned
+model-cache metadata, moved the exact inodes through a same-filesystem
+`renameat2(RENAME_NOREPLACE)` quarantine, and unlinked only after the full
+quarantine passed.
+
+The scope was 80 shards across ten one-step transport run directories, with
+both `checkpoint-1/base_model` and `final/base_model` represented. It removed
+289,921,618,400 logical bytes / 289,922,170,880 allocated bytes. The observed
+unlink free-space delta exactly matched the allocated-byte total. Independent
+postflight found zero transport-v2 safetensors, retained 386 non-weight files,
+and found zero trained safetensors anywhere under `runs/v10` outside the
+protected model cache. The cache retained its four pinned model shards and its
+metadata snapshot remained unchanged.
+
+The state is deliberately `transport_pilot_weights_pruned`, not
+`verified_pruned`. The
+[`PRUNE_INTENT.json`](../provenance/pruning/transport_v2_step1_raw_weights/PRUNE_INTENT.json)
+SHA-256 is
+`37b193705177d425fe55e81bd526e5d93e953280fd6b6c587cc640fc29303692`;
+the
+[`PRUNE_RECEIPT.json`](../provenance/pruning/transport_v2_step1_raw_weights/PRUNE_RECEIPT.json)
+SHA-256 is
+`93866c58f15ed9f8ecb1bc86568e40894c3dade3ce8be14eb5d1ae4d77bd7e63`.
+The retained pre-unlink
+[`QUARANTINE_VERIFIED.json`](../provenance/pruning/transport_v2_step1_raw_weights/QUARANTINE_VERIFIED.json)
+SHA-256 is
+`9b7373d147f5a50cc9c46cf4b46ee2e1602251d6b95393ffe10c42de02a8b544`.
+The deleted trained weights are not reconstructible from these artifacts.
+
 ## Capacity gate
 
 The measured Mistral-7B final base-model bundle selected for pruning was
