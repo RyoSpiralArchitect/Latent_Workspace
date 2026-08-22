@@ -997,6 +997,10 @@ def capture(args: argparse.Namespace) -> dict[str, Any]:
     bindings_after = {label: _checkpoint_binding(repo_root, checkpoints[label]) for label in labels}
     if bindings_after != bindings:
         raise BehaviorCaptureError("A checkpoint changed during behavior capture.")
+    if tree_inventory(original_snapshot) != original_binding["snapshot_inventory"]:
+        raise BehaviorCaptureError(
+            "Original model snapshot changed during behavior capture."
+        )
     if sha256_file(prompt_path) != prompt_sha256:
         raise BehaviorCaptureError("Prompt suite changed during behavior capture.")
     if sha256_file(task_path) != task_sha256:
