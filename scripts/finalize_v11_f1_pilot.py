@@ -8,6 +8,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
@@ -214,6 +215,8 @@ def finalize(args: argparse.Namespace) -> dict[str, Any]:
     contract = load_json(contract_path)
     continuation = load_json(continuation_path)
     gate_receipt = load_json(gate_receipt_path)
+    if re.fullmatch(r"[0-9a-f]{40}", args.source_commit) is None:
+        raise FinalizeError("--source-commit must be a full lowercase Git commit.")
     expected_config = continuation["artifacts"]["F1_inline"]
     config_path = regular_file(
         (continuation_path.parent / str(expected_config["path"])).resolve(),
@@ -439,7 +442,11 @@ def finalize(args: argparse.Namespace) -> dict[str, Any]:
             "global_step": manifest.get("global_step"),
             "harness_version": manifest.get("harness_version"),
             "source_sha256": manifest.get("source_sha256"),
-            "source_commit_at_launch": gate_receipt.get("source", {}).get("commit"),
+            "source_commit_at_launch": args.source_commit,
+            "source_commit_binding": (
+                "Remote clean HEAD observed immediately before the foreground launch; "
+                "engine bytes are independently bound by source_sha256."
+            ),
             "optimizer": tracked_config["train"]["optimizer"],
             "gradient_accumulation_offload": offload.get("mode"),
             "peak_cpu_accumulator_bytes": offload.get("peak_cpu_accumulator_bytes"),
@@ -485,6 +492,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=Path("provenance/pilots/v11_gate0_symmetric/GATE0_RECEIPT.json"),
     )
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--source-commit", required=True)
     parser.add_argument("--overwrite", action="store_true")
     return parser
 
