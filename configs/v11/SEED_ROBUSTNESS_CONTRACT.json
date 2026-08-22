@@ -1,0 +1,194 @@
+{
+  "artifacts": {
+    "lr_1e_7_seed43": {
+      "learning_rate": 1e-07,
+      "learning_rate_id": "lr_1e_7",
+      "output_dir": "../../../runs/v11/seed_robustness/F1_lr_1e_7_seed43_step4",
+      "path": "conditions/config_F1_seed_robustness_lr_1e_7_seed43_step4.json",
+      "seed": 43,
+      "sha256": "91513daa1535ef9ead93dec13ba1a13762a7a7238015b24bc1a3fc0e6c06ed86"
+    },
+    "lr_1e_7_seed44": {
+      "learning_rate": 1e-07,
+      "learning_rate_id": "lr_1e_7",
+      "output_dir": "../../../runs/v11/seed_robustness/F1_lr_1e_7_seed44_step4",
+      "path": "conditions/config_F1_seed_robustness_lr_1e_7_seed44_step4.json",
+      "seed": 44,
+      "sha256": "b7cb3e3ca0cd08c14d0d74cddc18ff4a5e9d40f657978c43a24d8e75931ffa89"
+    },
+    "lr_1e_7_seed45": {
+      "learning_rate": 1e-07,
+      "learning_rate_id": "lr_1e_7",
+      "output_dir": "../../../runs/v11/seed_robustness/F1_lr_1e_7_seed45_step4",
+      "path": "conditions/config_F1_seed_robustness_lr_1e_7_seed45_step4.json",
+      "seed": 45,
+      "sha256": "46c023b291fbb66a069c6704714361dbc19a00486d71dfec48b5ad83b0a89c0a"
+    },
+    "lr_2e_7_seed43": {
+      "learning_rate": 2e-07,
+      "learning_rate_id": "lr_2e_7",
+      "output_dir": "../../../runs/v11/seed_robustness/F1_lr_2e_7_seed43_step4",
+      "path": "conditions/config_F1_seed_robustness_lr_2e_7_seed43_step4.json",
+      "seed": 43,
+      "sha256": "61b61f696716199ee21d6414b73fc17f9c815c2f3dd7d86dcc8040f11b7950ea"
+    },
+    "lr_2e_7_seed44": {
+      "learning_rate": 2e-07,
+      "learning_rate_id": "lr_2e_7",
+      "output_dir": "../../../runs/v11/seed_robustness/F1_lr_2e_7_seed44_step4",
+      "path": "conditions/config_F1_seed_robustness_lr_2e_7_seed44_step4.json",
+      "seed": 44,
+      "sha256": "7b53735d6715e6cf529601d73ac93cbb01c7a6b843272be26fb88dfb68c77ab8"
+    },
+    "lr_2e_7_seed45": {
+      "learning_rate": 2e-07,
+      "learning_rate_id": "lr_2e_7",
+      "output_dir": "../../../runs/v11/seed_robustness/F1_lr_2e_7_seed45_step4",
+      "path": "conditions/config_F1_seed_robustness_lr_2e_7_seed45_step4.json",
+      "seed": 45,
+      "sha256": "3a89fc27bdaab4ec82471d5022e4b6adb3b20c0f53bcfbe8a2f8347095f8d422"
+    }
+  },
+  "behavior_veto": {
+    "capture_seed": 20260823,
+    "max_new_tokens": 96,
+    "maximum_single_token_run": 24,
+    "maximum_top_token_fraction": 0.75,
+    "minimum_distinct_task_choices": 2,
+    "minimum_task_subset_accuracy": 0.75,
+    "prompt_suite": {
+      "path": "../v10/behavior_prompt_suite_v1.json",
+      "sha256": "f3710a323b876fd42da19b2c4a97e6fd303b67c0db338da53c57209177979373"
+    }
+  },
+  "cell_gates": {
+    "maximum_final_full_vocab_loss": 1.5,
+    "minimum_accuracy": 0.7,
+    "minimum_distinct_predicted_classes": 2,
+    "minimum_label_recall": 0.6,
+    "require_applied_learning_rate_schedule_match": true,
+    "require_behavior_veto_pass": true,
+    "require_exact_pre_update_window_within_seed_pair": true,
+    "require_exact_step0_parity": true,
+    "require_final_choice_loss_below_step0": true,
+    "require_finite_decision_metrics": true,
+    "require_integrity_pass": true,
+    "require_nonzero_persisted_base_update": true
+  },
+  "claim_boundary": "This matched six-cell matrix can establish descriptive four-step robustness across new seeds 43, 44, and 45 for the two tested learning rates. The rates were chosen after seed-42 exploration; n=3 does not establish broad optimizer, model, or long-run robustness.",
+  "data": {
+    "eval": {
+      "path": "../../data/v10/functional_eval.jsonl",
+      "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e"
+    },
+    "train": {
+      "path": "../../data/v10/functional_train.jsonl",
+      "sha256": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+    }
+  },
+  "deferred": [
+    "O0 or other active-workspace execution until a separate matched contract is frozen",
+    "sixteen-step continuation",
+    "optimizer or precision comparison",
+    "14B scaling and the broad matrix"
+  ],
+  "execution": {
+    "alternating_pair_order": true,
+    "condition_order": [
+      "lr_1e_7_seed43",
+      "lr_2e_7_seed43",
+      "lr_2e_7_seed44",
+      "lr_1e_7_seed44",
+      "lr_1e_7_seed45",
+      "lr_2e_7_seed45"
+    ],
+    "eval_batches": 0,
+    "eval_every": 1,
+    "optimizer_steps": 4,
+    "retain_all_weights_until_behavior_capture": true,
+    "save_periodic_checkpoints": false
+  },
+  "format": "latent-workspace-ft-v11-seed-robustness-contract-v1",
+  "frozen_before_execution": true,
+  "held_fixed": [
+    "Mistral-7B model id, revision, and BF16 stored parameters",
+    "F1 inline route and train-selected symmetric elicitation",
+    "choice-normalized objective with zero full-vocabulary loss weight",
+    "functional train and eval bytes",
+    "Adafactor, weight decay, clipping, and cosine scheduler semantics",
+    "four optimizer steps with eight-microbatch cpu_accumulate transport",
+    "step-0 and every-step complete 1,024-case eval",
+    "behavior prompt suite, greedy decoding, token cap, and capture seed"
+  ],
+  "learning_rate_robustness_gate": {
+    "allow_seed42_in_aggregation": false,
+    "minimum_passed_seed_fraction": 1.0,
+    "require_every_cell_eligible": true,
+    "required_new_seeds": [
+      43,
+      44,
+      45
+    ]
+  },
+  "matched_design": {
+    "cells": 6,
+    "learning_rates": [
+      {
+        "id": "lr_1e_7",
+        "value": 1e-07
+      },
+      {
+        "id": "lr_2e_7",
+        "value": 2e-07
+      }
+    ],
+    "new_seeds": [
+      43,
+      44,
+      45
+    ],
+    "pairing": "Both learning rates use the same train seed within each pair.",
+    "seed42_excluded": true
+  },
+  "model": {
+    "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71"
+  },
+  "parent_commit": "13ecc2a74b394f49d6f1ba1cb5327c3e4e916a0b",
+  "post_result_authority": {
+    "further_training_or_o0_execution_authorized": false,
+    "next_contract_design_authorized": true,
+    "selected_learning_rate_becomes_candidate_f1_baseline": true
+  },
+  "prior_selected_baseline": {
+    "contract": {
+      "path": "UPDATE_RESPONSE_CONTRACT.json",
+      "sha256": "4dcc8119572e9b0cfd21698a0dd8f0b911a45d0af1573314e49d49ede39bcb1c"
+    },
+    "promotion_behavior": {
+      "path": "../../provenance/pilots/v11_update_response_seed42/GENERATION_BEHAVIOR_STEP4.json",
+      "sha256": "e9827320d3ab8b304cdccbb4db35d8c19b4f7199feba1c7e8a4e676dca318482"
+    },
+    "promotion_receipt": {
+      "path": "../../provenance/pilots/v11_update_response_seed42/STEP4_PROMOTION_RECEIPT.json",
+      "sha256": "8d56f695fe67d0598693629c7849081b978cb693a7eecbddb30772e2a5c19124"
+    },
+    "role": "design input only; seed 42 is excluded from robustness aggregation",
+    "selected_learning_rate": 2e-07,
+    "selection_seed": 42,
+    "surface_receipt": {
+      "path": "../../provenance/pilots/v11_update_response_seed42/UPDATE_RESPONSE_RECEIPT.json",
+      "sha256": "360b9ba8c31bdf35a7732d57ce94d5ee646227412a2fbc027c27c6acab60d67d"
+    }
+  },
+  "question": "Across three new training-order seeds, does 1e-7 or 2e-7 provide the more robust four-update F1 full-update baseline under the already qualified metric and generation-behavior gates?",
+  "schema_version": 1,
+  "selection_rule": [
+    "Exclude any learning rate that fails a frozen cell gate on any new seed.",
+    "Rank robust learning rates by higher worst-seed behavior task accuracy.",
+    "Then rank by higher worst-seed complete-eval accuracy.",
+    "Then rank by higher worst-seed minimum label recall.",
+    "Then rank by lower worst-seed and lower mean final choice loss.",
+    "Break any remaining tie by the lower learning rate."
+  ]
+}
