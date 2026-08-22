@@ -116,6 +116,41 @@ def test_completion_groups_preserve_exact_token_equivalence() -> None:
     ]
 
 
+def test_original_task_views_uses_frozen_elicitation(monkeypatch: pytest.MonkeyPatch) -> None:
+    class DataConfig:
+        functional_elicitation = "symmetric_instruction"
+        prompt_separator = "<SEP>"
+
+    prompts: list[str] = []
+
+    class Tokenizer:
+        def __call__(self, values, **_kwargs):
+            prompts.extend(values)
+            raise RuntimeError("stop after prompt rendering")
+
+    monkeypatch.setattr(
+        "latent_workspace_ft_v10.engine._functional_elicitation_query",
+        lambda query, _config: f"INSTRUCTION<SEP>{query}",
+    )
+    cases = [
+        {
+            "context": "WORLD",
+            "query": "QUERY",
+            "choices": [" no", " yes"],
+            "expected_index": 0,
+        }
+    ]
+    with pytest.raises(RuntimeError, match="stop after prompt rendering"):
+        behavior.capture_original_task_views(
+            object(),
+            Tokenizer(),
+            cases,
+            data_config=DataConfig(),
+            device=behavior.torch.device("cpu"),
+        )
+    assert prompts == ["INSTRUCTION<SEP>QUERY"]
+
+
 def test_transformers_snapshot_validation_follows_weight_index(tmp_path: Path) -> None:
     for name in ("config.json", "tokenizer_config.json", "tokenizer.json"):
         (tmp_path / name).write_text("{}", encoding="utf-8")
