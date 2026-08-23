@@ -1,0 +1,394 @@
+{
+  "checks": [
+    {
+      "criterion": "two classes with equal counts in both paired conditions",
+      "id": "balanced_targets",
+      "observed": {
+        "f0": {
+          "0": 512,
+          "1": 512
+        },
+        "f1": {
+          "0": 512,
+          "1": 512
+        }
+      },
+      "passed": true
+    },
+    {
+      "criterion": "exact tensor equality",
+      "id": "f0_direct_wrapper_logits",
+      "observed": {
+        "compared_logit_elements": 536870912,
+        "exact_logits": true,
+        "exact_predictions": true,
+        "max_abs_logit_difference": 0.0
+      },
+      "passed": true
+    },
+    {
+      "criterion": "exact tensor equality",
+      "id": "f1_direct_wrapper_logits",
+      "observed": {
+        "compared_logit_elements": 2625634304,
+        "exact_logits": true,
+        "exact_predictions": true,
+        "max_abs_logit_difference": 0.0
+      },
+      "passed": true
+    },
+    {
+      "criterion": "exact prediction equality in both conditions",
+      "id": "direct_wrapper_predictions",
+      "observed": {
+        "f0": true,
+        "f1": true
+      },
+      "passed": true
+    },
+    {
+      "criterion": "> 0.5",
+      "id": "f1_overall_above_chance",
+      "observed": 0.6385434161953002,
+      "passed": true
+    },
+    {
+      "criterion": "Wilson lower bound > 0.5",
+      "id": "f1_hop1_above_chance",
+      "observed": {
+        "accuracy": 0.6328125,
+        "accuracy_wilson_lower_bound": 0.5902137891286587,
+        "correct": 324,
+        "examples": 512
+      },
+      "passed": true
+    },
+    {
+      "criterion": ">= 2 classes",
+      "id": "f1_predicts_both_classes",
+      "observed": {
+        "counts": {
+          "0": 264,
+          "1": 760
+        },
+        "distinct": 2
+      },
+      "passed": true
+    },
+    {
+      "criterion": ">= 0.55 for each label",
+      "id": "f1_minimum_label_recall",
+      "observed": [
+        0.42578125,
+        0.91015625
+      ],
+      "passed": false
+    },
+    {
+      "criterion": ">= 0.05",
+      "id": "f1_improves_over_f0",
+      "observed": 0.181640625,
+      "passed": true
+    }
+  ],
+  "claim_boundary": "A qualified receipt validates this pinned model, dataset, raw prompt separator, constrained choices, and exact F0/F1 wrapper implementation. It does not establish that training, deferred workspace routing, or the v11 objective repair succeeds.",
+  "completed_at": "2026-08-22T15:14:47.399509+00:00",
+  "conditions": {
+    "F0_query_only": {
+      "accuracy": 0.486328125,
+      "accuracy_wilson_lower_bound": 0.4558234532296227,
+      "candidate_token_id_rows": [
+        [
+          1476,
+          5849
+        ]
+      ],
+      "choice_loss": 0.7357222121208906,
+      "condition_id": "F0_query_only",
+      "correct": 498,
+      "direct_wrapper_parity": {
+        "compared_logit_elements": 536870912,
+        "exact_logits": true,
+        "exact_predictions": true,
+        "max_abs_logit_difference": 0.0
+      },
+      "distinct_predicted_classes": 2,
+      "examples": 1024,
+      "full_vocab_loss": 4.750274658203125,
+      "mean_target_margin": 0.00726318359375,
+      "mean_yes_minus_no_gap": 0.17919921875,
+      "per_hop": {
+        "1": {
+          "accuracy": 0.484375,
+          "accuracy_wilson_lower_bound": 0.4413643447142569,
+          "correct": 248,
+          "examples": 512
+        },
+        "2": {
+          "accuracy": 0.4318181818181818,
+          "accuracy_wilson_lower_bound": 0.33332677056322896,
+          "correct": 38,
+          "examples": 88
+        },
+        "3": {
+          "accuracy": 0.5,
+          "accuracy_wilson_lower_bound": 0.39989831509207535,
+          "correct": 46,
+          "examples": 92
+        },
+        "4": {
+          "accuracy": 0.5263157894736842,
+          "accuracy_wilson_lower_bound": 0.4155202869026268,
+          "correct": 40,
+          "examples": 76
+        },
+        "5": {
+          "accuracy": 0.4921875,
+          "accuracy_wilson_lower_bound": 0.43151586938966136,
+          "correct": 126,
+          "examples": 256
+        }
+      },
+      "per_label": {
+        "0": {
+          "correct": 201,
+          "examples": 512,
+          "recall": 0.392578125
+        },
+        "1": {
+          "correct": 297,
+          "examples": 512,
+          "recall": 0.580078125
+        }
+      },
+      "prediction_counts": {
+        "0": 416,
+        "1": 608
+      },
+      "prediction_entropy_nats": 0.6754645824509031,
+      "prediction_rows_sha256": "d8acb0a929bdf0eda370199d7acd777f5ec265d510ed5ffbc0940bad67f951b5",
+      "route_mode": "query_only",
+      "target_counts": {
+        "0": 512,
+        "1": 512
+      }
+    },
+    "F1_inline": {
+      "accuracy": 0.66796875,
+      "accuracy_wilson_lower_bound": 0.6385434161953002,
+      "candidate_token_id_rows": [
+        [
+          1476,
+          5849
+        ]
+      ],
+      "choice_loss": 0.6611791159957647,
+      "condition_id": "F1_inline",
+      "correct": 684,
+      "direct_wrapper_parity": {
+        "compared_logit_elements": 2625634304,
+        "exact_logits": true,
+        "exact_predictions": true,
+        "max_abs_logit_difference": 0.0
+      },
+      "distinct_predicted_classes": 2,
+      "examples": 1024,
+      "full_vocab_loss": 4.8775787353515625,
+      "mean_target_margin": 0.9400634765625,
+      "mean_yes_minus_no_gap": 1.31011962890625,
+      "per_hop": {
+        "1": {
+          "accuracy": 0.6328125,
+          "accuracy_wilson_lower_bound": 0.5902137891286587,
+          "correct": 324,
+          "examples": 512
+        },
+        "2": {
+          "accuracy": 0.7727272727272727,
+          "accuracy_wilson_lower_bound": 0.6748572348431644,
+          "correct": 68,
+          "examples": 88
+        },
+        "3": {
+          "accuracy": 0.7934782608695652,
+          "accuracy_wilson_lower_bound": 0.6998218608639662,
+          "correct": 73,
+          "examples": 92
+        },
+        "4": {
+          "accuracy": 0.8421052631578947,
+          "accuracy_wilson_lower_bound": 0.743985675457256,
+          "correct": 64,
+          "examples": 76
+        },
+        "5": {
+          "accuracy": 0.60546875,
+          "accuracy_wilson_lower_bound": 0.5444625238945794,
+          "correct": 155,
+          "examples": 256
+        }
+      },
+      "per_label": {
+        "0": {
+          "correct": 218,
+          "examples": 512,
+          "recall": 0.42578125
+        },
+        "1": {
+          "correct": 466,
+          "examples": 512,
+          "recall": 0.91015625
+        }
+      },
+      "prediction_counts": {
+        "0": 264,
+        "1": 760
+      },
+      "prediction_entropy_nats": 0.5707564027442638,
+      "prediction_rows_sha256": "05117a5aefac0170ce5be129971428d187136755da0e604ed6912d76b6b7c985",
+      "route_mode": "inline",
+      "target_counts": {
+        "0": 512,
+        "1": 512
+      }
+    }
+  },
+  "contract": {
+    "path": "/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-workspace-ft-v11/configs/v11/GATE0_CONTRACT.json",
+    "payload": {
+      "conditions": [
+        {
+          "id": "F0_query_only",
+          "route_mode": "query_only"
+        },
+        {
+          "id": "F1_inline",
+          "route_mode": "inline"
+        }
+      ],
+      "config": {
+        "path": "conditions/config_F1_inline_choice_repair.json",
+        "sha256": "0006a47d43985cdfd31febc0c4a3f1424f72454cc1cc6da13cd4fe36ada0f60c"
+      },
+      "dataset": {
+        "path": "../../data/v10/functional_eval.jsonl",
+        "record_count": 64,
+        "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e"
+      },
+      "elicitation": {
+        "choices": [
+          " no",
+          " yes"
+        ],
+        "prompt_separator": "\n\n",
+        "use_chat_template": false
+      },
+      "execution": {
+        "max_batches": 0,
+        "optimizer_steps": 0
+      },
+      "failure_action": "Do not launch v11 training. Repair elicitation or wrapper parity, freeze a new contract, and rerun Gate-0.",
+      "format": "latent-workspace-ft-v11-gate0-contract-v1",
+      "frozen_before_execution": true,
+      "gates": {
+        "minimum_f1_distinct_predicted_classes": 2,
+        "minimum_f1_hop1_wilson_lower_bound": 0.5,
+        "minimum_f1_label_recall": 0.55,
+        "minimum_f1_minus_f0_accuracy": 0.05,
+        "minimum_f1_overall_wilson_lower_bound": 0.5,
+        "require_balanced_targets": true,
+        "require_exact_direct_wrapper_logits": true,
+        "require_exact_direct_wrapper_predictions": true,
+        "wilson_z": 1.959963984540054
+      },
+      "model": {
+        "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+        "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71"
+      },
+      "question": "Does the pinned base model exceed chance on exact F1 inline and one-hop constrained evaluation before any update?",
+      "schema_version": 1
+    },
+    "sha256": "985c9f4703220429626134240a7521b6947d80af0039949b945c4703d9a5627e"
+  },
+  "failed_checks": [
+    "f1_minimum_label_recall"
+  ],
+  "format": "latent-workspace-ft-v11-gate0-receipt-v1",
+  "inputs": {
+    "config": {
+      "path": "/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-workspace-ft-v11/configs/v11/conditions/config_F1_inline_choice_repair.json",
+      "sha256": "0006a47d43985cdfd31febc0c4a3f1424f72454cc1cc6da13cd4fe36ada0f60c"
+    },
+    "dataset": {
+      "path": "/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-workspace-ft-v11/data/v10/functional_eval.jsonl",
+      "records": 64,
+      "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e"
+    },
+    "model": {
+      "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+      "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71"
+    }
+  },
+  "paired_comparison": {
+    "f1_minus_f0_accuracy": 0.181640625,
+    "paired_case_keys_sha256": "52a499a3823d3c1aee205c6897b8977503bcf0c1084e294317e8cbbfbf59da4f",
+    "same_target_counts": true,
+    "target_counts": {
+      "0": 512,
+      "1": 512
+    }
+  },
+  "passed": false,
+  "question": "Does the pinned base model, under the exact current grouped-world F0/F1 wrapper path and legacy raw elicitation, show usable inline one-hop discrimination before any optimizer update?",
+  "runtime": {
+    "allocator_backend": "native",
+    "allocator_initialized": true,
+    "allocator_settings": "backend:native,expandable_segments:True",
+    "allocator_snapshot_settings": {
+      "expandable_segments": true,
+      "garbage_collection_threshold": 0.0,
+      "max_split_size": -1
+    },
+    "cuda_devices": [
+      {
+        "capability": [
+          12,
+          0
+        ],
+        "index": 0,
+        "name": "NVIDIA GeForce RTX 5090",
+        "total_memory": 33668268032
+      }
+    ],
+    "cuda_memory_allocated_bytes": 14890066432,
+    "cuda_memory_reserved_bytes": 15154020352,
+    "cuda_runtime": "13.2",
+    "cudnn": 92000,
+    "device": "cuda",
+    "harness_version": "11.0.0",
+    "hostname": "spiralreality",
+    "mixed_precision": "bf16",
+    "peft": null,
+    "platform": "Linux-7.0.0-29-generic-x86_64-with-glibc2.43",
+    "python": "3.14.4 (main, Jun 18 2026, 14:25:02) [GCC 15.2.0]",
+    "pytorch_alloc_conf": "backend:native,expandable_segments:True",
+    "pytorch_cuda_alloc_conf_legacy": null,
+    "pytorch_hip_alloc_conf_legacy": null,
+    "pytorch_no_cuda_memory_caching": null,
+    "safetensors": "0.8.0",
+    "source_sha256": "dd0afe599763e511c6fe6478d5643fbb35d3fa6b0eaa67c75c782ad710034173",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0"
+  },
+  "schema_version": 1,
+  "source": {
+    "available": true,
+    "branch": "SpiralReality/v11-objective-repair",
+    "clean": true,
+    "commit": "8e73d9f8f6d906fce6d754ffcc259696817ab869",
+    "remote": "https://github.com/RyoSpiralArchitect/Latent_Workspace.git",
+    "status_porcelain": []
+  },
+  "started_at": "2026-08-22T15:14:27.450922+00:00",
+  "status": "blocked"
+}

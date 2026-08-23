@@ -1,5 +1,13 @@
 # Latent Workspace FT — CUDA comparison harness
 
+V11.0 is the current bounded research lane. It first qualifies the exact F0/F1
+step-0 instrument, then tests a single objective repair: constrained-choice CE
+instead of full-vocabulary answer-token CE. See
+[`docs/V11_OBJECTIVE_REPAIR.md`](docs/V11_OBJECTIVE_REPAIR.md) and the frozen
+[`configs/v11/CONTRACT.json`](configs/v11/CONTRACT.json). The import package
+name remains `latent_workspace_ft_v10` so V10 checkpoints and tooling retain a
+stable compatibility surface.
+
 This repository is the clean staging surface for a CUDA-native, full-parameter
 Latent Workspace comparison. It starts with a portable v10 engine, provenance,
 data, and explicit decision boundaries.
@@ -8,16 +16,17 @@ data, and explicit decision boundaries.
 
 - Canonical source is the
   [`RyoSpiralArchitect/Latent_Workspace`](https://github.com/RyoSpiralArchitect/Latent_Workspace)
-  repository. The current transport work is isolated on branch
-  `SpiralReality/transport-v2`.
+  repository. V11 objective repair is isolated on branch
+  `SpiralReality/v11-objective-repair`, stacked on the verified transport-v2
+  parent until that branch is merged.
 - The runtime contract is PyTorch CUDA, BF16, SDPA, gradient checkpointing,
   and full-parameter Adafactor. Custom Triton kernels remain deferred until a
   measured bottleneck and forward/backward parity test justify them.
 - The starting model is `mistralai/Mistral-7B-Instruct-v0.3`, pinned to
   revision `c170c708c41dac9275d15a8fff4eca08d52bab71`.
-- Furnace dependency, tokenizer, full-data, immutable model-cache, and source
-  gates pass for the pinned receipts. The active engine SHA-256 is
-  `967f49b9d54b23a4c2382608e318b1e63974aef3ea1bf9c4c4f20c22ef4df494`.
+- Furnace dependency, tokenizer, full-data, and immutable model-cache gates
+  passed for the pinned V10 receipts. V11 source and Gate-0 execution receive
+  new hashes and receipts; V10 source receipts must not be reused as V11 proof.
 - The four-condition seed-42 smoke cut is complete. `F0_query_only`,
   `B_local_invariance`, `F1_inline_upper`, and `O3_slots4_k1_lw_cf` each ran
   eight optimizer steps, passed run and assay integrity verification, passed an

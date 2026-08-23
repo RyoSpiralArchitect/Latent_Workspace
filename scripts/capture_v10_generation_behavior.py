@@ -426,14 +426,29 @@ def capture_original_task_views(
     tokenizer: Any,
     cases: Sequence[Mapping[str, Any]],
     *,
+    data_config: Any,
     device: torch.device,
 ) -> dict[str, Any]:
+    from latent_workspace_ft_v10 import engine
+
     views: dict[str, Any] = {}
     for view in ("query_only", "inline"):
-        prompts = [
-            str(case["query"]) if view == "query_only" else f"{case['context']}\n{case['query']}"
-            for case in cases
-        ]
+        prompts: list[str] = []
+        for case in cases:
+            elicited_query = engine._functional_elicitation_query(
+                str(case["query"]),
+                data_config,
+            )
+            prompt = (
+                elicited_query
+                if view == "query_only"
+                else (
+                    f"{case['context']}"
+                    f"{data_config.prompt_separator}"
+                    f"{elicited_query}"
+                )
+            )
+            prompts.append(prompt)
         encoded = tokenizer(
             prompts,
             return_tensors="pt",
@@ -452,9 +467,14 @@ def capture_original_task_views(
         rows = torch.arange(input_ids.shape[0], device=device)
         source_logits = outputs.logits[rows, positions]
         candidate_ids: list[list[int]] = []
-        for case in cases:
+        for prompt, case in zip(prompts, cases, strict=True):
             ids = [
-                list(tokenizer.encode(choice, add_special_tokens=False))
+                engine._functional_suffix_token_ids(
+                    tokenizer,
+                    prompt,
+                    str(choice),
+                    require_one=True,
+                )[2]
                 for choice in case["choices"]
             ]
             if any(len(value) != 1 for value in ids):
@@ -480,6 +500,8 @@ def capture_original_task_views(
             )
             view_cases.append(row)
         views[view] = {
+            "functional_elicitation": str(data_config.functional_elicitation),
+            "prompt_separator": str(data_config.prompt_separator),
             "cases": view_cases,
             "accuracy": sum(bool(row["correct"]) for row in view_cases) / len(view_cases),
             "predictions_sha256": stable_hash([int(row["predicted_index"]) for row in view_cases]),
@@ -852,6 +874,28 @@ def capture(args: argparse.Namespace) -> dict[str, Any]:
         "eos_token_id": int(tokenizer.eos_token_id),
     }
 
+    from latent_workspace_ft_v10 import engine
+
+    checkpoint_configs = {
+        label: engine.ExperimentConfig.from_json(checkpoints[label] / "experiment_config.json")
+        for label in labels
+    }
+    prompt_contracts = {
+        (
+            str(config.data.functional_elicitation),
+            str(config.data.prompt_separator),
+            bool(config.data.use_chat_template),
+            bool(config.data.add_bos),
+            bool(config.data.add_eos),
+        )
+        for config in checkpoint_configs.values()
+    }
+    if len(prompt_contracts) != 1:
+        raise BehaviorCaptureError(
+            "All checkpoints must share one task-native prompt contract."
+        )
+    reference_config = checkpoint_configs[labels[0]]
+
     model_results: dict[str, dict[str, Any]] = {}
     original = _load_base_model(
         original_snapshot,
@@ -871,17 +915,16 @@ def capture(args: argparse.Namespace) -> dict[str, Any]:
             original,
             tokenizer,
             task_cases,
+            data_config=reference_config.data,
             device=device,
         ),
     }
     del original
     release_device_cache(device)
 
-    from latent_workspace_ft_v10 import engine
-
     for label in labels:
         checkpoint = checkpoints[label]
-        config = engine.ExperimentConfig.from_json(checkpoint / "experiment_config.json")
+        config = checkpoint_configs[label]
         base_model = _load_base_model(
             checkpoint / "base_model",
             revision=None,
@@ -1004,6 +1047,13 @@ def capture(args: argparse.Namespace) -> dict[str, Any]:
             },
         },
         "tokenizer": tokenizer_binding,
+        "task_native_prompt_contract": {
+            "functional_elicitation": str(reference_config.data.functional_elicitation),
+            "prompt_separator": str(reference_config.data.prompt_separator),
+            "use_chat_template": bool(reference_config.data.use_chat_template),
+            "add_bos": bool(reference_config.data.add_bos),
+            "add_eos": bool(reference_config.data.add_eos),
+        },
         "models": model_results,
         "transport_behavior_parity": parity,
         "cross_model_completion_groups": _completion_groups(model_results),

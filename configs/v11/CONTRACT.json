@@ -1,0 +1,55 @@
+{
+  "claim_boundary": "Integrity PASS is not a scientific win. V11.0 tests only the objective-mismatch hypothesis on one seed and two bounded routes; it does not qualify the 57-run matrix or 14B scaling.",
+  "configs": {
+    "F1_inline": {
+      "path": "conditions/config_F1_inline_choice_repair.json",
+      "sha256": "0006a47d43985cdfd31febc0c4a3f1424f72454cc1cc6da13cd4fe36ada0f60c"
+    },
+    "O0_slots4_k1": {
+      "path": "conditions/config_O0_slots4_k1_choice_repair.json",
+      "sha256": "8d8d73351f418c5e9d9f0cad78e2f4c4359c3dc0d8dd323cf69ba98a9eeab8ab"
+    },
+    "gate0": {
+      "path": "GATE0_CONTRACT.json",
+      "sha256": "985c9f4703220429626134240a7521b6947d80af0039949b945c4703d9a5627e"
+    }
+  },
+  "f1_positive_control_gates": {
+    "final_choice_loss_below_step0": true,
+    "forbid_nonfinite_or_constant_choice": true,
+    "minimum_distinct_predicted_classes": 2,
+    "minimum_final_accuracy": 0.7,
+    "minimum_final_label_recall": 0.6
+  },
+  "format": "latent-workspace-ft-v11-objective-repair-contract-v1",
+  "frozen_before_execution": true,
+  "held_fixed": [
+    "model identity and revision",
+    "functional train/eval bytes",
+    "raw prompt format and double-newline separator",
+    "optimizer and learning rates",
+    "gradient accumulation and cpu_accumulate transport",
+    "gradient clipping policy",
+    "F1 and O0 route definitions"
+  ],
+  "o0_active_route_gates": {
+    "final_choice_loss_below_step0": true,
+    "launch_requires_f1_positive_control_pass": true,
+    "minimum_final_accuracy": 0.6,
+    "minimum_final_label_recall": 0.55,
+    "minimum_intact_minus_amputated_accuracy": 0.05
+  },
+  "question": "Did v10 collapse because full-vocabulary answer-token CE optimized token mass before the balanced no/yes decision?",
+  "schema_version": 1,
+  "sequence": [
+    "Gate-0 exact F0/F1 step-0 qualification",
+    "F1 inline positive-control 16-step full update",
+    "O0 active-route 16-step full update only if F1 passes",
+    "behavior capture before any weight pruning"
+  ],
+  "single_changed_mechanism": {
+    "from": "functional.task_objective=full_vocab",
+    "full_vocab_loss_weight": 0.0,
+    "to": "functional.task_objective=choice_normalized"
+  }
+}

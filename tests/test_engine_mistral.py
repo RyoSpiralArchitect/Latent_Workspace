@@ -15,9 +15,11 @@ from transformers import GPT2Config, GPT2LMHeadModel, MistralConfig, MistralForC
 from transformers.optimization import Adafactor
 
 from latent_workspace_ft_v10.engine import (
+    DataConfig,
     DistributedContext,
     ExperimentConfig,
     FunctionalBoundaryAdapter,
+    FunctionalWorkspaceConfig,
     LatentWorkspaceCausalLM,
     LatentWorkspaceLoss,
     TrainConfig,
@@ -26,6 +28,7 @@ from latent_workspace_ft_v10.engine import (
     _CPUGradientAccumulator,
     _cuda_base_activation_offload,
     _finish_gradient_accumulation_offload_window,
+    _functional_elicitation_query,
     _functional_split_equivalence_check,
     _mark_gradient_accumulation_offload_terminal,
     _new_gradient_accumulation_offload_receipt,
@@ -50,6 +53,130 @@ from latent_workspace_ft_v10.engine import (
     runtime_environment,
     stable_hash,
 )
+
+
+def _functional_objective_probe(
+    mode: str,
+    *,
+    full_vocab_loss_weight: float = 0.0,
+) -> tuple[LatentWorkspaceCausalLM, torch.Tensor, dict[str, torch.Tensor]]:
+    model = tiny_workspace_model()
+    model.functional_config = FunctionalWorkspaceConfig(
+        task_objective=mode,
+        full_vocab_loss_weight=full_vocab_loss_weight,
+    )
+    logits = torch.zeros((2, 3, 97), dtype=torch.float32, requires_grad=True)
+    with torch.no_grad():
+        logits[0, 1, 10] = 1.5
+        logits[0, 1, 20] = -0.5
+        logits[1, 1, 10] = 0.25
+        logits[1, 1, 20] = 0.75
+    labels = torch.full((2, 3), -100, dtype=torch.long)
+    labels[0, 2] = 10
+    labels[1, 2] = 20
+    result = model._functional_task_result(
+        logits,
+        labels,
+        torch.tensor([[10, 20], [10, 20]], dtype=torch.long),
+        torch.tensor([0, 1], dtype=torch.long),
+        batch_size=1,
+        side_indices=torch.tensor([0, 1], dtype=torch.long),
+        world_indices=torch.tensor([0, 0], dtype=torch.long),
+        query_indices=torch.tensor([0, 0], dtype=torch.long),
+        affected=torch.tensor([[True]]),
+        heldout=torch.tensor([[False]]),
+        hop_distances=torch.tensor([[1]], dtype=torch.long),
+    )
+    return model, logits, result
+
+
+def test_v11_choice_objective_is_normalized_over_declared_choices() -> None:
+    _model, logits, result = _functional_objective_probe("choice_normalized")
+    source = logits[:, 1, :]
+    expected_choice = F.cross_entropy(
+        source[:, [10, 20]],
+        torch.tensor([0, 1]),
+    )
+    expected_full_vocab = F.cross_entropy(
+        source,
+        torch.tensor([10, 20]),
+    )
+
+    torch.testing.assert_close(result["task_loss"], expected_choice)
+    torch.testing.assert_close(result["functional_choice_loss"], expected_choice)
+    torch.testing.assert_close(
+        result["functional_full_vocab_loss"], expected_full_vocab
+    )
+    assert result["functional_label_0_recall"].item() == 1.0
+    assert result["functional_label_1_recall"].item() == 1.0
+    assert result["functional_prediction_entropy_nats"].item() == pytest.approx(
+        0.6931471805599453
+    )
+
+    result["task_loss"].backward()
+    assert logits.grad is not None
+    non_choice = torch.ones(97, dtype=torch.bool)
+    non_choice[[10, 20]] = False
+    assert torch.count_nonzero(logits.grad[:, 1, non_choice]).item() == 0
+    assert torch.count_nonzero(logits.grad[:, 1, [10, 20]]).item() == 4
+
+
+def test_v11_full_vocab_default_and_hybrid_objectives_remain_explicit() -> None:
+    _full_model, _full_logits, full = _functional_objective_probe("full_vocab")
+    _hybrid_model, _hybrid_logits, hybrid = _functional_objective_probe(
+        "hybrid",
+        full_vocab_loss_weight=0.125,
+    )
+
+    torch.testing.assert_close(
+        full["task_loss"],
+        full["functional_full_vocab_loss"],
+    )
+    torch.testing.assert_close(
+        hybrid["task_loss"],
+        hybrid["functional_choice_loss"]
+        + 0.125 * hybrid["functional_full_vocab_loss"],
+    )
+
+
+def test_v11_functional_objective_config_validation_fails_closed() -> None:
+    config = ExperimentConfig()
+    config.functional.task_objective = "unbounded"
+    with pytest.raises(ValueError, match="functional.task_objective"):
+        config.validate()
+
+    config.functional.task_objective = "hybrid"
+    config.functional.full_vocab_loss_weight = 0.0
+    with pytest.raises(ValueError, match="positive full_vocab_loss_weight"):
+        config.validate()
+
+
+@pytest.mark.parametrize(
+    ("style", "expected"),
+    [
+        ("legacy", "Is Aster ranked above Beryl? Answer:"),
+        ("explicit_labels", "Is Aster ranked above Beryl? Answer no or yes:"),
+    ],
+)
+def test_v11_functional_elicitation_preserves_dataset_bytes(
+    style: str,
+    expected: str,
+) -> None:
+    config = DataConfig(functional_elicitation=style)
+    query = "Is Aster ranked above Beryl? Answer:"
+    assert _functional_elicitation_query(query, config) == expected
+    assert query == "Is Aster ranked above Beryl? Answer:"
+
+
+def test_v11_symmetric_elicitation_defines_both_labels() -> None:
+    config = DataConfig(functional_elicitation="symmetric_instruction")
+    rendered = _functional_elicitation_query(
+        "Is Aster ranked above Beryl? Answer:",
+        config,
+    )
+    assert "If it is false, answer no" in rendered
+    assert "if it is true, answer yes" in rendered
+    assert rendered.endswith("Is Aster ranked above Beryl? Answer:")
 
 
 def test_releasing_unconsumed_logits_preserves_indexed_loss_gradients() -> None:

@@ -1,4 +1,4 @@
-"""LatentWorkspace FT v10: portable query-deferred workspace harness.
+"""LatentWorkspace FT v11: portable query-deferred workspace harness.
 
 The file intentionally keeps the latent workspace, regularizer, data path,
 trainer, checkpoint protocol, distributed launcher integration, diagnostics,
@@ -42,7 +42,7 @@ from typing import Any, Callable, Dict, Iterable, Iterator, List, Mapping, Mutab
 from torch.utils.data import BatchSampler, DataLoader, Dataset, Sampler, Subset
 
 
-__version__ = "10.0.0"
+__version__ = "11.0.0"
 
 
 class LatentWorkspaceLoss(nn.Module):
@@ -644,6 +644,7 @@ class DataConfig:
     functional_inline_max_length: int = 256
     functional_max_queries: int = 8
     functional_require_one_token_answer: bool = True
+    functional_elicitation: str = "legacy"
 
 
 @dataclass
@@ -751,6 +752,13 @@ class FunctionalWorkspaceConfig:
     injection_scale: float = 1.0
     gate_init_bias: float = -2.0
 
+    # v11 repairs the supervised objective without changing the functional
+    # prompt, route, optimizer, or dataset. ``full_vocab`` is the v10 objective;
+    # ``choice_normalized`` trains only the constrained answer decision; and
+    # ``hybrid`` adds a preregistered amount of the old full-vocabulary NLL.
+    task_objective: str = "full_vocab"  # full_vocab | choice_normalized | hybrid
+    full_vocab_loss_weight: float = 0.0
+
     # O0/O1/O2/O3 objective matrix. Intact multi-query CE is always active.
     # Counterfactual CE applies only to queries whose answer changes under the
     # local twin edit; stability KL applies only to unaffected queries.
@@ -812,6 +820,7 @@ class TrainConfig:
 
     log_every: int = 10
     eval_every: int = 100
+    eval_at_start: bool = False
     save_every: int = 100
     save_every_minutes: float = 30.0
     eval_batches: int = 32
@@ -1227,6 +1236,13 @@ class ExperimentConfig:
             raise ValueError("functional_inline_max_length must be at least 2.")
         if self.data.functional_max_queries < 1:
             raise ValueError("functional_max_queries must be positive.")
+        if self.data.functional_elicitation not in {
+            "legacy",
+            "explicit_labels",
+            "symmetric_instruction",
+            "symmetric_instruction_explicit_labels",
+        }:
+            raise ValueError("Unsupported data.functional_elicitation.")
         if self.functional.route_mode not in {"query_only", "deferred", "inline"}:
             raise ValueError("functional.route_mode must be query_only, deferred, or inline.")
         if self.functional.memory_mode not in {
@@ -1256,6 +1272,27 @@ class ExperimentConfig:
             )
         if self.functional.injection_scale < 0:
             raise ValueError("functional.injection_scale must be non-negative.")
+        if self.functional.task_objective not in {
+            "full_vocab",
+            "choice_normalized",
+            "hybrid",
+        }:
+            raise ValueError(
+                "functional.task_objective must be full_vocab, "
+                "choice_normalized, or hybrid."
+            )
+        if self.functional.full_vocab_loss_weight < 0:
+            raise ValueError(
+                "functional.full_vocab_loss_weight must be non-negative."
+            )
+        if (
+            self.functional.task_objective == "hybrid"
+            and self.functional.full_vocab_loss_weight <= 0
+        ):
+            raise ValueError(
+                "functional.task_objective='hybrid' requires a positive "
+                "full_vocab_loss_weight."
+            )
         if self.functional.counterfactual_weight < 0 or self.functional.stability_weight < 0:
             raise ValueError("functional objective weights must be non-negative.")
         if self.functional.stability_temperature <= 0:
@@ -2391,6 +2428,34 @@ def _truncate_encoded(
             mask[-1] = False
     return input_ids, labels, prompt_mask, masks
 
+_FUNCTIONAL_SYMMETRIC_INSTRUCTION = (
+    "Use the world facts to decide whether the ranking statement is true. "
+    "If it is false, answer no; if it is true, answer yes. "
+    "Output exactly one lowercase word: no or yes."
+)
+
+
+def _functional_elicitation_query(query: str, config: DataConfig) -> str:
+    """Render a frozen functional prompt style without mutating dataset bytes."""
+    style = config.functional_elicitation
+    rendered = str(query).strip()
+    if style in {"explicit_labels", "symmetric_instruction_explicit_labels"}:
+        marker = "Answer:"
+        if not rendered.endswith(marker):
+            raise ValueError(
+                "Explicit-label functional elicitation requires queries ending "
+                "with 'Answer:'."
+            )
+        rendered = rendered[: -len(marker)] + "Answer no or yes:"
+    if style in {
+        "symmetric_instruction",
+        "symmetric_instruction_explicit_labels",
+    }:
+        rendered = (
+            f"{_FUNCTIONAL_SYMMETRIC_INSTRUCTION}"
+            f"{config.prompt_separator}{rendered}"
+        )
+    return rendered
 
 
 def _functional_suffix_token_ids(
@@ -2521,10 +2586,11 @@ def _encode_functional_world_pair(
     require_one = bool(config.functional_require_one_token_answer)
     for side in range(2):
         for query_index, query in enumerate(queries):
+            elicited_query = _functional_elicitation_query(query, config)
             answer_suffix = choices[answers[side][query_index]]
             ids, labels, answer_token_ids = _functional_suffix_token_ids(
                 tokenizer,
-                query,
+                elicited_query,
                 answer_suffix,
                 require_one=require_one,
             )
@@ -2543,7 +2609,7 @@ def _encode_functional_world_pair(
                 _candidate_full, _candidate_labels, candidate_answer = (
                     _functional_suffix_token_ids(
                         tokenizer,
-                        query,
+                        elicited_query,
                         choice,
                         require_one=require_one,
                     )
@@ -2551,7 +2617,9 @@ def _encode_functional_world_pair(
                 candidates.append(candidate_answer)
             query_choice_ids[side].append(candidates)
 
-            inline_prefix = f"{contexts[side]}{config.prompt_separator}{query}"
+            inline_prefix = (
+                f"{contexts[side]}{config.prompt_separator}{elicited_query}"
+            )
             full_inline, labels_inline, _ = _functional_suffix_token_ids(
                 tokenizer,
                 inline_prefix,
@@ -5340,6 +5408,24 @@ class LatentWorkspaceCausalLM(nn.Module):
         masked[rows, answer_classes] = float("-inf")
         return correct - masked.max(dim=1).values
 
+    def _functional_objective_rows(
+        self,
+        full_vocab_nll: torch.Tensor,
+        choice_nll: torch.Tensor,
+    ) -> torch.Tensor:
+        """Select the preregistered v11 functional supervision objective."""
+        mode = self.functional_config.task_objective
+        if mode == "full_vocab":
+            return full_vocab_nll
+        if mode == "choice_normalized":
+            return choice_nll
+        if mode == "hybrid":
+            return choice_nll + (
+                float(self.functional_config.full_vocab_loss_weight)
+                * full_vocab_nll
+            )
+        raise RuntimeError(f"Unsupported functional task objective: {mode}")
+
     def _functional_task_result(
         self,
         logits: torch.Tensor,
@@ -5356,15 +5442,26 @@ class LatentWorkspaceCausalLM(nn.Module):
         hop_distances: torch.Tensor,
         donor_answer_classes: Optional[torch.Tensor] = None,
     ) -> dict[str, torch.Tensor]:
-        token_nll, choice_logits, _target_tokens, _source_positions = (
+        full_vocab_nll, choice_logits, _target_tokens, _source_positions = (
             self._functional_answer_rows(logits, labels, candidate_ids)
+        )
+        choice_nll = F.cross_entropy(
+            choice_logits.float(),
+            answer_classes,
+            reduction="none",
+        )
+        objective_nll = self._functional_objective_rows(
+            full_vocab_nll,
+            choice_nll,
         )
         predicted = choice_logits.argmax(dim=1)
         correct = predicted.eq(answer_classes)
         margin = self._functional_margin(choice_logits, answer_classes)
-        nll_sum = token_nll.sum()
+        nll_sum = objective_nll.sum()
+        full_vocab_nll_sum = full_vocab_nll.sum()
+        choice_nll_sum = choice_nll.sum()
         token_count = torch.tensor(
-            token_nll.numel(), device=logits.device, dtype=torch.long
+            objective_nll.numel(), device=logits.device, dtype=torch.long
         )
 
         world_side = world_indices * 2 + side_indices
@@ -5382,41 +5479,115 @@ class LatentWorkspaceCausalLM(nn.Module):
         heldout_values = heldout[world_indices, query_indices]
         hop_values = hop_distances[world_indices, query_indices]
         zero = nll_sum.detach() * 0.0
+        query_count = torch.tensor(
+            correct.numel(), device=logits.device, dtype=torch.float32
+        )
+        choice_count = int(choice_logits.shape[1])
+        predicted_counts = torch.bincount(predicted, minlength=choice_count)
+        prediction_probabilities = predicted_counts.float() / query_count.clamp_min(1.0)
+        positive_prediction_probabilities = prediction_probabilities[
+            prediction_probabilities > 0
+        ]
+        prediction_entropy = -(
+            positive_prediction_probabilities
+            * positive_prediction_probabilities.log()
+        ).sum()
+        if choice_count == 2:
+            signed_choice_gap = (
+                choice_logits[:, 1].float() - choice_logits[:, 0].float()
+            )
+            signed_choice_gap_sum = signed_choice_gap.sum()
+            signed_choice_gap_mean = signed_choice_gap.mean()
+        else:
+            signed_choice_gap_sum = zero
+            signed_choice_gap_mean = zero
+
+        affected_count = affected_values.sum().to(torch.float32)
+        unaffected_count = (~affected_values).sum().to(torch.float32)
+        heldout_count = heldout_values.sum().to(torch.float32)
 
         result: dict[str, torch.Tensor] = {
             "task_loss": nll_sum / token_count.to(nll_sum.dtype),
             "task_nll_sum": nll_sum,
             "base_nll_sum": nll_sum,
+            "full_vocab_nll_sum": full_vocab_nll_sum,
+            "choice_nll_sum": choice_nll_sum,
+            "functional_full_vocab_loss": (
+                full_vocab_nll_sum / token_count.to(full_vocab_nll_sum.dtype)
+            ),
+            "functional_choice_loss": (
+                choice_nll_sum / token_count.to(choice_nll_sum.dtype)
+            ),
             "supervised_tokens": token_count,
-            "per_example_nll": token_nll,
-            "per_example_base_nll": token_nll,
-            "per_example_tokens": torch.ones_like(token_nll, dtype=torch.long),
+            "per_example_nll": objective_nll,
+            "per_example_base_nll": objective_nll,
+            "per_example_full_vocab_nll": full_vocab_nll,
+            "per_example_choice_nll": choice_nll,
+            "per_example_tokens": torch.ones_like(objective_nll, dtype=torch.long),
             "delta_logit_norm": zero,
             "gated_delta_logit_norm": zero,
             "functional_query_accuracy": correct.float().mean(),
+            "functional_query_correct": correct.sum().to(torch.float32),
             "functional_all_query_world_accuracy": (
                 all_query[valid_worlds].float().mean() if valid_worlds.any() else zero
             ),
+            "functional_all_query_world_examples": valid_worlds.sum().to(torch.float32),
+            "functional_all_query_world_correct": (
+                all_query[valid_worlds].sum().to(torch.float32)
+            ),
             "functional_choice_margin": margin.mean(),
+            "functional_yes_minus_no_gap": signed_choice_gap_mean,
+            "functional_yes_minus_no_gap_sum": signed_choice_gap_sum,
+            "functional_prediction_entropy_nats": prediction_entropy,
+            "functional_distinct_predicted_classes": (
+                predicted_counts.gt(0).sum().to(torch.float32)
+            ),
+            "functional_choice_count": torch.tensor(
+                choice_count, device=logits.device, dtype=torch.float32
+            ),
             "functional_affected_accuracy": (
                 correct[affected_values].float().mean()
                 if affected_values.any()
                 else zero
+            ),
+            "functional_affected_examples": affected_count,
+            "functional_affected_correct": (
+                correct[affected_values].sum().to(torch.float32)
             ),
             "functional_unaffected_accuracy": (
                 correct[~affected_values].float().mean()
                 if (~affected_values).any()
                 else zero
             ),
+            "functional_unaffected_examples": unaffected_count,
+            "functional_unaffected_correct": (
+                correct[~affected_values].sum().to(torch.float32)
+            ),
             "functional_heldout_query_accuracy": (
                 correct[heldout_values].float().mean()
                 if heldout_values.any()
                 else zero
             ),
-            "functional_query_count": torch.tensor(
-                correct.numel(), device=logits.device, dtype=torch.float32
+            "functional_heldout_query_examples": heldout_count,
+            "functional_heldout_query_correct": (
+                correct[heldout_values].sum().to(torch.float32)
             ),
+            "functional_query_count": query_count,
         }
+        for label in range(choice_count):
+            label_mask = answer_classes.eq(label)
+            label_examples = label_mask.sum().to(torch.float32)
+            label_correct = (correct & label_mask).sum().to(torch.float32)
+            label_predictions = predicted_counts[label].to(torch.float32)
+            result[f"functional_label_{label}_examples"] = label_examples
+            result[f"functional_label_{label}_correct"] = label_correct
+            result[f"functional_label_{label}_predictions"] = label_predictions
+            result[f"functional_label_{label}_recall"] = (
+                label_correct / label_examples.clamp_min(1.0)
+            )
+            result[f"functional_label_{label}_prediction_fraction"] = (
+                label_predictions / query_count.clamp_min(1.0)
+            )
         if donor_answer_classes is not None:
             donor_correct = predicted.eq(donor_answer_classes)
             result["functional_donor_accuracy"] = donor_correct.float().mean()
@@ -5440,6 +5611,9 @@ class LatentWorkspaceCausalLM(nn.Module):
             if mask.any():
                 result[f"functional_hop_{hop}_accuracy"] = correct[mask].float().mean()
                 result[f"functional_hop_{hop}_examples"] = mask.float().sum()
+                result[f"functional_hop_{hop}_correct"] = (
+                    correct[mask].sum().to(torch.float32)
+                )
         return result
 
     def _functional_workspace_regularizer(
@@ -5848,12 +6022,20 @@ class LatentWorkspaceCausalLM(nn.Module):
                 swapped_source_logits = swapped_logits[
                     donor_rows, source_positions
                 ]
-                cf_nll = F.cross_entropy(
+                cf_full_vocab_nll = F.cross_entropy(
                     swapped_source_logits[affected_values],
                     donor_target_tokens[affected_values],
-                    reduction="sum",
+                    reduction="none",
                 )
-                counterfactual_nll_sum = cf_nll
+                cf_choice_nll = F.cross_entropy(
+                    swapped_choices[affected_values].float(),
+                    donor_answers[affected_values],
+                    reduction="none",
+                )
+                counterfactual_nll_sum = self._functional_objective_rows(
+                    cf_full_vocab_nll,
+                    cf_choice_nll,
+                ).sum()
                 counterfactual_tokens = affected_values.sum().to(torch.long)
             unaffected_values = ~affected_values
             if unaffected_values.any():
@@ -9722,18 +9904,33 @@ def _scalar_workspace_metrics(output: Mapping[str, Any]) -> dict[str, float]:
         ) / count
         result["stability_items"] = float(stability_items.item())
     for key in (
+        "functional_full_vocab_loss",
+        "functional_choice_loss",
         "functional_query_accuracy",
         "functional_all_query_world_accuracy",
+        "functional_all_query_world_examples",
         "functional_choice_margin",
+        "functional_yes_minus_no_gap",
+        "functional_prediction_entropy_nats",
+        "functional_distinct_predicted_classes",
+        "functional_choice_count",
         "functional_affected_accuracy",
+        "functional_affected_examples",
         "functional_unaffected_accuracy",
+        "functional_unaffected_examples",
         "functional_heldout_query_accuracy",
+        "functional_heldout_query_examples",
         "functional_donor_accuracy",
         "functional_affected_donor_accuracy",
         "functional_unaffected_original_stability",
         "functional_query_count",
     ):
         value = output.get(key)
+        if isinstance(value, torch.Tensor) and value.numel() == 1:
+            result[key] = float(value.detach().float().item())
+    for key, value in output.items():
+        if not key.startswith("functional_label_"):
+            continue
         if isinstance(value, torch.Tensor) and value.numel() == 1:
             result[key] = float(value.detach().float().item())
     for hop in range(1, 9):
@@ -9857,11 +10054,17 @@ def _format_metrics(prefix: str, step: int, metrics: Mapping[str, float]) -> str
     preferred = [
         "loss",
         "task_loss",
+        "functional_choice_loss",
+        "functional_full_vocab_loss",
         "perplexity",
         "workspace_loss",
         "counterfactual_loss",
         "stability_loss",
         "functional_query_accuracy",
+        "functional_label_0_recall",
+        "functional_label_1_recall",
+        "functional_prediction_entropy_nats",
+        "functional_yes_minus_no_gap",
         "functional_all_query_world_accuracy",
         "functional_affected_donor_accuracy",
         "functional_unaffected_original_stability",
@@ -9929,6 +10132,7 @@ def evaluate(
     accumulator = MetricAccumulator()
     total_nll = 0.0
     total_tokens = 0
+    functional_totals: dict[str, float] = {}
 
     for batch_index, raw_batch in enumerate(dataloader):
         if max_batches > 0 and batch_index >= max_batches:
@@ -9961,8 +10165,70 @@ def evaluate(
         token_count = int(output["supervised_tokens"].item())
         total_nll += float(task_nll_sum.detach().float().item())
         total_tokens += token_count
+        for key, value in output.items():
+            aggregate = key in {
+                "choice_nll_sum",
+                "full_vocab_nll_sum",
+                "functional_yes_minus_no_gap_sum",
+                "functional_query_count",
+                "functional_query_correct",
+                "functional_all_query_world_examples",
+                "functional_all_query_world_correct",
+                "functional_affected_examples",
+                "functional_affected_correct",
+                "functional_unaffected_examples",
+                "functional_unaffected_correct",
+                "functional_heldout_query_examples",
+                "functional_heldout_query_correct",
+            } or (
+                key.startswith("functional_label_")
+                and key.endswith(("_examples", "_correct", "_predictions"))
+            ) or (
+                key.startswith("functional_hop_")
+                and key.endswith(("_examples", "_correct"))
+            )
+            if aggregate and isinstance(value, torch.Tensor) and value.numel() == 1:
+                functional_totals[key] = functional_totals.get(key, 0.0) + float(
+                    value.detach().float().item()
+                )
         scalar = _scalar_workspace_metrics(output)
-        weights = {"task_loss": float(token_count), "base_task_loss": float(token_count)}
+        query_count = float(scalar.get("functional_query_count", 0.0))
+        weights = {
+            "task_loss": float(token_count),
+            "base_task_loss": float(token_count),
+            "functional_full_vocab_loss": float(token_count),
+            "functional_choice_loss": float(token_count),
+        }
+        for key in (
+            "functional_query_accuracy",
+            "functional_choice_margin",
+            "functional_yes_minus_no_gap",
+        ):
+            weights[key] = query_count
+        weights["functional_all_query_world_accuracy"] = float(
+            scalar.get("functional_all_query_world_examples", 0.0)
+        )
+        for stem in (
+            "functional_affected",
+            "functional_unaffected",
+            "functional_heldout_query",
+        ):
+            weights[f"{stem}_accuracy"] = float(
+                scalar.get(f"{stem}_examples", 0.0)
+            )
+        for key in tuple(scalar):
+            if key.startswith("functional_label_") and key.endswith("_recall"):
+                weights[key] = float(
+                    scalar.get(key.removesuffix("_recall") + "_examples", 0.0)
+                )
+            elif key.startswith("functional_label_") and key.endswith(
+                "_prediction_fraction"
+            ):
+                weights[key] = query_count
+        for hop in range(1, 9):
+            weights[f"functional_hop_{hop}_accuracy"] = float(
+                scalar.get(f"functional_hop_{hop}_examples", 0.0)
+            )
         accumulator.add(scalar, weights=weights)
 
         per_example_nll = output.get("per_example_nll")
@@ -9999,6 +10265,89 @@ def evaluate(
                 )
 
     metrics = accumulator.mean()
+    functional_query_count = functional_totals.get("functional_query_count", 0.0)
+    if functional_query_count > 0:
+        metrics["functional_query_count"] = functional_query_count
+        metrics["functional_query_accuracy"] = (
+            functional_totals.get("functional_query_correct", 0.0)
+            / functional_query_count
+        )
+        metrics["functional_choice_loss"] = (
+            functional_totals.get("choice_nll_sum", 0.0)
+            / functional_query_count
+        )
+        metrics["functional_full_vocab_loss"] = (
+            functional_totals.get("full_vocab_nll_sum", 0.0)
+            / functional_query_count
+        )
+        metrics["functional_yes_minus_no_gap"] = (
+            functional_totals.get("functional_yes_minus_no_gap_sum", 0.0)
+            / functional_query_count
+        )
+        world_examples = functional_totals.get(
+            "functional_all_query_world_examples", 0.0
+        )
+        metrics["functional_all_query_world_examples"] = world_examples
+        if world_examples > 0:
+            metrics["functional_all_query_world_accuracy"] = (
+                functional_totals.get("functional_all_query_world_correct", 0.0)
+                / world_examples
+            )
+        for stem in (
+            "functional_affected",
+            "functional_unaffected",
+            "functional_heldout_query",
+        ):
+            examples = functional_totals.get(f"{stem}_examples", 0.0)
+            metrics[f"{stem}_examples"] = examples
+            if examples > 0:
+                metrics[f"{stem}_accuracy"] = (
+                    functional_totals.get(f"{stem}_correct", 0.0) / examples
+                )
+
+        label_ids = sorted(
+            {
+                int(key.split("_")[2])
+                for key in functional_totals
+                if key.startswith("functional_label_")
+                and key.endswith("_examples")
+            }
+        )
+        prediction_counts: list[float] = []
+        for label in label_ids:
+            prefix = f"functional_label_{label}"
+            examples = functional_totals.get(f"{prefix}_examples", 0.0)
+            correct = functional_totals.get(f"{prefix}_correct", 0.0)
+            predictions = functional_totals.get(f"{prefix}_predictions", 0.0)
+            prediction_counts.append(predictions)
+            metrics[f"{prefix}_examples"] = examples
+            metrics[f"{prefix}_correct"] = correct
+            metrics[f"{prefix}_predictions"] = predictions
+            metrics[f"{prefix}_recall"] = correct / max(examples, 1.0)
+            metrics[f"{prefix}_prediction_fraction"] = (
+                predictions / functional_query_count
+            )
+        prediction_probabilities = [
+            count / functional_query_count
+            for count in prediction_counts
+            if count > 0
+        ]
+        metrics["functional_prediction_entropy_nats"] = -sum(
+            probability * math.log(probability)
+            for probability in prediction_probabilities
+        )
+        metrics["functional_distinct_predicted_classes"] = float(
+            sum(count > 0 for count in prediction_counts)
+        )
+        for hop in range(1, 9):
+            prefix = f"functional_hop_{hop}"
+            examples = functional_totals.get(f"{prefix}_examples", 0.0)
+            if examples <= 0:
+                continue
+            metrics[f"{prefix}_examples"] = examples
+            metrics[f"{prefix}_accuracy"] = (
+                functional_totals.get(f"{prefix}_correct", 0.0) / examples
+            )
     task_loss = total_nll / max(total_tokens, 1)
     metrics["task_loss"] = task_loss
     metrics["perplexity"] = math.exp(min(task_loss, 20.0))
@@ -11241,6 +11590,48 @@ def train_experiment(config: ExperimentConfig) -> Path:
                 **count_parameters(raw_model),
             }
             print(json.dumps(summary, indent=2))
+
+        if (
+            config.train.eval_at_start
+            and resume_checkpoint is None
+            and state.global_step == 0
+            and eval_dataset is not None
+        ):
+            context.barrier()
+            if context.is_main:
+                assert eval_loader is not None
+                starting_induction = induction_status(
+                    config.workspace,
+                    config.induction,
+                    0,
+                    total_steps,
+                )
+                step0_eval = evaluate(
+                    raw_model,
+                    eval_loader,
+                    device=context.device,
+                    precision=precision,
+                    workspace_loss_weight=starting_induction.weight,
+                    max_batches=config.train.eval_batches,
+                    compute_spectral=config.workspace.spectral_every != 0,
+                    compute_workspace_loss=config.workspace.loss_weight > 0.0,
+                )
+                step0_eval["step"] = 0.0
+                step0_eval["optimizer_steps"] = 0.0
+                print(_format_metrics("eval-step0", 0, step0_eval))
+                _write_jsonl(
+                    metrics_path,
+                    {
+                        "split": "eval-step0",
+                        "run_id": state.run_id,
+                        "induction_phase": starting_induction.phase,
+                        "functional_task_objective": (
+                            config.functional.task_objective
+                        ),
+                        **step0_eval,
+                    },
+                )
+            context.barrier()
 
         training_model.train()
         if config.model.train_mode == "workspace_only":
