@@ -1,0 +1,316 @@
+{
+  "behavior_veto": {
+    "maximum_single_token_run": 24,
+    "maximum_top_token_fraction": 0.75,
+    "minimum_distinct_task_choices": 2,
+    "minimum_task_subset_accuracy": 0.75,
+    "prompt_suite": {
+      "path": "../v10/behavior_prompt_suite_v1.json",
+      "sha256": "f3710a323b876fd42da19b2c4a97e6fd303b67c0db338da53c57209177979373"
+    }
+  },
+  "branch_robustness_gate": {
+    "minimum_passed_seed_fraction": 1.0,
+    "require_every_cell_eligible": true,
+    "required_seeds": [
+      43,
+      44,
+      45
+    ]
+  },
+  "cell_gates": {
+    "maximum_final_full_vocab_loss": 1.5,
+    "minimum_accuracy": 0.7,
+    "minimum_distinct_predicted_classes": 2,
+    "minimum_label_recall": 0.6,
+    "require_behavior_veto_pass": true,
+    "require_final_choice_loss_below_step0": true,
+    "require_finite_decision_metrics": true,
+    "require_integrity_pass": true,
+    "require_nonzero_persisted_base_update": true
+  },
+  "claim_boundary": "This contract can compare two complete configured systems across three seeds at four and sixteen updates and can classify bounded mechanism evidence. It cannot isolate route topology from workspace optimization, establish broad capability improvement, or justify 14B/V12 execution.",
+  "data": {
+    "eval": {
+      "path": "../../data/v10/functional_eval.jsonl",
+      "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e"
+    },
+    "train": {
+      "path": "../../data/v10/functional_train.jsonl",
+      "sha256": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3"
+    }
+  },
+  "execution_boundaries": {
+    "no_14b_or_optimizer_sweep_authorized": true,
+    "no_v12_training_execution_authorized": true,
+    "retain_all_weights_until_behavior_and_necessity_capture": true,
+    "v12_design_derivation_authorized": true
+  },
+  "format": "latent-workspace-ft-v11-f1-o0-refinement-contract-v1",
+  "frozen_before_execution": true,
+  "held_fixed": [
+    "Mistral-7B model id, revision, BF16 storage, and full base update mode",
+    "base learning rate 1e-7, Adafactor, weight decay, clipping, and scheduler family",
+    "train/eval bytes and train-selected symmetric elicitation",
+    "choice-normalized objective with zero full-vocabulary loss weight",
+    "eight-microbatch cpu_accumulate transport and batch construction",
+    "seed pairing at 43, 44, and 45",
+    "complete 1,024-case eval and deterministic generation-veto suite"
+  ],
+  "model": {
+    "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71"
+  },
+  "noninferiority_margins": {
+    "behavior_task_accuracy": 0.03125,
+    "complete_eval_accuracy": 0.02,
+    "minimum_label_recall": 0.03
+  },
+  "parent_commit": "dbe5faa4ac6a78acf9b2fb552c7a1bbdb257a276",
+  "question": "Does the active O0 four-slot deferred route provide a competitive or mechanistically distinct alternative to the robust 1e-7 F1 inline control at four updates and after an independent sixteen-update refinement horizon?",
+  "refinement16": {
+    "artifacts": {
+      "F1_seed43": {
+        "base_learning_rate": 1e-07,
+        "eval_every": 4,
+        "max_steps": 16,
+        "output_dir": "../../../runs/v11/f1_o0_refinement/refinement16/F1_seed43_step16",
+        "path": "conditions/config_F1_refinement_seed43_step16.json",
+        "route_id": "F1",
+        "seed": 43,
+        "sha256": "6cd5f750e3c3647c0bd243ea4eb5c1a021a243342aa228316a320505d52dfeed",
+        "workspace_learning_rate": 0.0003
+      },
+      "F1_seed44": {
+        "base_learning_rate": 1e-07,
+        "eval_every": 4,
+        "max_steps": 16,
+        "output_dir": "../../../runs/v11/f1_o0_refinement/refinement16/F1_seed44_step16",
+        "path": "conditions/config_F1_refinement_seed44_step16.json",
+        "route_id": "F1",
+        "seed": 44,
+        "sha256": "3e1a8466700e272d390552e69005170268be5bddc6ce8dd8c14ee270505be490",
+        "workspace_learning_rate": 0.0003
+      },
+      "F1_seed45": {
+        "base_learning_rate": 1e-07,
+        "eval_every": 4,
+        "max_steps": 16,
+        "output_dir": "../../../runs/v11/f1_o0_refinement/refinement16/F1_seed45_step16",
+        "path": "conditions/config_F1_refinement_seed45_step16.json",
+        "route_id": "F1",
+        "seed": 45,
+        "sha256": "550eb4d207b5bf28937b6cf02826a1c0f4dbff7a35a5c34be44f0dea637c206f",
+        "workspace_learning_rate": 0.0003
+      },
+      "O0_seed43": {
+        "base_learning_rate": 1e-07,
+        "eval_every": 4,
+        "max_steps": 16,
+        "output_dir": "../../../runs/v11/f1_o0_refinement/refinement16/O0_seed43_step16",
+        "path": "conditions/config_O0_refinement_seed43_step16.json",
+        "route_id": "O0",
+        "seed": 43,
+        "sha256": "e2053b8701e05ef08f0473fb94459eb82950c7588984e6e87dce99808d13d4b3",
+        "workspace_learning_rate": 0.0003
+      },
+      "O0_seed44": {
+        "base_learning_rate": 1e-07,
+        "eval_every": 4,
+        "max_steps": 16,
+        "output_dir": "../../../runs/v11/f1_o0_refinement/refinement16/O0_seed44_step16",
+        "path": "conditions/config_O0_refinement_seed44_step16.json",
+        "route_id": "O0",
+        "seed": 44,
+        "sha256": "428d114664dedf46c5c8d18bfc630bad886933646c8a44ada9590456e310cb5c",
+        "workspace_learning_rate": 0.0003
+      },
+      "O0_seed45": {
+        "base_learning_rate": 1e-07,
+        "eval_every": 4,
+        "max_steps": 16,
+        "output_dir": "../../../runs/v11/f1_o0_refinement/refinement16/O0_seed45_step16",
+        "path": "conditions/config_O0_refinement_seed45_step16.json",
+        "route_id": "O0",
+        "seed": 45,
+        "sha256": "31158270c4c4f4b2358fe84dd069718021bb300c0c629c33c082a557fbc719f6",
+        "workspace_learning_rate": 0.0003
+      }
+    },
+    "behavior_capture": {
+      "capture_seed": 20260825,
+      "max_new_tokens": 96,
+      "models": [
+        "original",
+        "F1_seed43",
+        "O0_seed43",
+        "O0_seed44",
+        "F1_seed44",
+        "F1_seed45",
+        "O0_seed45"
+      ]
+    },
+    "condition_order": [
+      "F1_seed43",
+      "O0_seed43",
+      "O0_seed44",
+      "F1_seed44",
+      "F1_seed45",
+      "O0_seed45"
+    ],
+    "eval_every": 4,
+    "necessity": {
+      "content_specificity_requires": [
+        "F3_counterfactual_direction",
+        "F4_local_causal_specificity"
+      ],
+      "record_ladder_levels": [
+        "F0",
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5"
+      ],
+      "require_engineering_intervention_coverage": true,
+      "required_seeds": [
+        43,
+        44,
+        45
+      ],
+      "routes": [
+        "O0"
+      ]
+    },
+    "optimizer_steps": 16,
+    "purpose": "Run both routes from the pinned initial model under a fresh shared sixteen-step schedule; this is not a schedule extension from step 4.",
+    "schedule_note": "cpu_accumulate forbids schedule-horizon extension on resume, so both routes restart from the pinned model with max_steps=16."
+  },
+  "schema_version": 1,
+  "stage4": {
+    "artifacts": {
+      "O0_seed43": {
+        "base_learning_rate": 1e-07,
+        "eval_every": 1,
+        "max_steps": 4,
+        "output_dir": "../../../runs/v11/f1_o0_refinement/stage4/O0_seed43_step4",
+        "path": "conditions/config_O0_f1_contrast_seed43_step4.json",
+        "route_id": "O0",
+        "seed": 43,
+        "sha256": "565c0d9f621da99eefa7f4d1000eba4bd937c4801417aff8e5739b7151b05ebd",
+        "workspace_learning_rate": 0.0003
+      },
+      "O0_seed44": {
+        "base_learning_rate": 1e-07,
+        "eval_every": 1,
+        "max_steps": 4,
+        "output_dir": "../../../runs/v11/f1_o0_refinement/stage4/O0_seed44_step4",
+        "path": "conditions/config_O0_f1_contrast_seed44_step4.json",
+        "route_id": "O0",
+        "seed": 44,
+        "sha256": "51681a00d43831a0da5a56ca1cac6f24a8a4f2897cd7c6daac883a92d0d5f881",
+        "workspace_learning_rate": 0.0003
+      },
+      "O0_seed45": {
+        "base_learning_rate": 1e-07,
+        "eval_every": 1,
+        "max_steps": 4,
+        "output_dir": "../../../runs/v11/f1_o0_refinement/stage4/O0_seed45_step4",
+        "path": "conditions/config_O0_f1_contrast_seed45_step4.json",
+        "route_id": "O0",
+        "seed": 45,
+        "sha256": "fa5571ed9a8c5a0b0ac10cb97cc9bf0750ff832c3e333cb61b68787296754c48",
+        "workspace_learning_rate": 0.0003
+      }
+    },
+    "behavior_capture": {
+      "capture_seed": 20260824,
+      "max_new_tokens": 96,
+      "models": [
+        "original",
+        "O0_seed43",
+        "O0_seed44",
+        "O0_seed45"
+      ]
+    },
+    "condition_order": [
+      "O0_seed43",
+      "O0_seed44",
+      "O0_seed45"
+    ],
+    "eval_every": 1,
+    "optimizer_steps": 4,
+    "post_result_authority": {
+      "competitive_gate_pass_not_required_for_diagnostic_refinement": true,
+      "reason": "The user explicitly authorized comparison through refinement; the sixteen-step stage is diagnostic if O0 is not yet competitive.",
+      "refinement_execution_authorized_on_integrity_pass": true
+    },
+    "purpose": "Compare O0 directly to the verified V11.0 four-update F1 control."
+  },
+  "treatment_difference": {
+    "F1": {
+      "functional_memory_mode": "raw_sequence",
+      "functional_route_mode": "inline",
+      "injection_scale": 0.0,
+      "workspace_learning_rate": 0.0003
+    },
+    "O0": {
+      "functional_memory_mode": "slots",
+      "functional_route_mode": "deferred",
+      "injection_scale": 1.0,
+      "reader_steps": 1,
+      "slot_count": 4,
+      "workspace_learning_rate": 0.0003,
+      "writer_steps": 1
+    },
+    "claim_boundary": "Route topology, memory representation, and activation of the workspace injection path change together while both configured learning rates stay fixed; this is a system-level contrast, not a one-factor causal estimate of architecture alone."
+  },
+  "v12_decision_rules": [
+    {
+      "id": "scale_content_specific_o0",
+      "v12_focus": "scale and efficiency while preserving intervention receipts",
+      "when": "O0 is performance-competitive and content-specific necessity replicates."
+    },
+    {
+      "id": "sharpen_semantics",
+      "v12_focus": "separate semantic content from nonzero carrier availability",
+      "when": "O0 is competitive but only carrier dependence replicates."
+    },
+    {
+      "id": "stabilize_active_route",
+      "v12_focus": "optimize ownership, warm start, gating, and LR curriculum",
+      "when": "O0 shows content-specific effects but is not performance-competitive."
+    },
+    {
+      "id": "redesign_route",
+      "v12_focus": "redesign injection and workspace training before scale-up",
+      "when": "F1 is robust while O0 is neither competitive nor mechanistically specific."
+    },
+    {
+      "id": "repair_shared_optimizer",
+      "v12_focus": "repair shared long-horizon optimizer dynamics before architecture claims",
+      "when": "neither F1 nor O0 is robust at sixteen steps."
+    }
+  ],
+  "verified_f1_stage4_control": {
+    "behavior": {
+      "path": "../../provenance/pilots/v11_seed_robustness_new_seeds/GENERATION_BEHAVIOR.json",
+      "sha256": "4dc6a984067d84b3728a5a81b95c774bb03edaa8eceb77256f7842e446dcee52"
+    },
+    "contract": {
+      "path": "SEED_ROBUSTNESS_CONTRACT.json",
+      "sha256": "b5e513c390a392946ccf43715e8a1ae62e381d4a0c43a43c10d5a9394456b820"
+    },
+    "receipt": {
+      "path": "../../provenance/pilots/v11_seed_robustness_new_seeds/SEED_ROBUSTNESS_RECEIPT.json",
+      "sha256": "58d9543e24ba2cc0031a44ed6a85cd27e5e62747b1b8460f9b45d352501ba577"
+    },
+    "reuse_reason": "The exact F1 cells are already receipt-verified; rerunning them under the same four-step horizon would add no independent evidence.",
+    "seeds": [
+      43,
+      44,
+      45
+    ],
+    "selected_learning_rate": 1e-07
+  }
+}
