@@ -12251,6 +12251,13 @@ def train_experiment(config: ExperimentConfig) -> Path:
                         interval_tokens_local
                     )
                     log_metrics.update(_optimizer_learning_rates(optimizer))
+                    # The scheduler advances immediately after the optimizer
+                    # update. ``lr_base`` therefore describes the next step;
+                    # preserve the learning rates that were actually applied
+                    # to the just-completed update as separate diagnostics.
+                    log_metrics["applied_lr_base"] = step_base_lr
+                    log_metrics["applied_lr_workspace"] = step_workspace_lr
+                    log_metrics["window_metrics_phase"] = "pre_update_forward"
                     log_metrics["grad_norm"] = float(clip_metrics["grad_norm"])
                     log_metrics["base_grad_norm"] = float(clip_metrics["base_grad_norm"])
                     log_metrics["workspace_grad_norm"] = float(
