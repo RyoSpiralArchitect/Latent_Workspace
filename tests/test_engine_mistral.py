@@ -188,6 +188,20 @@ def test_gradient_accumulation_offload_is_validated_and_resume_bound() -> None:
     offloaded.train.gradient_accumulation_offload = "cpu"
     assert resume_signature(native) != resume_signature(offloaded)
 
+    cpu_accumulated = copy.deepcopy(native)
+    cpu_accumulated.train.gradient_accumulation_offload = "cpu_accumulate"
+    assert resume_signature(native) != resume_signature(cpu_accumulated)
+    assert resume_signature(offloaded) != resume_signature(cpu_accumulated)
+
+    activation_offloaded = copy.deepcopy(native)
+    activation_offloaded.train.base_activation_offload = "all_base"
+    assert resume_signature(native) != resume_signature(activation_offloaded)
+
+    invalid_activation = copy.deepcopy(native)
+    invalid_activation.train.base_activation_offload = "everything"
+    with pytest.raises(ValueError, match="base_activation_offload"):
+        invalid_activation.validate()
+
     cpu_offload = TrainConfig(gradient_accumulation_offload="cpu")
     with pytest.raises(RuntimeError, match="single-process only"):
         _require_gradient_accumulation_offload_context(
@@ -358,6 +372,51 @@ def test_cpu_gradient_accumulator_fails_closed_on_duplicate_and_missing_state() 
         accumulator.restore()
     assert parameter.grad is None
     assert accumulator.statistics()["live_cpu_buffer_count"] == 0
+
+
+def test_cpu_gradient_accumulator_cpu_merge_preserves_dtype_order() -> None:
+    reference = torch.nn.Parameter(
+        torch.tensor([0.0, 1.0, -1.0, 3.0], dtype=torch.bfloat16)
+    )
+    candidate = torch.nn.Parameter(reference.detach().clone())
+    gradients = [
+        torch.tensor(values, dtype=torch.bfloat16)
+        for values in (
+            [0.125, -0.5, 0.25, 0.75],
+            [-0.375, 0.25, 0.5, 0.125],
+            [0.5, -0.125, -0.75, 0.25],
+        )
+    ]
+    accumulator = _CPUGradientAccumulator(
+        (("weight", candidate),),
+        merge_device="cpu",
+    )
+    for gradient in gradients:
+        if reference.grad is None:
+            reference.grad = gradient.clone()
+        else:
+            reference.grad.add_(gradient)
+        candidate.grad = gradient.clone()
+        spill = accumulator.spill()
+        assert spill["live_cpu_buffer_count"] >= 1
+        assert candidate.grad is None
+
+    restored = accumulator.restore()
+    assert restored["live_cpu_buffer_count"] == 0
+    assert torch.equal(candidate.grad, reference.grad)
+
+    receipt = _new_gradient_accumulation_offload_receipt(
+        accumulator.schema_records(),
+        run_id="cpu-accumulate-receipt",
+        source_digest="c" * 64,
+        resume_digest="d" * 64,
+        initial_global_step=0,
+        configured_accumulation_steps=3,
+        offload_mode="cpu_accumulate",
+    )
+    assert receipt["schema_version"] == 3
+    assert receipt["mode"] == "cpu_accumulate"
+    assert receipt["algorithm"] == "pinned_cpu_staging_cpu_dtype_ordered_add_v1"
 
 
 def gradient_offload_test_schema() -> list[dict[str, object]]:
@@ -792,7 +851,10 @@ def test_gradient_offload_resume_requires_exact_schedule(tmp_path: Path) -> None
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is required")
-def test_cuda_gradient_accumulation_offload_is_bitwise_native() -> None:
+@pytest.mark.parametrize("merge_device", ["cuda", "cpu"])
+def test_cuda_gradient_accumulation_offload_is_bitwise_native(
+    merge_device: str,
+) -> None:
     class Probe(torch.nn.Module):
         def __init__(self, weight: torch.Tensor, bias: torch.Tensor) -> None:
             super().__init__()
@@ -819,6 +881,7 @@ def test_cuda_gradient_accumulation_offload_is_bitwise_native() -> None:
     accumulator = _CPUGradientAccumulator(
         tuple(candidate.named_parameters()),
         require_cuda=True,
+        merge_device=merge_device,
     )
     for inputs in microbatches:
         candidate(inputs).backward()

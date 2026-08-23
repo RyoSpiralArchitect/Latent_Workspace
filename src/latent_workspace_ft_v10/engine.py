@@ -780,7 +780,8 @@ class TrainConfig:
     batch_size: int = 4
     eval_batch_size: int = 4
     gradient_accumulation_steps: int = 4
-    gradient_accumulation_offload: str = "none"  # none | cpu
+    gradient_accumulation_offload: str = "none"  # none | cpu | cpu_accumulate
+    base_activation_offload: str = "legacy_functional"  # disabled | legacy_functional | all_base
 
     learning_rate: float = 2e-5
     workspace_learning_rate: float = 1e-4
@@ -1291,9 +1292,23 @@ class ExperimentConfig:
             raise ValueError("max_grad_norm must be positive.")
         if self.train.gradient_accumulation_steps < 1:
             raise ValueError("gradient_accumulation_steps must be positive.")
-        if self.train.gradient_accumulation_offload not in {"none", "cpu"}:
+        if self.train.gradient_accumulation_offload not in {
+            "none",
+            "cpu",
+            "cpu_accumulate",
+        }:
             raise ValueError(
-                "train.gradient_accumulation_offload must be none or cpu."
+                "train.gradient_accumulation_offload must be none, cpu, "
+                "or cpu_accumulate."
+            )
+        if self.train.base_activation_offload not in {
+            "disabled",
+            "legacy_functional",
+            "all_base",
+        }:
+            raise ValueError(
+                "train.base_activation_offload must be disabled, "
+                "legacy_functional, or all_base."
             )
         if self.train.epochs < 1 and self.train.max_steps < 1:
             raise ValueError("Set epochs >= 1 or max_steps >= 1.")
@@ -4433,10 +4448,20 @@ class LatentWorkspaceCausalLM(nn.Module):
         *,
         functional_config: Optional[FunctionalWorkspaceConfig] = None,
         hidden_capture: str = "hook",
+        base_activation_offload: str = "legacy_functional",
     ) -> None:
         super().__init__()
         if hidden_capture not in {"hook", "hidden_states"}:
             raise ValueError("hidden_capture must be hook or hidden_states.")
+        if base_activation_offload not in {
+            "disabled",
+            "legacy_functional",
+            "all_base",
+        }:
+            raise ValueError(
+                "base_activation_offload must be disabled, legacy_functional, "
+                "or all_base."
+            )
 
         self.base_model = base_model
         self.hidden_dim = hidden_dim
@@ -4444,6 +4469,7 @@ class LatentWorkspaceCausalLM(nn.Module):
         self.workspace_config = config
         self.functional_config = functional_config or FunctionalWorkspaceConfig()
         self.hidden_capture = hidden_capture
+        self.base_activation_offload = base_activation_offload
 
         workspace_cls: type[nn.Module]
         if config.architecture == "causal_broadcast":
@@ -4557,6 +4583,19 @@ class LatentWorkspaceCausalLM(nn.Module):
             raise ValueError("The base model returned no output embedding module.")
         return head
 
+    def _base_activation_offload_context(
+        self,
+        device: torch.device,
+        *,
+        legacy_region: bool = False,
+    ) -> Any:
+        enabled = self.base_activation_offload == "all_base" or (
+            self.base_activation_offload == "legacy_functional" and legacy_region
+        )
+        if not enabled:
+            return contextlib.nullcontext()
+        return _cuda_base_activation_offload(device)
+
     def _base_forward_with_hidden_capture(
         self,
         input_ids: torch.Tensor,
@@ -4570,7 +4609,8 @@ class LatentWorkspaceCausalLM(nn.Module):
         }
 
         if self.hidden_capture == "hidden_states":
-            outputs = self.base_model(output_hidden_states=True, **common_kwargs)
+            with self._base_activation_offload_context(input_ids.device):
+                outputs = self.base_model(output_hidden_states=True, **common_kwargs)
             hidden_states = getattr(outputs, "hidden_states", None)
             if not hidden_states:
                 raise RuntimeError("The base model did not return hidden_states.")
@@ -4589,7 +4629,8 @@ class LatentWorkspaceCausalLM(nn.Module):
         head = self.get_base_output_embeddings()
         handle = head.register_forward_pre_hook(capture_input)
         try:
-            outputs = self.base_model(output_hidden_states=False, **common_kwargs)
+            with self._base_activation_offload_context(input_ids.device):
+                outputs = self.base_model(output_hidden_states=False, **common_kwargs)
         finally:
             handle.remove()
 
@@ -5469,11 +5510,12 @@ class LatentWorkspaceCausalLM(nn.Module):
                     memory,
                     memory_mask,
                 )
-        logits = self.functional_boundary_adapter.decode(
-            injected,
-            query_attention_mask,
-            boundary_layer,
-        )
+        with self._base_activation_offload_context(injected.device):
+            logits = self.functional_boundary_adapter.decode(
+                injected,
+                query_attention_mask,
+                boundary_layer,
+            )
         return logits, gate_mean, read_norm
 
     def _forward_functional_workspace(
@@ -5574,12 +5616,13 @@ class LatentWorkspaceCausalLM(nn.Module):
             flat_choices = functional_inline_choice_ids.reshape(
                 B * 2 * J, -1
             )[flat_positions]
-            outputs = self.base_model(
-                input_ids=flat_ids,
-                attention_mask=flat_mask,
-                use_cache=False,
-                return_dict=True,
-            )
+            with self._base_activation_offload_context(flat_ids.device):
+                outputs = self.base_model(
+                    input_ids=flat_ids,
+                    attention_mask=flat_mask,
+                    use_cache=False,
+                    return_dict=True,
+                )
             logits = getattr(outputs, "logits", None)
             if logits is None:
                 raise RuntimeError("Inline functional base model returned no logits.")
@@ -5612,12 +5655,13 @@ class LatentWorkspaceCausalLM(nn.Module):
                 B * 2 * J, -1
             )[flat_positions]
             if mode == "query_only":
-                outputs = self.base_model(
-                    input_ids=flat_ids,
-                    attention_mask=flat_mask,
-                    use_cache=False,
-                    return_dict=True,
-                )
+                with self._base_activation_offload_context(flat_ids.device):
+                    outputs = self.base_model(
+                        input_ids=flat_ids,
+                        attention_mask=flat_mask,
+                        use_cache=False,
+                        return_dict=True,
+                    )
                 logits = getattr(outputs, "logits", None)
                 if logits is None:
                     raise RuntimeError("Query-only functional model returned no logits.")
@@ -5661,8 +5705,9 @@ class LatentWorkspaceCausalLM(nn.Module):
                 with isolated_torch_rng(
                     isolate, context_seed, context_flat_ids.device
                 ):
-                    with _cuda_base_activation_offload(
-                        context_flat_ids.device
+                    with self._base_activation_offload_context(
+                        context_flat_ids.device,
+                        legacy_region=True,
                     ):
                         context_boundary = self.functional_boundary_adapter.encode(
                             context_flat_ids,
@@ -5695,7 +5740,10 @@ class LatentWorkspaceCausalLM(nn.Module):
                     mode=memory_intervention,
                     seed=memory_intervention_seed,
                 )
-                with _cuda_base_activation_offload(flat_ids.device):
+                with self._base_activation_offload_context(
+                    flat_ids.device,
+                    legacy_region=True,
+                ):
                     query_boundary = self.functional_boundary_adapter.encode(
                         flat_ids,
                         flat_mask,
@@ -5763,9 +5811,13 @@ class LatentWorkspaceCausalLM(nn.Module):
             # Reuse the already-computed lower query representation. No second
             # query/base dropout stream is introduced by the causal objective.
             if 'query_boundary' not in locals():
-                query_boundary = self.functional_boundary_adapter.encode(
-                    flat_ids, flat_mask, boundary
-                )
+                with self._base_activation_offload_context(
+                    flat_ids.device,
+                    legacy_region=True,
+                ):
+                    query_boundary = self.functional_boundary_adapter.encode(
+                        flat_ids, flat_mask, boundary
+                    )
             swapped_logits, _cf_gate, _cf_read = self._functional_decode_with_memory(
                 query_boundary,
                 flat_mask,
@@ -6693,6 +6745,7 @@ def build_workspace_model(config: ExperimentConfig) -> tuple[LatentWorkspaceCaus
         config=config.workspace,
         functional_config=config.functional,
         hidden_capture=config.model.hidden_capture,
+        base_activation_offload=config.train.base_activation_offload,
     )
     configure_trainability(wrapper, config.model.train_mode)
     return wrapper, tokenizer
@@ -6772,7 +6825,7 @@ def _require_gradient_accumulation_offload_context(
     train: TrainConfig,
     context: DistributedContext,
 ) -> None:
-    if train.gradient_accumulation_offload != "cpu":
+    if train.gradient_accumulation_offload not in {"cpu", "cpu_accumulate"}:
         return
     if context.enabled or context.world_size != 1:
         raise RuntimeError(
@@ -7203,14 +7256,13 @@ class _CPUGradientAccumulatorSpec:
 
 
 class _CPUGradientAccumulator:
-    """Store one accumulation window's gradients on pageable host memory.
+    """Store one accumulation window's gradients on host memory.
 
-    The host tensors are storage only: BF16/FP16 accumulation never runs on
-    CPU.  For every microbatch after the first observation of a parameter, the
-    previous host value is copied back to its original device and receives the
-    current gradient with an in-place device ``add_``.  This preserves native
-    ``AccumulateGrad`` order while permitting ``parameter.grad`` to be cleared
-    before the next forward.
+    ``merge_device='cuda'`` is the original exact-spill path: prior host state
+    returns to CUDA for every merge. ``merge_device='cpu'`` keeps the same
+    microbatch order and dtype but performs only the cross-microbatch ``add_``
+    on pinned host tensors. The latter needs one D2H gradient volume per
+    microbatch and one final H2D restore instead of a round trip per merge.
     """
 
     def __init__(
@@ -7218,7 +7270,12 @@ class _CPUGradientAccumulator:
         parameters: Iterable[tuple[str, nn.Parameter]],
         *,
         require_cuda: bool = False,
+        merge_device: str = "cuda",
     ) -> None:
+        if merge_device not in {"cuda", "cpu"}:
+            raise RuntimeError(
+                "CPU gradient accumulation merge_device must be cuda or cpu."
+            )
         specs: list[_CPUGradientAccumulatorSpec] = []
         names: set[str] = set()
         physical_ids: set[int] = set()
@@ -7281,7 +7338,14 @@ class _CPUGradientAccumulator:
             sorted(specs, key=lambda spec: (spec.parameter.numel(), spec.name))
         )
         self._specs_by_id = {id(spec.parameter): spec for spec in self._specs}
+        self._merge_device = merge_device
+        self._pin_memory = bool(
+            merge_device == "cpu"
+            and self._specs
+            and all(spec.device.type == "cuda" for spec in self._specs)
+        )
         self._buffers: dict[int, torch.Tensor] = {}
+        self._staging_buffers: dict[int, torch.Tensor] = {}
         self._seen_parameter_ids: set[int] = set()
         self._buffer_strides: dict[int, tuple[int, ...]] = {}
         self._spill_count = 0
@@ -7289,6 +7353,8 @@ class _CPUGradientAccumulator:
         self._first_spill_count = 0
         self._cumulative_current_gradient_bytes = 0
         self._peak_cpu_accumulator_bytes = 0
+        self._peak_cpu_staging_bytes = 0
+        self._peak_cpu_total_bytes = 0
         self._active = True
 
     def schema_records(self) -> list[dict[str, Any]]:
@@ -7316,6 +7382,26 @@ class _CPUGradientAccumulator:
 
     def _buffer_bytes(self) -> int:
         return sum(self._storage_bytes(buffer) for buffer in self._buffers.values())
+
+    def _staging_bytes(self) -> int:
+        return sum(
+            self._storage_bytes(buffer) for buffer in self._staging_buffers.values()
+        )
+
+    def _live_cpu_buffer_count(self) -> int:
+        return len(self._buffers) + len(self._staging_buffers)
+
+    def _live_cpu_buffer_bytes(self) -> int:
+        return self._buffer_bytes() + self._staging_bytes()
+
+    def _empty_cpu_like(self, tensor: torch.Tensor) -> torch.Tensor:
+        return torch.empty_strided(
+            tuple(tensor.shape),
+            tuple(tensor.stride()),
+            dtype=tensor.dtype,
+            device="cpu",
+            pin_memory=self._pin_memory,
+        )
 
     def _require_active(self) -> None:
         if not self._active:
@@ -7389,6 +7475,8 @@ class _CPUGradientAccumulator:
             failures.append("dtype")
         if buffer.device.type != "cpu":
             failures.append("device")
+        if bool(buffer.is_pinned()) != self._pin_memory:
+            failures.append("pin_memory")
         expected_stride = self._buffer_strides.get(id(spec.parameter))
         if expected_stride is None:
             failures.append("missing_stride_schema")
@@ -7400,9 +7488,19 @@ class _CPUGradientAccumulator:
                 f"{spec.name!r}: {sorted(failures)}."
             )
 
+    def _synchronize_host_copies(
+        self,
+        specs: Iterable[_CPUGradientAccumulatorSpec],
+    ) -> None:
+        if not self._pin_memory:
+            return
+        devices = {spec.device for spec in specs}
+        for device in sorted(devices, key=str):
+            torch.cuda.current_stream(device).synchronize()
+
     @torch.no_grad()
     def spill(self) -> dict[str, int]:
-        """Merge current grads in native device order, then clear them."""
+        """Merge current grads in microbatch order, then clear them."""
 
         self._require_active()
         current_gradient_count = 0
@@ -7410,6 +7508,14 @@ class _CPUGradientAccumulator:
         new_parameter_count = 0
         merged_parameter_count = 0
         try:
+            cpu_merge_copies: list[
+                tuple[
+                    _CPUGradientAccumulatorSpec,
+                    torch.Tensor,
+                    torch.Tensor,
+                    bool,
+                ]
+            ] = []
             for spec in self._specs:
                 self._validate_parameter(spec)
                 physical_id = id(spec.parameter)
@@ -7425,18 +7531,20 @@ class _CPUGradientAccumulator:
                 current_gradient_bytes += gradient_bytes
 
                 if buffer is None:
-                    buffer = torch.empty_strided(
-                        tuple(gradient.shape),
-                        tuple(gradient.stride()),
-                        dtype=gradient.dtype,
-                        device="cpu",
-                    )
-                    buffer.copy_(gradient.detach(), non_blocking=False)
+                    buffer = self._empty_cpu_like(gradient)
                     self._buffers[physical_id] = buffer
                     self._seen_parameter_ids.add(physical_id)
                     self._buffer_strides[physical_id] = tuple(buffer.stride())
                     new_parameter_count += 1
-                else:
+                    if self._merge_device == "cuda":
+                        buffer.copy_(gradient.detach(), non_blocking=False)
+                    else:
+                        buffer.copy_(
+                            gradient.detach(),
+                            non_blocking=self._pin_memory,
+                        )
+                        cpu_merge_copies.append((spec, buffer, buffer, True))
+                elif self._merge_device == "cuda":
                     previous_device = torch.empty_strided(
                         tuple(buffer.shape),
                         tuple(buffer.stride()),
@@ -7448,9 +7556,35 @@ class _CPUGradientAccumulator:
                     buffer.copy_(previous_device, non_blocking=False)
                     del previous_device
                     merged_parameter_count += 1
+                else:
+                    staging = self._staging_buffers.get(physical_id)
+                    if staging is None:
+                        staging = self._empty_cpu_like(gradient)
+                        self._staging_buffers[physical_id] = staging
+                    else:
+                        self._validate_buffer(spec, staging)
+                    staging.copy_(
+                        gradient.detach(),
+                        non_blocking=self._pin_memory,
+                    )
+                    cpu_merge_copies.append((spec, buffer, staging, False))
+                    merged_parameter_count += 1
 
-                # Clear only after the synchronous host copy has succeeded.
-                spec.parameter.grad = None
+                if self._merge_device == "cuda":
+                    # Clear only after the synchronous host copy has succeeded.
+                    spec.parameter.grad = None
+
+            if self._merge_device == "cpu":
+                self._synchronize_host_copies(
+                    spec for spec, _buffer, _staging, _is_new in cpu_merge_copies
+                )
+                # Host copies are now complete, so device gradients can be
+                # released before CPU accumulation begins.
+                for spec, _buffer, _staging, _is_new in cpu_merge_copies:
+                    spec.parameter.grad = None
+                for _spec, buffer, staging, is_new in cpu_merge_copies:
+                    if not is_new:
+                        buffer.add_(staging)
 
             if not self._buffers:
                 raise RuntimeError(
@@ -7472,6 +7606,14 @@ class _CPUGradientAccumulator:
                 self._peak_cpu_accumulator_bytes,
                 self._buffer_bytes(),
             )
+            self._peak_cpu_staging_bytes = max(
+                self._peak_cpu_staging_bytes,
+                self._staging_bytes(),
+            )
+            self._peak_cpu_total_bytes = max(
+                self._peak_cpu_total_bytes,
+                self._live_cpu_buffer_bytes(),
+            )
             return {
                 "spill_count": self._spill_count,
                 "current_gradient_count": current_gradient_count,
@@ -7481,6 +7623,12 @@ class _CPUGradientAccumulator:
                 "accumulated_parameter_count": len(self._buffers),
                 "cpu_accumulator_bytes": self._buffer_bytes(),
                 "peak_cpu_accumulator_bytes": self._peak_cpu_accumulator_bytes,
+                "cpu_staging_buffer_count": len(self._staging_buffers),
+                "cpu_staging_bytes": self._staging_bytes(),
+                "peak_cpu_staging_bytes": self._peak_cpu_staging_bytes,
+                "live_cpu_buffer_count": self._live_cpu_buffer_count(),
+                "live_cpu_buffer_bytes": self._live_cpu_buffer_bytes(),
+                "peak_cpu_total_bytes": self._peak_cpu_total_bytes,
                 "cumulative_merge_count": self._merge_count,
                 "cumulative_first_spill_count": self._first_spill_count,
                 "cumulative_current_gradient_bytes": (
@@ -7517,6 +7665,11 @@ class _CPUGradientAccumulator:
                 raise RuntimeError(
                     "CPU gradient accumulation restore found an unknown parameter buffer."
                 )
+            staging_ids = set(self._staging_buffers)
+            if not staging_ids <= buffer_ids:
+                raise RuntimeError(
+                    "CPU gradient accumulation restore found an unknown staging buffer."
+                )
 
             for spec in self._specs:
                 self._validate_parameter(spec)
@@ -7528,9 +7681,16 @@ class _CPUGradientAccumulator:
                 buffer = self._buffers.get(id(spec.parameter))
                 if buffer is not None:
                     self._validate_buffer(spec, buffer)
+                staging = self._staging_buffers.get(id(spec.parameter))
+                if staging is not None:
+                    self._validate_buffer(spec, staging)
 
             cpu_accumulator_bytes = self._buffer_bytes()
+            cpu_staging_bytes = self._staging_bytes()
             restored_parameter_count = 0
+            pending_restores: list[
+                tuple[_CPUGradientAccumulatorSpec, torch.Tensor]
+            ] = []
             for spec in self._specs:
                 buffer = self._buffers.get(id(spec.parameter))
                 if buffer is None:
@@ -7541,11 +7701,16 @@ class _CPUGradientAccumulator:
                     dtype=buffer.dtype,
                     device=spec.device,
                 )
-                restored.copy_(buffer, non_blocking=False)
-                spec.parameter.grad = restored
+                restored.copy_(buffer, non_blocking=self._pin_memory)
+                pending_restores.append((spec, restored))
                 restored_parameter_count += 1
 
+            self._synchronize_host_copies(spec for spec, _restored in pending_restores)
+            for spec, restored in pending_restores:
+                spec.parameter.grad = restored
+
             self._buffers.clear()
+            self._staging_buffers.clear()
             self._seen_parameter_ids.clear()
             self._buffer_strides.clear()
             self._active = False
@@ -7558,7 +7723,10 @@ class _CPUGradientAccumulator:
                 ),
                 "restored_parameter_count": restored_parameter_count,
                 "cpu_accumulator_bytes_before_restore": cpu_accumulator_bytes,
+                "cpu_staging_bytes_before_restore": cpu_staging_bytes,
                 "peak_cpu_accumulator_bytes": self._peak_cpu_accumulator_bytes,
+                "peak_cpu_staging_bytes": self._peak_cpu_staging_bytes,
+                "peak_cpu_total_bytes": self._peak_cpu_total_bytes,
                 "live_cpu_buffer_count": 0,
                 "live_cpu_buffer_bytes": 0,
             }
@@ -7573,6 +7741,7 @@ class _CPUGradientAccumulator:
         for spec in self._specs:
             spec.parameter.grad = None
         self._buffers.clear()
+        self._staging_buffers.clear()
         self._seen_parameter_ids.clear()
         self._buffer_strides.clear()
         self._active = False
@@ -7586,8 +7755,10 @@ class _CPUGradientAccumulator:
                 self._cumulative_current_gradient_bytes
             ),
             "peak_cpu_accumulator_bytes": self._peak_cpu_accumulator_bytes,
-            "live_cpu_buffer_count": len(self._buffers),
-            "live_cpu_buffer_bytes": self._buffer_bytes(),
+            "peak_cpu_staging_bytes": self._peak_cpu_staging_bytes,
+            "peak_cpu_total_bytes": self._peak_cpu_total_bytes,
+            "live_cpu_buffer_count": self._live_cpu_buffer_count(),
+            "live_cpu_buffer_bytes": self._live_cpu_buffer_bytes(),
         }
 
 
@@ -7890,6 +8061,44 @@ def _gradient_offload_checkpoint_descriptor(
     }
 
 
+def _gradient_accumulation_offload_profile(mode: str) -> dict[str, Any]:
+    if mode == "cpu":
+        return {
+            "schema_version": 2,
+            "mode": "cpu",
+            "algorithm": "pageable_cpu_storage_cuda_native_order_add_v1",
+            "execution_proof": (
+                "This receipt proves that the single-process CUDA spill/merge/restore "
+                "path executed with exact schema accounting and no live host buffers "
+                "after each recorded restore."
+            ),
+            "numerical_proof": (
+                "Additions run on each parameter's original CUDA device and dtype in "
+                "microbatch order; model-level bitwise parity remains an external "
+                "oracle comparison."
+            ),
+        }
+    if mode == "cpu_accumulate":
+        return {
+            "schema_version": 3,
+            "mode": "cpu_accumulate",
+            "algorithm": "pinned_cpu_staging_cpu_dtype_ordered_add_v1",
+            "execution_proof": (
+                "This receipt proves that the single-process CUDA D2H/CPU-add/H2D "
+                "path executed in microbatch order with exact schema accounting and "
+                "no live host buffers after each recorded restore."
+            ),
+            "numerical_proof": (
+                "Cross-microbatch additions run on CPU in each parameter's original "
+                "dtype and order. Model-level bitwise parity with the CUDA-add spill "
+                "reference remains an external oracle comparison."
+            ),
+        }
+    raise RuntimeError(
+        "Gradient accumulation offload receipt mode must be cpu or cpu_accumulate."
+    )
+
+
 def _new_gradient_accumulation_offload_receipt(
     schema_records: Sequence[Mapping[str, Any]],
     *,
@@ -7898,9 +8107,11 @@ def _new_gradient_accumulation_offload_receipt(
     resume_digest: str,
     initial_global_step: int,
     configured_accumulation_steps: int,
+    offload_mode: str = "cpu",
     resume_checkpoint: Optional[Path] = None,
     output_dir: Optional[Path] = None,
 ) -> dict[str, Any]:
+    profile = _gradient_accumulation_offload_profile(offload_mode)
     schema_identity = _gradient_offload_schema_identity(schema_records)
     counters = {field_name: 0 for field_name in _GRADIENT_OFFLOAD_COUNTER_FIELDS}
     if resume_checkpoint is not None and output_dir is None:
@@ -7916,20 +8127,12 @@ def _new_gradient_accumulation_offload_receipt(
         else None
     )
     receipt: dict[str, Any] = {
-        "schema_version": 2,
-        "mode": "cpu",
-        "algorithm": "pageable_cpu_storage_cuda_native_order_add_v1",
+        "schema_version": profile["schema_version"],
+        "mode": profile["mode"],
+        "algorithm": profile["algorithm"],
         "claim_boundary": {
-            "execution_proof": (
-                "This receipt proves that the single-process CUDA spill/merge/restore "
-                "path executed with exact schema accounting and no live host buffers "
-                "after each recorded restore."
-            ),
-            "numerical_proof": (
-                "Additions run on each parameter's original CUDA device and dtype in "
-                "microbatch order; model-level bitwise parity remains an external "
-                "oracle comparison."
-            ),
+            "execution_proof": profile["execution_proof"],
+            "numerical_proof": profile["numerical_proof"],
             "unsupported": (
                 "DDP, non-CUDA execution, and schedule-extension resumes are rejected."
             ),
@@ -8009,7 +8212,9 @@ def _continue_gradient_accumulation_offload_receipt(
     resume_checkpoint: Path,
     resume_step: int,
     configured_accumulation_steps: int,
+    offload_mode: str = "cpu",
 ) -> dict[str, Any]:
+    profile = _gradient_accumulation_offload_profile(offload_mode)
     try:
         loaded = json.loads(receipt_path.read_text(encoding="utf-8"))
     except Exception as exc:
@@ -8033,9 +8238,9 @@ def _continue_gradient_accumulation_offload_receipt(
     failures: list[str] = []
 
     expected_scalars: dict[str, Any] = {
-        "schema_version": 2,
-        "mode": "cpu",
-        "algorithm": "pageable_cpu_storage_cuda_native_order_add_v1",
+        "schema_version": profile["schema_version"],
+        "mode": profile["mode"],
+        "algorithm": profile["algorithm"],
         "run_id": str(run_id),
         "source_sha256": str(source_digest),
         "resume_signature": str(resume_digest),
@@ -8286,15 +8491,25 @@ def _record_gradient_accumulation_offload_spill(
         raise RuntimeError(
             "CPU gradient accumulation recorded more spills than microbatches."
         )
-    live_count = int(statistics["accumulated_parameter_count"])
-    live_bytes = int(statistics["cpu_accumulator_bytes"])
-    if live_count < 1 or live_bytes < 1:
+    accumulator_count = int(statistics["accumulated_parameter_count"])
+    accumulator_bytes = int(statistics["cpu_accumulator_bytes"])
+    live_count = int(statistics.get("live_cpu_buffer_count", accumulator_count))
+    live_bytes = int(statistics.get("live_cpu_buffer_bytes", accumulator_bytes))
+    if accumulator_count < 1 or accumulator_bytes < 1:
         raise RuntimeError(
             "CPU gradient accumulation spill did not retain a host accumulator."
         )
+    if live_count < accumulator_count or live_bytes < accumulator_bytes:
+        raise RuntimeError(
+            "CPU gradient accumulation live host accounting is incomplete."
+        )
     active_window["spills_completed"] = expected_spill_count
     active_window["last_microbatch_index"] = int(microbatch_index)
-    active_window["latest_cpu_accumulator_bytes"] = live_bytes
+    active_window["latest_cpu_accumulator_bytes"] = accumulator_bytes
+    active_window["latest_cpu_staging_bytes"] = int(
+        statistics.get("cpu_staging_bytes", 0)
+    )
+    active_window["latest_live_cpu_buffer_bytes"] = live_bytes
     active_window["cumulative_parameter_merges"] = int(
         statistics["cumulative_merge_count"]
     )
@@ -10658,6 +10873,7 @@ def _load_training_model(
         config=current_config.workspace,
         functional_config=current_config.functional,
         hidden_capture=current_config.model.hidden_capture,
+        base_activation_offload=current_config.train.base_activation_offload,
     )
     custom_state = _torch_load(checkpoint / "workspace_state.pt", weights_only=True)
     wrapper.load_custom_state_dict(custom_state)
@@ -10750,7 +10966,7 @@ def train_experiment(config: ExperimentConfig) -> Path:
     configure_runtime_math(config.train)
     context = initialize_distributed(config.train)
     gradient_accumulation_offload_enabled = (
-        config.train.gradient_accumulation_offload == "cpu"
+        config.train.gradient_accumulation_offload in {"cpu", "cpu_accumulate"}
     )
     try:
         _require_gradient_accumulation_offload_context(config.train, context)
@@ -10943,6 +11159,7 @@ def train_experiment(config: ExperimentConfig) -> Path:
                         configured_accumulation_steps=(
                             config.train.gradient_accumulation_steps
                         ),
+                        offload_mode=config.train.gradient_accumulation_offload,
                     )
                 )
             else:
@@ -10965,6 +11182,7 @@ def train_experiment(config: ExperimentConfig) -> Path:
                     configured_accumulation_steps=(
                         config.train.gradient_accumulation_steps
                     ),
+                    offload_mode=config.train.gradient_accumulation_offload,
                     resume_checkpoint=resume_checkpoint,
                     output_dir=output_dir,
                 )
@@ -11076,6 +11294,12 @@ def train_experiment(config: ExperimentConfig) -> Path:
                     active_gradient_accumulator = _CPUGradientAccumulator(
                         gradient_offload_parameters,
                         require_cuda=True,
+                        merge_device=(
+                            "cpu"
+                            if config.train.gradient_accumulation_offload
+                            == "cpu_accumulate"
+                            else "cuda"
+                        ),
                     )
                 current_induction = induction_status(
                     config.workspace,
@@ -11340,7 +11564,9 @@ def train_experiment(config: ExperimentConfig) -> Path:
                                         "step": state.global_step,
                                         "microbatch_index": micro_index,
                                         "accumulation_window_size": len(window),
-                                        "gradient_accumulation_offload": "cpu",
+                                        "gradient_accumulation_offload": (
+                                            config.train.gradient_accumulation_offload
+                                        ),
                                         **spill_statistics,
                                         **_memory_metrics(context.device),
                                     },
@@ -12220,6 +12446,7 @@ def load_bundle(
         config=config.workspace,
         functional_config=config.functional,
         hidden_capture=config.model.hidden_capture,
+        base_activation_offload=config.train.base_activation_offload,
     )
     custom_state = _torch_load(
         checkpoint_path / "workspace_state.pt",

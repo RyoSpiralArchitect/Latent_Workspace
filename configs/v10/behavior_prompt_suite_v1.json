@@ -1,0 +1,57 @@
+{
+  "format": "latent-workspace-v10-behavior-prompt-suite-v1",
+  "prompts": [
+    {
+      "id": "ranked_world_explanation",
+      "category": "task_adjacent_reasoning",
+      "prompt": "World facts. The ranking is transitive.\n- Aster is above Luma.\n- Luma is above Ione.\n- Ione is above Eris.\n- Eris is above Beryl.\n\nIs Aster above Beryl? Begin with yes or no, then explain in one short sentence."
+    },
+    {
+      "id": "counterfactual_update",
+      "category": "counterfactual_reasoning",
+      "prompt": "In world A, Mira is older than Niko and Niko is older than Oren. In world B, only Mira and Niko swap positions. Which pairwise age statements change between the worlds? Answer compactly and distinguish direct changes from consequences."
+    },
+    {
+      "id": "instruction_precision",
+      "category": "instruction_following",
+      "prompt": "Give exactly three bullet points explaining why a deterministic experiment receipt is useful. Each bullet must contain six words or fewer."
+    },
+    {
+      "id": "mechanism_boundary",
+      "category": "scientific_explanation",
+      "prompt": "A model carries a non-zero hidden-state signal, but an intervention does not change its answer. What may we conclude, and what must remain unclaimed? Use two concise paragraphs."
+    },
+    {
+      "id": "japanese_synthesis",
+      "category": "japanese",
+      "prompt": "実験で『実装が正しい』ことと『仮説が支持された』ことを混同しないために、研究ノートへ何を残すべきか。簡潔な日本語で答えてください。"
+    },
+    {
+      "id": "creative_memory",
+      "category": "creative",
+      "prompt": "Write a four-line miniature scene in which a machine remembers a path without remembering the traveler. Avoid the words memory, data, and ghost."
+    }
+  ],
+  "task_native": {
+    "dataset": "data/v10/functional_eval.jsonl",
+    "world_indices": [
+      0,
+      1
+    ],
+    "query_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "selection_contract": {
+      "require_balanced_expected_choices": true,
+      "require_affected_and_unaffected": true,
+      "require_heldout_and_non_heldout": true
+    }
+  }
+}

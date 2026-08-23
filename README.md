@@ -6,9 +6,10 @@ data, and explicit decision boundaries.
 
 ## Status
 
-- Canonical source is staged locally on branch
-  `SpiralReality/cuda-full-update`. The implementation is committed at
-  `b6f8e85`; the GitHub remote and push are pending the repository URL.
+- Canonical source is the
+  [`RyoSpiralArchitect/Latent_Workspace`](https://github.com/RyoSpiralArchitect/Latent_Workspace)
+  repository. The current transport work is isolated on branch
+  `SpiralReality/transport-v2`.
 - The runtime contract is PyTorch CUDA, BF16, SDPA, gradient checkpointing,
   and full-parameter Adafactor. Custom Triton kernels remain deferred until a
   measured bottleneck and forward/backward parity test justify them.
@@ -16,7 +17,7 @@ data, and explicit decision boundaries.
   revision `c170c708c41dac9275d15a8fff4eca08d52bab71`.
 - Furnace dependency, tokenizer, full-data, immutable model-cache, and source
   gates pass for the pinned receipts. The active engine SHA-256 is
-  `755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c`.
+  `967f49b9d54b23a4c2382608e318b1e63974aef3ea1bf9c4c4f20c22ef4df494`.
 - The four-condition seed-42 smoke cut is complete. `F0_query_only`,
   `B_local_invariance`, `F1_inline_upper`, and `O3_slots4_k1_lw_cf` each ran
   eight optimizer steps, passed run and assay integrity verification, passed an
@@ -29,6 +30,19 @@ data, and explicit decision boundaries.
   model, workspace, trainer state, and stable metrics under the receipt's
   explicit exclusions. The matched last-step throughput was 5.902 versus
   88.003 supervised tokens/s, an observed 14.9x spill slowdown for this pilot.
+- The transport-v2 `cpu_accumulate` path keeps cross-microbatch BF16 additions
+  on pinned CPU storage and reduces logical gradient-volume movement from 16 to
+  9 per eight-microbatch window. Current-source one-step full-state oracles pass
+  for F0/B/F1/O3, with observed old-spill speedups from 1.372x to 1.420x.
+- A pre-prune behavior workflow now captures the pinned original model, every
+  trained base trunk, complete functional-workspace task traces, exact transport
+  sentinels, and a human observation note. Its first run passed integrity but
+  found constant-`no` task behavior in all four one-step trained conditions.
+- After that observation was durably recorded, a GitHub-published exact intent gated the
+  first transport-pilot cleanup. It removed 80 checkpoint/final shards totaling
+  289,921,618,400 logical bytes and retained the distinct
+  `transport_pilot_weights_pruned` state; the weights are not recoverable from
+  hashes or decoded generations.
 - Native B multi-microbatch equivalence is not verified. The matched native
   gradient-accumulation-two route OOMed on its first backward pass; the reduced
   one-microbatch pair was correctly rejected because it never exercised a spill
@@ -67,6 +81,12 @@ Verified engineering evidence:
   run;
 - current-source F0 spill-versus-native byte equivalence for base, workspace,
   trainer, and stable metrics under explicit exclusions;
+- current-source F0/B/F1/O3 `cpu_accumulate` versus old-spill full-state
+  equivalence at gradient accumulation 8;
+- deterministic pre-prune free-form and task-native behavior capture, including
+  exact B/B-reference completion tokens and task choice logits;
+- behavior-gated, intent-published removal of the exact 80 transport-v2 shard
+  bodies while preserving the pinned model cache and non-weight evidence;
 - bitwise-exact fixed-schedule resume for all four conditions, including active
   workspace routes; and
 - assay-complete, compact-exported, explicitly pruned formal runs that remain
@@ -75,16 +95,20 @@ Verified engineering evidence:
 Not yet verified:
 
 - native multi-microbatch equivalence for B, F1, or O3;
+- long-run `cpu_accumulate` throughput, stability, or behavioral outcome;
 - n=3, n=10, a 14B full update, signal preemption, schedule extension,
   multi-GPU execution, or cross-runtime reproduction;
 - training quality, causal memory, content-specific memory, generalization,
   model superiority, or comparability with GPT-2 v9.
 
-The exact current result, failed hypotheses, negative B parity attempt, evidence
-paths, and handoff are recorded in
-[`docs/CUDA_SMOKE_STATUS.md`](docs/CUDA_SMOKE_STATUS.md). Historical F0 pilots
-remain preserved separately and must not be substituted for the current engine
-or current-source oracle.
+The original CUDA smoke result remains in
+[`docs/CUDA_SMOKE_STATUS.md`](docs/CUDA_SMOKE_STATUS.md). The current transport
+result and failed activation-offload hypothesis are in
+[`docs/TRANSPORT_V2_STATUS.md`](docs/TRANSPORT_V2_STATUS.md), and the mandatory
+pre-prune behavior procedure is in
+[`docs/GENERATION_BEHAVIOR_WORKFLOW.md`](docs/GENERATION_BEHAVIOR_WORKFLOW.md).
+Historical F0 pilots remain preserved separately and must not be substituted
+for the current engine or current-source oracle.
 
 ## Staged comparison plan
 

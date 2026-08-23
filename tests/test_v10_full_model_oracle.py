@@ -166,6 +166,7 @@ def write_bundle(
     stable_loss: float = 8.5,
     gradient_accumulation_offload: str = "none",
     include_gradient_accumulation_offload: bool = True,
+    base_activation_offload: str | None = None,
     output_dir: str = "runs/shared",
     resume_from: str | None = None,
     config_extra: dict[str, object] | None = None,
@@ -184,6 +185,8 @@ def write_bundle(
     }
     if include_gradient_accumulation_offload:
         train_config["gradient_accumulation_offload"] = gradient_accumulation_offload
+    if base_activation_offload is not None:
+        train_config["base_activation_offload"] = base_activation_offload
     train_config.update({"max_steps": 8, "epochs": 1})
     experiment_config: dict[str, object] = {
         "model": {},
@@ -342,6 +345,49 @@ def make_cross_offload_bundle_fixture(tmp_path: Path) -> tuple[Path, list[str]]:
             "--oracle-run",
             "runs/oracle",
             "--cross-offload-parity",
+        ]
+    )
+    return repo, arguments
+
+
+def make_cross_transport_bundle_fixture(
+    tmp_path: Path,
+    *,
+    oracle_gradient_accumulation_offload: str = "none",
+) -> tuple[Path, list[str]]:
+    repo, arguments = make_fixture(tmp_path)
+    candidate_run = repo / "runs/candidate"
+    oracle_run = repo / "runs/oracle"
+    write_bundle(
+        candidate_run,
+        run_id="activation-offload-run",
+        reverse_assignment=False,
+        dynamic_offset=1.0,
+        gradient_accumulation_offload="none",
+        base_activation_offload="all_base",
+        output_dir="/remote/private/candidate-output",
+    )
+    write_bundle(
+        oracle_run,
+        run_id="reference-run",
+        reverse_assignment=True,
+        dynamic_offset=99.0,
+        gradient_accumulation_offload=oracle_gradient_accumulation_offload,
+        base_activation_offload="legacy_functional",
+        output_dir="/remote/private/oracle-output",
+        source_sha256="b" * 64,
+    )
+    arguments[arguments.index("--candidate-model") + 1] = (
+        "runs/candidate/final/base_model"
+    )
+    arguments[arguments.index("--oracle-model") + 1] = "runs/oracle/final/base_model"
+    arguments.extend(
+        [
+            "--candidate-run",
+            "runs/candidate",
+            "--oracle-run",
+            "runs/oracle",
+            "--cross-transport-parity",
         ]
     )
     return repo, arguments
@@ -690,6 +736,114 @@ def test_cross_offload_parity_binds_allowed_config_and_signature_differences(
     assert "/remote/private/candidate-output" not in encoded
     assert "/remote/private/oracle-output" not in encoded
     assert "/remote/private/candidate-checkpoint" not in encoded
+
+
+@pytest.mark.parametrize("oracle_gradient_offload", ["none", "cpu"])
+def test_cross_transport_parity_binds_activation_and_gradient_modes(
+    tmp_path: Path,
+    oracle_gradient_offload: str,
+) -> None:
+    repo, arguments = make_cross_transport_bundle_fixture(
+        tmp_path,
+        oracle_gradient_accumulation_offload=oracle_gradient_offload,
+    )
+
+    assert oracle.main(arguments) == 0
+    receipt = read_receipt(repo)
+    assert receipt["status"] == "PASS"
+    assert receipt["claims"]["comparison_mode"] == "cross_transport_parity"
+
+    bundle = receipt["result"]["run_bundle"]
+    assert bundle["mode"] == "cross_transport_parity"
+    assert bundle["cross_offload_config_comparison"] is None
+    assert bundle["cross_offload_trainer_signature_bindings"] is None
+    config = bundle["transport_config_comparison"]
+    assert config["passed"] is True
+    assert config["candidate_base_activation_offload"] == "all_base"
+    assert config["oracle_base_activation_offload"] == "legacy_functional"
+    assert config["candidate_gradient_accumulation_offload"] == "none"
+    assert config["oracle_gradient_accumulation_offload"] == oracle_gradient_offload
+    observed = {
+        item["path"]: item for item in config["observed_differences"]
+    }
+    assert observed["train.base_activation_offload"]["candidate"]["value"] == "all_base"
+    assert observed["train.base_activation_offload"]["oracle"]["value"] == (
+        "legacy_functional"
+    )
+    if oracle_gradient_offload == "cpu":
+        assert observed["train.gradient_accumulation_offload"]["candidate"]["value"] == (
+            "none"
+        )
+        assert observed["train.gradient_accumulation_offload"]["oracle"]["value"] == "cpu"
+    else:
+        assert "train.gradient_accumulation_offload" not in observed
+
+    trainer = bundle["comparisons"]["trainer_state"]
+    assert trainer["passed"] is True
+    assert trainer["excluded_paths"] == [
+        "$.resume_signature",
+        "$.run_state.run_id",
+        "$.structural_resume_signature",
+    ]
+    signatures = bundle["transport_trainer_signature_bindings"]
+    assert signatures["resume_signature"]["values_equal"] is False
+    encoded = json.dumps(receipt, sort_keys=True)
+    assert "/remote/private/candidate-output" not in encoded
+    assert "/remote/private/oracle-output" not in encoded
+
+
+def test_cross_transport_parity_accepts_cpu_accumulate_against_cuda_merge(
+    tmp_path: Path,
+) -> None:
+    repo, arguments = make_cross_transport_bundle_fixture(
+        tmp_path,
+        oracle_gradient_accumulation_offload="cpu",
+    )
+    candidate_config_path = repo / "runs/candidate/final/experiment_config.json"
+    candidate_config = json.loads(candidate_config_path.read_text(encoding="utf-8"))
+    candidate_config["train"]["base_activation_offload"] = "legacy_functional"
+    candidate_config["train"]["gradient_accumulation_offload"] = "cpu_accumulate"
+    write_json(candidate_config_path, candidate_config)
+    rebind_bundle_provenance(repo / "runs/candidate")
+
+    assert oracle.main(arguments) == 0
+    receipt = read_receipt(repo)
+    config = receipt["result"]["run_bundle"]["transport_config_comparison"]
+    assert config["candidate_base_activation_offload"] == "legacy_functional"
+    assert config["oracle_base_activation_offload"] == "legacy_functional"
+    assert config["candidate_gradient_accumulation_offload"] == "cpu_accumulate"
+    assert config["oracle_gradient_accumulation_offload"] == "cpu"
+    paths = [item["path"] for item in config["observed_differences"]]
+    assert "train.base_activation_offload" not in paths
+    assert "train.gradient_accumulation_offload" in paths
+
+
+def test_cross_transport_parity_rejects_non_allowlisted_config_difference(
+    tmp_path: Path,
+) -> None:
+    repo, arguments = make_cross_transport_bundle_fixture(tmp_path)
+    candidate_config_path = repo / "runs/candidate/final/experiment_config.json"
+    candidate_config = json.loads(candidate_config_path.read_text(encoding="utf-8"))
+    candidate_config["train"]["micro_batch_size"] = 2
+    write_json(candidate_config_path, candidate_config)
+    rebind_bundle_provenance(repo / "runs/candidate")
+
+    assert oracle.main(arguments) == 2
+    receipt = read_receipt(repo)
+    assert receipt["status"] == "ERROR"
+    message = receipt["result"]["error"]["message"]
+    assert "non-allowlisted semantic difference" in message
+    assert "train.micro_batch_size" in message
+
+
+def test_transport_parity_flags_are_mutually_exclusive(tmp_path: Path) -> None:
+    _repo, arguments = make_cross_transport_bundle_fixture(tmp_path)
+    arguments.append("--cross-offload-parity")
+
+    with pytest.raises(SystemExit) as exc_info:
+        oracle.build_parser().parse_args(arguments)
+
+    assert exc_info.value.code == 2
 
 
 def test_default_bundle_does_not_exclude_cross_offload_signatures(tmp_path: Path) -> None:

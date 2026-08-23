@@ -4,13 +4,17 @@ Pruning is never automatic. It requires an explicit operator flag and a
 `PRUNE_RECEIPT.json`.
 
 Verified-run weights may be pruned only after all contracted post-training
-assays have completed and compact receipts have been exported and rehashed.
+assays have completed, the pre-prune generation behavior workflow has passed,
+its human observation note preserves negative results, and compact receipts
+have been exported and rehashed. See
+[`GENERATION_BEHAVIOR_WORKFLOW.md`](GENERATION_BEHAVIOR_WORKFLOW.md).
 The prune receipt must bind:
 
 - run ID, model revision, contract/source/data hashes;
 - explicit opt-in and pruning reason;
 - pre-prune file inventory, hashes, and byte counts;
 - required verification and assay receipts with their hashes;
+- the generation behavior receipt and human observation note hashes;
 - every deleted or migrated path and bytes reclaimed;
 - durable destination, if migrated;
 - recoverability classification;
@@ -19,11 +23,17 @@ The prune receipt must bind:
 Invalid or interrupted runs require a separate failed-run prune receipt and
 must retain enough compact evidence to explain the failure.
 
+One-step transport engineering pilots are not formal verified runs. Their
+target-bounded cleanup uses the separate `transport_pilot_weights_pruned` state,
+and only after its generation receipt, human observation note, tensor/state
+oracles, exact shard inventory, and GitHub-published prune intent are all bound.
+
 ## Verified smoke transitions
 
-The current-engine seed-42 smoke runs for F0, B, F1, and O3 each satisfied
+The seed-42 smoke runs for F0, B, F1, and O3 each satisfied
 their run, configured assay, and exact-resume preconditions before moving from
-`verified_completed` to `verified_pruned`. The active engine SHA-256 is
+`verified_completed` to `verified_pruned`. The engine SHA-256 used by those
+historical transitions is
 `755ddaee835cd6cf0d30269212226250a5aeed14e5457385ceca60db0f39aa3c`.
 
 For each run, the exact derived deletion target was `final/base_model`, with a
@@ -80,6 +90,40 @@ SHA-256
 `98572e528ebb9b15475ce9f16a586363ebd026c3b468421662f5a434c1f0b0c8`.
 It also records one earlier schema mismatch that failed closed before target
 hashing, rename, or unlink.
+
+## Behavior-gated transport-v2 cleanup
+
+The first generation-behavior-gated transition is complete. Its exact intent
+was published at GitHub commit
+`a80c9539280b51537bb294e1518b9d486efea0f5` before unlink. The transaction then
+rehashed all targets and nine compact evidence artifacts, verified the pinned
+model-cache metadata, moved the exact inodes through a same-filesystem
+`renameat2(RENAME_NOREPLACE)` quarantine, and unlinked only after the full
+quarantine passed.
+
+The scope was 80 shards across ten one-step transport run directories, with
+both `checkpoint-1/base_model` and `final/base_model` represented. It removed
+289,921,618,400 logical bytes / 289,922,170,880 allocated bytes. The observed
+unlink free-space delta exactly matched the allocated-byte total. Independent
+postflight found zero transport-v2 safetensors, retained 386 non-weight files,
+and found zero trained safetensors anywhere under `runs/v10` outside the
+protected model cache. The cache retained its four pinned model shards and its
+metadata snapshot remained unchanged.
+
+The state is deliberately `transport_pilot_weights_pruned`, not
+`verified_pruned`. The
+[`PRUNE_INTENT.json`](../provenance/pruning/transport_v2_step1_raw_weights/PRUNE_INTENT.json)
+SHA-256 is
+`37b193705177d425fe55e81bd526e5d93e953280fd6b6c587cc640fc29303692`;
+the
+[`PRUNE_RECEIPT.json`](../provenance/pruning/transport_v2_step1_raw_weights/PRUNE_RECEIPT.json)
+SHA-256 is
+`93866c58f15ed9f8ecb1bc86568e40894c3dade3ce8be14eb5d1ae4d77bd7e63`.
+The retained pre-unlink
+[`QUARANTINE_VERIFIED.json`](../provenance/pruning/transport_v2_step1_raw_weights/QUARANTINE_VERIFIED.json)
+SHA-256 is
+`9b7373d147f5a50cc9c46cf4b46ee2e1602251d6b95393ffe10c42de02a8b544`.
+The deleted trained weights are not reconstructible from these artifacts.
 
 ## Capacity gate
 
