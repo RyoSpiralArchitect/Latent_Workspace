@@ -42,7 +42,7 @@ from typing import Any, Callable, Dict, Iterable, Iterator, List, Mapping, Mutab
 from torch.utils.data import BatchSampler, DataLoader, Dataset, Sampler, Subset
 
 
-__version__ = "11.0.0"
+__version__ = "12.0.1"
 
 
 class LatentWorkspaceLoss(nn.Module):
@@ -739,7 +739,11 @@ class FunctionalWorkspaceConfig:
     """
 
     enabled: bool = False
-    route_mode: str = "deferred"  # query_only | deferred | inline
+    # ``inline_sidecar`` keeps the qualified inline base path intact and adds
+    # the deferred memory reader as a zero-initialized residual at the split
+    # boundary.  Unlike ``deferred``, true route amputation therefore restores
+    # the exact inline computation rather than the context-free query branch.
+    route_mode: str = "deferred"  # query_only | deferred | inline | inline_sidecar
     boundary_layer: int = 6
     memory_mode: str = "raw_sequence"  # raw_sequence | projected_sequence | slots | fixed_carrier
     slot_count: int = 4
@@ -785,6 +789,12 @@ class TrainConfig:
     device: str = "auto"  # auto | cuda | mps | cpu
     epochs: int = 1
     max_steps: int = -1
+    # Number of initial optimizer updates during which base gradients are
+    # measured and clipped but removed before the optimizer step.  This keeps
+    # the base parameters and optimizer state exactly frozen while allowing the
+    # workspace family to calibrate.  The base group is released when
+    # ``global_step >= base_release_step``.
+    base_release_step: int = 0
     batch_size: int = 4
     eval_batch_size: int = 4
     gradient_accumulation_steps: int = 4
@@ -1243,8 +1253,16 @@ class ExperimentConfig:
             "symmetric_instruction_explicit_labels",
         }:
             raise ValueError("Unsupported data.functional_elicitation.")
-        if self.functional.route_mode not in {"query_only", "deferred", "inline"}:
-            raise ValueError("functional.route_mode must be query_only, deferred, or inline.")
+        if self.functional.route_mode not in {
+            "query_only",
+            "deferred",
+            "inline",
+            "inline_sidecar",
+        }:
+            raise ValueError(
+                "functional.route_mode must be query_only, deferred, inline, "
+                "or inline_sidecar."
+            )
         if self.functional.memory_mode not in {
             "raw_sequence", "projected_sequence", "slots", "fixed_carrier"
         }:
@@ -1349,6 +1367,22 @@ class ExperimentConfig:
             )
         if self.train.epochs < 1 and self.train.max_steps < 1:
             raise ValueError("Set epochs >= 1 or max_steps >= 1.")
+        if self.train.base_release_step < 0:
+            raise ValueError("train.base_release_step must be non-negative.")
+        if (
+            self.train.base_release_step > 0
+            and self.model.train_mode != "full"
+        ):
+            raise ValueError(
+                "train.base_release_step is supported only with model.train_mode='full'."
+            )
+        if (
+            self.train.max_steps > 0
+            and self.train.base_release_step > self.train.max_steps
+        ):
+            raise ValueError(
+                "train.base_release_step cannot exceed train.max_steps."
+            )
         if self.train.fused_adamw not in {"auto", "true", "false"}:
             raise ValueError("train.fused_adamw must be auto, true, or false.")
         if self.train.optimizer == "adafactor" and self.train.fused_adamw == "true":
@@ -4072,6 +4106,7 @@ class FunctionalMemoryReader(nn.Module):
         dropout: float,
         injection_scale: float,
         gate_init_bias: float,
+        zero_initialize_output: bool = True,
     ) -> None:
         super().__init__()
         if hidden_dim % heads != 0:
@@ -4092,11 +4127,12 @@ class FunctionalMemoryReader(nn.Module):
         self.gate = nn.Linear(hidden_dim, 1)
         nn.init.zeros_(self.gate.weight)
         nn.init.constant_(self.gate.bias, gate_init_bias)
-        # Exact query-only equality at initialization; the route opens only when
-        # task or counterfactual supervision finds useful memory content.
-        nn.init.zeros_(self.attention.out_proj.weight)
-        if self.attention.out_proj.bias is not None:
-            nn.init.zeros_(self.attention.out_proj.bias)
+        if zero_initialize_output:
+            # Exact query-only equality at initialization; the route opens only
+            # when task or counterfactual supervision finds useful memory.
+            nn.init.zeros_(self.attention.out_proj.weight)
+            if self.attention.out_proj.bias is not None:
+                nn.init.zeros_(self.attention.out_proj.bias)
 
     def forward(
         self,
@@ -4588,7 +4624,21 @@ class LatentWorkspaceCausalLM(nn.Module):
                     dropout=self.functional_config.dropout,
                     injection_scale=self.functional_config.injection_scale,
                     gate_init_bias=self.functional_config.gate_init_bias,
+                    zero_initialize_output=(
+                        self.functional_config.route_mode != "inline_sidecar"
+                    ),
                 )
+            )
+            self.functional_sidecar_adapter: Optional[
+                LowRankWorkspaceLogitAdapter
+            ] = (
+                LowRankWorkspaceLogitAdapter(
+                    workspace_dim=hidden_dim,
+                    vocab_size=vocab_size,
+                    rank=config.logit_rank,
+                )
+                if self.functional_config.route_mode == "inline_sidecar"
+                else None
             )
             self.functional_loss_projection: Optional[nn.Module]
             if functional_memory_dim == config.workspace_dim:
@@ -4603,6 +4653,7 @@ class LatentWorkspaceCausalLM(nn.Module):
         else:
             self.functional_writer = None
             self.functional_reader = None
+            self.functional_sidecar_adapter = None
             self.functional_loss_projection = None
             self.functional_boundary_adapter = None
         self.gate_norm = nn.LayerNorm(hidden_dim)
@@ -5781,8 +5832,12 @@ class LatentWorkspaceCausalLM(nn.Module):
         world_side_indices = world_indices * 2 + side_indices
 
         mode = self.functional_config.route_mode
+        sidecar_delta_logits: Optional[torch.Tensor] = None
+        inline_base_logits: Optional[torch.Tensor] = None
         if bypass_workspace and mode == "deferred":
             mode = "query_only"
+        elif bypass_workspace and mode == "inline_sidecar":
+            mode = "inline"
         if mode == "inline":
             flat_ids = functional_inline_input_ids.reshape(B * 2 * J, -1)[flat_positions]
             flat_mask = functional_inline_attention_mask.reshape(B * 2 * J, -1)[flat_positions]
@@ -5822,12 +5877,32 @@ class LatentWorkspaceCausalLM(nn.Module):
             intact_memory = None
             intact_memory_mask = None
         else:
-            flat_ids = functional_query_input_ids.reshape(B * 2 * J, -1)[flat_positions]
-            flat_mask = functional_query_attention_mask.reshape(B * 2 * J, -1)[flat_positions]
-            flat_labels = functional_query_labels.reshape(B * 2 * J, -1)[flat_positions]
-            flat_choices = functional_query_choice_ids.reshape(
-                B * 2 * J, -1
-            )[flat_positions]
+            if mode == "inline_sidecar":
+                flat_ids = functional_inline_input_ids.reshape(B * 2 * J, -1)[
+                    flat_positions
+                ]
+                flat_mask = functional_inline_attention_mask.reshape(
+                    B * 2 * J, -1
+                )[flat_positions]
+                flat_labels = functional_inline_labels.reshape(B * 2 * J, -1)[
+                    flat_positions
+                ]
+                flat_choices = functional_inline_choice_ids.reshape(
+                    B * 2 * J, -1
+                )[flat_positions]
+            else:
+                flat_ids = functional_query_input_ids.reshape(B * 2 * J, -1)[
+                    flat_positions
+                ]
+                flat_mask = functional_query_attention_mask.reshape(B * 2 * J, -1)[
+                    flat_positions
+                ]
+                flat_labels = functional_query_labels.reshape(B * 2 * J, -1)[
+                    flat_positions
+                ]
+                flat_choices = functional_query_choice_ids.reshape(
+                    B * 2 * J, -1
+                )[flat_positions]
             if mode == "query_only":
                 with self._base_activation_offload_context(flat_ids.device):
                     outputs = self.base_model(
@@ -5860,13 +5935,30 @@ class LatentWorkspaceCausalLM(nn.Module):
                 writer_mask = None
                 intact_memory = None
                 intact_memory_mask = None
-            elif mode == "deferred":
+            elif mode in {"deferred", "inline_sidecar"}:
                 boundary = int(self.functional_config.boundary_layer)
                 layer_count = self.functional_boundary_adapter.layer_count()
                 if boundary > layer_count:
                     raise ValueError(
                         f"functional boundary {boundary} exceeds {layer_count} layers."
                     )
+                if mode == "inline_sidecar":
+                    # The qualified inline path is the authority.  Execute it
+                    # first so all base dropout/RNG behavior is identical to F1;
+                    # the extra sidecar computations below are isolated and can
+                    # only add a zero-initialized logit residual.
+                    with self._base_activation_offload_context(flat_ids.device):
+                        inline_outputs = self.base_model(
+                            input_ids=flat_ids,
+                            attention_mask=flat_mask,
+                            use_cache=False,
+                            return_dict=True,
+                        )
+                    inline_base_logits = getattr(inline_outputs, "logits", None)
+                    if inline_base_logits is None:
+                        raise RuntimeError(
+                            "Inline-sidecar functional base model returned no logits."
+                        )
                 context_flat_ids = functional_context_input_ids.reshape(
                     B * 2, context_length
                 )
@@ -5888,6 +5980,8 @@ class LatentWorkspaceCausalLM(nn.Module):
                             context_flat_mask,
                             boundary,
                         )
+                if mode == "inline_sidecar":
+                    context_boundary = context_boundary.detach()
                 with isolated_torch_rng(
                     isolate, route_seed, context_boundary.device
                 ):
@@ -5914,27 +6008,84 @@ class LatentWorkspaceCausalLM(nn.Module):
                     mode=memory_intervention,
                     seed=memory_intervention_seed,
                 )
-                with self._base_activation_offload_context(
-                    flat_ids.device,
-                    legacy_region=True,
-                ):
-                    query_boundary = self.functional_boundary_adapter.encode(
-                        flat_ids,
-                        flat_mask,
-                        boundary,
-                    )
+                if mode == "inline_sidecar":
+                    with isolated_torch_rng(isolate, route_seed, flat_ids.device):
+                        with self._base_activation_offload_context(
+                            flat_ids.device,
+                            legacy_region=True,
+                        ):
+                            query_boundary = (
+                                self.functional_boundary_adapter.encode(
+                                    flat_ids,
+                                    flat_mask,
+                                    boundary,
+                                ).detach()
+                            )
+                else:
+                    with self._base_activation_offload_context(
+                        flat_ids.device,
+                        legacy_region=True,
+                    ):
+                        query_boundary = self.functional_boundary_adapter.encode(
+                            flat_ids,
+                            flat_mask,
+                            boundary,
+                        )
                 expanded_memory = memory.index_select(0, world_side_indices)
                 expanded_memory_mask = memory_mask.index_select(0, world_side_indices)
-                logits, gate_mean, read_norm = self._functional_decode_with_memory(
-                    query_boundary,
-                    flat_mask,
-                    expanded_memory,
-                    expanded_memory_mask,
-                    boundary_layer=boundary,
-                    hard_bypass=memory_intervention == "hard_bypass",
-                    route_rng_seed=route_seed,
-                    isolate_route_rng=isolate,
-                )
+                if mode == "inline_sidecar":
+                    if (
+                        self.functional_reader is None
+                        or self.functional_sidecar_adapter is None
+                        or inline_base_logits is None
+                    ):
+                        raise RuntimeError(
+                            "Inline-sidecar modules were not initialized."
+                        )
+                    if memory_intervention == "hard_bypass":
+                        zero = inline_base_logits.detach().sum() * 0.0
+                        gate_mean = zero
+                        read_norm = zero
+                        # The adapter's LayerNorm is affine, so a zero routed
+                        # delta can still emit a learned context-independent
+                        # residual; hard amputation must bypass the adapter
+                        # entirely and restore the inline base exactly.
+                        sidecar_delta_logits = torch.zeros_like(
+                            inline_base_logits
+                        )
+                        logits = inline_base_logits
+                    else:
+                        with isolated_torch_rng(
+                            isolate, route_seed, query_boundary.device
+                        ):
+                            (
+                                routed_boundary,
+                                gate_mean,
+                                read_norm,
+                            ) = self.functional_reader(
+                                query_boundary,
+                                flat_mask,
+                                expanded_memory,
+                                expanded_memory_mask,
+                            )
+                        routed_delta = routed_boundary - query_boundary
+                        sidecar_delta_logits = self.functional_sidecar_adapter(
+                            routed_delta
+                        )
+                        logits = inline_base_logits + sidecar_delta_logits.to(
+                            inline_base_logits.dtype
+                        )
+                else:
+                    logits, gate_mean, read_norm = self._functional_decode_with_memory(
+                        query_boundary,
+                        flat_mask,
+                        expanded_memory,
+                        expanded_memory_mask,
+                        boundary_layer=boundary,
+                        hard_bypass=memory_intervention == "hard_bypass",
+                        route_rng_seed=route_seed,
+                        isolate_route_rng=isolate,
+                    )
             else:
                 raise RuntimeError(f"Unsupported functional route mode: {mode}")
 
@@ -5958,6 +6109,10 @@ class LatentWorkspaceCausalLM(nn.Module):
                 donor_answers if memory_intervention == "counterfactual_twin" else None
             ),
         )
+        if sidecar_delta_logits is not None:
+            sidecar_norm = sidecar_delta_logits.float().norm(dim=-1).mean()
+            task_result["delta_logit_norm"] = sidecar_norm
+            task_result["gated_delta_logit_norm"] = sidecar_norm
 
         zero = task_result["task_nll_sum"].detach() * 0.0
         counterfactual_nll_sum = zero
@@ -5965,7 +6120,7 @@ class LatentWorkspaceCausalLM(nn.Module):
         stability_kl_sum = zero
         stability_items = torch.zeros((), device=logits.device, dtype=torch.long)
         if (
-            mode == "deferred"
+            mode in {"deferred", "inline_sidecar"}
             and memory_intervention == "intact"
             and intact_memory is not None
             and intact_memory_mask is not None
@@ -5992,18 +6147,53 @@ class LatentWorkspaceCausalLM(nn.Module):
                     query_boundary = self.functional_boundary_adapter.encode(
                         flat_ids, flat_mask, boundary
                     )
-            swapped_logits, _cf_gate, _cf_read = self._functional_decode_with_memory(
-                query_boundary,
-                flat_mask,
-                expanded_swapped,
-                expanded_swapped_mask,
-                boundary_layer=boundary,
-                hard_bypass=False,
-                route_rng_seed=(
-                    None if rng_streams is None else rng_streams.get("route")
-                ),
-                isolate_route_rng=rng_streams is not None,
-            )
+            if mode == "inline_sidecar":
+                if (
+                    self.functional_reader is None
+                    or self.functional_sidecar_adapter is None
+                    or inline_base_logits is None
+                ):
+                    raise RuntimeError(
+                        "Inline-sidecar modules were not initialized for the "
+                        "counterfactual objective."
+                    )
+                with isolated_torch_rng(
+                    rng_streams is not None,
+                    None if rng_streams is None else rng_streams.get("route"),
+                    query_boundary.device,
+                ):
+                    swapped_boundary, _cf_gate, _cf_read = self.functional_reader(
+                        query_boundary,
+                        flat_mask,
+                        expanded_swapped,
+                        expanded_swapped_mask,
+                    )
+                swapped_delta = self.functional_sidecar_adapter(
+                    swapped_boundary - query_boundary
+                )
+                # Counterfactual and stability supervision own only the
+                # sidecar family.  Updating the inline base toward a donor
+                # answer under its original context would corrupt the control.
+                swapped_logits = inline_base_logits.detach() + swapped_delta.to(
+                    inline_base_logits.dtype
+                )
+            else:
+                swapped_logits, _cf_gate, _cf_read = (
+                    self._functional_decode_with_memory(
+                        query_boundary,
+                        flat_mask,
+                        expanded_swapped,
+                        expanded_swapped_mask,
+                        boundary_layer=boundary,
+                        hard_bypass=False,
+                        route_rng_seed=(
+                            None
+                            if rng_streams is None
+                            else rng_streams.get("route")
+                        ),
+                        isolate_route_rng=rng_streams is not None,
+                    )
+                )
             _intact_nll, intact_choices, _it, _ip = self._functional_answer_rows(
                 logits, flat_labels, flat_choices
             )
@@ -6063,7 +6253,7 @@ class LatentWorkspaceCausalLM(nn.Module):
             regularizer_anchor = writer_anchor
             regularizer_mask = writer_mask
             if (
-                mode == "deferred"
+                mode in {"deferred", "inline_sidecar"}
                 and not self.workspace_config.aux_backprop_to_base
             ):
                 # Recompute through the same writer parameters from a detached
@@ -9464,6 +9654,95 @@ def _base_gradient_sentinel(
     return parameter, sentinel, before_sample
 
 
+def _workspace_gradient_sentinel(
+    model: nn.Module,
+) -> tuple[nn.Parameter, dict[str, Any], torch.Tensor]:
+    """Select a deterministic bounded sample from a nonzero workspace gradient."""
+
+    candidates = sorted(
+        (
+            (name, parameter)
+            for name, parameter in model.named_parameters()
+            if not name.startswith("base_model.")
+        ),
+        key=lambda item: (int(item[1].numel()), item[0]),
+    )
+    selected: Optional[tuple[str, nn.Parameter, int]] = None
+    for name, parameter in candidates:
+        gradient = parameter.grad
+        if (
+            gradient is None
+            or not parameter.requires_grad
+            or gradient.numel() == 0
+        ):
+            continue
+        flat_index = _first_nonzero_gradient_index(gradient)
+        if flat_index is not None:
+            selected = (name, parameter, flat_index)
+            break
+    if selected is None:
+        raise RuntimeError(
+            "No deterministic nonzero-gradient workspace parameter was available "
+            "for the optimizer-step sentinel."
+        )
+
+    name, parameter, flat_index = selected
+    flat_parameter = parameter.detach().reshape(-1)
+    flat_gradient = parameter.grad.detach().reshape(-1)  # type: ignore[union-attr]
+    sample_start = max(0, flat_index - 64)
+    sample_stop = min(flat_parameter.numel(), sample_start + 128)
+    before_sample = flat_parameter[sample_start:sample_stop].float().cpu().clone()
+    sentinel = {
+        "parameter_family": "workspace",
+        "parameter_name": name,
+        "selection": "workspace_parameter_first_nonzero_gradient",
+        "parameter_shape": list(parameter.shape),
+        "parameter_dtype": str(parameter.dtype),
+        "flat_index": int(flat_index),
+        "sample_start": int(sample_start),
+        "sample_length": int(sample_stop - sample_start),
+        "gradient_value": float(flat_gradient[flat_index].float().item()),
+        "gradient_nonzero": bool(flat_gradient[flat_index].ne(0).item()),
+        "before_value": float(flat_parameter[flat_index].float().item()),
+    }
+    return parameter, sentinel, before_sample
+
+
+def _finalize_step_sentinel(
+    parameter: nn.Parameter,
+    report: dict[str, Any],
+    before_sample: torch.Tensor,
+    *,
+    parameter_family: str,
+    grad_scale_before: float,
+    grad_scale_after: float,
+) -> dict[str, Any]:
+    flat_parameter = parameter.detach().reshape(-1)
+    sample_start = int(report["sample_start"])
+    sample_stop = sample_start + int(report["sample_length"])
+    after_sample = flat_parameter[sample_start:sample_stop].float().cpu().clone()
+    delta = after_sample - before_sample
+    flat_index = int(report["flat_index"])
+    after_value = float(flat_parameter[flat_index].float().item())
+    report.update(
+        {
+            "format": "latent-workspace-ft-family-step-sentinel-v1",
+            "parameter_family": parameter_family,
+            "after_value": after_value,
+            "delta": after_value - float(report["before_value"]),
+            "sample_max_abs_delta": float(delta.abs().max().item()),
+            "sample_l2_delta": float(delta.norm().item()),
+            "sample_nonzero_delta_elements": int(delta.ne(0).sum().item()),
+            "updated": bool(delta.ne(0).any().item()),
+            "grad_scale_before": float(grad_scale_before),
+            "grad_scale_after": float(grad_scale_after),
+            "optimizer_step_skipped": bool(grad_scale_after < grad_scale_before),
+        }
+    )
+    report["report_sha256"] = stable_hash(report)
+    return report
+
+
 def optimizer_step_with_base_sentinel(
     model: nn.Module,
     optimizer: torch.optim.Optimizer,
@@ -10077,6 +10356,7 @@ def _format_metrics(prefix: str, step: int, metrics: Mapping[str, float]) -> str
         "task_gain_nats",
         "gate_mean",
         "grad_norm",
+        "base_update_active",
         "lr_base",
         "lr_workspace",
         "tokens_per_second",
@@ -10099,6 +10379,53 @@ def _optimizer_learning_rates(optimizer: torch.optim.Optimizer) -> dict[str, flo
         family = str(group.get("family", "group"))
         result[f"lr_{family}"] = float(group["lr"])
     return result
+
+
+def _set_optimizer_family_learning_rate(
+    optimizer: torch.optim.Optimizer,
+    family: str,
+    learning_rate: float,
+) -> None:
+    matched = 0
+    for group in optimizer.param_groups:
+        if str(group.get("family", "group")) != family:
+            continue
+        group["lr"] = float(learning_rate)
+        matched += 1
+    if matched == 0:
+        raise RuntimeError(f"Optimizer has no {family!r} parameter group.")
+
+
+def _optimizer_family_state_entries(
+    optimizer: torch.optim.Optimizer,
+) -> dict[str, int]:
+    """Count materialized optimizer-state entries by declared family."""
+
+    result: dict[str, int] = {}
+    for group in optimizer.param_groups:
+        family = str(group.get("family", "group"))
+        result.setdefault(family, 0)
+        result[family] += sum(
+            1 for parameter in group["params"] if parameter in optimizer.state
+        )
+    return result
+
+
+def _clear_parameter_family_gradients(
+    model: LatentWorkspaceCausalLM,
+    family: str,
+) -> int:
+    if family not in {"base", "workspace"}:
+        raise ValueError("Parameter family must be base or workspace.")
+    cleared = 0
+    for name, parameter in model.named_parameters():
+        is_base = name.startswith("base_model.")
+        if (family == "base") != is_base:
+            continue
+        if parameter.grad is not None:
+            parameter.grad = None
+            cleared += 1
+    return cleared
 
 
 def _memory_metrics(device: torch.device) -> dict[str, float]:
@@ -11543,6 +11870,7 @@ def train_experiment(config: ExperimentConfig) -> Path:
 
         metrics_path = output_dir / "metrics.jsonl"
         microbatch_memory_path = output_dir / "microbatch_memory.jsonl"
+        update_ownership_path = output_dir / "update_ownership.jsonl"
         if context.is_main:
             if resume_checkpoint is None and metrics_path.exists():
                 raise RuntimeError(
@@ -11701,7 +12029,8 @@ def train_experiment(config: ExperimentConfig) -> Path:
                 current_workspace_weight = current_induction.weight
                 functional_runtime_route = bool(
                     config.functional.enabled
-                    and config.functional.route_mode == "deferred"
+                    and config.functional.route_mode
+                    in {"deferred", "inline_sidecar"}
                     and config.functional.injection_scale != 0.0
                 )
                 bypass_workspace = bool(
@@ -12138,6 +12467,51 @@ def train_experiment(config: ExperimentConfig) -> Path:
                         raise FloatingPointError("Non-finite gradient norm detected.")
                     continue
 
+                base_update_active = bool(
+                    config.model.train_mode == "full"
+                    and state.global_step >= config.train.base_release_step
+                )
+                ownership_telemetry_enabled = bool(
+                    config.functional.enabled
+                    and config.functional.route_mode == "inline_sidecar"
+                )
+                family_sentinels: dict[
+                    str, tuple[nn.Parameter, dict[str, Any], torch.Tensor]
+                ] = {}
+                if ownership_telemetry_enabled:
+                    preferred_output_rows: set[int] = set()
+                    for source_batch in window:
+                        for key in (
+                            "functional_inline_choice_ids",
+                            "functional_query_choice_ids",
+                        ):
+                            values = source_batch.get(key)
+                            if isinstance(values, torch.Tensor):
+                                preferred_output_rows.update(
+                                    int(value)
+                                    for value in torch.unique(values).tolist()
+                                    if int(value) >= 0
+                                )
+                    family_sentinels["base"] = _base_gradient_sentinel(
+                        raw_model,
+                        preferred_output_rows=sorted(preferred_output_rows),
+                    )
+                    family_sentinels["workspace"] = _workspace_gradient_sentinel(
+                        raw_model
+                    )
+
+                scheduled_learning_rates = _optimizer_learning_rates(optimizer)
+                cleared_base_gradients = 0
+                if config.model.train_mode == "full" and not base_update_active:
+                    # Preserve the full-family gradient and clipping telemetry,
+                    # then remove base gradients before Adafactor can create or
+                    # advance base optimizer state.  LambdaLR restores the
+                    # scheduled group LR after this frozen update.
+                    cleared_base_gradients = _clear_parameter_family_gradients(
+                        raw_model, "base"
+                    )
+                    _set_optimizer_family_learning_rate(optimizer, "base", 0.0)
+
                 step_learning_rates = _optimizer_learning_rates(optimizer)
                 step_base_lr = float(step_learning_rates.get("lr_base", 0.0))
                 step_workspace_lr = float(
@@ -12148,9 +12522,79 @@ def train_experiment(config: ExperimentConfig) -> Path:
                 scaler.update()
                 new_scale = float(scaler.get_scale())
                 scaler_skipped = precision == "fp16" and new_scale < previous_scale
+                optimizer_state_entries = _optimizer_family_state_entries(optimizer)
+                finalized_sentinels: dict[str, dict[str, Any]] = {}
+                for family, (
+                    parameter,
+                    sentinel,
+                    before_sample,
+                ) in family_sentinels.items():
+                    finalized_sentinels[family] = _finalize_step_sentinel(
+                        parameter,
+                        sentinel,
+                        before_sample,
+                        parameter_family=family,
+                        grad_scale_before=previous_scale,
+                        grad_scale_after=new_scale,
+                    )
+                if (
+                    ownership_telemetry_enabled
+                    and not base_update_active
+                    and finalized_sentinels["base"]["updated"]
+                ):
+                    raise RuntimeError(
+                        "Base-family sentinel changed during the frozen ownership phase."
+                    )
+                if (
+                    ownership_telemetry_enabled
+                    and not base_update_active
+                    and optimizer_state_entries.get("base", 0) != 0
+                ):
+                    raise RuntimeError(
+                        "Base optimizer state materialized during the frozen "
+                        "ownership phase."
+                    )
+                if context.is_main and ownership_telemetry_enabled:
+                    base_raw_norm = float(clip_metrics["base_grad_norm"])
+                    workspace_raw_norm = float(clip_metrics["workspace_grad_norm"])
+                    _write_jsonl(
+                        update_ownership_path,
+                        {
+                            "format": "latent-workspace-ft-v12-update-ownership-v1",
+                            "run_id": state.run_id,
+                            "step": state.global_step + 1,
+                            "base_release_step": config.train.base_release_step,
+                            "base_update_active": base_update_active,
+                            "cleared_base_gradients": cleared_base_gradients,
+                            "scheduled_lr_base": float(
+                                scheduled_learning_rates.get("lr_base", 0.0)
+                            ),
+                            "scheduled_lr_workspace": float(
+                                scheduled_learning_rates.get("lr_workspace", 0.0)
+                            ),
+                            "applied_lr_base": step_base_lr,
+                            "applied_lr_workspace": step_workspace_lr,
+                            "base_raw_grad_norm": base_raw_norm,
+                            "workspace_raw_grad_norm": workspace_raw_norm,
+                            "base_clip_coefficient": float(
+                                clip_metrics["base_clip_coefficient"]
+                            ),
+                            "workspace_clip_coefficient": float(
+                                clip_metrics["workspace_clip_coefficient"]
+                            ),
+                            "base_clipped_grad_norm": base_raw_norm
+                            * float(clip_metrics["base_clip_coefficient"]),
+                            "workspace_clipped_grad_norm": workspace_raw_norm
+                            * float(clip_metrics["workspace_clip_coefficient"]),
+                            "optimizer_step_skipped": scaler_skipped,
+                            "optimizer_state_entries": optimizer_state_entries,
+                            "sentinels": finalized_sentinels,
+                        },
+                    )
                 if (
                     not scaler_skipped
                     and config.model.train_mode == "full"
+                    and base_update_active
                     and step_base_lr > 0.0
                     and base_update_coverage is None
                 ):
@@ -12257,6 +12701,10 @@ def train_experiment(config: ExperimentConfig) -> Path:
                     # to the just-completed update as separate diagnostics.
                     log_metrics["applied_lr_base"] = step_base_lr
                     log_metrics["applied_lr_workspace"] = step_workspace_lr
+                    log_metrics["base_update_active"] = float(base_update_active)
+                    log_metrics["base_release_step"] = float(
+                        config.train.base_release_step
+                    )
                     log_metrics["window_metrics_phase"] = "pre_update_forward"
                     log_metrics["grad_norm"] = float(clip_metrics["grad_norm"])
                     log_metrics["base_grad_norm"] = float(clip_metrics["base_grad_norm"])
@@ -13472,9 +13920,10 @@ def _run_functional_necessity_loaded(
     device: torch.device,
 ) -> dict[str, Any]:
     necessity = config.assays.necessity
-    if config.functional.route_mode != "deferred":
+    if config.functional.route_mode not in {"deferred", "inline_sidecar"}:
         raise ValueError(
-            "v9 functional necessity requires functional.route_mode='deferred'."
+            "Functional necessity requires functional.route_mode='deferred' "
+            "or 'inline_sidecar'."
         )
     if float(config.functional.injection_scale) == 0.0:
         raise ValueError("v9 functional necessity requires a nonzero injection scale.")
@@ -16950,7 +17399,10 @@ def _doctor_smoke_step(
     raw_batch = collator([dataset[index] for index in range(count)])
     batch = move_batch_to_device(raw_batch, device)
     split_equivalence: Optional[dict[str, float | bool]] = None
-    if config.functional.enabled and config.functional.route_mode == "deferred":
+    if (
+        config.functional.enabled
+        and config.functional.route_mode in {"deferred", "inline_sidecar"}
+    ):
         common_kwargs = dict(
             input_ids=batch["input_ids"],
             attention_mask=batch["attention_mask"],
