@@ -63,3 +63,15 @@ world facts; a sidecar influence there is not evidence that memory was necessary
 
 Machine-readable source/data/model bounds live in
 `configs/v14/INSTRUMENT_RETURN_PLAN.json`; run receipts bind its exact hash.
+
+## Observed disposition (2026-09-04)
+
+Both the OLMo screen and the matched Mistral re-entry completed under source
+commit `8920302`. Each passed all 50 mechanical checks and covered all 480
+answer cases per route. Neither passed calibration task admission. OLMo chose
+yes throughout; Mistral's F1 had 25 tied candidate decisions. Thus the return
+milestone is complete, while task elicitation remains the next gate. No training,
+held-out scoring, norm sweep or further model run followed.
+
+Full results and evidence bounds:
+`provenance/pilots/v14_instrument_return_20260904/README.md`.
