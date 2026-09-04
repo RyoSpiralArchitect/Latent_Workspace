@@ -1,8 +1,7 @@
-"""LatentWorkspace FT v11: portable query-deferred workspace harness.
+"""LatentWorkspace FT v14: explicit portable computation boundaries.
 
-The file intentionally keeps the latent workspace, regularizer, data path,
-trainer, checkpoint protocol, distributed launcher integration, diagnostics,
-and generation loader in one auditable implementation.
+The trainer and legacy routes remain here; functional workspace algorithms,
+model binding, normalization, and numerical composition are separate modules.
 """
 
 from __future__ import annotations
@@ -41,8 +40,13 @@ from typing import Any, Callable, Dict, Iterable, Iterator, List, Mapping, Mutab
 
 from torch.utils.data import BatchSampler, DataLoader, Dataset, Sampler, Subset
 
+from .implementation_identity import implementation_fingerprint
+from .model_binding import FunctionalBoundaryAdapter
+from .normalization import NormalizationSpec
+from .numerics import NumericsPolicy
+from .workspace_core import FunctionalMemoryReader, FunctionalMemoryWriter, LowRankWorkspaceLogitAdapter
 
-__version__ = "12.0.0"
+__version__ = "14.0.0"
 
 
 class LatentWorkspaceLoss(nn.Module):
@@ -763,6 +767,11 @@ class FunctionalWorkspaceConfig:
     task_objective: str = "full_vocab"  # full_vocab | choice_normalized | hybrid
     full_vocab_loss_weight: float = 0.0
 
+    # V14 operator changes are experiment conditions, never host-model defaults.
+    workspace_norm_kind: str = "layer_norm"
+    workspace_norm_eps: float = 1e-5
+    logit_composition: str = "legacy_native"
+
     # O0/O1/O2/O3 objective matrix. Intact multi-query CE is always active.
     # Counterfactual CE applies only to queries whose answer changes under the
     # local twin edit; stability KL applies only to unaffected queries.
@@ -1110,6 +1119,12 @@ class ExperimentConfig:
             self.train.resume_from = str(_resolve_relative_path(resume, base_dir))
 
     def validate(self) -> None:
+        NormalizationSpec(self.functional.workspace_norm_kind, self.functional.workspace_norm_eps)
+        NumericsPolicy(self.functional.logit_composition)
+        if self.functional.logit_composition != "legacy_native" and (
+            not self.functional.enabled or self.functional.route_mode != "inline_sidecar"
+        ):
+            raise ValueError("functional.logit_composition requires enabled inline_sidecar route")
         if self.model.train_mode not in {"full", "workspace_only", "lora"}:
             raise ValueError("model.train_mode must be full, workspace_only, or lora.")
         if self.model.hidden_capture not in {"hook", "hidden_states"}:
@@ -1689,10 +1704,8 @@ def _same_data_fingerprint(
 
 
 def source_sha256() -> str:
-    try:
-        return hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
-    except OSError:
-        return "unavailable"
+    # The complete split implementation, not just this engine file, is pinned.
+    return implementation_fingerprint()["sha256"]
 
 
 def allocator_runtime_environment() -> dict[str, Any]:
@@ -1845,6 +1858,7 @@ def require_effective_cuda_allocator_policy(
 
 
 def runtime_environment() -> dict[str, Any]:
+    implementation = implementation_fingerprint()
     result: dict[str, Any] = {
         "harness_version": __version__,
         "python": sys.version,
@@ -1857,7 +1871,8 @@ def runtime_environment() -> dict[str, Any]:
             if getattr(torch.backends, "cudnn", None) is not None
             else None
         ),
-        "source_sha256": source_sha256(),
+        "source_sha256": implementation["sha256"],
+        "implementation_identity": implementation,
         **allocator_runtime_environment(),
     }
     if torch.cuda.is_available():
@@ -3855,27 +3870,6 @@ class CausalBroadcastLatentWorkspace(nn.Module):
         return torch.stack(trajectory, dim=2), anchor
 
 
-class LowRankWorkspaceLogitAdapter(nn.Module):
-    """Maps the final workspace state to a low-rank residual over vocabulary."""
-
-    def __init__(
-        self,
-        workspace_dim: int,
-        vocab_size: int,
-        rank: int,
-    ) -> None:
-        super().__init__()
-        if rank < 1:
-            raise ValueError("rank must be positive.")
-        self.norm = nn.LayerNorm(workspace_dim)
-        self.down = nn.Linear(workspace_dim, rank, bias=False)
-        self.up = nn.Linear(rank, vocab_size, bias=False)
-        nn.init.normal_(self.down.weight, mean=0.0, std=0.02)
-        nn.init.zeros_(self.up.weight)
-
-    def forward(self, final_state: torch.Tensor) -> torch.Tensor:
-        return self.up(F.gelu(self.down(self.norm(final_state))))
-
 
 
 class WorkspaceMemoryBridge(nn.Module):
@@ -3958,581 +3952,6 @@ class WorkspaceMemoryBridge(nn.Module):
 
 
 
-class FunctionalMemoryWriter(nn.Module):
-    """Query-independent v9 memory writer.
-
-    ``raw_sequence`` and ``projected_sequence`` preserve one memory token per
-    context token. ``slots`` compresses the world into a fixed number of shared
-    recurrent slots. The writer never receives a query tensor.
-    """
-
-    def __init__(
-        self,
-        hidden_dim: int,
-        workspace_dim: int,
-        *,
-        mode: str,
-        slot_count: int,
-        steps: int,
-        heads: int,
-        dropout: float,
-    ) -> None:
-        super().__init__()
-        self.hidden_dim = int(hidden_dim)
-        self.workspace_dim = int(workspace_dim)
-        self.mode = str(mode)
-        self.slot_count = int(slot_count)
-        self.steps = int(steps)
-        if mode == "raw_sequence":
-            self.output_dim = hidden_dim
-            self.context_projection: nn.Module = nn.Identity()
-        else:
-            self.output_dim = workspace_dim
-            self.context_projection = nn.Linear(hidden_dim, workspace_dim, bias=False)
-
-        self.slot_seed = nn.Parameter(torch.zeros(slot_count, workspace_dim))
-        nn.init.normal_(self.slot_seed, mean=0.0, std=0.02)
-        self.slot_norm = nn.LayerNorm(workspace_dim)
-        self.context_norm = nn.LayerNorm(workspace_dim)
-        self.cross_attention = nn.MultiheadAttention(
-            workspace_dim,
-            heads,
-            dropout=dropout,
-            batch_first=True,
-        )
-        self.self_attention = nn.MultiheadAttention(
-            workspace_dim,
-            heads,
-            dropout=dropout,
-            batch_first=True,
-        )
-        self.ff_norm = nn.LayerNorm(workspace_dim)
-        self.ff = nn.Sequential(
-            nn.Linear(workspace_dim, workspace_dim * 2),
-            nn.GELU(),
-            nn.Dropout(dropout),
-            nn.Linear(workspace_dim * 2, workspace_dim),
-        )
-        self.dropout = nn.Dropout(dropout)
-
-    def forward(
-        self,
-        context_hidden: torch.Tensor,
-        context_attention_mask: torch.Tensor,
-    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
-        if context_hidden.ndim != 3 or context_attention_mask.ndim != 2:
-            raise ValueError("Functional writer expects [B,C,H] and [B,C].")
-        valid = context_attention_mask.to(torch.bool)
-        if not valid.any(dim=1).all():
-            raise ValueError("Every functional context requires at least one token.")
-
-        if self.mode in {"raw_sequence", "projected_sequence"}:
-            memory = self.context_projection(context_hidden)
-            memory = memory * valid.to(memory.dtype).unsqueeze(-1)
-            trajectory = memory.unsqueeze(2).expand(
-                -1, -1, self.steps, -1
-            ).contiguous()
-            return memory, valid.to(context_attention_mask.dtype), trajectory, memory
-
-        if self.mode == "fixed_carrier":
-            positions = torch.arange(
-                self.slot_count * self.workspace_dim,
-                device=context_hidden.device,
-                dtype=torch.float32,
-            ).reshape(self.slot_count, self.workspace_dim)
-            carrier = torch.sin(positions * 0.017) + torch.cos(positions * 0.031)
-            carrier = F.layer_norm(carrier, (self.workspace_dim,))
-            memory = carrier.to(context_hidden.dtype).unsqueeze(0).expand(
-                context_hidden.shape[0], -1, -1
-            )
-            mask = torch.ones(
-                (context_hidden.shape[0], self.slot_count),
-                device=context_hidden.device,
-                dtype=context_attention_mask.dtype,
-            )
-            trajectory = memory.unsqueeze(2).expand(
-                -1, -1, self.steps, -1
-            ).contiguous()
-            return memory, mask, trajectory, memory
-
-        if self.mode != "slots":
-            raise ValueError(f"Unsupported functional memory mode: {self.mode}")
-
-        context = self.context_projection(context_hidden)
-        context = self.context_norm(context)
-        state = self.slot_seed.to(context.dtype).unsqueeze(0).expand(
-            context.shape[0], -1, -1
-        )
-        anchor = state
-        trajectory: list[torch.Tensor] = []
-        key_padding = ~valid
-        for _step in range(self.steps):
-            cross, _ = self.cross_attention(
-                self.slot_norm(state),
-                context,
-                context,
-                key_padding_mask=key_padding,
-                need_weights=False,
-            )
-            state = state + self.dropout(cross)
-            self_read, _ = self.self_attention(
-                self.slot_norm(state),
-                self.slot_norm(state),
-                self.slot_norm(state),
-                need_weights=False,
-            )
-            state = state + self.dropout(self_read)
-            state = state + self.dropout(self.ff(self.ff_norm(state)))
-            trajectory.append(state)
-        memory = trajectory[-1]
-        mask = torch.ones(
-            (context.shape[0], self.slot_count),
-            device=context.device,
-            dtype=context_attention_mask.dtype,
-        )
-        return memory, mask, torch.stack(trajectory, dim=2), anchor
-
-
-class FunctionalMemoryReader(nn.Module):
-    """Inject query-conditioned reads at a fixed transformer boundary."""
-
-    def __init__(
-        self,
-        hidden_dim: int,
-        memory_dim: int,
-        *,
-        heads: int,
-        steps: int,
-        dropout: float,
-        injection_scale: float,
-        gate_init_bias: float,
-        zero_initialize_output: bool = True,
-    ) -> None:
-        super().__init__()
-        if hidden_dim % heads != 0:
-            raise ValueError("hidden_dim must be divisible by functional reader heads.")
-        self.hidden_dim = int(hidden_dim)
-        self.memory_dim = int(memory_dim)
-        self.steps = int(steps)
-        self.injection_scale = float(injection_scale)
-        self.query_norm = nn.LayerNorm(hidden_dim)
-        self.memory_norm = nn.LayerNorm(memory_dim)
-        self.memory_projection = nn.Linear(memory_dim, hidden_dim, bias=False)
-        self.attention = nn.MultiheadAttention(
-            hidden_dim,
-            heads,
-            dropout=dropout,
-            batch_first=True,
-        )
-        self.gate = nn.Linear(hidden_dim, 1)
-        nn.init.zeros_(self.gate.weight)
-        nn.init.constant_(self.gate.bias, gate_init_bias)
-        if zero_initialize_output:
-            # Exact query-only equality at initialization; the route opens only
-            # when task or counterfactual supervision finds useful memory.
-            nn.init.zeros_(self.attention.out_proj.weight)
-            if self.attention.out_proj.bias is not None:
-                nn.init.zeros_(self.attention.out_proj.bias)
-
-    def forward(
-        self,
-        query_hidden: torch.Tensor,
-        query_attention_mask: torch.Tensor,
-        memory: torch.Tensor,
-        memory_attention_mask: torch.Tensor,
-    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        if query_hidden.ndim != 3 or memory.ndim != 3:
-            raise ValueError("Functional reader expects rank-3 query and memory tensors.")
-        state = query_hidden
-        projected_memory = self.memory_projection(self.memory_norm(memory))
-        key_padding = ~memory_attention_mask.to(torch.bool)
-        gate_values: list[torch.Tensor] = []
-        read_norms: list[torch.Tensor] = []
-        for _step in range(self.steps):
-            read, _ = self.attention(
-                self.query_norm(state),
-                projected_memory,
-                projected_memory,
-                key_padding_mask=key_padding,
-                need_weights=False,
-            )
-            gate = torch.sigmoid(self.gate(self.query_norm(state)))
-            valid_query = query_attention_mask.to(state.dtype).unsqueeze(-1)
-            route_update = self.injection_scale * gate.to(read.dtype) * read
-            state = state + route_update * valid_query
-            gate_values.append(gate)
-            read_norms.append(read.float().norm(dim=-1).mean())
-        return (
-            state,
-            torch.stack(gate_values).mean(),
-            torch.stack(read_norms).mean(),
-        )
-
-
-class FunctionalBoundaryAdapter:
-    """No-cache split decoder for the supported causal-LM layouts.
-
-    GPT-2 remains the compatibility path used by the v9 harness. Mistral is a
-    strict adapter because its mask and decoder-layer APIs changed between the
-    two Transformers releases supported by this source. Unknown Mistral API
-    versions fail closed instead of silently changing the split computation.
-
-    Decoder layers are invoked through ``module(...)`` rather than ``forward``.
-    Transformers' ``GradientCheckpointingLayer.__call__`` can therefore retain
-    activation checkpointing while the model is split at an internal boundary.
-    """
-
-    _MISTRAL_TRANSFORMERS_VERSIONS = frozenset({"4.57.6", "5.15.0"})
-
-    def __init__(self, base_model: nn.Module) -> None:
-        self.base_model = base_model
-        custom_to = getattr(base_model, "functional_forward_to_boundary", None)
-        custom_from = getattr(base_model, "functional_forward_from_boundary", None)
-        custom_layers = getattr(base_model, "functional_num_layers", None)
-        if callable(custom_to) and callable(custom_from) and custom_layers is not None:
-            self._kind = "custom"
-            return
-
-        model_type = str(getattr(getattr(base_model, "config", None), "model_type", ""))
-        if model_type == "mistral":
-            self._kind = "mistral"
-            self._validate_mistral_layout()
-            return
-
-        transformer = getattr(base_model, "transformer", None)
-        if model_type == "gpt2" or (
-            transformer is not None and getattr(transformer, "h", None) is not None
-        ):
-            self._kind = "gpt2"
-            return
-
-        raise TypeError(
-            "functional_workspace requires model_type='gpt2', "
-            "model_type='mistral', or a complete custom functional split interface."
-        )
-
-    @staticmethod
-    def _validate_boundary(boundary_layer: int, layer_count: int) -> int:
-        boundary = int(boundary_layer)
-        if not 0 <= boundary <= layer_count:
-            raise ValueError(
-                f"boundary_layer={boundary} outside [0, {layer_count}]."
-            )
-        return boundary
-
-    def _validate_mistral_layout(self) -> None:
-        try:
-            import transformers
-        except ImportError as exc:
-            raise RuntimeError(
-                "The Mistral functional boundary adapter requires Transformers."
-            ) from exc
-
-        version = str(transformers.__version__)
-        if version not in self._MISTRAL_TRANSFORMERS_VERSIONS:
-            supported = ", ".join(sorted(self._MISTRAL_TRANSFORMERS_VERSIONS))
-            raise RuntimeError(
-                "Unsupported Transformers version for the strict Mistral split "
-                f"adapter: {version!r}; expected exactly one of {supported}."
-            )
-
-        decoder = getattr(self.base_model, "model", None)
-        required = ("embed_tokens", "layers", "rotary_emb", "norm")
-        missing = [name for name in required if getattr(decoder, name, None) is None]
-        if missing:
-            raise TypeError(
-                "Mistral split adapter could not locate decoder components: "
-                + ", ".join(missing)
-            )
-        configured_layers = getattr(getattr(decoder, "config", None), "num_hidden_layers", None)
-        if configured_layers is None or int(configured_layers) != len(decoder.layers):
-            raise ValueError(
-                "Mistral decoder layer count does not match config.num_hidden_layers."
-            )
-        if self._lm_head() is None:
-            raise ValueError("Mistral split adapter could not locate lm_head.")
-        self._mistral_transformers_version = version
-
-    def _lm_head(self) -> Optional[nn.Module]:
-        head = getattr(self.base_model, "lm_head", None)
-        if head is not None:
-            return head
-        getter = getattr(self.base_model, "get_output_embeddings", None)
-        return getter() if callable(getter) else None
-
-    def layer_count(self) -> int:
-        if self._kind == "custom":
-            return int(self.base_model.functional_num_layers)
-        if self._kind == "mistral":
-            return len(self.base_model.model.layers)
-        transformer = getattr(self.base_model, "transformer", None)
-        blocks = getattr(transformer, "h", None)
-        if blocks is None:
-            raise TypeError("GPT-2 split adapter could not locate transformer.h.")
-        return len(blocks)
-
-    @staticmethod
-    def _legacy_gpt2_attention_mask(
-        attention_mask: torch.Tensor,
-        dtype: torch.dtype,
-    ) -> torch.Tensor:
-        expanded = attention_mask[:, None, None, :].to(dtype=dtype)
-        return (1.0 - expanded) * torch.finfo(dtype).min
-
-    @staticmethod
-    def _position_tensors(hidden: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
-        cache_position = torch.arange(hidden.shape[1], device=hidden.device)
-        return cache_position, cache_position.unsqueeze(0)
-
-    @classmethod
-    def _gpt2_causal_mask(
-        cls,
-        transformer: nn.Module,
-        hidden: torch.Tensor,
-        attention_mask: torch.Tensor,
-        cache_position: torch.Tensor,
-        position_ids: torch.Tensor,
-    ) -> torch.Tensor:
-        try:
-            from transformers.masking_utils import create_causal_mask
-
-            parameters = inspect.signature(create_causal_mask).parameters
-            kwargs: dict[str, Any] = {
-                "config": transformer.config,
-                "attention_mask": attention_mask,
-                "past_key_values": None,
-                "position_ids": position_ids,
-            }
-            if "inputs_embeds" in parameters:
-                kwargs["inputs_embeds"] = hidden
-            elif "input_embeds" in parameters:
-                kwargs["input_embeds"] = hidden
-            else:
-                raise TypeError("Unknown Transformers causal-mask embedding API.")
-            if "cache_position" in parameters:
-                kwargs["cache_position"] = cache_position
-            return create_causal_mask(**kwargs)
-        except (ImportError, TypeError):
-            # Compatibility with the pre-mask-utils GPT-2 releases used by v9.
-            return cls._legacy_gpt2_attention_mask(attention_mask, hidden.dtype)
-
-    @staticmethod
-    def _call_gpt2_block(
-        block: nn.Module,
-        hidden: torch.Tensor,
-        attention_mask: torch.Tensor,
-        cache_position: torch.Tensor,
-        position_ids: torch.Tensor,
-    ) -> torch.Tensor:
-        parameters = inspect.signature(block.forward).parameters
-        attempts: tuple[dict[str, Any], ...]
-        if "cache_position" in parameters:
-            attempts = ({
-                "past_key_values": None,
-                "cache_position": cache_position,
-                "attention_mask": attention_mask,
-                "head_mask": None,
-                "encoder_hidden_states": None,
-                "encoder_attention_mask": None,
-                "use_cache": False,
-                "output_attentions": False,
-            }, {
-                "layer_past": None,
-                "attention_mask": attention_mask,
-                "head_mask": None,
-                "encoder_hidden_states": None,
-                "encoder_attention_mask": None,
-                "use_cache": False,
-                "output_attentions": False,
-            }, {
-                "attention_mask": attention_mask,
-                "use_cache": False,
-                "output_attentions": False,
-            }, {"attention_mask": attention_mask})
-        else:
-            # Transformers 5.x GPT-2 passes the already combined causal mask
-            # and sequential position IDs to each block. Avoid sending legacy
-            # head/cache keywords through ``**kwargs`` into the attention API.
-            attempts = ({
-                "past_key_values": None,
-                "attention_mask": attention_mask,
-                "encoder_hidden_states": None,
-                "encoder_attention_mask": None,
-                "use_cache": False,
-                "position_ids": position_ids,
-            },)
-        last_error: Optional[Exception] = None
-        for kwargs in attempts:
-            try:
-                output = block(hidden, **kwargs)
-                return output[0] if isinstance(output, (tuple, list)) else output
-            except TypeError as exc:
-                last_error = exc
-        assert last_error is not None
-        raise last_error
-
-    def _gpt2_encode(
-        self,
-        input_ids: torch.Tensor,
-        attention_mask: torch.Tensor,
-        boundary_layer: int,
-    ) -> torch.Tensor:
-        transformer = self.base_model.transformer
-        blocks = transformer.h
-        boundary = self._validate_boundary(boundary_layer, len(blocks))
-        token_embeddings = transformer.wte(input_ids)
-        cache_position, position_ids = self._position_tensors(token_embeddings)
-        hidden = token_embeddings + transformer.wpe(position_ids).to(token_embeddings.device)
-        hidden = transformer.drop(hidden)
-        causal_mask = self._gpt2_causal_mask(
-            transformer, token_embeddings, attention_mask, cache_position, position_ids
-        )
-        for block in blocks[:boundary]:
-            hidden = self._call_gpt2_block(
-                block, hidden, causal_mask, cache_position, position_ids
-            )
-        return hidden
-
-    def _gpt2_decode(
-        self,
-        hidden: torch.Tensor,
-        attention_mask: torch.Tensor,
-        boundary_layer: int,
-    ) -> torch.Tensor:
-        transformer = self.base_model.transformer
-        blocks = transformer.h
-        boundary = self._validate_boundary(boundary_layer, len(blocks))
-        cache_position, position_ids = self._position_tensors(hidden)
-        causal_mask = self._gpt2_causal_mask(
-            transformer, hidden, attention_mask, cache_position, position_ids
-        )
-        for block in blocks[boundary:]:
-            hidden = self._call_gpt2_block(
-                block, hidden, causal_mask, cache_position, position_ids
-            )
-        head = self._lm_head()
-        if head is None:
-            raise ValueError("GPT-2 split adapter could not locate lm_head.")
-        return head(transformer.ln_f(hidden))
-
-    def _mistral_runtime(
-        self,
-        hidden: torch.Tensor,
-        attention_mask: torch.Tensor,
-    ) -> tuple[torch.Tensor, torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
-        from transformers.masking_utils import (
-            create_causal_mask,
-            create_sliding_window_causal_mask,
-        )
-
-        decoder = self.base_model.model
-        cache_position, position_ids = self._position_tensors(hidden)
-        mask_function = (
-            create_causal_mask
-            if decoder.config.sliding_window is None
-            else create_sliding_window_causal_mask
-        )
-        common = {
-            "config": decoder.config,
-            "attention_mask": attention_mask,
-            "past_key_values": None,
-            "position_ids": position_ids,
-        }
-        if self._mistral_transformers_version == "4.57.6":
-            causal_mask = mask_function(
-                input_embeds=hidden,
-                cache_position=cache_position,
-                **common,
-            )
-        else:
-            causal_mask = mask_function(inputs_embeds=hidden, **common)
-        position_embeddings = decoder.rotary_emb(
-            hidden, position_ids=position_ids
-        )
-        return causal_mask, position_ids, position_embeddings
-
-    def _run_mistral_layers(
-        self,
-        hidden: torch.Tensor,
-        attention_mask: torch.Tensor,
-        layers: Sequence[nn.Module],
-    ) -> torch.Tensor:
-        causal_mask, position_ids, position_embeddings = self._mistral_runtime(
-            hidden, attention_mask
-        )
-        cache_position = torch.arange(hidden.shape[1], device=hidden.device)
-        for layer in layers:
-            kwargs: dict[str, Any] = {
-                "attention_mask": causal_mask,
-                "position_ids": position_ids,
-                "past_key_values": None,
-                "use_cache": False,
-                "position_embeddings": position_embeddings,
-            }
-            if self._mistral_transformers_version == "4.57.6":
-                kwargs["cache_position"] = cache_position
-            output = layer(hidden, **kwargs)
-            hidden = output[0] if isinstance(output, (tuple, list)) else output
-        return hidden
-
-    def _mistral_encode(
-        self,
-        input_ids: torch.Tensor,
-        attention_mask: torch.Tensor,
-        boundary_layer: int,
-    ) -> torch.Tensor:
-        decoder = self.base_model.model
-        boundary = self._validate_boundary(boundary_layer, len(decoder.layers))
-        hidden = decoder.embed_tokens(input_ids)
-        return self._run_mistral_layers(
-            hidden, attention_mask, decoder.layers[:boundary]
-        )
-
-    def _mistral_decode(
-        self,
-        hidden: torch.Tensor,
-        attention_mask: torch.Tensor,
-        boundary_layer: int,
-    ) -> torch.Tensor:
-        decoder = self.base_model.model
-        boundary = self._validate_boundary(boundary_layer, len(decoder.layers))
-        hidden = self._run_mistral_layers(
-            hidden, attention_mask, decoder.layers[boundary:]
-        )
-        head = self._lm_head()
-        assert head is not None
-        return head(decoder.norm(hidden))
-
-    def encode(
-        self,
-        input_ids: torch.Tensor,
-        attention_mask: torch.Tensor,
-        boundary_layer: int,
-    ) -> torch.Tensor:
-        if self._kind == "custom":
-            boundary = self._validate_boundary(boundary_layer, self.layer_count())
-            return self.base_model.functional_forward_to_boundary(
-                input_ids, attention_mask, boundary
-            )
-        if self._kind == "mistral":
-            return self._mistral_encode(input_ids, attention_mask, boundary_layer)
-        return self._gpt2_encode(input_ids, attention_mask, boundary_layer)
-
-    def decode(
-        self,
-        hidden: torch.Tensor,
-        attention_mask: torch.Tensor,
-        boundary_layer: int,
-    ) -> torch.Tensor:
-        if self._kind == "custom":
-            boundary = self._validate_boundary(boundary_layer, self.layer_count())
-            return self.base_model.functional_forward_from_boundary(
-                hidden, attention_mask, boundary
-            )
-        if self._kind == "mistral":
-            return self._mistral_decode(hidden, attention_mask, boundary_layer)
-        return self._gpt2_decode(hidden, attention_mask, boundary_layer)
-
 
 class LatentWorkspaceCausalLM(nn.Module):
     """Wraps a causal LM with a configurable recurrent latent workspace.
@@ -4572,6 +3991,12 @@ class LatentWorkspaceCausalLM(nn.Module):
         self.vocab_size = vocab_size
         self.workspace_config = config
         self.functional_config = functional_config or FunctionalWorkspaceConfig()
+        self.functional_numerics = NumericsPolicy(self.functional_config.logit_composition)
+        functional_norm = NormalizationSpec(
+            self.functional_config.workspace_norm_kind,
+            self.functional_config.workspace_norm_eps,
+        )
+        self._functional_norm_spec = functional_norm
         self.hidden_capture = hidden_capture
         self.base_activation_offload = base_activation_offload
 
@@ -4612,6 +4037,7 @@ class LatentWorkspaceCausalLM(nn.Module):
                     steps=self.functional_config.writer_steps,
                     heads=self.functional_config.writer_heads,
                     dropout=self.functional_config.dropout,
+                    norm_spec=functional_norm,
                 )
             )
             functional_memory_dim = self.functional_writer.output_dim
@@ -4627,6 +4053,7 @@ class LatentWorkspaceCausalLM(nn.Module):
                     zero_initialize_output=(
                         self.functional_config.route_mode != "inline_sidecar"
                     ),
+                    norm_spec=functional_norm,
                 )
             )
             self.functional_sidecar_adapter: Optional[
@@ -4636,6 +4063,7 @@ class LatentWorkspaceCausalLM(nn.Module):
                     workspace_dim=hidden_dim,
                     vocab_size=vocab_size,
                     rank=config.logit_rank,
+                    norm_spec=functional_norm,
                 )
                 if self.functional_config.route_mode == "inline_sidecar"
                 else None
@@ -4684,6 +4112,32 @@ class LatentWorkspaceCausalLM(nn.Module):
 
         step_weights = self._make_step_weights(config)
         self.register_buffer("workspace_step_weights", step_weights, persistent=True)
+
+    def functional_operator_contract(self) -> dict[str, Any]:
+        """Describe resolved operators; mutable config cannot silently relabel them."""
+        configured_norm = NormalizationSpec(
+            self.functional_config.workspace_norm_kind,
+            self.functional_config.workspace_norm_eps,
+        )
+        configured_numerics = NumericsPolicy(self.functional_config.logit_composition)
+        if (
+            configured_norm != self._functional_norm_spec
+            or configured_numerics != self.functional_numerics
+        ):
+            raise RuntimeError(
+                "Functional operator configuration changed after construction; "
+                "rebuild the model to change normalization or logit composition."
+            )
+        if configured_numerics.profile != "legacy_native" and (
+            not self.functional_config.enabled
+            or self.functional_config.route_mode != "inline_sidecar"
+        ):
+            raise RuntimeError("Nonlegacy logit composition requires enabled inline_sidecar")
+        return {
+            "normalization": self._functional_norm_spec.fingerprint(),
+            "numerics": self.functional_numerics.fingerprint(),
+            "scope": "functional writer/reader/sidecar; native backbone norms unchanged",
+        }
 
     @staticmethod
     def _make_step_weights(config: WorkspaceConfig) -> torch.Tensor:
@@ -5769,6 +5223,7 @@ class LatentWorkspaceCausalLM(nn.Module):
         memory_intervention: str,
         memory_intervention_seed: int,
     ) -> dict[str, Any]:
+        self.functional_operator_contract()
         required = {
             "functional_context_input_ids": functional_context_input_ids,
             "functional_context_attention_mask": functional_context_attention_mask,
@@ -6065,8 +5520,8 @@ class LatentWorkspaceCausalLM(nn.Module):
                     sidecar_delta_logits = self.functional_sidecar_adapter(
                         routed_delta
                     )
-                    logits = inline_base_logits + sidecar_delta_logits.to(
-                        inline_base_logits.dtype
+                    logits = self.functional_numerics.compose_logits(
+                        inline_base_logits, sidecar_delta_logits
                     )
                 else:
                     logits, gate_mean, read_norm = self._functional_decode_with_memory(
@@ -6167,8 +5622,8 @@ class LatentWorkspaceCausalLM(nn.Module):
                 # Counterfactual and stability supervision own only the
                 # sidecar family.  Updating the inline base toward a donor
                 # answer under its original context would corrupt the control.
-                swapped_logits = inline_base_logits.detach() + swapped_delta.to(
-                    inline_base_logits.dtype
+                swapped_logits = self.functional_numerics.compose_logits(
+                    inline_base_logits.detach(), swapped_delta
                 )
             else:
                 swapped_logits, _cf_gate, _cf_read = (
@@ -15599,6 +15054,12 @@ def generate_text(
     temperature: float = 0.0,
     top_p: float = 0.95,
 ) -> str:
+    if model.functional_config.enabled:
+        raise ValueError(
+            "Functional workspace free-form generation requires an explicit context/query "
+            "readout API and is not implemented. This generic generator must not silently "
+            "substitute a different workspace route or base-only behavior."
+        )
     if model.workspace_config.route_topology == "deferred_bridge":
         raise ValueError(
             "Free-form generation is not defined for deferred_bridge because it "

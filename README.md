@@ -1,5 +1,15 @@
 # Latent Workspace FT — CUDA comparison harness
 
+V14 begins with a **portable-operator foundation**, not a new training result.
+Model boundary binding, functional workspace operators, normalization choices,
+final-logit arithmetic, and bounded named-norm observation now have separate
+contracts. The default path preserves the sealed V13 algorithm; changing a
+workspace norm is a new algorithm condition, not an equivalent optimization.
+Start with [`docs/V14_PORTABLE_BOUNDARIES.md`](docs/V14_PORTABLE_BOUNDARIES.md)
+and the fixed offline [OLMo2 portability plan](configs/v14/PORTABILITY_RUN_PLAN.json).
+The selected cached OLMo-2 1B is a structural control, not an Instruct capability
+comparison or evidence that the proposed read/transition bridge works.
+
 V13 now has a **completed bounded S0/S1 diagnostic pilot**, not a training run.
 The broader design distinguishes workspace state that is readable now from state
 that affects later recurrent transitions, with normalization explicit. Start with
@@ -29,13 +39,12 @@ This repository is the clean staging surface for a CUDA-native, full-parameter
 Latent Workspace comparison. It starts with a portable v10 engine, provenance,
 data, and explicit decision boundaries.
 
-## Historical runtime status (not V13 qualification)
+## Historical runtime status (not V13/V14 qualification)
 
 - Canonical source is the
   [`RyoSpiralArchitect/Latent_Workspace`](https://github.com/RyoSpiralArchitect/Latent_Workspace)
-  repository. This local design is isolated on
-  `SpiralReality/v13-instrument-visibility`, based on the preserved V13 design
-  commit `d72db11` and V12 commit `fce1e8515b6344adefb9ef529939167371d5ba72`.
+  repository. V14 is isolated on `SpiralReality/v14-portable-boundaries`, based
+  on the sealed V13 observation/retention commit `ed5ce398`.
   The historical observations below
   describe their named V10/V11 runs, not the current V13 implementation status.
 - The runtime contract is PyTorch CUDA, BF16, SDPA, gradient checkpointing,

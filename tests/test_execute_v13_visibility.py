@@ -8,15 +8,26 @@ import sys
 from pathlib import Path
 
 import pytest
+from _sealed_v13_reference import ENGINE_PATH, PINNED_SHA256, stage_sealed_files
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "scripts"))
+WORKING_ROOT = Path(__file__).resolve().parents[1]
+ROOT = WORKING_ROOT
+sys.path.insert(0, str(WORKING_ROOT / "scripts"))
 SPEC = importlib.util.spec_from_file_location(
-    "execute_v13_visibility", ROOT / "scripts/execute_v13_visibility.py"
+    "execute_v13_visibility", WORKING_ROOT / "scripts/execute_v13_visibility.py"
 )
 assert SPEC and SPEC.loader
 runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def historical_repo(tmp_path_factory):
+    root = tmp_path_factory.mktemp("sealed-v13-visibility")
+    stage_sealed_files(root, PINNED_SHA256)
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(sys.modules[__name__], "ROOT", root)
+        yield root
 
 
 @pytest.fixture
@@ -36,11 +47,18 @@ def bound_plan(tmp_path):
             payload = f"fake test {row['id']} {name}".encode()
             (checkpoint / name).write_bytes(payload)
             row[key] = hashlib.sha256(payload).hexdigest()
+    # Prevent an unrelated historical-engine hash gate from masking negative cases.
+    assert len(runner.validate_plan(plan, ROOT)) == 2
     return plan
 
 
 def test_pinned_source_and_mock_bundle_bindings(bound_plan):
     assert len(runner.validate_plan(bound_plan, ROOT)) == 2
+
+
+def test_v14_working_engine_is_rejected_by_historical_visibility_plan(bound_plan):
+    with pytest.raises(ValueError, match=f"Input hash changed: {ENGINE_PATH}"):
+        runner.validate_plan(bound_plan, WORKING_ROOT)
 
 
 @pytest.mark.parametrize(

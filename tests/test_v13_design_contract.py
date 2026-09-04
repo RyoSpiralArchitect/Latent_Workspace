@@ -9,18 +9,32 @@ import sys
 from pathlib import Path
 
 import pytest
+from _sealed_v13_reference import DESIGN_PATH, ENGINE_PATH, PINNED_SHA256, stage_sealed_files
 
-REPO = Path(__file__).resolve().parents[1]
-SCRIPT = REPO / "scripts/validate_v13_design_contract.py"
+WORKING_REPO = Path(__file__).resolve().parents[1]
+REPO = WORKING_REPO
+SCRIPT = WORKING_REPO / "scripts/validate_v13_design_contract.py"
 SPEC = importlib.util.spec_from_file_location("validate_v13_design_contract", SCRIPT)
 assert SPEC is not None and SPEC.loader is not None
 validator = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(validator)
 
 
+@pytest.fixture(scope="module", autouse=True)
+def historical_repo(tmp_path_factory):
+    root = tmp_path_factory.mktemp("sealed-v13-design")
+    stage_sealed_files(root, {**validator.ANCHORS, DESIGN_PATH: PINNED_SHA256[DESIGN_PATH]})
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(sys.modules[__name__], "REPO", root)
+        yield root
+
+
 @pytest.fixture
 def contract() -> dict:
-    return json.loads((REPO / "configs/v13/DESIGN_CONTRACT.json").read_text(encoding="utf-8"))
+    value = json.loads((REPO / DESIGN_PATH).read_text(encoding="utf-8"))
+    # Every negative test starts from valid historical anchors, not a V14 hash failure.
+    assert validator.validate_contract(value, REPO) == []
+    return value
 
 
 def _stage(contract: dict, name: str) -> dict:
@@ -37,7 +51,7 @@ def _cli(root: Path, path: str = "configs/v13/DESIGN_CONTRACT.json") -> subproce
     )
 
 
-def test_current_design_is_valid_but_never_execution_ready(contract: dict) -> None:
+def test_historical_design_is_valid_but_never_execution_ready(contract: dict) -> None:
     before = copy.deepcopy(contract)
     assert validator.validate_contract(contract, REPO) == []
     assert contract == before
@@ -51,6 +65,21 @@ def test_current_design_is_valid_but_never_execution_ready(contract: dict) -> No
     assert "not scientific evidence" in result["claim_boundary"]
     assert "production fail-closed" in result["claim_boundary"]
     assert "passed" not in result
+
+
+def test_v14_working_engine_is_not_qualified_by_the_v13_contract(contract: dict) -> None:
+    errors = validator.validate_contract(contract, WORKING_REPO)
+    index = next(
+        i
+        for i, anchor in enumerate(contract["historical_anchors"])
+        if anchor["path"] == ENGINE_PATH
+    )
+    assert f"historical_anchors[{index}]: historical anchor content SHA-256 changed" in errors
+    completed = _cli(WORKING_REPO)
+    assert completed.returncode == 1
+    result = json.loads(completed.stdout)
+    assert result["design_status"] == "DESIGN_INVALID"
+    assert result["execution_ready"] is False
 
 
 def test_harmless_documentation_additions_are_allowed(contract: dict) -> None:

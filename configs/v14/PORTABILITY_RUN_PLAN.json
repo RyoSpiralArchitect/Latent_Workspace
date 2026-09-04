@@ -1,0 +1,231 @@
+{
+  "format": "latent-workspace-v14-portability-run-plan-v1",
+  "status": "PRE_RUN_SCOPE_FIXED_PENDING_COMMITTED_EXECUTION_RECEIPTS",
+  "scientific_success": false,
+  "actual_run_status": "NOT_RUN",
+  "purpose": "Native versus split pipeline identity on one locally cached non-Mistral model; foundation for later V14 causal bridge work, not bridge evidence.",
+  "preregistered_source_anchors": {
+    "package_fingerprint_scope": "package_top_level_python_modules_v1",
+    "package_fingerprint_sha256": "dfb0279a86de0758ed3a23a046f9daba3f6f2f835766bc3159a14a710e5118d1",
+    "engine_file": "src/latent_workspace_ft_v10/engine.py",
+    "engine_file_sha256": "3e7659b7c927cab23b4d994ce2e320d99431e4ba657d560c1094bc36de596178",
+    "canary_file": "scripts/run_v14_portability_canary.py",
+    "canary_file_sha256": "5b225593f3fef729133d14f95d83320ae8cb32100b0801c1410a8d3e007d26c4",
+    "mismatch_policy": "STOP_BEFORE_MODEL_LOAD_DO_NOT_REPIN_AFTER_OBSERVING_RESULTS"
+  },
+  "prerun_local_test_evidence": {
+    "scope": "Local test suite, not Furnace model execution",
+    "passed": 741,
+    "skipped": 3,
+    "skip_scope": "CUDA-only tests not run locally",
+    "elapsed_seconds": 25.33,
+    "real_model_cuda_receipts_available": false
+  },
+  "authorization_scope": {
+    "bounded_sequential_cuda_forward_canaries": true,
+    "bounded_backward_without_optimizer": true,
+    "training": false,
+    "optimizer_construction": false,
+    "parameter_updates": false,
+    "model_download": false,
+    "remote_code": false,
+    "cache_mutation": false,
+    "weight_deletion": false,
+    "scale_up_14b": false,
+    "additional_model_cells": false
+  },
+  "prelaunch_binding": {
+    "commit_plan_docs_and_implementation_before_gpu_execution": true,
+    "launch_receipt_required": true,
+    "record_before_model_load": [
+      "git_commit",
+      "plan_sha256",
+      "canary_script_sha256",
+      "package_implementation_fingerprint",
+      "resolved_absolute_local_snapshot_path",
+      "snapshot_revision_and_config_sha256",
+      "exact_cell_cli_arguments",
+      "fresh_absolute_output_directory",
+      "observed_runtime_and_gpu_contention_check"
+    ],
+    "same_implementation_and_plan_for_both_cells": true,
+    "plan_is_not_automatically_consumed_by_canary_cli": true,
+    "operator_must_check_declared_model_runtime_and_cell_bindings": true
+  },
+  "model": {
+    "repository_id": "allenai/OLMo-2-0425-1B",
+    "revision": "a1847dff35000b4271fa70afc5db10fd29fedbdf",
+    "variant": "BASE",
+    "model_type": "olmo2",
+    "architecture": "Olmo2ForCausalLM",
+    "num_hidden_layers": 16,
+    "hidden_size": 2048,
+    "stored_tensor_dtype": "float32",
+    "expected_weight_shards": 2,
+    "expected_weight_bytes": 5939687552,
+    "config_sha256": "3dc581384d61b3366fc34a95d12c20e595014ea62352469c17c3e3a77f32882a",
+    "local_snapshot_locator": {
+      "layout": "HF_HUB_CACHE_SNAPSHOT",
+      "repository_directory": "models--allenai--OLMo-2-0425-1B",
+      "snapshot_directory": "a1847dff35000b4271fa70afc5db10fd29fedbdf",
+      "absolute_path_recorded_in_launch_receipt": true,
+      "resolve_only_existing_local_snapshot": true,
+      "missing_snapshot_policy": "STOP_NO_DOWNLOAD"
+    },
+    "native_normalization": "RMSNorm on Q/K projections and attention/MLP branch outputs before residual addition, plus native final RMSNorm; leave unchanged.",
+    "cross_model_norm_only_causal_comparison": false
+  },
+  "runtime": {
+    "host": "Furnace",
+    "python_executable": "/usr/bin/python",
+    "expected_torch_version": "2.13.0+cu132",
+    "expected_transformers_version": "5.15.0",
+    "device": "cuda",
+    "load_dtype": "bfloat16",
+    "cpu_threads": 2,
+    "seed": 1401,
+    "model_mode": "eval",
+    "local_files_only": true,
+    "trust_remote_code": false,
+    "use_cache": false,
+    "allow_tf32": false,
+    "offline_environment": {
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "HF_DATASETS_OFFLINE": "1",
+      "TOKENIZERS_PARALLELISM": "false"
+    },
+    "effective_sdpa_backend_without_dispatch_instrumentation": "UNKNOWN",
+    "sdpa_policy_is_executed_backend_evidence": false,
+    "model_load_or_api_failure_policy": "FAILED_RECEIPT_NO_FALLBACK_OR_VERSION_UPGRADE"
+  },
+  "inputs": {
+    "prompts": [
+      "The cobalt box is in room A. The amber box is in room B. The cobalt box is in",
+      "Rain fell overnight. By morning the streets were",
+      "Two keys rest on a wooden table. Beside them is"
+    ],
+    "padding_side": "right",
+    "padding": true,
+    "add_special_tokens": true,
+    "truncation": false,
+    "maximum_input_tokens": 96,
+    "minimum_valid_tokens_per_prompt": 2,
+    "missing_pad_token_policy": "USE_EXISTING_EOS_OR_FAIL_WITHOUT_VOCABULARY_EXTENSION",
+    "record_actual_input_ids_and_attention_masks": true
+  },
+  "execution": {
+    "script": "scripts/run_v14_portability_canary.py",
+    "cell_order": ["olmo2_base_bf16_sdpa", "olmo2_base_bf16_eager"],
+    "parallel_cells": false,
+    "one_fresh_process_and_output_directory_per_cell": true,
+    "cells": [
+      {
+        "id": "olmo2_base_bf16_sdpa",
+        "attention_implementation": "sdpa",
+        "cli_flags": ["--device", "cuda", "--dtype", "bfloat16", "--attention-implementation", "sdpa", "--check-gradients"],
+        "status_at_preregistration": "NOT_RUN"
+      },
+      {
+        "id": "olmo2_base_bf16_eager",
+        "attention_implementation": "eager",
+        "cli_flags": ["--device", "cuda", "--dtype", "bfloat16", "--attention-implementation", "eager", "--check-gradients"],
+        "status_at_preregistration": "NOT_RUN"
+      }
+    ],
+    "required_resolved_cli_paths": ["--model-path", "--output-dir"],
+    "attention_implementation_must_match_loaded_config": true,
+    "ordinary_pipeline_mismatch": "PRESERVE_FAILED_CELL_AND_RUN_THE_OTHER_PREDECLARED_CELL_IF_INTEGRITY_AND_RESOURCE_CHECKS_STILL_HOLD",
+    "source_or_snapshot_integrity_failure": "STOP_SUBSEQUENT_CELLS",
+    "retry_or_scope_expansion_requires_separate_recorded_decision": true
+  },
+  "checks": {
+    "native_vs_split_logits": {
+      "boundary_layers": [0, 8, 16],
+      "boundary_semantics": "After exactly N decoder blocks, before next block or native final norm; final norm/head execute in decode.",
+      "compare_all_prompt_positions_including_padding": true,
+      "require_same_shape_and_dtype": true,
+      "require_all_compared_values_finite": true,
+      "atol": 0.015625,
+      "rtol": 0.0078125
+    },
+    "native_vs_split_gradients": {
+      "boundary_layer": 8,
+      "all_named_parameters_required": true,
+      "every_parameter_requires_grad": true,
+      "native_and_split_gradients_present_and_finite_for_every_parameter": true,
+      "exclude_failed_parameters_from_denominator": false,
+      "loss": "Mean fixed next-input-token cross entropy over non-padding targets, logits cast to FP32.",
+      "native_then_split_backward_sequentially": true,
+      "native_gradients_copied_to_cpu_before_split_backward": true,
+      "clear_gradients_between_and_after_comparisons": true,
+      "optimizer_steps": 0,
+      "atol": 0.00001,
+      "rtol": 0.02
+    },
+    "greedy_generation": {
+      "prompt_indices": [0, 1],
+      "boundary_layer": 8,
+      "tokens_per_prompt_per_path": 4,
+      "sampling": false,
+      "remove_batch_padding_before_individual_generation": true,
+      "stop_early_at_eos": false,
+      "native_split_token_ids_must_match_exactly": true,
+      "language_capability_claim": false
+    },
+    "true_bypass": {
+      "profiles": ["legacy_native", "fp32_accumulate"],
+      "original_base_tensor_identity_and_dtype_required": true,
+      "scope": "Numerics helper on native logits, not a workspace-wrapper route test."
+    },
+    "named_norm_observation": {
+      "selection": "First three inventoried normalizers plus native model.norm if present.",
+      "max_records": 8,
+      "max_tensor_elements_per_record": 4096,
+      "hash_and_statistics_scope": "Explicitly labelled flattened prefix; omitted elements are not measured.",
+      "every_selected_module_invoked_and_recorded_once": true,
+      "dropped_or_incomplete_records_allowed": false,
+      "captured_prefix_values_must_be_finite": true,
+      "observed_native_logits_must_equal_unobserved_native_logits_exactly": true,
+      "attention_or_kv_mechanism_claim": false
+    },
+    "tolerance_selection": "Fixed from canary source before observing any cell output; no fitting or relaxation.",
+    "numerical_test": "torch.allclose on finite full compared tensors with declared atol/rtol, after CPU float64 comparison conversion.",
+    "cross_backend_logit_or_gradient_equality_required": false
+  },
+  "integrity_and_bounds": {
+    "snapshot_payload_limit_bytes": 8589934592,
+    "snapshot_file_limit": 128,
+    "snapshot_limit_is_gpu_memory_cap": false,
+    "snapshot_file_set_size_timestamps_and_all_payload_sha256_checked_before_after": true,
+    "standard_hf_snapshot_relative_blob_links_only": true,
+    "output_must_be_fresh_and_disjoint_from_snapshot": true,
+    "package_fingerprint_scope": "package_top_level_python_modules_v1",
+    "all_package_top_level_python_hashes_checked_before_after": true,
+    "canary_and_selected_model_tokenizer_source_hashes_checked_before_after": true,
+    "parameter_object_identity_versions_and_requires_grad_unchanged": true,
+    "record_torch_cuda_peak_allocated_and_reserved_bytes": true,
+    "gpu_peak_scope": "This process Torch CUDA allocator, not all device memory and not an imposed memory cap.",
+    "sha256_is_reconstructible_weight_backup": false
+  },
+  "result_policy": {
+    "receipt_filename_per_cell": "PORTABILITY_CANARY.json",
+    "required_success_status": "COMPLETE",
+    "both_cells_must_satisfy_all_pipeline_and_integrity_checks": true,
+    "partial_or_failed_cells_preserved": true,
+    "no_success_before_actual_receipts": true,
+    "successful_canary_claim": "Bounded native/split pipeline identity for the exact recorded model, source, runtime, prompts, precision and attention configuration.",
+    "scientific_success_remains_false": true,
+    "hard_task_qualified": false,
+    "content_specific_workspace_use_established": false,
+    "reader_transition_bridge_established": false,
+    "legacy_b_f1_o3_comparison_undeferred": false,
+    "legacy_optimizer_resume_parity_claim": false
+  },
+  "later_candidates_not_authorized_by_this_plan": [
+    {"model": "Qwen/Qwen2.5-0.5B", "reason": "Smaller portability control; normalization placement is closer to Mistral."},
+    {"model": "google/gemma-2-2b-it", "reason": "Later control for offset affine parameterization and different normalization placement."}
+  ],
+  "historical_v13_policy": "Do not repin historical validators or contracts. Their tests stage SHA-verified ed5ce398e08b55d3118a316cfda61e36b8cc4b54 files, and explicitly reject the V14 working engine.",
+  "claim_boundary": "Portable execution boundaries and bounded arithmetic/observation checks are implemented foundations. This plan does not establish an R-to-D or D-to-R causal bridge, qualify a hard task, train or delete weights, remove native normalization, or make magnitude synonymous with confidence."
+}
