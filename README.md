@@ -1,12 +1,15 @@
 # Latent Workspace FT — CUDA comparison harness
 
-V13 is currently **design only**: it separates workspace state that is readable
-now from state that affects later recurrent transitions, with normalization as
-an explicit part of the contract. Start with
+V13 now has a **bounded S0/S1 diagnostic pilot**, not a training run: it separates
+workspace state that is readable now from state that affects later recurrent
+transitions, with normalization as an explicit part of the contract. Start with
+[`docs/V13_S0_S1_PILOT.md`](docs/V13_S0_S1_PILOT.md). The original design remains
+historical and non-executable:
 [`docs/V13_NORMALIZATION_STATE_DESIGN.md`](docs/V13_NORMALIZATION_STATE_DESIGN.md)
 and [`configs/v13/DESIGN_CONTRACT.json`](configs/v13/DESIGN_CONTRACT.json).
-No V13 scientific runner or training configuration is implemented or authorized
-by this design. V14's proposed bridge between the two state views remains a
+The separate pilot plan permits only synthetic falsification checks and retained
+V12 numerical visibility measurements. No V13 training configuration is enabled.
+V14's proposed bridge between the two state views remains a
 hypothesis, not a demonstrated mechanism.
 
 The completed parent is the bounded
@@ -25,8 +28,9 @@ data, and explicit decision boundaries.
 - Canonical source is the
   [`RyoSpiralArchitect/Latent_Workspace`](https://github.com/RyoSpiralArchitect/Latent_Workspace)
   repository. This local design is isolated on
-  `SpiralReality/v13-normalization-state-design`, based on V12 commit
-  `fce1e8515b6344adefb9ef529939167371d5ba72`. The historical observations below
+  `SpiralReality/v13-instrument-visibility`, based on the preserved V13 design
+  commit `d72db11` and V12 commit `fce1e8515b6344adefb9ef529939167371d5ba72`.
+  The historical observations below
   describe their named V10/V11 runs, not the current V13 implementation status.
 - The runtime contract is PyTorch CUDA, BF16, SDPA, gradient checkpointing,
   and full-parameter Adafactor. Custom Triton kernels remain deferred until a

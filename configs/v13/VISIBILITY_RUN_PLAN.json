@@ -1,0 +1,48 @@
+{
+  "format": "latent-workspace-v13-visibility-run-plan-v1",
+  "status": "BOUNDED_DIAGNOSTIC_AUTHORIZED_BY_USER",
+  "authorization_scope": "First S0 falsification fixtures and S1 retained-inline visibility diagnostic, following user request to use the available Furnace. No training or promotion.",
+  "design_contract_sha256": "88d924979c29837ef2c8576a51efc1ce534bfe07a27e0b98def0ef8d3c545d86",
+  "historical_engine_sha256": "aee2a1fe3b95c6c0ff21d89870c0d3bb959da28fc544aaa9aced7ccc0abae133",
+  "source_binding_rule": "Freeze the implementation file hashes in the launch receipt after tests, before any GPU diagnostic; do not treat this design plan as runtime validation.",
+  "eval_file": "data/v10/functional_eval.jsonl",
+  "eval_sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+  "input_lane": "retained_inline_diagnostic",
+  "selection": "First two paired-world records in file order, identical for both checkpoints; selection frozen before inspecting V13 outputs.",
+  "max_worlds": 2,
+  "raw_query_limit": 2,
+  "seed": 271828,
+  "modes": ["intact", "zero", "fixed_carrier", "norm_matched_random", "counterfactual_twin", "hard_bypass"],
+  "post_adapter_gain_grid": [1.0, 4.0, 16.0],
+  "gain_rule": "Descriptive visibility only; no gain selection, threshold fitting, learned intervention, or semantic promotion.",
+  "checkpoint_root": "/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-workspace-ft-v12-calibrated-route",
+  "checkpoints": [
+    {
+      "id": "task_seed43_step16",
+      "path": "runs/v12/calibrated_route/refinement16/task_lr_1e_5_seed43_step16/final",
+      "manifest_sha256": "9f7be7a39e7de1a994d1b21a7c05796aad2d33f8a09e8a9fbf4539b9aca38d2f",
+      "workspace_sha256": "7bd50e91cda608686089cef1e77897c167662184418e61b4e4563dab8f998d91"
+    },
+    {
+      "id": "semantic_seed43_step16",
+      "path": "runs/v12/calibrated_route/refinement16/semantic_lr_1e_5_seed43_step16/final",
+      "manifest_sha256": "93a5e1b1041b5a3ed76ee44e6c60840afee5869c8675efcd940e8957a1693834",
+      "workspace_sha256": "0fc7a8900c42199f818b2c6ebb1e3f33b9995cab12208b49a1ecf435dd20e913"
+    }
+  ],
+  "s0_fixture": {"seed": 1301, "families": 8, "scope": "SYNTHETIC_FALSIFICATION_ONLY_NOT_QUALIFIED_CORPUS"},
+  "guards": {
+    "offline_model_loading": true,
+    "base_frozen": true,
+    "workspace_frozen": true,
+    "engine_unchanged": true,
+    "training": false,
+    "s0_fully_qualified": false,
+    "deferred_sufficiency_claim": false,
+    "content_specific_success_claim": false,
+    "v14_bridge_claim": false,
+    "scale_up_14b": false,
+    "checkpoint_deletion_in_diagnostic": false
+  },
+  "claim_boundary": "A bounded numerical diagnostic on two retained V12 checkpoints and old evaluation data. It does not complete S0 task qualification, train V13, establish content-specific workspace use, or identify a V14 bridge. Synthetic fixture results are not model results."
+}
