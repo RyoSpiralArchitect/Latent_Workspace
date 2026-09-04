@@ -1,24 +1,33 @@
 # Latent Workspace FT — CUDA comparison harness
 
-V11.0 is the current bounded research lane. It first qualifies the exact F0/F1
-step-0 instrument, then tests a single objective repair: constrained-choice CE
-instead of full-vocabulary answer-token CE. See
-[`docs/V11_OBJECTIVE_REPAIR.md`](docs/V11_OBJECTIVE_REPAIR.md) and the frozen
-[`configs/v11/CONTRACT.json`](configs/v11/CONTRACT.json). The import package
-name remains `latent_workspace_ft_v10` so V10 checkpoints and tooling retain a
-stable compatibility surface.
+V13 is currently **design only**: it separates workspace state that is readable
+now from state that affects later recurrent transitions, with normalization as
+an explicit part of the contract. Start with
+[`docs/V13_NORMALIZATION_STATE_DESIGN.md`](docs/V13_NORMALIZATION_STATE_DESIGN.md)
+and [`configs/v13/DESIGN_CONTRACT.json`](configs/v13/DESIGN_CONTRACT.json).
+No V13 scientific runner or training configuration is implemented or authorized
+by this design. V14's proposed bridge between the two state views remains a
+hypothesis, not a demonstrated mechanism.
+
+The completed parent is the bounded
+[V12 calibrated-route study](provenance/pilots/v12_calibrated_route/OBSERVATIONS.md),
+which demonstrated initialization/update ownership but no winning workspace
+branch. The V13 design records interpretation corrections without modifying
+historical evidence. The import package remains `latent_workspace_ft_v10` for
+checkpoint/tooling compatibility.
 
 This repository is the clean staging surface for a CUDA-native, full-parameter
 Latent Workspace comparison. It starts with a portable v10 engine, provenance,
 data, and explicit decision boundaries.
 
-## Status
+## Historical runtime status (not V13 qualification)
 
 - Canonical source is the
   [`RyoSpiralArchitect/Latent_Workspace`](https://github.com/RyoSpiralArchitect/Latent_Workspace)
-  repository. V11 objective repair is isolated on branch
-  `SpiralReality/v11-objective-repair`, stacked on the verified transport-v2
-  parent until that branch is merged.
+  repository. This local design is isolated on
+  `SpiralReality/v13-normalization-state-design`, based on V12 commit
+  `fce1e8515b6344adefb9ef529939167371d5ba72`. The historical observations below
+  describe their named V10/V11 runs, not the current V13 implementation status.
 - The runtime contract is PyTorch CUDA, BF16, SDPA, gradient checkpointing,
   and full-parameter Adafactor. Custom Triton kernels remain deferred until a
   measured bottleneck and forward/backward parity test justify them.
@@ -175,6 +184,7 @@ specific bottleneck and a numerical-parity test exists.
 - `src/latent_workspace_ft_v10/` — portable engine and CUDA/Mistral split adapter.
 - `tests/` — offline tiny-model equivalence and optimizer coverage tests.
 - `configs/v10/` — pinned 19-condition contract and smoke/n3/n10 profiles.
+- `configs/v13/` — non-executable normalization-state design; unresolved run gates remain explicit.
 - `scripts/` — deterministic data remapping, contract preparation, and runners.
 - `data/` — byte-identical v9 inputs, Mistral-safe v10 inputs, and manifests.
 - `docs/` — model and backend decisions.

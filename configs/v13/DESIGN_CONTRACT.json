@@ -1,0 +1,284 @@
+{
+  "format": "latent-workspace-ft-v13-normalization-state-design-v1",
+  "schema_version": 1,
+  "status": "DESIGN_ONLY",
+  "frozen_for_execution": false,
+  "question": "Which coordinates of a workspace state are readable now, which affect later transitions, and where does normalization mediate their accessibility?",
+  "parent_commit": "fce1e8515b6344adefb9ef529939167371d5ba72",
+  "historical_anchors": [
+    {
+      "path": "src/latent_workspace_ft_v10/engine.py",
+      "sha256": "aee2a1fe3b95c6c0ff21d89870c0d3bb959da28fc544aaa9aced7ccc0abae133"
+    },
+    {
+      "path": "configs/v12/CONTRACT.json",
+      "sha256": "3dd0fe81f5519c9721430c8ae259f3739b6b69e99cb6dda0cc4fca79d7536a60"
+    },
+    {
+      "path": "provenance/pilots/v12_calibrated_route/refinement16/FINAL_RECEIPT.json",
+      "sha256": "b46e3c2e01d3f384b0e2d02dc613edb57cbb585ad7002601e4d298a9ed9b1c0b"
+    },
+    {
+      "path": "provenance/pilots/v12_calibrated_route/refinement16/V13_HANDOFF.json",
+      "sha256": "056bef47819113b5afc0ea9d72e034ef0576fbc6072b1680d7f1a4906a6519e1"
+    }
+  ],
+  "execution_authority": {
+    "training": false,
+    "base_release": false,
+    "scale_up_14b": false,
+    "remote_jobs": false,
+    "weight_pruning": false,
+    "v14_bridge_training": false
+  },
+  "implementation_status": {
+    "design_validator": "IMPLEMENTED",
+    "paired_metric_repair": "NOT_IMPLEMENTED",
+    "hard_task_generator": "NOT_IMPLEMENTED",
+    "normalization_trace": "NOT_IMPLEMENTED",
+    "coordinate_interventions": "NOT_IMPLEMENTED",
+    "transition_interventions": "NOT_IMPLEMENTED",
+    "conditional_modulation": "NOT_IMPLEMENTED",
+    "scientific_runs": "NOT_RUN"
+  },
+  "model_anchor": {
+    "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "base_weights": "FROZEN_THROUGHOUT_V13",
+    "native_normalizer": "RMSNorm_UNCHANGED",
+    "pure_native_b_f1_o3_parity": "DEFERRED_NOT_A_PREREQUISITE"
+  },
+  "state_contract": {
+    "two_views_not_assumed_independent_stores": true,
+    "readable_now": "Effect of a state patch followed by the qualified, fixed query reader without further writer transitions; report representation access separately from answer effect.",
+    "transition_effective": "Effect of a state patch followed by the remaining fixed writer transitions and the same qualified readout, contrasted with read-now and carry-only controls.",
+    "coordinate_source": "RAW_PRE_AFFINE_STATE",
+    "factorization": "m = mu * ones + rho * u; mean(u)=0; RMS(u)=1; rho=sqrt(mean((m-mu)^2))",
+    "actual_layernorm_formula": "gamma * (rho / sqrt(rho^2 + epsilon)) * u + beta",
+    "factorization_uses_normalizer_epsilon": false,
+    "reconstruct_then_apply_actual_checkpoint_normalizer": true,
+    "coordinate_interpretation": "NO_PREASSIGNED_SEMANTICS_OR_CONFIDENCE",
+    "degenerate_radius_policy": "MARK_UNKNOWN_AND_REPORT_COVERAGE_DO_NOT_IMPUTE_DIRECTION",
+    "slot_matching": "SAME_CHECKPOINT_SAME_SLOT_INDEX_NO_LABEL_BASED_ALIGNMENT",
+    "hybrid_slot_map_frozen_across_all_cells_and_patch_modes": true,
+    "mean_shift_under_current_pre_norm_architecture": "STRUCTURAL_NULL_NOT_SEMANTIC_SUCCESS",
+    "normalizer_policy": "RECORD_ACTUAL_EPS_GAMMA_BETA_DTYPE_AND_PROJECTION",
+    "architecture_fingerprint_includes_non_tensor_attributes": true,
+    "update_means": "RECURRENT_ACTIVATION_TRANSITION_NOT_OPTIMIZER_STEP",
+    "bridge_claim_in_v13": false
+  },
+  "input_lanes": {
+    "retained_inline_diagnostic": {
+      "query_and_base_information": "ORIGINAL_WORLD_CONTEXT_PRESENT",
+      "claim": "CONDITIONAL_ACCESSIBILITY_OR_CONFLICT_OVERRIDE_NOT_DEFERRED_SUFFICIENCY"
+    },
+    "deferred_primary": {
+      "query_and_base_information": "QUERY_WITHOUT_ORIGINAL_WORLD_CONTEXT",
+      "claim": "DEFERRED_SUFFICIENCY_ONLY_AFTER_SAME_ROUTE_QUALIFICATION"
+    },
+    "record_sources_per_stage": true,
+    "requalify_reader_and_sufficiency_on_each_route": true,
+    "pool_metrics_across_lanes": false
+  },
+  "measurement_contract": {
+    "per_case_predictions_and_logits_required": true,
+    "paired_donor_logodds_gain": "(z_swap[donor]-z_swap[original])-(z_intact[donor]-z_intact[original]); affected rows only",
+    "intact_correct_to_donor_correct_required": true,
+    "report_intact_wrong_rows_and_all_affected_denominator": true,
+    "unaffected_prediction_agreement_required": true,
+    "unaffected_ground_truth_accuracy_separate": true,
+    "content_control_effect_required": true,
+    "donor_accuracy_alone_is_causal_evidence": false,
+    "require_each_claim_gate_not_f3_f4_only": true,
+    "null_controls": [
+      "identity",
+      "memory_blind_internal_inversion",
+      "fixed_carrier",
+      "norm_matched_random",
+      "true_bypass",
+      "slot_permutation_invariance"
+    ],
+    "uncertainty_unit": "ORIGINAL_WORLD_FAMILY_CLUSTER",
+    "cluster_includes": ["both_sides", "all_queries", "alternate_edits", "renamings", "rendering_variants", "all_interventions"],
+    "optimization_seed_variation_separate_from_world_uncertainty": true,
+    "missing_or_degenerate_measurement": "UNKNOWN_NOT_PASS",
+    "matched_eval_surface": [
+      "collated_input_ids_masks_labels_choice_ids",
+      "batch_shape_and_padding",
+      "autocast_and_accumulation_dtype",
+      "runtime_math_and_attention_backend",
+      "rng_and_dropout",
+      "same_input_pre_save_post_reload"
+    ],
+    "artifact_binding": [
+      "source_commit_and_source_hash",
+      "requested_and_resolved_config_equivalence",
+      "base_and_workspace_content_hashes",
+      "tokenizer_and_prompt_hashes",
+      "data_and_split_hashes",
+      "runtime_environment",
+      "per_case_trace_hashes"
+    ],
+    "freeform_scope": "CAPTURE_BASE_ONLY_AND_FULL_WRAPPER_SEPARATELY_OR_MARK_WRAPPER_UNSUPPORTED"
+  },
+  "data_contract": {
+    "legacy_v10_corpus_use": "NUMERICAL_DIAGNOSTIC_ONLY_NOT_V13_GENERALIZATION_TEST",
+    "primary_query_family": "INTERNAL_NONADJACENT_RELATIONS",
+    "twin_edit": "CONSTRAINED_INTERNAL_NONADJACENT_SWAP_OR_BLOCK_REORDER",
+    "adjacent_only_twins_allowed_for_primary_claim": false,
+    "query_selection_uses_both_worlds": true,
+    "sampling_order": "ORIGINAL_WORLD_AND_QUERY_THEN_ALTERNATE_EDITS_THEN_PAIRED_ELIGIBILITY_AUDIT",
+    "same_original_world_query_has_both_affected_statuses_across_edits": true,
+    "must_balance_affected_and_unaffected_within_structural_strata": true,
+    "heldout_template_crosses_affected_status": true,
+    "hop_distance_recorded_for_both_worlds": true,
+    "shuffle_query_order_and_balance_answer_patterns": true,
+    "match_twin_fact_presentation_order": true,
+    "primary_task_shortcut_oracles": [
+      "direct_edge_endpoint_rule",
+      "memory_blind_internal_inversion",
+      "query_position_only",
+      "query_only"
+    ],
+    "positive_control": "SYMBOLIC_PATH_ORACLE_AND_PINNED_MATCHED_INLINE_MODEL",
+    "split_policy": "SEPARATE_CALIBRATION_DEVELOPMENT_SEALED_TEST_BY_PAIRED_WORLD_FAMILY",
+    "entity_renaming_test_required": true,
+    "numeric_counts_seeds_and_thresholds": "PENDING_PREFLIGHT_FREEZE"
+  },
+  "stages": [
+    {
+      "id": "S0_INSTRUMENT",
+      "status": "NOT_IMPLEMENTED",
+      "depends_on": [],
+      "input_lanes": ["retained_inline_diagnostic", "deferred_primary"],
+      "purpose": "Repair causal metrics, data shortcuts, exact bypass, execution-surface parity and evidence binding before scientific interpretation.",
+      "success": "All nulls receive zero causal credit; new task is identifiable and positive controls qualify under frozen criteria."
+    },
+    {
+      "id": "S1_VISIBILITY",
+      "status": "NOT_IMPLEMENTED",
+      "depends_on": ["S0_INSTRUMENT"],
+      "input_lanes": ["retained_inline_diagnostic"],
+      "purpose": "Locate loss of observable signal using retained weights; FP32 accumulation and post-adapter gain are separate diagnostic contrasts.",
+      "trace_points": [
+        "raw_slot_state",
+        "actual_memory_norm_output",
+        "projected_keys_and_values",
+        "query_specific_read",
+        "gated_update_before_residual_roundtrip",
+        "recovered_delta_after_residual_roundtrip",
+        "adapter_input_and_output",
+        "candidate_residual_before_cast",
+        "candidate_residual_after_cast",
+        "candidate_logits_after_accumulation"
+      ],
+      "readout_control": "POST_ADAPTER_GAIN_AND_FP32_ACCUMULATION",
+      "success": "Measured signal survival or a localized null; neither constitutes semantic success."
+    },
+    {
+      "id": "S2_COORDINATES",
+      "status": "NOT_IMPLEMENTED",
+      "depends_on": ["S0_INSTRUMENT", "S1_VISIBILITY"],
+      "input_lanes": ["retained_inline_diagnostic", "deferred_primary"],
+      "purpose": "Separate shape, centered radius and mean at a fixed writer-to-reader boundary.",
+      "factors": ["shape", "radius", "mean"],
+      "donor_levels": ["original", "twin"],
+      "factorial_cells": 8,
+      "both_swap_directions_required": true,
+      "identity_and_self_reconstruction_required": true,
+      "held_fixed": ["checkpoint", "query", "masks", "slot_indices", "reader", "gain", "dtype"],
+      "followup_if_statistics_help": "SEPARATE_STATISTICS_CHANNEL_WITH_CONSTANT_AND_SHUFFLED_STATISTICS_CONTROLS",
+      "success": "Classify accessible coordinates and paired causal effects, or record null/unknown; do not require a winning coordinate."
+    },
+    {
+      "id": "S3_TRANSITIONS",
+      "status": "NOT_IMPLEMENTED",
+      "depends_on": ["S0_INSTRUMENT", "S1_VISIBILITY", "S2_COORDINATES"],
+      "input_lanes": ["deferred_primary"],
+      "purpose": "Compare read-now, resume-transition and carry-only effects without yet learning a bridge.",
+      "candidate_writer_steps": [1, 2, 4],
+      "reader_steps": 1,
+      "patch_modes": ["read_now", "resume_remaining_transitions", "carry_only"],
+      "must_qualify_each_horizon": true,
+      "reuse_k1_checkpoint_as_trained_k4_evidence": false,
+      "intermediate_readout_distribution_shift_must_be_reported": true,
+      "matched_parameter_budget_schedule_and_compute_reporting": true,
+      "normalization_topology_changed_with_horizon": false,
+      "success": "Identify read-only, transition-only, both, neither or unknown under explicit observability/uncertainty limits."
+    },
+    {
+      "id": "S4_MODULATION_OPTIONAL",
+      "status": "PARKED_DESIGN_ONLY",
+      "depends_on": ["S0_INSTRUMENT", "S1_VISIBILITY", "S2_COORDINATES"],
+      "input_lanes": ["deferred_primary", "retained_inline_diagnostic"],
+      "purpose": "Optional single-site memory-conditioned normalization-output modulation; not the primary state audit and not a V14 bridge claim.",
+      "formula": "n=N_native(h); n_prime=n+a*(delta_gamma(M,Q)*n+delta_beta(M,Q))",
+      "native_normalizer_replaced": false,
+      "modulation_head_output_init": "ZERO",
+      "outer_gain_init": "FIXED_NONZERO_BOUNDED",
+      "single_site": "PENDING_PREFLIGHT_FREEZE",
+      "controls": [
+        "no_op",
+        "trained_static",
+        "query_only",
+        "fixed_carrier",
+        "memory_conditioned",
+        "matched_non_normalization_site_modulation"
+      ],
+      "primary_input_lane": "QUERY_ONLY_REQUALIFIED_WITHOUT_ORIGINAL_WORLD_CONTEXT",
+      "inline_input_lane_claim": "CONFLICT_OVERRIDE_NOT_DEFERRED_SUFFICIENCY"
+    }
+  ],
+  "claim_gates": {
+    "content_specific_requires_all": [
+      "instrument_and_artifact_integrity",
+      "requalified_task_sufficiency",
+      "positive_paired_donor_effect",
+      "intact_correct_to_donor_correct_with_full_denominators",
+      "matched_content_control_effect",
+      "unaffected_retention",
+      "heldout_affected_and_unaffected_coverage"
+    ],
+    "representation_probe_success_is_causal_success": false,
+    "raw_norm_growth_is_reasoning_progress": false,
+    "conditional_adapter_gain_is_workspace_success": false,
+    "v13_success_requires_positive_semantic_result": false,
+    "numerical_thresholds": null,
+    "threshold_freeze_rule": "USE_SEPARATE_CALIBRATION_THEN_FREEZE_BEFORE_COMPARING_CANDIDATES_OR_OPENING_TEST"
+  },
+  "unresolved_execution_fields": [
+    "new_dataset_generator_counts_seeds_and_split_manifests",
+    "numerical_noop_reconstruction_and_null_tolerances",
+    "minimum_sufficiency_effect_and_retention_thresholds",
+    "cluster_uncertainty_resampling_and_multiplicity_plan",
+    "gain_grid_optimizer_schedule_seed_count_and_compute_budget",
+    "recurrent_horizon_and_intermediate_reader_qualification",
+    "optional_modulation_site_capacity_and_feature_source",
+    "implementation_hashes_and_separate_execution_approval"
+  ],
+  "v14_handoff": {
+    "status": "HYPOTHESIS_ONLY",
+    "question": "Can a transition-effective workspace component become a causally useful readable component through an identifiable transformation?",
+    "required_exports": [
+      "paired_world_and_query_ids",
+      "checkpoint_and_runtime_bindings",
+      "raw_and_normalized_state_at_each_observed_step",
+      "shape_radius_mean_and_degeneracy_masks",
+      "read_now_transition_and_carry_only_outcomes",
+      "per_case_predictions_logits_and_directional_metrics",
+      "null_effect_distributions_and_unknown_coverage"
+    ],
+    "future_bridge_proof_requires": [
+      "current_reader_and_next_transition_inputs_can_be_patched_independently",
+      "crossed_reader_only_and_transition_only_interventions_executed",
+      "transition_effect_persists_with_direct_current_reader_input_held_original",
+      "transition_patch_changes_later_readable_state",
+      "later_readable_state_changes_answers_in_donor_direction",
+      "matched_carry_only_and_gain_controls_do_not_explain_effect",
+      "restoring_later_readable_state_removes_effect",
+      "transplanting_later_readable_state_reproduces_effect",
+      "heldout_replication_with_intact_sufficiency_and_unaffected_retention"
+    ],
+    "correlation_or_probe_decodability_is_bridge_proof": false
+  }
+}
