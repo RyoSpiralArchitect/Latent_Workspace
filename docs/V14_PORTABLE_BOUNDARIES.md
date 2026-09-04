@@ -9,6 +9,9 @@ V14の最初の成果物は、モデル固有の実行境界、workspaceの演�
 コミットする。実行結果、最終テスト集計、使用commitは実際のreceiptで記録する。
 計画ファイルや小規模テストを実モデルの成功receiptとして扱わない。
 
+初回の実行済み結果は[OLMo2 CUDAの2セル観測](../provenance/pilots/v14_portability_20260904/OBSERVATIONS.md)
+に分離した。事前計画の`NOT_RUN`は実行前の状態として保存し、結果で上書きしない。
+
 実行前のローカル全テスト結果は741 passed、CUDA専用3 skipped、25.33秒。
 これはFurnace上の実モデル実行結果ではなく、CUDA-onlyのskipを成功として数えない。
 この計画の固定source anchorは次のとおり。commitとplan自体のhashは、実行前のlaunch receiptで束ねる。

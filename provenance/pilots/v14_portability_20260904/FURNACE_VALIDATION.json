@@ -1,0 +1,158 @@
+{
+  "format": "latent-workspace-v14-furnace-validation-v1",
+  "status": "BACKEND_CONDITIONAL_VALIDATION",
+  "source_commit": "d7d6f0a50e1888276146aa111ddb5ccd21f1f607",
+  "package_implementation_sha256": "dfb0279a86de0758ed3a23a046f9daba3f6f2f835766bc3159a14a710e5118d1",
+  "launch_receipt": "provenance/raw/v14_portability_20260904/LAUNCH.json",
+  "launch_sha256": "a1bb30e15b2da88bf87247a90ea983682c63d5aa2360c71a24bf94b588899f77",
+  "plan_sha256": "e7f6da28213f5d61a57ec8ff2e8d55cde731dabf0819fffae02e51f150b58ca3",
+  "canary_script_sha256": "5b225593f3fef729133d14f95d83320ae8cb32100b0801c1410a8d3e007d26c4",
+  "command_context": {
+    "cwd": ".",
+    "cwd_meaning": "source repository root",
+    "executable": "python",
+    "executable_path_normalized": true,
+    "executable_note": "The executing agent used the system Python interpreter; only its basename is published. All remaining argv entries are preserved.",
+    "command_evidence": "Executing agent confirmed both invocations; environment agrees with the hash-bound raw LAUNCH receipt. JUnit does not independently record argv or backend settings.",
+    "environment": {
+      "PYTORCH_ALLOC_CONF": "backend:native,expandable_segments:True",
+      "PYTHONPATH": "src",
+      "OMP_NUM_THREADS": "2",
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "HF_DATASETS_OFFLINE": "1",
+      "TOKENIZERS_PARALLELISM": "false"
+    },
+    "unset_environment": [
+      "PYTORCH_CUDA_ALLOC_CONF",
+      "PYTORCH_HIP_ALLOC_CONF"
+    ]
+  },
+  "runtime": {
+    "python_major_minor": "3.14",
+    "python_patch": null,
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0",
+    "runtime_evidence": "Executing-agent runtime metadata; Python major/minor is also visible in the default-run traceback. The precise Python patch version is not captured in these JUnit receipts."
+  },
+  "runs": [
+    {
+      "id": "default_cpu_backend",
+      "status": "FAILED_CPU_BF16_BACKWARD_UNAVAILABLE",
+      "argv": [
+        "python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests",
+        "--junitxml=runs/v14/furnace-validation-20260904.xml"
+      ],
+      "process_local_backend_override": null,
+      "raw_junit": "provenance/raw/v14_portability_20260904/furnace-validation-20260904.xml",
+      "junit_sha256": "cc789032f1018c4aea39d17bda94570b8e3d3451cb053f97c173e76f0d4eaf77",
+      "junit_timestamp_utc": "2026-09-04T06:31:09.106043+00:00",
+      "junit_elapsed_seconds": 25.076,
+      "tests": 744,
+      "passed": 736,
+      "failures": 8,
+      "errors": 0,
+      "skipped": 0,
+      "failure_details": [
+        {
+          "classname": "tests.test_v14_legacy_parity",
+          "name": "test_writer_defaults_match_sealed_initialization_outputs_and_all_gradients[bf16_cpu_autocast-1-slots]",
+          "message": "RuntimeError: DNNL does not support bf16/f16 backward on the platform with avx2_vnni_2"
+        },
+        {
+          "classname": "tests.test_v14_legacy_parity",
+          "name": "test_writer_defaults_match_sealed_initialization_outputs_and_all_gradients[bf16_cpu_autocast-2-slots]",
+          "message": "RuntimeError: DNNL does not support bf16/f16 backward on the platform with avx2_vnni_2"
+        },
+        {
+          "classname": "tests.test_v14_legacy_parity",
+          "name": "test_logit_adapter_defaults_match_sealed_outputs_and_all_gradients[bf16_cpu_autocast-zero_initialized]",
+          "message": "RuntimeError: DNNL does not support bf16/f16 backward on the platform with avx2_vnni_2"
+        },
+        {
+          "classname": "tests.test_v14_legacy_parity",
+          "name": "test_logit_adapter_defaults_match_sealed_outputs_and_all_gradients[bf16_cpu_autocast-opened]",
+          "message": "RuntimeError: DNNL does not support bf16/f16 backward on the platform with avx2_vnni_2"
+        },
+        {
+          "classname": "tests.test_v14_legacy_parity",
+          "name": "test_tiny_functional_wrapper_and_counterfactual_gradients_match_sealed[bf16_cpu_autocast-inline_sidecar]",
+          "message": "RuntimeError: DNNL does not support bf16/f16 backward on the platform with avx2_vnni_2"
+        },
+        {
+          "classname": "tests.test_v14_legacy_parity",
+          "name": "test_tiny_functional_wrapper_and_counterfactual_gradients_match_sealed[bf16_cpu_autocast-deferred]",
+          "message": "RuntimeError: DNNL does not support bf16/f16 backward on the platform with avx2_vnni_2"
+        },
+        {
+          "classname": "tests.test_v14_operator_contracts",
+          "name": "test_main_and_counterfactual_use_same_profile_without_changing_detach[legacy_native]",
+          "message": "RuntimeError: DNNL does not support bf16/f16 backward on the platform with avx2_vnni_2"
+        },
+        {
+          "classname": "tests.test_v14_operator_contracts",
+          "name": "test_main_and_counterfactual_use_same_profile_without_changing_detach[fp32_accumulate]",
+          "message": "RuntimeError: DNNL does not support bf16/f16 backward on the platform with avx2_vnni_2"
+        }
+      ]
+    },
+    {
+      "id": "explicit_mkldnn_disabled_process",
+      "status": "PASSED_UNDER_EXPLICIT_PROCESS_LOCAL_BACKEND_OVERRIDE",
+      "argv": [
+        "python",
+        "-c",
+        "import torch,pytest; torch.backends.mkldnn.enabled=False; raise SystemExit(pytest.main([\"-q\",\"tests\",\"--junitxml=runs/v14/furnace-validation-mkldnn-disabled-20260904.xml\"]))"
+      ],
+      "process_local_backend_override": {
+        "torch.backends.mkldnn.enabled": false,
+        "scope": "this fresh validation process only"
+      },
+      "raw_junit": "provenance/raw/v14_portability_20260904/furnace-validation-mkldnn-disabled-20260904.xml",
+      "junit_sha256": "a6f3a63798824c0951d06571479b5f679c3a8f6e5568616f106d9137ac3f2752",
+      "junit_timestamp_utc": "2026-09-04T06:32:21.403793+00:00",
+      "junit_elapsed_seconds": 24.048,
+      "tests": 744,
+      "passed": 744,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failure_details": []
+    }
+  ],
+  "cross_run_checks": {
+    "same_ordered_744_testcase_identities": true,
+    "same_source_commit_and_package_fingerprint": true,
+    "package_fingerprint_matches_local_validation_and_launch": true,
+    "same_published_environment_and_unset_environment": true,
+    "suite_cases_removed_or_skipped_in_diagnostic": false,
+    "source_or_test_edits_between_runs": false
+  },
+  "default_run_trace_audit": {
+    "identical_runtime_exception_count": 8,
+    "recorded_assertion_failure_count": 0,
+    "specific_failing_operator": "UNKNOWN",
+    "notes": [
+      "Four writer/logit-adapter cases explicitly fail in the sealed legacy-reference backward call, before candidate execution: tests/test_v14_legacy_parity.py:125 and tests/test_v14_legacy_parity.py:110.",
+      "Two legacy-wrapper cases fail at backward in a reference-first loop, before final output/gradient parity assertions: tests/test_v14_legacy_parity.py:324, tests/test_v14_legacy_parity.py:333, tests/test_v14_legacy_parity.py:336. The XML does not identify the active loop iteration.",
+      "The two numerics-profile wrapper cases pass their forward formula, detach-role and output-dtype assertions before failing at backward: tests/test_v14_operator_contracts.py:188, tests/test_v14_operator_contracts.py:196 and tests/test_v14_operator_contracts.py:201. Subsequent gradient assertions are not reached.",
+      "All eight traces terminate in the generic autograd/C++ backward engine with the same DNNL message. These receipts do not identify a particular linear, activation, normalization, attention or other primitive.",
+      "No parity assertion failure is recorded in the default run; an interrupted comparison is not evidence that its remaining assertions would pass under that default backend."
+    ]
+  },
+  "claims": {
+    "default_cpu_bf16_backward_qualified": false,
+    "all_744_tests_passed_with_explicit_mkldnn_disabled": true,
+    "global_backend_policy_changed": false,
+    "canary_process_policy_changed": false,
+    "training_performed": false,
+    "actual_model_portability_established_by_this_record": false,
+    "scientific_success": false,
+    "cuda_model_cells": "REQUIRE_SEPARATE_RECEIPTS_NOT_ASSESSED_HERE"
+  },
+  "claim_boundary": "This preserves the default-backend failure and the passing process-local CPU backend diagnostic as separate evidence. It does not qualify default CPU BF16 backward, change the preregistered CUDA canary policy, or establish real-model portability. Each CUDA model cell uses a fresh process and requires its own receipt. JUnit elapsed times are execution bookkeeping, not a performance comparison."
+}

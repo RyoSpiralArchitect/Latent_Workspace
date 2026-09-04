@@ -1,0 +1,122 @@
+{
+  "curation": {
+    "curator_sha256": "4414956ca87e2a2bf4cb42ac3ec1931f667da39a256b2d938b4b685ce6967385",
+    "not_byte_identical_to_raw_receipt": true,
+    "raw_sha256": "a1bb30e15b2da88bf87247a90ea983682c63d5aa2360c71a24bf94b588899f77",
+    "transform": "Absolute local paths replaced with labelled roots; numerical/content fields retained."
+  },
+  "receipt": {
+    "canary_script_sha256": "5b225593f3fef729133d14f95d83320ae8cb32100b0801c1410a8d3e007d26c4",
+    "cells": [
+      {
+        "argv": [
+          "$PYTHON_EXECUTABLE",
+          "scripts/run_v14_portability_canary.py",
+          "--model-path",
+          "$MODEL_SNAPSHOT",
+          "--output-dir",
+          "$REPO/runs/v14/olmo2_base_bf16_sdpa_20260904",
+          "--device",
+          "cuda",
+          "--dtype",
+          "bfloat16",
+          "--attention-implementation",
+          "sdpa",
+          "--check-gradients"
+        ],
+        "id": "olmo2_base_bf16_sdpa"
+      },
+      {
+        "argv": [
+          "$PYTHON_EXECUTABLE",
+          "scripts/run_v14_portability_canary.py",
+          "--model-path",
+          "$MODEL_SNAPSHOT",
+          "--output-dir",
+          "$REPO/runs/v14/olmo2_base_bf16_eager_20260904",
+          "--device",
+          "cuda",
+          "--dtype",
+          "bfloat16",
+          "--attention-implementation",
+          "eager",
+          "--check-gradients"
+        ],
+        "id": "olmo2_base_bf16_eager"
+      }
+    ],
+    "environment": {
+      "HF_DATASETS_OFFLINE": "1",
+      "HF_HUB_OFFLINE": "1",
+      "OMP_NUM_THREADS": "2",
+      "PYTHONPATH": "src",
+      "PYTORCH_ALLOC_CONF": "backend:native,expandable_segments:True",
+      "TOKENIZERS_PARALLELISM": "false",
+      "TRANSFORMERS_OFFLINE": "1"
+    },
+    "format": "latent-workspace-v14-launch-binding-v1",
+    "git_commit": "d7d6f0a50e1888276146aa111ddb5ccd21f1f607",
+    "model_download": false,
+    "model_path": "$MODEL_SNAPSHOT",
+    "package_implementation_fingerprint": {
+      "files": {
+        "__init__.py": "124b526664691d27e124a9e973400e1b4d35fc48b1ead89261f6a80dbf55e7e7",
+        "__main__.py": "71e2b8c807406881aa3d12a21323dc92682fe2b602fbe08b25460805793e0518",
+        "engine.py": "3e7659b7c927cab23b4d994ce2e320d99431e4ba657d560c1094bc36de596178",
+        "implementation_identity.py": "5e4ac6e92a899bc49669f71d5e1c249432585cca6f88be031bdb668404c220c5",
+        "model_binding.py": "58360a21e6ef717ae00a8f8715f2b5ff2a277fb6bdce583dba2a6e6bd1869e18",
+        "normalization.py": "642bc6fe017df2d9cfcee6cf9ac5a578909e62a20b37fe7f7647812dba989b7a",
+        "numerics.py": "b3a3da6cbf27605379b4f1ef16dc6d37922ad0782bbf88bd13bb6b415d5b0e85",
+        "observability.py": "ac7bcd4bd33fe6f61f4c34abc882108f5e95746de96d1e3de9f1b7eade180c06",
+        "workspace_core.py": "600bb0f308cff66d5d793eb5853cef3b51710f75a77cbe3cd1d0a930a6754dd0"
+      },
+      "scope": "package_top_level_python_modules_v1",
+      "sha256": "dfb0279a86de0758ed3a23a046f9daba3f6f2f835766bc3159a14a710e5118d1"
+    },
+    "plan_sha256": "e7f6da28213f5d61a57ec8ff2e8d55cde731dabf0819fffae02e51f150b58ca3",
+    "plan_status_is_preregistration_not_run_result": true,
+    "prelaunch_test_observations": {
+      "canary_process_mkldnn_policy": "not changed; each canary is a new process with default CPU backend and fixed CUDA model computation",
+      "furnace_default_cpu_backend": {
+        "cause": "DNNL does not support bf16/f16 backward on the platform with avx2_vnni_2",
+        "failed": 8,
+        "passed": 736,
+        "raw_junit": "furnace-validation-20260904.xml"
+      },
+      "furnace_explicit_mkldnn_disabled_process": {
+        "failed": 0,
+        "passed": 744,
+        "raw_junit": "furnace-validation-mkldnn-disabled-20260904.xml",
+        "skipped": 0
+      },
+      "local": {
+        "passed": 741,
+        "skipped_cuda_only": 3
+      }
+    },
+    "resource_check_before_first_model": {
+      "after_test_process_exit": true,
+      "available_ram_gib": 84,
+      "compute_processes": 0,
+      "gpu": "NVIDIA GeForce RTX 5090",
+      "other_cpu_workload": "present; left untouched",
+      "tool": "spiral status",
+      "total_mib": 32607,
+      "used_mib": 10
+    },
+    "snapshot_config_sha256": "3dc581384d61b3366fc34a95d12c20e595014ea62352469c17c3e3a77f32882a",
+    "snapshot_revision": "a1847dff35000b4271fa70afc5db10fd29fedbdf",
+    "source_bundle_sha256": "05a745fe52a8207535a8c0a6fb971c435208abc6de3f6b5bf8cf68c9c1b6c7de",
+    "status": "SOURCE_MODEL_CONFIG_BINDINGS_VERIFIED",
+    "training": false,
+    "unset_environment": [
+      "PYTORCH_CUDA_ALLOC_CONF",
+      "PYTORCH_HIP_ALLOC_CONF"
+    ],
+    "utc": "2026-09-04T06:31:45.590399+00:00",
+    "weight_bytes": 5939687552,
+    "weight_deletion": false,
+    "weight_shards": 2,
+    "worktree": "$REPO"
+  }
+}

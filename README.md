@@ -9,6 +9,12 @@ Start with [`docs/V14_PORTABLE_BOUNDARIES.md`](docs/V14_PORTABLE_BOUNDARIES.md)
 and the fixed offline [OLMo2 portability plan](configs/v14/PORTABILITY_RUN_PLAN.json).
 The selected cached OLMo-2 1B is a structural control, not an Instruct capability
 comparison or evidence that the proposed read/transition bridge works.
+The [two real-model CUDA canaries are complete](provenance/pilots/v14_portability_20260904/OBSERVATIONS.md):
+within both BF16/SDPA and BF16/eager, three split boundaries preserve logits and
+the middle boundary preserves all 179 parameter gradients with numerical
+difference zero. Short native/split generations also match. This does not claim
+SDPA/eager equality: their native CE values differ. The default-CPU DNNL backward
+failures and the separately passing MKLDNN-disabled test run are both retained.
 
 V13 now has a **completed bounded S0/S1 diagnostic pilot**, not a training run.
 The broader design distinguishes workspace state that is readable now from state
