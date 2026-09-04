@@ -1,8 +1,8 @@
 # Latent Workspace FT — CUDA comparison harness
 
-V13 now has a **bounded S0/S1 diagnostic pilot**, not a training run: it separates
-workspace state that is readable now from state that affects later recurrent
-transitions, with normalization as an explicit part of the contract. Start with
+V13 now has a **completed bounded S0/S1 diagnostic pilot**, not a training run.
+The broader design distinguishes workspace state that is readable now from state
+that affects later recurrent transitions, with normalization explicit. Start with
 [`docs/V13_S0_S1_PILOT.md`](docs/V13_S0_S1_PILOT.md). The original design remains
 historical and non-executable:
 [`docs/V13_NORMALIZATION_STATE_DESIGN.md`](docs/V13_NORMALIZATION_STATE_DESIGN.md)
@@ -11,6 +11,12 @@ The separate pilot plan permits only synthetic falsification checks and retained
 V12 numerical visibility measurements. No V13 training configuration is enabled.
 V14's proposed bridge between the two state views remains a
 hypothesis, not a demonstrated mechanism.
+
+The [first observations](provenance/pilots/v13_s0_s1_20260904/OBSERVATIONS.md)
+localize a BF16 final-addition visibility loss at two retained checkpoints; they
+do not establish semantic causal success. [Weight retention](docs/WEIGHT_RETENTION.md)
+is latest two checkpoints **per condition**, not two version generations.
+The scoped retention audit found no eligible older steps; no weights were deleted.
 
 The completed parent is the bounded
 [V12 calibrated-route study](provenance/pilots/v12_calibrated_route/OBSERVATIONS.md),

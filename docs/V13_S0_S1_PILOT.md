@@ -4,6 +4,9 @@
 元の `DESIGN_CONTRACT.json` と V12 engine は変更しない。
 実行範囲は [`VISIBILITY_RUN_PLAN.json`](../configs/v13/VISIBILITY_RUN_PLAN.json) に分離した。
 
+初回の2診断は完了。[結果・留保・次の境界](../provenance/pilots/v13_s0_s1_20260904/OBSERVATIONS.md)。
+重みの更新・旧重みの削除は行っていない。
+
 ## 今回行うこと
 
 - S0 の paired 計器: 元の正答から donor 正答への遷移を、最初から donor に誤答した例と区別。
@@ -43,6 +46,9 @@ python scripts/execute_v13_visibility.py --output-dir runs/v13/NEW_RUN_ID
 ## 重み保存
 
 ユーザーは旧重みの記録後削除と「最新と1個前」の保存を依頼した。
-世代単位か各条件の checkpoint 単位かを確認中。V12 の今回の読込対象は保護する。
-削除用の台帳を別途作り、今回の診断から暗黙に削除しない。
+ユーザーの訂正により、**各実験条件の最新2 checkpoint** と確定した。世代単位ではない。
+条件・seed・独立実行を混ぜず、同一系列の最新2つの異なる保存stepを保護する。
+確認した保存履歴には、この基準で削除可能な旧stepはなかった。今回の削除・容量解放は0。
+判定範囲・留保・今後の保存規約は [WEIGHT_RETENTION.md](WEIGHT_RETENTION.md) に記録した。
+V12 の今回の読込対象は保護する。今回の診断から暗黙に削除しない。
 hash・config・metrics は重みの復元可能なバックアップではない。
