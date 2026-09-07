@@ -1,0 +1,46 @@
+{
+  "format": "latent-workspace-v14-mistral-prompt-gate-v2-plan-v1",
+  "frozen_before_target_model_scoring": true,
+  "purpose": "After V1 showed a label-projection failure not repaired by answer capitalization, select one balanced no-system Mistral demonstration on calibration and qualify it once on untouched holdout.",
+  "parent_prompt_plan_sha256": "a37299c35c2c4ff26fe76c88655970f8b35f1cf2791934fad4c36b047b2ec015",
+  "blocked_report_sha256": "67a8c44272c432a0345441f1b447dd002d71e92877769de1a108e63edbcc16fb",
+  "diagnostic_sha256": "c785cfe10cd337eeadc159d3f03922f5116c5f61c06ba1306c12b78515293190",
+  "source_identity": {
+    "scripts/run_v14_mistral_prompt_gate_v2.py": "8cd1f8112f016c17f796e83c62887ef5c8a4891d43265c631c9d00c6f3fc55fb",
+    "scripts/v14_prompt_binding_v2.py": "cd776c4e7269730802ead2efad343ce7b39360a31de631c3c7cefe21f1367e29",
+    "scripts/run_v14_mistral_prompt_gate.py": "59a41f252aa177187280b13d2af26d67734da4e68ae123369ccf0d0e2d0d93d7",
+    "scripts/v14_prompt_binding.py": "8429f535ab6d54acd49ab5028506221a9c94571eae2adc5fdcb1d9a49b4b8386"
+  },
+  "candidate_order": [
+    "mistral_native_chat_direct_caps",
+    "mistral_native_chat_balanced_text_demo",
+    "mistral_native_chat_balanced_turn_demo"
+  ],
+  "candidates": [
+    {"id": "mistral_native_chat_direct_caps", "renderer": "native_chat_direct_caps"},
+    {"id": "mistral_native_chat_balanced_text_demo", "renderer": "native_chat_balanced_text_demo"},
+    {"id": "mistral_native_chat_balanced_turn_demo", "renderer": "native_chat_balanced_turn_demo"}
+  ],
+  "answer_suffixes": [" No", " Yes"],
+  "selection_rule": "Calibration-qualified candidates only; maximize inline easy accuracy, then minimum easy label recall, then descriptive primary accuracy, then earlier candidate order.",
+  "holdout_rule": "Score only the selected calibration renderer once. The same frozen gate must pass; no fallback renderer or retry is authorized.",
+  "gates": {
+    "minimum_inline_easy_accuracy": 0.7,
+    "minimum_inline_easy_label_recall": 0.6,
+    "minimum_inline_minus_query_easy_accuracy": 0.1
+  },
+  "maximum_prompt_tokens": 320,
+  "batch_size": 8,
+  "authorized_actions": {
+    "calibration_candidate_scoring": true,
+    "single_selected_holdout_scoring": true,
+    "fixed_balanced_demonstrations": true,
+    "optimizer_or_training": false,
+    "semantic_direction": false,
+    "cache_intervention": false,
+    "unbounded_free_generation": false,
+    "download": false,
+    "weight_write_or_delete": false
+  },
+  "claim_boundary": "A passing gate qualifies one fixed Mistral-native prompt projection only for the frozen synthetic one-hop easy control. Demonstrations define the no/yes map but do not solve target facts. Multi-hop rows remain descriptive. It does not establish workspace semantics, cache amplification, training benefit, broad generalization, or free-chat behavior."
+}
