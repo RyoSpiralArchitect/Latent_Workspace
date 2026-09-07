@@ -1,0 +1,94 @@
+{
+  "format": "latent-workspace-v14-checkpoint-direction-gate-plan-v1",
+  "frozen_before_target_model_scoring": true,
+  "purpose": "Bridge actual retained-checkpoint reader updates into the pinned Mistral layer-16 pre-RMSNorm cache-writing boundary at natural amplitude, then test only whether the native arithmetic preserves a distinct intact/twin state.",
+  "input_lane": "retained_inline_checkpoint_compatibility",
+  "predecessor_atomic_report": {
+    "path": "provenance/raw/v14_mistral_atomic_instrument_gate_20260907/report.json",
+    "sha256": "bba2d15ecb46cbebf0bf4a559ceb2f46d572fc3bfe3b20f032ddf7288659005f"
+  },
+  "checkpoint": {
+    "id": "semantic_seed43_step16",
+    "path": "/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-workspace-ft-v12-calibrated-route/runs/v12/calibrated_route/refinement16/semantic_lr_1e_5_seed43_step16/final",
+    "manifest_sha256": "93a5e1b1041b3ed76ee44e6c60840afee5869c8675efcd940e8957a1693834",
+    "workspace_sha256": "0fc7a8900c42199f818b2c6ebb1e3f33b9995cab12208b49a1ecf435dd20e913"
+  },
+  "eval": {
+    "path": "data/v10/functional_eval.jsonl",
+    "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+    "role": "retained checkpoint-compatible diagnostic only; not the unqualified V14 seven-fact task"
+  },
+  "max_worlds": 2,
+  "expected_rows": 32,
+  "world_selection": "first_n_complete_records_in_file_order",
+  "modes": [
+    "intact",
+    "counterfactual_twin"
+  ],
+  "seed": 271828,
+  "model_contract": {
+    "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+    "model_type": "mistral",
+    "hidden_size": 4096,
+    "dtype": "torch.bfloat16",
+    "cache": "native DynamicCache full attention"
+  },
+  "pulse": {
+    "layer": 16,
+    "boundary": "decoder_layer_input_pre_rmsnorm",
+    "composition_dtype": "fp32_add_then_cast_to_hidden",
+    "amplitude": "natural_vector_rms_no_gain",
+    "directions": [
+      "intact_update",
+      "twin_update",
+      "twin_minus_intact"
+    ]
+  },
+  "mechanical_gates": {
+    "all_direction_vectors_finite_nonzero": true,
+    "all_pulses_applied_once": true,
+    "all_native_cast_deltas_nonzero": true,
+    "all_actual_projections_follow_requested_sign": true,
+    "all_direction_caches_differ_from_base": true,
+    "all_intact_twin_caches_are_distinct": true,
+    "frozen_row_count_complete": true,
+    "all_inputs_and_parameters_unchanged": true
+  },
+  "source_identity": {
+    "scripts/run_v14_checkpoint_direction_gate.py": "da1d183b73f86fe29f42e814ca9bd06f0cd7b25ff69cf0df0f6195d35b614407",
+    "scripts/v13_visibility_trace.py": "39e9321598123bf27800450b04ab4807c3ce15b4dcf0a3158e06d753593de55d",
+    "scripts/run_v11_gate0.py": "6bdbb22c35e62c0681eac1c32463789c6ed9d59a8a274a7bb5ea7e6456f89058",
+    "src/latent_workspace_ft_v10/cache_binding.py": "f3c5dc1c10654a8be5aa28acc3fba6bd00698c9b57f721378722ea19febb71ff",
+    "src/latent_workspace_ft_v10/engine.py": "3e7659b7c927cab23b4d994ce2e320d99431e4ba657d560c1094bc36de596178"
+  },
+  "expected_runtime": {
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0",
+    "python": "3.14.4",
+    "cuda": "13.2"
+  },
+  "required_environment": {
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "HF_DATASETS_OFFLINE": "1",
+    "TOKENIZERS_PARALLELISM": "false",
+    "HF_HUB_DISABLE_PROGRESS_BARS": "1",
+    "OMP_NUM_THREADS": "2",
+    "PYTORCH_ALLOC_CONF": "backend:native,expandable_segments:True"
+  },
+  "cpu_threads": 2,
+  "cuda_allocator_fraction": 0.9,
+  "authorized_actions": {
+    "checkpoint_load": true,
+    "checkpoint_direction_capture": true,
+    "native_cache_pulse": true,
+    "optimizer_or_training": false,
+    "free_generation": false,
+    "model_download": false,
+    "weight_write_or_delete": false,
+    "amplitude_layer_or_row_selection": false,
+    "semantic_success_claim": false
+  },
+  "stop_rule": "Execute the frozen two-world natural-amplitude mechanical gate once. Preserve pass, block, partial or failure. Do not choose a gain, layer, row subset or threshold after observing outputs.",
+  "claim_boundary": "A retained V12 inline-sidecar checkpoint compatibility diagnostic. Qualification means only that actual checkpoint-derived intact and twin hidden updates remain finite, nonzero and distinct when written once through the pinned native Mistral layer-16 cache boundary. Candidate-logit direction is descriptive and cannot qualify semantic effect, the unqualified seven-fact V14 task, training, accumulation, generalization or free chat."
+}
