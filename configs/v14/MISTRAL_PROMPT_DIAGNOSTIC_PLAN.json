@@ -1,0 +1,26 @@
+{
+  "format": "latent-workspace-v14-mistral-prompt-diagnostic-plan-v1",
+  "frozen_before_diagnostic": true,
+  "purpose": "On calibration easy controls only, distinguish answer-token surface mismatch from a prompt/task failure after the first renderer gate blocked.",
+  "parent_prompt_plan_sha256": "a37299c35c2c4ff26fe76c88655970f8b35f1cf2791934fad4c36b047b2ec015",
+  "blocked_report_sha256": "67a8c44272c432a0345441f1b447dd002d71e92877769de1a108e63edbcc16fb",
+  "source_identity": {
+    "scripts/diagnose_v14_mistral_prompt_failure.py": "bbd3ed50f7f5559b380f75f3115266cfc43d4063f6593fc817dea4137b16ea81",
+    "scripts/v14_prompt_binding.py": "8429f535ab6d54acd49ab5028506221a9c94571eae2adc5fdcb1d9a49b4b8386"
+  },
+  "prompt_candidates": [
+    {"id": "mistral_native_chat_symmetric", "renderer": "native_chat_user", "instruction": "symmetric"},
+    {"id": "mistral_native_chat_compact", "renderer": "native_chat_user", "instruction": "compact"}
+  ],
+  "answer_surfaces": [
+    {"id": "lower_no_yes", "suffixes": [" no", " yes"]},
+    {"id": "capital_No_Yes", "suffixes": [" No", " Yes"]},
+    {"id": "lower_false_true", "suffixes": [" false", " true"]}
+  ],
+  "greedy_row_indices": [0, 1, 2, 3, 4, 5, 6, 7],
+  "batch_size": 8,
+  "selection": false,
+  "holdout_scoring": false,
+  "optimizer_or_training": false,
+  "claim_boundary": "This calibration-only screen diagnoses first-token answer surfaces and eight fixed greedy continuations. It does not choose a renderer, open holdout, qualify the task, train, or establish semantic evidence."
+}
