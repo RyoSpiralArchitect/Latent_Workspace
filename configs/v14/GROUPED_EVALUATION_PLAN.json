@@ -1,0 +1,73 @@
+{
+  "format": "latent-workspace-v14-grouped-evaluation-plan-v1",
+  "frozen_before_target_evaluation": true,
+  "purpose": "Evaluate the paired-world data through its native grouped functional path after the generic flat-record choice command correctly failed with zero eligible records.",
+  "training_execution": {
+    "path": "provenance/raw/v14_boundary_training_20260907/execution.json",
+    "sha256": "5a75333f7403962d7bbc856eb0cd27e6be39aec531104b58390dc2ae94d77229"
+  },
+  "failed_flat_choice_execution": {
+    "path": "provenance/raw/v14_boundary_evaluation_20260907/execution.json",
+    "sha256": "8019121b5ab7be71e8aa8fe9e46a36362d1f95d3935c63c78a12d469fc73523c",
+    "disposition": "preserved instrument incompatibility; do not retry or treat zero records as a model result"
+  },
+  "flat_choice_retry": false,
+  "cell_order": [
+    "task",
+    "semantic"
+  ],
+  "cells": [
+    {
+      "id": "task",
+      "checkpoint": "runs/v14/boundary_training/task_seed47_step8/final",
+      "manifest_sha256": "00561bf8fd6f1b4eec52061fe88684198dbaa8ea2feee1d948bd202eb43523ad",
+      "workspace_sha256": "2861d3421fde4d9532142517f86ae1a4984806b3f872ead6d426f1fee6ec0e00",
+      "output": "provenance/raw/v14_grouped_evaluation_20260907/task_necessity.json"
+    },
+    {
+      "id": "semantic",
+      "checkpoint": "runs/v14/boundary_training/semantic_seed47_step8/final",
+      "manifest_sha256": "067c48cb1d312e1e0fa504f889343d5bd825140a49e0a3e2deec2004bf3113f2",
+      "workspace_sha256": "3e2c9ace61b7aa08c1efb93e0b8e6d9466ba52073395cf20c0c599ea06a518b2",
+      "output": "provenance/raw/v14_grouped_evaluation_20260907/semantic_necessity.json"
+    }
+  ],
+  "modes": [
+    "intact",
+    "hard_bypass",
+    "zero",
+    "fixed_carrier",
+    "norm_matched_random",
+    "counterfactual_twin",
+    "cross_world_shuffle"
+  ],
+  "expected_queries_per_mode": 1024,
+  "estimands": {
+    "primary": "counterfactual-twin affected donor accuracy",
+    "co_primary_control": "counterfactual-twin unaffected original stability",
+    "secondary": [
+      "intact query accuracy and choice margin",
+      "hard-bypass and zero route dependence",
+      "fixed-carrier and norm-matched-random insufficiency",
+      "cross-world content sensitivity",
+      "semantic-minus-task matched-cell contrast"
+    ],
+    "no_posthoc_subset": true
+  },
+  "source_identity": {
+    "scripts/run_v14_grouped_evaluation.py": "46efd0870c1d1b25b2c2786221076a6280b952a5ad9d9f9c5499fd35818eb6ba",
+    "scripts/run_v14_boundary_training.py": "9f9d597df2277ee684e21cd215ee479d86b8c4d62c0a5809b6643a38fb655dac",
+    "src/latent_workspace_ft_v10/engine.py": "3e7659b7c927cab23b4d994ce2e320d99431e4ba657d560c1094bc36de596178"
+  },
+  "authorized_actions": {
+    "checkpoint_load": true,
+    "native_grouped_necessity": true,
+    "flat_choice_retry": false,
+    "training_or_optimizer": false,
+    "weight_write_or_delete": false,
+    "generation": false,
+    "metric_or_query_selection": false
+  },
+  "stop_rule": "Run each retained final once through its native grouped necessity assay. Preserve failure without retry and do not reinterpret the nested zero-record flat-choice component.",
+  "claim_boundary": "Full grouped coverage can measure constrained paired-world behavior and intervention directionality. Carrier damage alone is not semantic evidence, and any result remains separate from free-form chat behavior and the unqualified seven-fact renderer task."
+}
