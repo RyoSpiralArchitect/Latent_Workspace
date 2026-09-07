@@ -33,7 +33,7 @@ incremental cache clones.
 Evidence:
 
 - `SUMMARY.json` is the compact interpretation with the claim ceiling.
-- `MANIFEST.json` binds the copied artifacts and independent recomputation.
+- `ARTIFACT_INDEX.json` binds the copied artifacts and independent recomputation.
 - `raw/report.json` is the complete Furnace receipt.
 - `raw/trajectory.jsonl` contains all six frozen five-cell rows.
 - `raw/recomputed_metrics.json` was regenerated locally from the raw rows and

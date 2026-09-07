@@ -19,7 +19,7 @@ from v14_cache_trajectory_metrics import summarize  # noqa: E402
 
 
 def main() -> int:
-    manifest = json.loads((HERE / "MANIFEST.json").read_text())
+    manifest = json.loads((HERE / "ARTIFACT_INDEX.json").read_text())
     summary = json.loads((HERE / "SUMMARY.json").read_text())
     report = json.loads((HERE / "raw/report.json").read_text())
     plan_path = REPO / "configs/v14/CACHE_TRAJECTORY_PLAN.json"
