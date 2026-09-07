@@ -1,0 +1,82 @@
+{
+  "format": "latent-workspace-v14-cache-trajectory-curated-summary-v1",
+  "run_status": "COMPLETE",
+  "mechanical_gate": "MECHANICAL_RETURN_GATE_PASSED",
+  "semantic_qualification": "NOT_APPLICABLE_NON_SEMANTIC_SCREEN",
+  "identifiers": {
+    "source_commit": "0db95e668f9c071529750659e71bbe81eba81f67",
+    "plan_sha256": "c1807e92eb311f99e23cccb0b34e20ed1c5c79fc5866c997ae182d2ec5df5b9b",
+    "adapter_fingerprint": "8492f1b901c5a3744be23b95123596516d95873c26a2f05cc7467af7ab5468ac",
+    "model_revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "direction_sha256": "b7f3e2950942f1cf8f0158a05f7fbd37f7b36f10650b60835c88ab0f74085194"
+  },
+  "intervention": {
+    "model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "layer": 16,
+    "boundary": "decoder_layer_input_pre_rmsnorm",
+    "direction_kind": "equal_norm_random_sign_pair",
+    "semantic": false,
+    "requested_signed_rms": [0.0625, -0.0625],
+    "realized_rms": [0.0625026747584343, 0.062499623745679855],
+    "realized_signed_projection": [4.000157356262207, -3.9999608993530273],
+    "teacher_forced_horizons": [0, 1, 2, 3, 4, 5]
+  },
+  "structural_result": {
+    "all_18_predeclared_checks_passed": true,
+    "pulse_position_changed_layers": {
+      "positive": [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+      "negative": [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+    },
+    "horizon_1_new_position_changed_layers": {
+      "positive": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+      "negative": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+    },
+    "horizon_1_new_position_layers_0_through_16_exact": true,
+    "matched_base_cache_replacement_exact_all_future_horizons": true,
+    "duplicate_base_next_step_bit_exact": true,
+    "full_positive_cache_transplant_next_step_bit_exact": true,
+    "stored_pulse_position_hashes_stable_through_horizon_5": true
+  },
+  "trajectory": {
+    "horizons": [0, 1, 2, 3, 4, 5],
+    "positive_all_cache_l2_vs_base": [52.54165515501222, 53.93539979808618, 54.42935631296588, 54.757982307918596, 55.074762163241765, 55.34897068930882],
+    "negative_all_cache_l2_vs_base": [51.97630219399368, 54.70522912954676, 55.53255717424721, 56.01128287411476, 56.435254091373686, 56.76209980366383],
+    "positive_new_position_kv_l2_vs_base": [52.54165479668986, 12.182028474984724, 7.316247908710676, 5.990138160000289, 5.898546392803699, 5.502642785669066],
+    "negative_new_position_kv_l2_vs_base": [51.97630190424397, 17.06241777029976, 9.55001882043272, 7.307456122892628, 6.904640484045554, 6.082604286838246],
+    "positive_full_vocab_logit_l2_vs_base": [67.36599731445312, 39.55966567993164, 26.453420639038086, 22.13690185546875, 21.346086502075195, 19.056875228881836],
+    "negative_full_vocab_logit_l2_vs_base": [82.40448760986328, 41.87157440185547, 23.76717185974121, 19.81745719909668, 19.217655181884766, 17.552488327026367],
+    "nondirectional_no_yes_central_contrast": [0.0, 0.1328125, 0.09375, 0.2265625, 0.15625, 0.125],
+    "nondirectional_endpoint": 0.125,
+    "nondirectional_signed_trapezoid_auc": 0.671875,
+    "candidate_argmax_matched_base_for_all_cells_and_horizons": true,
+    "interpretation": "The artificial pulse persisted into every measured future position, while its per-new-position K/V and full-logit displacement generally contracted rather than amplified over this five-token path. Aggregate cache L2 grows partly because changed positions accumulate in a longer cache."
+  },
+  "cross_shape_diagnostic": {
+    "cached_vs_full_recompute_bit_exact": [false, false, false, false, false, false],
+    "max_abs_logit_difference": [0.09375, 0.125, 0.099609375, 0.140625, 0.1484375, 0.125],
+    "gating_role": "NONE",
+    "interpretation": "Incremental-cache and full-sequence SDPA shapes are numerically different routes; all causal comparisons use matched incremental clones."
+  },
+  "integrity_and_resources": {
+    "source_plan_model_parameters_and_snapshot_unchanged": true,
+    "elapsed_seconds": 28.73221257701516,
+    "peak_allocated_bytes": 14580253696,
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0",
+    "requested_attention_implementation": "sdpa",
+    "executed_sdpa_kernel": "UNKNOWN"
+  },
+  "actions_not_performed": [
+    "optimizer construction",
+    "training",
+    "held-out evaluation",
+    "free generation",
+    "semantic direction injection",
+    "model download",
+    "weight write or deletion",
+    "automatic retry or sweep"
+  ],
+  "claim_ceiling": "This run establishes the specified artificial residual pulse to native BF16 K/V write, persistence, matched replacement, complete-cache transplant and later-position propagation. It does not establish semantic accumulation, amplification, model capability, a learned workspace bridge, necessity, generalization or free-chat behavior.",
+  "next_gate": "Before a semantic V14-T1 run, qualify the Mistral task renderer and freeze a checkpoint-derived semantic direction plus sham, equal-norm random, unrelated-donor and unaffected controls."
+}

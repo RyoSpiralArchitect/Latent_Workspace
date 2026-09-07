@@ -1,6 +1,7 @@
 # V14-T — cache-mediated trajectory lane
 
-Status before the first model run: **MECHANICAL_CANARY_PLANNED / SEMANTIC_NOT_ADMITTED**.
+Current status: **MECHANICAL_CANARY_COMPLETE_AND_PASSED /
+SEMANTIC_NOT_ADMITTED**.
 
 This lane asks whether a one-time activation perturbation can be written into a
 native decoder K/V cache, persist under fixed teacher-forced tokens, affect K/V
@@ -105,3 +106,30 @@ sample, or launch a layer sweep. If mechanics pass, the next decision is whether
 to qualify the Mistral task interface and then freeze a checkpoint-derived
 semantic direction experiment. If mechanics fail, repair the smallest stated
 interface/integrity gate under a new source-bound plan.
+
+## Frozen run result — 2026-09-07
+
+The one authorized target-model execution completed on the Furnace RTX 5090
+from source commit `0db95e668f9c071529750659e71bbe81eba81f67`. All 18
+structural checks, source/plan/snapshot integrity checks, coverage and protocol
+checks passed. Runtime was 28.73 seconds and peak Torch allocation was
+14,580,253,696 bytes.
+
+At the pulse position, only layers 16–31 changed. At the first later forced
+token, the newly written K/V remained exact through layer 16 and changed at
+layers 17–31 in both signed branches. Replacing either pulse branch with the
+matched base cache erased all future differences exactly. Independent base
+replay and complete-B-cache transplant were bit exact, and the stored pulse
+position remained hash-exact while later positions were appended.
+
+The random-direction future displacement persisted but generally contracted:
+new-position K/V L2 went from 12.18 to 5.50 in the positive branch and 17.06 to
+6.08 in the negative branch over horizons 1–5. Aggregate cache L2 grew because
+changed positions accumulated; it is not evidence of amplification. The fixed
+`no`/`yes` argmax never differed from base.
+
+Semantic qualification is therefore
+`NOT_APPLICABLE_NON_SEMANTIC_SCREEN`. No training, held-out access, free
+generation, semantic direction, download, weight change, retry or sweep
+occurred. The complete receipt and independently replayed metrics are under
+`provenance/pilots/v14_cache_trajectory_20260907/`.
