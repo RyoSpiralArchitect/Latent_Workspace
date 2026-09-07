@@ -28,6 +28,17 @@ V12 numerical visibility measurements. No V13 training configuration is enabled.
 V14's proposed bridge between the two state views remains a
 hypothesis, not a demonstrated mechanism.
 
+The current V14 Furnace line has now completed the bounded return sequence:
+the atomic Mistral renderer/instrument and native checkpoint-direction gates
+passed, while the full seven-fact task and five-cell semantic-accumulation claim
+did not qualify. Matched eight-update task and semantic layer-16 cells were then
+trained and evaluated; both failed grouped F1–F5, so no cell was selected. The
+[post-comparison free-form diagnostic](provenance/pilots/v14_boundary_chat_20260907/README.md)
+retains all 192 base/task/semantic continuations. It found zero intact-to-twin
+first-answer changes, but a descriptive late semantic continuation trace. Since
+that trace occurred under full-prefix recomputation with no K/V cache, it is a
+control against treating delayed text divergence alone as cache accumulation.
+
 The [first observations](provenance/pilots/v13_s0_s1_20260904/OBSERVATIONS.md)
 localize a BF16 final-addition visibility loss at two retained checkpoints; they
 do not establish semantic causal success. [Weight retention](docs/WEIGHT_RETENTION.md)
@@ -49,8 +60,9 @@ data, and explicit decision boundaries.
 
 - Canonical source is the
   [`RyoSpiralArchitect/Latent_Workspace`](https://github.com/RyoSpiralArchitect/Latent_Workspace)
-  repository. V14 is isolated on `SpiralReality/v14-portable-boundaries`, based
-  on the sealed V13 observation/retention commit `ed5ce398`.
+  repository. The current V14 continuation is isolated on
+  `SpiralReality/v14-semantic-chat`; its portability ancestor was based on the
+  sealed V13 observation/retention commit `ed5ce398`.
   The historical observations below
   describe their named V10/V11 runs, not the current V13 implementation status.
 - The runtime contract is PyTorch CUDA, BF16, SDPA, gradient checkpointing,
