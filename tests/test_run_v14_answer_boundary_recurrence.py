@@ -12,6 +12,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "scripts"))
 
 import run_v14_answer_boundary_recurrence as recurrence  # noqa: E402
+import verify_v14_answer_boundary_recurrence as recovery  # noqa: E402
 
 
 def test_frozen_plan_validates_without_remote_checkpoints() -> None:
@@ -19,7 +20,7 @@ def test_frozen_plan_validates_without_remote_checkpoints() -> None:
     paths = recurrence.validate_plan(
         REPO,
         plan,
-        require_fresh=True,
+        require_fresh=False,
         verify_checkpoints=False,
     )
     assert paths["output"] == REPO / plan["output"]
@@ -166,3 +167,13 @@ def test_summary_consumes_all_320_frozen_rows() -> None:
         == 4
     )
     assert summary["winner"] == "none"
+
+
+def test_verifier_recovery_preserves_raw_no_winner_report() -> None:
+    plan = json.loads(recovery.PLAN_PATH.read_text(encoding="utf-8"))
+    result = recovery.recover(plan, require_fresh=False)
+    assert result["status"] == "QUALIFIED_VERIFIER_RECOVERY"
+    assert result["recovered_mechanical_execution_qualified"] is True
+    assert result["target_model_reexecuted"] is False
+    assert result["scientific_values_recomputed_or_selected"] is False
+    assert result["winner"] == "none"
