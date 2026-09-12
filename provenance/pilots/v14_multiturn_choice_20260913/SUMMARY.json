@@ -1,0 +1,225 @@
+{
+  "format": "latent-workspace-v14-multiturn-choice-summary-v1",
+  "status": "QUALIFIED_EXECUTION",
+  "winner": "none",
+  "semantic_effect_qualified": false,
+  "execution": {
+    "source_commit": "992c0bb14e4daa90faba8a904af2505960eb0cd9",
+    "host": "SpiralReality-furnace",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "models": [
+      "base",
+      "task",
+      "semantic"
+    ],
+    "conditions": 14,
+    "scenarios": 4,
+    "history_modes": 2,
+    "regimes": 4,
+    "readouts": 2,
+    "turns_per_trajectory": 4,
+    "trajectories": 896,
+    "turn_rows": 3584,
+    "elapsed_seconds": 74.84305452834815,
+    "cuda_peak_allocated_bytes": 14899510784,
+    "training_performed": false,
+    "unconstrained_free_form_generation_performed": false,
+    "weights_written_or_deleted": false
+  },
+  "integrity": {
+    "raw_report_sha256": "19b0a0305b2ab014f48552b0d325a34576a7c8f846473c6da11d435de0972807",
+    "plan_sha256": "a8e70b61ab01458d872632ecea23251df84c363750d9bbbab02f5fb1caabce17",
+    "mechanical_execution_qualified": true,
+    "all_model_mechanical_checks_true": true,
+    "same_normalized_hidden_fed_both_heads": true,
+    "matched_sampling_uniforms": true,
+    "fixed_history_appended_only_frozen_original_answers": true,
+    "free_history_appended_only_each_branch_generated_answers": true,
+    "native_position_partitions_exact": true
+  },
+  "measurement_1_turn_zero_predecessor_replication": {
+    "all_task_and_semantic_route_readout_means_exact": true,
+    "comparisons": 12,
+    "scope": "task and semantic times full, answer-boundary, and non-boundary routes times native and FP32 readouts",
+    "interpretation": "Turn 0 exactly re-enters the sealed readout-precision assay before any generated answer is appended."
+  },
+  "measurement_2_semantic_intact_twin_trajectories": {
+    "pair_denominator_per_cell": 16,
+    "full_route": {
+      "teacher_forced_fixed_history": {
+        "native_changed_pairs": 0,
+        "fp32_changed_pairs": 0,
+        "affected_changed_slots_both_heads": 0
+      },
+      "free_history": {
+        "native_changed_pairs": 0,
+        "fp32_changed_pairs": 0,
+        "affected_changed_slots_both_heads": 0
+      },
+      "fixed_history_fp32_signed_pair_effect_by_turn": [
+        0.009080886840820312,
+        0.013380050659179688,
+        0.0029327869415283203,
+        0.007401943206787109
+      ]
+    },
+    "answer_boundary_only": {
+      "teacher_forced_fixed_history": {
+        "native_changed_pairs": 0,
+        "fp32_changed_pairs": 0,
+        "affected_changed_slots_both_heads": 0
+      },
+      "free_history": {
+        "native_changed_pairs": 1,
+        "fp32_changed_pairs": 1,
+        "first_turn_same_then_later_changed_pairs_each_head": 1,
+        "affected_changed_slots_both_heads": 0,
+        "unaffected_same_slots_each_head": 30,
+        "unaffected_slot_denominator_each_head": 32
+      },
+      "fixed_history_fp32_signed_pair_effect_by_turn": [
+        -0.009675979614257812,
+        -0.004045009613037109,
+        -0.018143653869628906,
+        0.008085250854492188
+      ]
+    },
+    "non_boundary_only": {
+      "teacher_forced_fixed_history": {
+        "native_changed_pairs": 0,
+        "fp32_changed_pairs": 0,
+        "affected_changed_slots_both_heads": 0
+      },
+      "free_history": {
+        "native_changed_pairs": 0,
+        "fp32_changed_pairs": 1,
+        "fp32_first_turn_same_then_later_changed_pairs": 1,
+        "affected_changed_slots_both_heads": 0,
+        "fp32_unaffected_same_slots": 30,
+        "unaffected_slot_denominator_per_head": 32
+      },
+      "fixed_history_fp32_signed_pair_effect_by_turn": [
+        -0.022518157958984375,
+        -0.0013003349304199219,
+        0.010918140411376953,
+        -0.00889134407043457
+      ]
+    },
+    "all_semantic_greedy_intact_twin_trajectories_identical": true,
+    "interpretation": "Neither fixed nor free history produces an intact-to-twin change on any affected semantic answer. Small fixed-history margins do not grow monotonically or preserve donor direction across turns."
+  },
+  "measurement_3_delayed_divergence_audit": {
+    "scenario": "w0_s0",
+    "regime": "sample_213",
+    "answer_boundary_both_heads": {
+      "intact": [
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "twin": [
+        "no",
+        "yes",
+        "no",
+        "yes"
+      ],
+      "first_difference_turn": 1,
+      "first_difference_affected": false,
+      "turn_1_prefix_identical": true,
+      "turn_3_prefix_identical": false
+    },
+    "non_boundary_fp32": {
+      "intact": [
+        "no",
+        "no",
+        "no",
+        "no"
+      ],
+      "twin": [
+        "no",
+        "yes",
+        "no",
+        "yes"
+      ],
+      "first_difference_turn": 1,
+      "first_difference_affected": false
+    },
+    "interpretation": "A small same-prefix score difference can cross a sampled threshold on an unaffected turn and its answer can then amplify later divergence. This is real trajectory feedback, but it is not donor-directed semantic accumulation."
+  },
+  "measurement_4_generic_history_feedback_control": {
+    "base_inline_fixed_vs_free_changed_pairs": {
+      "native": 6,
+      "fp32": 6,
+      "denominator_per_head": 16
+    },
+    "base_query_only_fixed_vs_free_changed_pairs": {
+      "native": 13,
+      "fp32": 12,
+      "denominator_per_head": 16
+    },
+    "semantic_condition_fixed_vs_free_changed_pair_range": [
+      12,
+      13
+    ],
+    "semantic_condition_denominator_per_head": 16,
+    "interpretation": "Self-generated history strongly changes later choices even without workspace memory. Free-history divergence is therefore a generic autoregressive sensitivity control, not semantic evidence by itself."
+  },
+  "measurement_5_task_checkpoint_threshold_crossings": {
+    "full_route_fixed_history_native": {
+      "changed_pairs": 2,
+      "affected_changed_slots": 2,
+      "changed_to_twin_donor_slots": 1,
+      "pair_denominator": 16
+    },
+    "full_route_fixed_history_fp32_changed_pairs": 0,
+    "full_route_free_history_native": {
+      "changed_pairs": 1,
+      "affected_changed_slots": 1,
+      "changed_to_twin_donor_slots": 1,
+      "unaffected_same_slots": 31,
+      "unaffected_slot_denominator": 32
+    },
+    "other_task_route_intact_twin_changed_pairs": 0,
+    "interpretation": "A few matched samples cross discrete thresholds in the task checkpoint, but the fixed native crossings are not consistently donor-directed and vanish in FP32. They do not transfer to the semantic checkpoint."
+  },
+  "measurement_6_behavior_reference": {
+    "all_regimes_all_turns_target_accuracy": {
+      "teacher_forced_fixed_history_fp32": {
+        "base_inline": 0.890625,
+        "base_query_only": 0.75,
+        "semantic_full_intact": 0.703125,
+        "semantic_boundary_intact": 0.71875,
+        "semantic_non_boundary_intact": 0.71875,
+        "semantic_full_twin": 0.515625,
+        "semantic_boundary_twin": 0.5,
+        "semantic_non_boundary_twin": 0.5
+      },
+      "free_history_fp32": {
+        "base_inline": 0.71875,
+        "base_query_only": 0.46875,
+        "semantic_full_intact": 0.4375,
+        "semantic_boundary_intact": 0.40625,
+        "semantic_non_boundary_intact": 0.46875,
+        "semantic_full_twin": 0.40625,
+        "semantic_boundary_twin": 0.375,
+        "semantic_non_boundary_twin": 0.4375
+      }
+    },
+    "interpretation": "The inline base remains the strongest bounded reference. Workspace routes do not recover twin-context affected answers and degrade sharply when their own sampled choices are fed back."
+  },
+  "overall_conclusion": {
+    "supported": [
+      "The precision assay and the first multi-turn state join exactly at turn 0.",
+      "Small score changes can cross a sampling threshold on a later turn and the resulting answer history can produce much larger downstream differences.",
+      "Fixed and free histories are mechanically separated, exposing generic autoregressive feedback as a large control effect."
+    ],
+    "not_supported": [
+      "Donor-directed temporal accumulation in the semantic checkpoint: affected intact-to-twin choices never change.",
+      "A semantic full-route trajectory bifurcation: all 16 fixed and all 16 free pairs remain identical under both heads.",
+      "Specificity of the two delayed semantic divergences, because they begin on an unaffected question and generic base histories diverge frequently.",
+      "Natural free-form chat quality, KV-cache-specific accumulation, semantic memory, generalization, or promotion."
+    ],
+    "smallest_next_gate": "Do not extend the conversation horizon yet. First train or calibrate an architecture-owned, precision-aware comparison bridge against donor-directed margin with unaffected and unrelated controls, then rerun this identical four-turn assay. Longer free-history runs would currently amplify generic answer-history errors faster than semantic signal."
+  }
+}
