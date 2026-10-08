@@ -1,0 +1,1995 @@
+{
+  "claim_boundary": [
+    "Only selected changed pairs and actual identical calibration controls are judged.",
+    "Replicates are repeated judge calls, not independent tasks or independent models.",
+    "Model labels are blinded; exact evidence quotes remain strict, with no repair.",
+    "Mistral public-preview identifier does not establish an immutable weight version.",
+    "Transport, model-identity or usage-contract failures can stop a cell; quality cannot."
+  ],
+  "durable_responses": 28,
+  "format": "latent-workspace-v14-judge-panel-cell-result-v1",
+  "human_evaluation": "PENDING",
+  "non_regression": "NOT_ESTABLISHED",
+  "observation_status_counts": {
+    "completed": 28
+  },
+  "pairs": [
+    {
+      "base_answer": "On Monday, a warehouse shipped 40 parcels, six arrived one day late during a two-hour tracking blackout; the cause of the delay remains unknown.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "general-01-summary",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_consistent",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "A/Bともに事実保持はできているが、指定の『ちょうど2文』を満たしていない。",
+              "Aは不確実性を『remains unknown』、Bは『remains undetermined』で表現しており、意味差はごく小さい。",
+              "A/Bともに追跡不能時間と遅延を並記しているが、明示的な因果は述べていない。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "A/Bともに原因不明を維持しており、過剰断定はない。不確実性表現は適切。",
+              "coherence": "どちらも自然で読みやすく、内部矛盾はない。ただし1文構成のため、形式要件との整合は弱い。",
+              "correctness": "可視事実（40個、月曜、6個が1日遅れ、2時間の追跡不能、原因不明）は両方とも正しく保持している。",
+              "grounding": "A/Bともに与えられた可視事実の範囲に留まり、原因の捏造はない。",
+              "instruction_following": "最大の問題は『exactly two sentences』違反。語数制限は満たしている可能性が高いが、主要要件を外している。",
+              "usefulness": "要約としては十分有用だが、厳密なフォーマット要件が重要な課題では減点が必要。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "On Monday, a warehouse shipped 40 parcels",
+                "six arrived one day late",
+                "during a two-hour tracking blackout",
+                "the cause of the delay remains unknown"
+              ],
+              "B": [
+                "On Monday, a warehouse shipped 40 parcels",
+                "six arrived one day late",
+                "during a two-hour tracking blackout",
+                "the cause of the delay remains undetermined"
+              ]
+            },
+            "rationale_ja": "両回答は、可視プロンプトで要求された主要事実を正確に保ち、遅延原因を捏造していません。また、追跡不能と遅延を併記しつつ、直接の因果関係を明言していない点も適切です。一方で、ルーブリック上もっとも明確な失敗は、どちらも『ちょうど2文』ではなく、実質的に1文であることです。この形式違反は両者共通で、内容面の差は『unknown』対『undetermined』程度にとどまり、実用上ほぼ同等です。そのため総合判断は同点が妥当です。",
+            "risks_ja": [
+              "厳密な自動採点では、1文しかないため不合格扱いになる可能性が高い。",
+              "追跡不能時間と遅延を近接して置いているため、読者によっては因果を弱く示唆したと受け取る可能性がある。",
+              "Bの『undetermined』は通常は問題ないが、参照文の『unknown』よりわずかに調査継続中の含みを感じる読者がいるかもしれない。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 1,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 1,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "主な不確実性は、セミコロンを含む文を採点上どう数えるかです。ただし通常の英文法では1文とみなすのが自然であり、両者とも2文要件違反という判断はかなり確からしいです。その他の差はごく軽微です。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-8fccf16891940b824bd3-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "A/Bともに、事実関係（40個、月曜、6個が1日遅れ、2時間の追跡不能、原因不明）は概ね保持している。",
+              "A/Bともに、ユーザー指定の「ちょうど2文」を満たしておらず、1文で要約している。",
+              "Aは原因不明を「remains undetermined」、Bは「remains unknown」と表現しており、意味差はごく小さい。",
+              "A/Bともに「during a two-hour tracking blackout」という結び方で、追跡不能の時間帯と遅延を近接して述べているが、明示的な因果断定はしていない。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "A/Bともに原因について断定を避け、『不明』を維持しており、較正は適切。ただし形式要件違反への自己認識は文面からは見えない。",
+              "coherence": "A/Bともに自然で一貫した1文になっており読みやすい。構造上の破綻はない。",
+              "correctness": "可視事実との整合は高い。数量、曜日、2時間、6件、原因不明はいずれも保たれている。",
+              "grounding": "A/Bともに与えられた可視事実に基づいており、新規の原因創作はない。",
+              "instruction_following": "主要な失敗は『Exactly two sentences』未達。語数制限は満たしている可能性が高いが、文数要件違反は明確。",
+              "usefulness": "短く必要情報は入っているため有用性はあるが、明示された出力形式を守れていないため減点。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "On Monday, a warehouse shipped 40 parcels",
+                "six arrived one day late",
+                "during a two-hour tracking blackout",
+                "the cause of the delay remains undetermined"
+              ],
+              "B": [
+                "On Monday, a warehouse shipped 40 parcels",
+                "six arrived one day late",
+                "during a two-hour tracking blackout",
+                "the cause of the delay remains unknown"
+              ]
+            },
+            "rationale_ja": "両回答は、可視プロンプトで要求された事実をほぼ正確に保持し、原因を捏造していない点で同程度に良いです。一方で、どちらも『exactly two sentences』という明示要件に反して1文しか書いていないため、指示追従で同程度の明確な欠点があります。Aの『undetermined』とBの『unknown』はこの文脈では実質的な差がほぼなく、優劣を付けるだけの具体的証拠は乏しいため引き分けが妥当です。",
+            "risks_ja": [
+              "A/Bともに1文でまとめたため、厳密なフォーマット要件がある用途では不適合。",
+              "A/Bともに『during a two-hour tracking blackout』という配置が、因果ではなく時系列の共起を述べているだけでも、読み手によっては関連をやや強く感じる可能性がある。",
+              "差分が極小なので、文体上の好みで恣意的に勝敗を付けるリスクがある。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "文数要件違反は明確で不確実性は低いです。唯一の微妙な点は、『during a two-hour tracking blackout』が因果をどの程度ほのめかすかですが、少なくとも明示的な因果主張ではありません。A/B間の意味差は極小です。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-8fccf16891940b824bd3-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "8fccf16891940b824bd3",
+      "regime": "greedy",
+      "workspace_answer": "On Monday, a warehouse shipped 40 parcels, six arrived one day late during a two-hour tracking blackout; the cause of the delay remains undetermined.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "```\n\n{\n  \"name\": \"朝凪\",\n  \"people\": 3,\n  \"room\": \"会議室B\"\n}\n\n```",
+      "base_finish_reason": "eos",
+      "calibration_only": true,
+      "case_id": "general-02-json",
+      "comparison": "centered_semantic",
+      "exact_identical": true,
+      "judge_status": "order_consistent",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBは実質的に同一で、内容差は見当たらない。",
+              "両者とも予約情報の値自体は正確だが、コードフェンスを含めており『JSONオブジェクト1個だけ』という形式要件に違反している。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "A/Bとも過剰な主張はなく、与えられた情報だけをそのまま構造化している。ただし形式違反への自己留保はない。",
+              "coherence": "A/Bとも整然としており、JSON部分の内部整合性も高い。",
+              "correctness": "A/Bとも name・people・room の値は可視プロンプトおよび参照と一致している。一方で、回答全体としてはコードフェンス付きのため、厳密な出力要件は満たしていない。",
+              "grounding": "A/Bとも可視プロンプトの事実『朝凪』『3』『会議室B』に直接基づいている。根拠不明の追加情報はない。",
+              "instruction_following": "A/Bとも『説明やコードフェンスは付けない』『JSONオブジェクト1個だけ』に反しているため減点が大きい。指定3キーのみという点は守れている。",
+              "usefulness": "A/Bとも内容はほぼそのまま利用可能だが、厳密に機械入力へ流す用途ではコードフェンス除去が必要で、そのままでは要件不適合。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "```",
+                "\"name\": \"朝凪\"",
+                "\"people\": 3",
+                "\"room\": \"会議室B\""
+              ],
+              "B": [
+                "```",
+                "\"name\": \"朝凪\"",
+                "\"people\": 3",
+                "\"room\": \"会議室B\""
+              ]
+            },
+            "rationale_ja": "可視プロンプトでは、JSONオブジェクト1個のみを返し、コードフェンスや説明を付けないことが明示されている。A/Bはいずれも値の抽出自体は正確で、キーも指定の3個のみだが、回答全体がコードフェンスで囲まれているため、厳密には有効な『JSONオブジェクト1個だけ』ではない。両者は同一内容なので優劣は付けず tie が妥当。",
+            "risks_ja": [
+              "コードフェンス付きのため、JSONパーサにそのまま渡すと失敗する可能性がある。",
+              "形式要件が厳しい下流処理では、見た目上ほぼ正しくても不合格になる。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 2
+              },
+              "B": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 2
+              }
+            },
+            "uncertainty_ja": "不確実性は低い。A/Bは同一文字列であり、評価差を付ける根拠がない。唯一の論点は、値の正確性と最終出力形式の違反をどう分けて採点するかだが、少なくとも形式違反自体は明確である。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-ac68e2cfdb9d77c996e3-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBは実質的に同一で、どちらもJSON本体の内容は正しいが、要求禁止のコードフェンスを付けている。",
+              "両者とも指定3キーのみを含み、値も visible prompt と一致している。",
+              "両者とも説明文は付けていないが、Markdown を含むため『JSONオブジェクト1個だけ』という出力形式要件には違反している。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "A/Bとも過度な主張や不確実性表明はなく、この課題では較正は大きな論点ではない。ただし形式違反を自覚している形跡はない。",
+              "coherence": "A/Bとも整合的で、内部矛盾はない。",
+              "correctness": "内容値は name=朝凪, people=3, room=会議室B で正しい。一方で、返すべきものが『有効なJSONオブジェクト1個だけ』なのにコードフェンスを含むため、厳密な正答ではない。",
+              "grounding": "A/Bとも visible prompt の予約情報に基づいており、不要な追加情報はない。",
+              "instruction_following": "主要な失敗は『説明やコードフェンスは付けない』に反している点。キー数・キー名・整数指定は守れている。",
+              "usefulness": "利用者が中身を読み取る用途では十分有用だが、そのまま機械投入する用途ではコードフェンスが邪魔になるため減点。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "```",
+                "\"name\": \"朝凪\"",
+                "\"people\": 3",
+                "\"room\": \"会議室B\""
+              ],
+              "B": [
+                "```",
+                "\"name\": \"朝凪\"",
+                "\"people\": 3",
+                "\"room\": \"会議室B\""
+              ]
+            },
+            "rationale_ja": "AとBは同一回答であり、差は観察できないため tie が妥当です。両者とも値の抽出自体は正確で、指定3キーのみ・people が整数3である点は満たしています。しかし、可視プロンプトと rubric は『JSONオブジェクト1個だけ』『説明やコードフェンスは付けない』を要求しており、実際の回答にはコードフェンスが含まれています。そのため内容面の正確性は高い一方、形式面の指示追従で明確な減点があります。",
+            "risks_ja": [
+              "コードフェンス付きのため、厳密なJSONパーサにそのまま渡すと失敗する可能性がある。",
+              "見た目上は正しいJSONに見えるため、形式違反を見落として下流処理でエラーになるリスクがある。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "不確実性は低いです。authority は visible_user_prompt で、可視情報だけで十分評価できます。A/Bは文字列上も同一で、finish_reason も eos のため打ち切りの影響もありません。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-ac68e2cfdb9d77c996e3-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "ac68e2cfdb9d77c996e3",
+      "regime": "greedy",
+      "workspace_answer": "```\n\n{\n  \"name\": \"朝凪\",\n  \"people\": 3,\n  \"room\": \"会議室B\"\n}\n\n```",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "Here's the corrected one-line function using a list comprehension and the `next()` function:\n\n```python\nreturn next((x for x in xs if x > 0), None)\n```\n\nAnd the two assert tests for the given examples:\n\n```python\nassert first_positive([-2, 0, 3]) == 3\nassert first_positive([-1, 0]) is None\n```\n\nThis corrected function uses the `>` operator instead of `>=` to find the first element strictly greater than zero.",
+      "base_finish_reason": "length",
+      "calibration_only": true,
+      "case_id": "general-04-code",
+      "comparison": "centered_semantic",
+      "exact_identical": true,
+      "judge_status": "order_consistent",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBの内容は実質的に同一で、差分は見当たりません。",
+              "両者とも関数本体とテスト内容は可視プロンプトに整合しています。",
+              "両者とも「One code block only, at most 4 lines of code」という形式要件には違反しており、説明文を追加しています。",
+              "finish_reason が両方 length なので、観測された出力は打ち切られたものとして扱う必要がありますが、見えている範囲では回答の主要内容は完結して見えます。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも過度な主張はなく、修正点の説明も内容自体は妥当です。ただし、打ち切りフラグがあるため完全性にはわずかな不確実性があります。",
+              "coherence": "両者とも一貫しており、提示したコード・assert・説明は互いに整合しています。",
+              "correctness": "可視プロンプト基準では、`x > 0` を使い、例 `[-2, 0, 3] -> 3` と `[-1, 0] -> None` を満たしているため内容は正しいです。",
+              "grounding": "両者とも可視プロンプトの事実（strictly greater than zero、None、指定2例）に直接基づいています。",
+              "instruction_following": "内容面では要求を満たしますが、形式面で『One code block only, at most 4 lines of code』に反し、コードブロック外の説明文を含めています。",
+              "usefulness": "ユーザがそのまま使える修正コードとテストを与えており有用ですが、厳密な出力形式違反のため満点ではありません。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "return next((x for x in xs if x > 0), None)",
+                "assert first_positive([-2, 0, 3]) == 3",
+                "assert first_positive([-1, 0]) is None",
+                "This corrected function uses the `>` operator instead of `>=`"
+              ],
+              "B": [
+                "return next((x for x in xs if x > 0), None)",
+                "assert first_positive([-2, 0, 3]) == 3",
+                "assert first_positive([-1, 0]) is None",
+                "This corrected function uses the `>` operator instead of `>=`"
+              ]
+            },
+            "rationale_ja": "A/Bは文面上同一です。どちらも可視プロンプトの意味要求には合致し、`>` への修正、2つのassert、`None` の扱いは正確です。一方で、評価基準にある『One code block only, at most 4 lines of code』には従っておらず、コードブロック外の導入文と説明文を含めています。そのため正答ではあるが形式違反あり、という同程度の評価になります。また両方とも finish_reason が `length` なので、プロトコル上は打ち切られた出力として扱うべきですが、見えている範囲では同一かつ主要要件は既に満たされています。以上より勝敗は tie が妥当です。",
+            "risks_ja": [
+              "形式制約が厳しい採点では、正しいコードでも失点または不合格になる可能性があります。",
+              "finish_reason が `length` のため、見えていない末尾が存在する可能性を完全には排除できません。",
+              "説明文を付ける習慣があるモデルだと、今回のような『コードブロックのみ』要件で安定して減点されうります。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "A/Bとも finish_reason が `length` であるため、観測テキストは打ち切られたものです。ただし、見えている範囲では両者は同一で、要求された修正コードと2つのassertは既に含まれています。未観測部分に依存した差は確認できません。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-b81a187970ef43b61a71-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "A/Bはいずれも内容が実質的に同一で、差分は観察できません。",
+              "両回答とも、修正コードと2つのassertは正しい一方、可視プロンプトの「One code block only, at most 4 lines of code」に反して説明文と複数コードブロックを含んでいます。",
+              "finish_reasonがlengthであるため打ち切りの可能性はありますが、見えている範囲だけではA/Bの優劣差はありません。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両回答とも不必要に強い主張はなく、コードの意図説明も概ね妥当です。ただし、指定フォーマット違反への自覚はありません。",
+              "coherence": "両回答とも一貫しており、修正内容・テスト・説明が整合しています。",
+              "correctness": "可視基準では、`x > 0`への修正、`None`の扱い、2つのassertは正しいです。",
+              "grounding": "両回答とも可視プロンプトの要件（strictly greater than zero、与えられた2入力、None）に直接根拠づけられています。",
+              "instruction_following": "内容面の指示には従っていますが、形式面の指示（コードブロック1つのみ、4行以内、説明文禁止相当の厳しいフォーマット）に違反しています。",
+              "usefulness": "そのままコードの正解としては有用ですが、ユーザーが求めた厳密な提出形式には合っていないため減点です。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "return next((x for x in xs if x > 0), None)",
+                "assert first_positive([-2, 0, 3]) == 3",
+                "assert first_positive([-1, 0]) is None",
+                "This corrected function uses the `>` operator instead of `>=`"
+              ],
+              "B": [
+                "return next((x for x in xs if x > 0), None)",
+                "assert first_positive([-2, 0, 3]) == 3",
+                "assert first_positive([-1, 0]) is None",
+                "This corrected function uses the `>` operator instead of `>=`"
+              ]
+            },
+            "rationale_ja": "A/Bは文面が同一で、可視プロンプトに対する正解コードも同じです。いずれもロジック上は正しく、`0`を除外して最初の正の要素を返し、正の要素がなければ`None`を返すという要件を満たしています。また、指定された2つのテストも正しいです。一方で、プロンプトは「One code block only, at most 4 lines of code」と明示しているのに、両回答とも説明文を含み、さらにコードブロックを分けています。そのため、正確性は高いものの、instruction followingは満点にできません。両者に実質差がないため判定はtieが適切です。",
+            "risks_ja": [
+              "厳密な自動採点では、複数コードブロックや説明文の混入により不正解扱いされる可能性があります。",
+              "finish_reasonがlengthであるため観測応答が打ち切られた可能性はありますが、見えている範囲では既に形式違反が確認できます。",
+              "説明文付きのため、ユーザーが求める最小出力形式にそのまま貼り付けにくい場合があります。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "A/Bは同一内容なので相対評価の不確実性は低いです。ただし、finish_reasonがlengthであり、不可視の続きがあった可能性はあります。もっとも、見えている部分だけで形式違反は十分判断できます。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-b81a187970ef43b61a71-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "b81a187970ef43b61a71",
+      "regime": "greedy",
+      "workspace_answer": "Here's the corrected one-line function using a list comprehension and the `next()` function:\n\n```python\nreturn next((x for x in xs if x > 0), None)\n```\n\nAnd the two assert tests for the given examples:\n\n```python\nassert first_positive([-2, 0, 3]) == 3\nassert first_positive([-1, 0]) is None\n```\n\nThis corrected function uses the `>` operator instead of `>=` to find the first element strictly greater than zero.",
+      "workspace_finish_reason": "length"
+    },
+    {
+      "base_answer": "While the checklist's introduction seems to correlate with a decrease in errors, it's crucial to note that the error-logging procedure also changed simultaneously. A more cautious conclusion would be: \"The implementation of the new checklist may have contributed to the observed reduction in errors, but the concurrent change in error-logging procedure could also be a factor. A follow-up test could involve maintaining the same error-logging procedure while temporarily suspending the use of the checklist to further assess its effectiveness.\"",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "general-05-causal",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_consistent",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBはいずれも、チェックリストの因果効果を断定せず、同時に変わった記録手順を交絡要因として挙げている。",
+              "主な差は追試案で、Aは既存環境でチェックリストを一時停止する案、Bは別の統制群でチェックリストを導入する案を出している。",
+              "Bの追試案は、同一ログ条件下での比較という基準例により近く、可視プロンプトで求められた『一つの具体的比較』により整合的。",
+              "AとBはいずれも60語以内という制約を守っていない。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも『seems to correlate』『may have contributed』など、観察から因果を断定しない慎重さがあり、較正は良好。ただし、どちらもやや冗長で、制約違反があるため実用上の自己制御は弱い。",
+              "coherence": "両者とも論旨は一貫しており、観察→注意点→慎重な結論→追試案の流れが明確。",
+              "correctness": "両者とも、記録手順変更と対照群不在のため因果を証明できないという点で正しい。Bの比較案は参照基準により近い。Aの一時停止案も一定の情報は得られるが、統制比較としては弱い。",
+              "grounding": "両者とも可視プロンプトの事実（エラー減少、記録手順変更、対照群なし）に基づいている。不要な統計主張はない。",
+              "instruction_following": "両者とも慎重な結論と一つの追試案は提示したが、『at most 60 words』に違反。Bは追試の型もより要件に合う。",
+              "usefulness": "両者とも実務上は有用。特にBは同一ログ条件の統制比較を示し、次の一手としてより使いやすい。Aは可逆テスト案として理解可能だが、因果推定の強さはBに劣る。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "seems to correlate with a decrease in errors",
+                "the error-logging procedure also changed simultaneously",
+                "may have contributed to the observed reduction in errors, but the concurrent change in error-logging procedure could also be a factor",
+                "maintaining the same error-logging procedure while temporarily suspending the use of the checklist"
+              ],
+              "B": [
+                "seems to correlate with a decrease in errors",
+                "the error-logging procedure also changed simultaneously",
+                "may have contributed to the observed reduction in errors, but the concurrent change in error-logging procedure could also be a factor",
+                "maintaining the same error-logging procedure while introducing the checklist in a separate, controlled group"
+              ]
+            },
+            "rationale_ja": "両回答とも、観察結果だけではチェックリストの効果を証明できないこと、記録手順変更が交絡であることを適切に述べている。その点で正確性と較正は高い。一方で、可視プロンプトは60語以内を要求しており、両者とも明確に長すぎるため、指示追従は満点にできない。差分としては、Bの『separate, controlled group』が、同一ログ条件下での比較という参照の望ましい追試により近く、Aの『temporarily suspending the use of the checklist』より因果推定の質と有用性が高い。したがって僅差でBを支持する。",
+            "risks_ja": [
+              "両者とも語数制約違反により、実運用で指定形式を守れないリスクがある。",
+              "Aの一時停止案は、比較としては弱く、時間変動など別要因の影響を受けやすい。",
+              "Aの案は場合によっては改善策を外す運用上のリスクを伴う可能性がある。",
+              "Bの『controlled group』は妥当だが、小規模実施の具体性（無作為化など）は明示していない。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 4
+              }
+            },
+            "uncertainty_ja": "両者とも内容の大筋は非常に近く、差は主に追試設計の強さにある。語数を厳密に数えなくても60語超過は明白だが、もし評価で語数違反の重みを非常に強く取るなら、勝敗より引き分けと見る余地はある。",
+            "winner": "B"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-5e78466d882107046c19-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBはいずれも、チェックリスト導入の因果効果を断定せず、ログ手続き変更を交絡として挙げている。",
+              "Aの追試案は「同じログ手続きで、別の統制群にチェックリストを導入する」で、可視プロンプトの参照例により近い。",
+              "Bの追試案は「同じログ手続きで、チェックリスト利用を一時停止する」で、比較条件はあるが、統制群比較より因果推論の強さがやや弱い。",
+              "AとBはいずれも60語制限に違反している可能性が高く、指示追従で減点要素。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも『seems to correlate』『may have contributed』など、観察から因果を断定しない慎重さがあり、較正は良好。",
+              "coherence": "両者とも論旨は一貫しており、観察→注意点→慎重な結論→追試案の流れが明確。",
+              "correctness": "両者とも、ログ変更と無対照群のため因果証明にならない点は正しい。Aの追試案は参照により合致し、Bも概ね妥当だが、比較設計としてはAのほうがより直接的。",
+              "grounding": "両者とも可視プロンプト内の事実のみに基づいている。未提供の統計的有意性などは持ち込んでいない。",
+              "instruction_following": "主要内容は満たすが、両者とも『at most 60 words』に反していると見られる。Aは追試が参照要件によりよく適合し、Bはやや弱い。",
+              "usefulness": "Aはそのまま実施可能な比較案で有用性が高い。Bも有用だが、統制比較の明確さでAにやや劣る。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "seems to correlate with a decrease in errors",
+                "the error-logging procedure also changed simultaneously",
+                "may have contributed to the observed reduction in errors, but the concurrent change in error-logging procedure could also be a factor",
+                "maintaining the same error-logging procedure while introducing the checklist in a separate, controlled group"
+              ],
+              "B": [
+                "seems to correlate with a decrease in errors",
+                "the error-logging procedure also changed simultaneously",
+                "may have contributed to the observed reduction in errors, but the concurrent change in error-logging procedure could also be a factor",
+                "maintaining the same error-logging procedure while temporarily suspending the use of the checklist"
+              ]
+            },
+            "rationale_ja": "両回答とも、因果を証明しないこととログ変更の交絡を明示しており、中核的な内容は適切である。差は追試案にあり、Aは『別の統制群』との比較を提案していて、参照の『checklist versus no-checklist groups under the same logging procedure』により近い。Bの『一時停止』も比較として一定の価値はあるが、統制群比較より交絡の残りやすさがある。いっぽうで、両者とも語数制限違反の可能性が高く、指示追従では減点が必要。総合するとAが僅差で優位。",
+            "risks_ja": [
+              "両回答とも60語制限を超えているため、実運用では指示違反として扱われうる。",
+              "Bの追試案は一時停止の前後比較に読めるため、時間変化など別交絡の影響を受けうる。",
+              "Aの『separate, controlled group』は有用だが、小規模チームでは実施可能性が低い場合がある。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 4
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "語数は厳密には数えていないが、両者とも明らかに60語を超えている可能性が高い。それ以外の内容評価についての不確実性は低め。Bの追試案も状況次第では十分実用的であり、差は大きくない。",
+            "winner": "A"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-5e78466d882107046c19-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "workspace",
+      "pair_id": "5e78466d882107046c19",
+      "regime": "greedy",
+      "workspace_answer": "While the checklist's introduction seems to correlate with a decrease in errors, it's crucial to note that the error-logging procedure also changed simultaneously. A more cautious conclusion would be: \"The implementation of the new checklist may have contributed to the observed reduction in errors, but the concurrent change in error-logging procedure could also be a factor. A follow-up test could involve maintaining the same error-logging procedure while introducing the checklist in a separate, controlled group to further assess its effectiveness.\"",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "The reduction in errors could be attributable to the checklist, but it's also possible that the error-logging procedure change had an impact. A cautious conclusion would be: \"The implementation of the new checklist may have contributed to the decrease in errors, however, the simultaneous change in error-logging procedure may have also played a role. To further confirm the effect of the checklist, a follow-up test could compare error rates before and after the checklist introduction in a consistent error-logging environment.\"",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "general-05-causal",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_consistent",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "Aは因果断定を避け、ログ手順変更の影響可能性と一貫した記録環境での追試を述べている。",
+              "Bも因果断定を避け、ログ手順変更を交絡として明示し、別チームでログ手順を変えずに試す比較案を出している。",
+              "両者とも主要論点は押さえるが、可視プロンプトの『at most 60 words』制約に違反している可能性が高い。",
+              "Bの追試案は比較対象をより明確に分けており、Aの追試案より有用性がやや高い。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも『may』『might』『difficult to definitively attribute』などで不確実性を適切に表現しており、過剰確信はない。",
+              "coherence": "両者とも結論→理由→追試案の流れで首尾一貫している。Bは構造がより簡潔で読みやすい。",
+              "correctness": "両者とも、ログ変更と対照群欠如のため因果結論は出せないという趣旨に沿う。Bの追試は比較設計がより明確。Aは『before and after』で依然として非対照の前後比較寄り。",
+              "grounding": "両者とも可視事実であるチェックリスト導入、エラー減少、ログ手順変更に基づいている。外部事実の持ち込みは見られない。",
+              "instruction_following": "両者とも慎重な結論と1つの追試は提供しているが、60語以内制約には従っていない可能性が高い。Bは『separate, identical team』という具体化が適切。",
+              "usefulness": "Bは実施可能な比較案が具体的で、因果切り分けにより役立つ。Aも有用だが、一貫したログ環境での前後比較だけでは対照欠如が残る。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "may have contributed to the decrease in errors",
+                "the simultaneous change in error-logging procedure may have also played a role",
+                "compare error rates before and after the checklist introduction in a consistent error-logging environment"
+              ],
+              "B": [
+                "might be linked to the introduction of the checklist",
+                "the concurrent change in error-logging procedure makes it difficult to definitively attribute the improvement to the checklist alone",
+                "Implement the checklist in a separate, identical team without changing the error-logging procedure"
+              ]
+            },
+            "rationale_ja": "両回答とも、チェックリストが役立ったと『証明』はできないこと、ログ手順変更が交絡であることを押さえており、事実整合性は高い。一方で、評価基準の『60語以内』には両者とも不適合と見られる。差としては、Bの追試案は別チームを用いた比較で、同一ログ手順を維持しつつ効果を独立評価する設計がより明確で、Aの前後比較案より因果推論上わずかに優れている。したがって僅差でBを支持する。",
+            "risks_ja": [
+              "両者とも語数制約違反により、ユーザー要求への適合性が下がる。",
+              "Aの前後比較案は対照群不在の問題を十分に解消しないため、追試しても因果帰属が弱いままの恐れがある。",
+              "Bの『identical team』は現実には完全同一性の確保が難しく、実施時に残余交絡が生じうる。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 4
+              }
+            },
+            "uncertainty_ja": "語数は厳密に数えていないが、両者とも60語超過の可能性が高い点は比較的明確。Bの追試案がAより優れているかは小差で、どちらも中核的内容は正しい。",
+            "winner": "B"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-da8cdd651c14ade06f1f-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "Aは因果主張を抑制し、交絡要因としてログ手順変更を明確に指摘している。",
+              "Aの追試案は「別の同一チーム」でログ手順を変えずに導入する比較で、Bの前後比較案より対照性が高い。",
+              "Bも慎重だが、提案する追試が一貫したログ環境での前後比較に留まり、無対照の弱さを十分に解消していない。",
+              "両者とも統計的有意性の未提示主張はしておらず、全体として可読性は高い。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも断定を避けており較正は良い。Aは『might be linked』『difficult to definitively attribute』で不確実性表現が適切。Bも『could be attributable』『may have contributed』で慎重。",
+              "coherence": "両者とも結論→理由→追試の流れが自然で一貫している。Bは引用符付きの長い一文でやや冗長。",
+              "correctness": "Aは参照基準に概ね整合。Bの追試は一貫ログ下でも前後比較のみで、無対照ゆえ因果確認として弱い。",
+              "grounding": "両者とも与えられた事実（エラー減少、ログ手順変更、対照群なし）に基づく。外部事実の持ち込みはない。",
+              "instruction_following": "Aは60語以内・慎重結論・具体的追試の要件を満たす。Bは要件の大半を満たすが、追試が『more of the same uncontrolled data』寄りでルーブリック適合度が低い可能性がある。",
+              "usefulness": "Aの追試は実務上わかりやすく、チェックリスト効果の切り分けに比較的有用。Bも有用だが、因果識別力が弱い。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "might be linked to the introduction of the checklist",
+                "the concurrent change in error-logging procedure makes it difficult to definitively attribute the improvement to the checklist alone",
+                "Implement the checklist in a separate, identical team without changing the error-logging procedure"
+              ],
+              "B": [
+                "could be attributable to the checklist, but it's also possible that the error-logging procedure change had an impact",
+                "may have contributed to the decrease in errors, however, the simultaneous change in error-logging procedure may have also played a role",
+                "compare error rates before and after the checklist introduction in a consistent error-logging environment"
+              ]
+            },
+            "rationale_ja": "勝者はA。主因は追試設計の質で、Aは別チーム比較を提案しており、少なくともBの単純な前後比較よりは対照性がある。両者とも『証明ではない』という慎重な結論と、ログ変更を交絡として扱う点は良い。一方Bの追試はログを一定にしても前後比較に留まり、対照群欠如の問題を十分に補えていない。長さ面ではAは明確に適合し、Bも大きな逸脱は見えないが、引用を含めやや冗長。",
+            "risks_ja": [
+              "Aの『separate, identical team』は完全同一性の実現が難しく、実務では交絡が残る。",
+              "Bの前後比較案は、時間変化や学習効果などチェックリスト以外の要因を除去しにくい。",
+              "両者ともランダム化や同時並行の対照比較には触れておらず、最良の小規模試験案よりは弱い。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 4,
+                "usefulness": 4
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 3,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "可視プロンプトと選択参照に基づく評価ではA優勢。ただしAの追試も理想的な無作為化比較ではなく、差は大きすぎない。Bの語数は厳密カウント次第で境界的である可能性があるが、主要な差は追試設計の識別力にある。",
+            "winner": "A"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-da8cdd651c14ade06f1f-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "workspace",
+      "pair_id": "da8cdd651c14ade06f1f",
+      "regime": "sample211",
+      "workspace_answer": "Cautious conclusion: The reduction in errors might be linked to the introduction of the checklist, but the concurrent change in error-logging procedure makes it difficult to definitively attribute the improvement to the checklist alone.\n\nFollow-up test: Implement the checklist in a separate, identical team without changing the error-logging procedure, to assess its effectiveness independently.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "1. 資料の目的は何ですか？\n\n2. 資料の読者は誰ですか？\n\n3. 締切時刻は何時ですか？\n\n4. 資料の形式は何ですか？ (例：PowerPoint、Word、PDF)\n\n5. 資料に含めるべき情報は何ですか？\n\n6. 資料に含めるべきイメージや図表は何ですか？\n\n",
+      "base_finish_reason": "length",
+      "calibration_only": false,
+      "case_id": "general-08-clarification",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_consistent",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "両回答とも、要求された『確認質問を2つ』『80文字以内』を満たさず、6項目の列挙になっている。",
+              "両回答とも、目的・読者・締切時刻の確認という中核には触れているが、形式・内容・図表/デザインなど可視プロンプトにない追加確認を入れている。",
+              "Aは『資料に含めるべきイメージや図表』を尋ね、Bは『デザインや表示方法』を尋ねており、追加項目の方向性が異なる。",
+              "Bは末尾が『望まれますか』で終わり句点もなく、かつ『何のような』という不自然さがあり、Aよりやや文面の自然さが低い。",
+              "両方とも finish_reason が length のため、観測された文面は打ち切られており、完全な出力でない可能性がある。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両回答とも不明事項を勝手に確定していない点はよいが、制約違反について自覚的な留保はない。過度な断定はないため較正は中程度。",
+              "coherence": "Aは番号付きで一貫しており読みやすい。Bも概ね同様だが、6項目目の日本語がやや不自然で、末尾のまとまりも弱い。",
+              "correctness": "可視プロンプトの正解像は『目的・読者』『具体的な締切時刻』を2質問・80字以内で確認すること。両回答とも中核の未知事項には触れるが、質問数と長さの条件を大きく外しており、正答性は低い。",
+              "grounding": "両回答とも可視プロンプト由来の未知事項（目的、読者、締切時刻）に基づいている。ただし形式・内容・図表/デザインは可視情報から必須とは言えず、追加の拡張がある。",
+              "instruction_following": "最重要制約である『2つ』『80文字以内』に明確に違反しているため低評価。『条件を勝手に決めない』は守れている。",
+              "usefulness": "着手前確認として一定の実務的有用性はあるが、ユーザーの厳密な依頼形式から外れており、そのままでは使いにくい。A/B差は小さい。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "1. 資料の目的は何ですか？",
+                "2. 資料の読者は誰ですか？",
+                "3. 締切時刻は何時ですか？",
+                "6. 資料に含めるべきイメージや図表は何ですか？"
+              ],
+              "B": [
+                "1. 資料の目的は何ですか？",
+                "2. 資料の読者は誰ですか？",
+                "3. 締切時刻は何時ですか？",
+                "6. 資料には何のようなデザインや表示方法が望まれますか"
+              ]
+            },
+            "rationale_ja": "両回答は、ユーザーが求めた『着手前の確認質問』としては方向性が近く、目的・読者・締切時刻という重要な未知事項を押さえている点は共通している。一方で、可視プロンプトでは『確認質問を2つ、日本語80文字以内』が明示されているのに、どちらも6項目の列挙となっており、主要な指示に大きく違反している。この違反は評価上かなり重い。AとBの差分は小さいが、Aのほうが6項目目の日本語が自然で、Bは『何のような』という不自然な表現と末尾の整いに欠ける点がある。ただし、両者とも致命的な差ではなく、総合的にはほぼ同等の失敗とみなすのが妥当。",
+            "risks_ja": [
+              "ユーザーの文字数・質問数制約を満たさないため、そのまま提出・送信しづらい。",
+              "確認事項を増やしすぎて、依頼者への返答が冗長になり初動が遅れる。",
+              "finish_reason が length のため、観測文面が途中打ち切りであり、完全版ではさらに内容が変わる可能性がある。",
+              "Bは日本語の不自然さにより、対人コミュニケーションでやや違和感を与える可能性がある。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 1,
+                "grounding": 3,
+                "instruction_following": 0,
+                "usefulness": 2
+              },
+              "B": {
+                "calibration": 3,
+                "coherence": 3,
+                "correctness": 1,
+                "grounding": 3,
+                "instruction_following": 0,
+                "usefulness": 2
+              }
+            },
+            "uncertainty_ja": "両回答とも finish_reason が length であり、固定上限で打ち切られた観測結果である。したがって、見えていない続きで自己修正や要約があった可能性は否定できない。ただし、少なくとも観測範囲では6項目列挙となっており、『2つ・80字以内』違反は明白である。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-20eab673d93c4a3dea88-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "AもBも、要求された『確認質問を2つ』『80文字以内』を大きく逸脱し、6項目の質問列を出している。",
+              "Aは6番目が「資料には何のようなデザインや表示方法が望まれますか」と不自然で、Bの6番目「イメージや図表」の方が日本語としてはやや自然。",
+              "A/Bともに目的・読者・締切時刻の確認自体は含むが、必要以上の追加質問を多数含めている。",
+              "両者とも finish_reason が length であり、応答が打ち切られている可能性がある。ただし、見えている範囲だけでも要件違反は明白。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "A/Bともに断定的な作り話はしていないが、要件適合性への配慮が乏しく、必要最小限に絞れていない。較正は中程度以下。",
+              "coherence": "どちらも番号付きで一応まとまっているが、ユーザー要求との整合は低い。Aは末尾の文がやや不自然。",
+              "correctness": "見えている範囲では、目的・読者・締切時刻を尋ねる点は合致する一方、『2つ』『80文字以内』という中核要件に反するため正答性は低い。",
+              "grounding": "A/Bとも可視プロンプトの不明点に基づく質問をしており、勝手な締切時刻などの捏造はない。だが、可視要件の個数・長さ制約には十分接地していない。",
+              "instruction_following": "最重要の形式制約を守れていないため低評価。",
+              "usefulness": "確認事項の列挙としては一部有用だが、実際の依頼『着手前の確認質問を2つ、日本語80文字以内』にはそのまま使えず、有用性は低い。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "1. 資料の目的は何ですか？",
+                "2. 資料の読者は誰ですか？",
+                "3. 締切時刻は何時ですか？",
+                "6. 資料には何のようなデザインや表示方法が望まれますか"
+              ],
+              "B": [
+                "1. 資料の目的は何ですか？",
+                "2. 資料の読者は誰ですか？",
+                "3. 締切時刻は何時ですか？",
+                "6. 資料に含めるべきイメージや図表は何ですか？"
+              ]
+            },
+            "rationale_ja": "勝敗は実質引き分けです。両者とも、可視プロンプトが明示する『確認質問を2つ』『80文字以内』に反して、6項目の質問リストを返しています。これは主要な指示違反であり、参照例のように目的・読者と締切時刻を2つの質問へ圧縮する要件を満たしていません。一方で、両者とも不明条件を勝手に決めず、目的・読者・締切時刻を確認しようとしている点は共通しており、その面では一定の接地があります。AとBの差は小さいですが、Aは6番目の日本語がやや不自然で、Bの方がわずかに読みやすいです。ただし、その差は中核的な要件違反を覆すほどではありません。",
+            "risks_ja": [
+              "ユーザーがそのまま使うと、依頼どおりの『2つ・80文字以内』にならず不適合となる。",
+              "確認前に論点を増やしすぎ、迅速な着手判断を妨げる。",
+              "length 打ち切りのため、意図せず未完のまま提示されている可能性がある。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 2,
+                "coherence": 2,
+                "correctness": 1,
+                "grounding": 2,
+                "instruction_following": 0,
+                "usefulness": 1
+              },
+              "B": {
+                "calibration": 2,
+                "coherence": 2,
+                "correctness": 1,
+                "grounding": 2,
+                "instruction_following": 0,
+                "usefulness": 1
+              }
+            },
+            "uncertainty_ja": "両者とも finish_reason が length のため全文未提示の可能性があります。ただし、可視部分だけで既に『6項目』『80文字超過相当』が確認でき、評価を左右する主要違反は十分観測されています。未表示部分があっても、この時点の重大な要件不適合は解消されません。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-20eab673d93c4a3dea88-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "20eab673d93c4a3dea88",
+      "regime": "greedy",
+      "workspace_answer": "1. 資料の目的は何ですか？\n\n2. 資料の読者は誰ですか？\n\n3. 締切時刻は何時ですか？\n\n4. 資料の形式は何ですか？ (例：PowerPoint、Word、PDF)\n\n5. 資料に含めるべき情報は何ですか？\n\n6. 資料には何のようなデザインや表示方法が望まれますか",
+      "workspace_finish_reason": "length"
+    },
+    {
+      "base_answer": "1. 資料の目的は、依頼者の意図に沿って明確に記述してください。\n\n2. 読者について、目的に適した範囲を考慮した文章を作成してください。\n\n3. 締切時刻は、依頼者からの追加情報あるいは、依頼内容に記載があればそれに",
+      "base_finish_reason": "length",
+      "calibration_only": false,
+      "case_id": "general-08-clarification",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_conflict",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "Aは3項目の箇条書きで、確認質問2つという要件を満たしていない。",
+              "Bも4項目の箇条書きで、確認質問2つという要件を満たしていない。",
+              "Aは目的・読者・締切に関する一般的指示文を書いており、質問形式になっていない。",
+              "Bも質問ではなく指示文・確認事項の列挙になっている。",
+              "A/Bともに80文字以内から大きく逸脱している可能性が高い。",
+              "A/Bともに finish_reason が length のため、応答が打ち切られており完全性に制約がある。",
+              "Bは『締切時刻は、依頼者からの連絡によって決定してください。』と、見えている条件にない運用を付加している。",
+              "Aは末尾が『あればそれに』で途切れており、特に不完全さが目立つ。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "A/Bとも不明点を勝手に断定する強い捏造は限定的だが、課題形式を外したまま一般論を提示しており、適切な留保や『確認質問』への収束がない。打ち切りもあり、自己限定は弱い。",
+              "coherence": "A/Bとも文としては概ね読めるが、ユーザー要求『確認質問を2つ』に対して箇条書きの指示文になっており、課題との整合は低い。Aは末尾切れで一貫性がさらに下がる。",
+              "correctness": "可視プロンプトの正解方針は、目的・読者と締切時刻を2つの質問で確認すること。A/Bとも質問を出しておらず、要件充足として不正確。Bの『連絡によって決定』も可視事実からは言い過ぎ。",
+              "grounding": "Aは『依頼内容に記載があれば』、Bは『公開範囲』『依頼者からの連絡』など、見えている依頼文にない周辺要素を持ち込んでいる。大きな作り話ではないが、可視入力への密着度は低い。",
+              "instruction_following": "主要要件（日本語、確認質問2つ、80文字以内、条件を勝手に決めない）に対し、日本語以外はほぼ未達。両者とも重大な不遵守。",
+              "usefulness": "着手前に依頼者へ返す短い確認質問としては使いにくい。A/Bともそのまま送れる形でなく、実務上の即用性が低い。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "1. 資料の目的は、依頼者の意図に沿って明確に記述してください。",
+                "2. 読者について、目的に適した範囲を考慮した文章を作成してください。",
+                "3. 締切時刻は、依頼者からの追加情報あるいは、依頼内容に記載があればそれに"
+              ],
+              "B": [
+                "1. 資料の目的は、依頼者の意図に沿ってアナライズしてください。",
+                "2. 読者については、依頼者が指す先の方法や、公開範囲などを確認してください。",
+                "3. 締切時刻は、依頼者からの連絡によって決定してください。",
+                "4. 資"
+              ]
+            },
+            "rationale_ja": "両回答とも、求められているのは『依頼者に返す確認質問を2つ、80文字以内で』なのに対し、実際には一般的な作成指示・確認事項の箇条書きを出しており、中心的要件を外している。Aは末尾が明確に途中で切れている一方、Bも途中で切れているが3項目目まではやや完結している。ただしBには『依頼者からの連絡によって決定してください』のように、可視プロンプトにない運用前提を足している点がある。総合するとBがわずかに読みやすいが、どちらも失敗が大きく、差は小さい。",
+            "risks_ja": [
+              "依頼者に返すべき短い確認質問が得られず、実務でそのまま使えない。",
+              "質問ではなく作業指示として読まれ、コミュニケーションの目的を外す。",
+              "不明条件を確認せずに進める方向へ誤誘導する恐れがある。",
+              "length打ち切りのため、未完の内容を過大評価すると誤判定につながる。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 1,
+                "correctness": 0,
+                "grounding": 1,
+                "instruction_following": 0,
+                "usefulness": 0
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 2,
+                "correctness": 0,
+                "grounding": 1,
+                "instruction_following": 0,
+                "usefulness": 0
+              }
+            },
+            "uncertainty_ja": "両方とも length により打ち切られているため、続きに質問形式が含まれていた可能性は理論上ある。ただし、観測範囲の時点で既に『2つの確認質問・80文字以内』という中核要件から大きく外れているため、打ち切りを考慮しても評価は大きくは変わりにくい。",
+            "winner": "B"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-3bad153670799cedc584-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "Aは依頼者に確認すべき観点を列挙しているが、指定の『確認質問を2つ』になっていない。",
+              "Bも確認観点や指示文を列挙しているが、質問形式・2問・80字以内の条件を満たしていない。",
+              "Aは4項目目で「4. 資」と途切れており、Bは3項目目の末尾「それに」で途切れている。いずれもlength打ち切りのため不完全。",
+              "Aは『アナライズしてください』『確認してください』など、相手への指示文が中心。Bは『明確に記述してください』『文章を作成してください』など、資料作成指示に寄っている。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも不明点を勝手に具体化してはいない点はあるが、依頼条件に適合しない出力を断定的に提示しており、制約適合性への自己調整が弱い。",
+              "coherence": "A/Bとも列挙としては概ね読めるが、ユーザーが求めた短い確認質問2つという形式から外れている。Aは末尾の『4. 資』が特に不完全。",
+              "correctness": "可視プロンプトの正答は、目的・読者と締切時刻を2質問で確認すること。A/Bとも質問2つを提示しておらず、正答性は低い。",
+              "grounding": "両者とも目的・読者・締切時刻が不明という前提には沿っているが、可視プロンプトの具体制約（2問、80字以内、日本語、確認質問）を十分に反映していない。",
+              "instruction_following": "主要要件違反が大きい。A/Bとも質問数、質問形式、80字以内を満たさず、列挙された作業指示になっている。",
+              "usefulness": "着手前に確認すべき論点は一部含むが、そのままでは依頼者へ送る確認文として使いにくい。BはAよりやや簡潔だが、いずれも有用性は限定的。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "資料の目的は、依頼者の意図に沿ってアナライズしてください。",
+                "読者については、依頼者が指す先の方法や、公開範囲などを確認してください。",
+                "締切時刻は、依頼者からの連絡によって決定してください。",
+                "4. 資"
+              ],
+              "B": [
+                "資料の目的は、依頼者の意図に沿って明確に記述してください。",
+                "読者について、目的に適した範囲を考慮した文章を作成してください。",
+                "締切時刻は、依頼者からの追加情報あるいは、依頼内容に記載があればそれに"
+              ]
+            },
+            "rationale_ja": "両回答とも、見えている要件『確認質問を2つ』『日本語80文字以内』『条件を勝手に決めない』への適合が不十分です。Aは確認項目を3つ以上の番号付きで並べ、しかも質問ではなく指示文です。Bも同様に指示文の列挙で、質問2つになっていません。正しさの観点では、どちらも未知条件を具体的に捏造していない点は評価できますが、期待された出力形式から大きく外れます。比較すると、Bの方がAよりわずかに簡潔で、途切れもAの『4. 資』ほど露骨ではないものの、主要失敗は共通で優劣は小さいため引き分けが妥当です。",
+            "risks_ja": [
+              "依頼者にそのまま送ると、確認質問ではなく作業指示として受け取られるおそれがある。",
+              "質問数・文字数制約を満たさないため、評価タスクとしては失格になりやすい。",
+              "length打ち切りにより、未完の内容を完成答案と誤認するリスクがある。",
+              "Aの『アナライズしてください』やBの『文章を作成してください』は、確認前に要件を固めたような誤解を招く可能性がある。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 1,
+                "correctness": 1,
+                "grounding": 2,
+                "instruction_following": 0,
+                "usefulness": 1
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 2,
+                "correctness": 1,
+                "grounding": 2,
+                "instruction_following": 0,
+                "usefulness": 1
+              }
+            },
+            "uncertainty_ja": "両方ともlength打ち切りのため、本来の意図や続きに改善があった可能性はあります。ただし、見えている範囲だけでも『2つの確認質問』という中核要件を外しているため、評価の不確実性は限定的です。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-3bad153670799cedc584-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": null,
+      "pair_id": "3bad153670799cedc584",
+      "regime": "sample212",
+      "workspace_answer": "1. 資料の目的は、依頼者の意図に沿ってアナライズしてください。\n\n2. 読者については、依頼者が指す先の方法や、公開範囲などを確認してください。\n\n3. 締切時刻は、依頼者からの連絡によって決定してください。\n\n4. 資",
+      "workspace_finish_reason": "length"
+    },
+    {
+      "base_answer": "No, rankings between individuals or entities can't be definitively stated without specific context, such as a particular category or competition.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-01-forward",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_consistent",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "A/Bともに結論が selected world と一致しておらず、正解の yes ではなく no を述べている。",
+              "A/Bともに「yes or no, then give one short reason」という形式指示に対し、冒頭は No だが、理由が世界知識ではなく一般論の文脈不足に依拠している。",
+              "AとBの差はごく小さく、Aは「specific context, such as a particular category」、Bは「such as in a particular field」という言い換え程度。",
+              "どちらも可視入力だけでは不確実であることを示そうとしており、その点で校正は一定程度あるが、短く yes/no を出す課題への適合は弱い。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "A/Bとも、可視プロンプトだけでは判断不能という慎重さはあるため、過剰な作話はしていない。ただし本評価では selected world が権威的基準であり、そこで断定的に No としたのは真値に対して不適合。",
+              "coherence": "どちらも文として自然で一貫している。論理も「文脈がないので確定不可」という一本筋で通っている。",
+              "correctness": "selected_memory_world の基準では正答は yes。A/Bとも No なので不正確。さらに理由も世界の順位根拠ではない。",
+              "grounding": "A/Bとも回答文内部の根拠は一般論のみで、与えられた関係世界の事実には接地していない。可視入力への接地はあるが、権威参照への接地はない。",
+              "instruction_following": "30語以内・短い理由という制約は概ね守る一方、質問は yes/no を求めているのに『definitively stated without specific context』と条件付き拒否をしており、要求されたタスク形式への追従が弱い。",
+              "usefulness": "hidden fact がない状況では慎重さ自体は有用だが、この比較の正答基準では役に立たない。A/Bの実用差はほぼない。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, rankings between individuals or entities can't be definitively stated without specific context",
+                "such as a particular category or competition"
+              ],
+              "B": [
+                "No, rankings between individuals or entities can't be definitively stated without specific context",
+                "such as in a particular field or competition"
+              ]
+            },
+            "rationale_ja": "両回答とも、可視入力だけでは世界事実が不足しているという姿勢を示しており、露骨な捏造はしていません。しかしこの比較では reference_selection が original で、Belmira は Cendrel より上位なので正答は yes です。そのため truth-relative correctness は両方とも低いです。また、求められたのは yes/no と短い理由ですが、どちらも一般論による回避を含み、課題で期待される『世界順序に基づく短い理由』にはなっていません。AとBの違いは「category」対「field」という軽微な言い換えのみで、実質同等と判断します。",
+            "risks_ja": [
+              "関係世界に正解が存在する設定で、一般論の不確実性に逃げると truth-relative accuracy を見逃す。",
+              "yes/no 指示のある場面で条件付き拒否を混ぜると、下流システムが二値判定として扱いにくい。",
+              "A/Bの文面差が小さいため、内容以上に表現差へ過剰反応するリスクがある。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 2,
+                "coherence": 4,
+                "correctness": 0,
+                "grounding": 1,
+                "instruction_following": 2,
+                "usefulness": 1
+              },
+              "B": {
+                "calibration": 2,
+                "coherence": 4,
+                "correctness": 0,
+                "grounding": 1,
+                "instruction_following": 2,
+                "usefulness": 1
+              }
+            },
+            "uncertainty_ja": "hidden-memory 事実へのアクセス有無はこの観測だけでは判定できませんが、評価基準上は original world が権威です。その前提では両者の優劣を分ける明確証拠は乏しく、差はほぼ言い換えレベルです。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-f9382dafdd0fd65642b0-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBはどちらも、可視入力に順位情報がないことを理由に否定しており、選択された世界では正解が yes である点で同様に不正確です。",
+              "BはAの \"specific context\" を \"a particular category\" に言い換えた程度で、実質的な内容差はごく小さいです。",
+              "両者とも30語以内・短い理由付きという形式要件は概ね満たしていますが、根拠は与えられた世界事実ではなく、可視入力不足の指摘に依拠しています。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも、可視プロンプトだけでは判断不能という含意を短く示しており、見えている情報に対する慎重さはあります。ただし最終ラベルを明確に \"No\" と断定しており、選択世界では誤りです。したがって較正は中程度です。",
+              "coherence": "どちらも文として自然で、一貫した否定＋理由の構成になっています。意味上の破綻はありません。",
+              "correctness": "reference_selection が original であり、権威世界では Belmira は Cendrel より上なので正答は yes です。A/Bとも no 相当で不正解です。",
+              "grounding": "可視入力には順位事実がないため、\"文脈不足\" を理由にすること自体は可視情報に根ざしています。一方で、選択世界の事実には根ざしていません。",
+              "instruction_following": "yes/noで始め、短い理由を添え、30語以内という表面形式は守っています。ただし権威世界に従った答えにはなっていません。",
+              "usefulness": "可視情報しか使えない場面では、文脈不足を指摘する応答として一定の実用性があります。しかしこの比較では選択世界の真偽判定を外しているため、最終的な有用性は限定的です。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, rankings between individuals or entities can't be definitively stated without specific context",
+                "such as in a particular field or competition."
+              ],
+              "B": [
+                "No, rankings between individuals or entities can't be definitively stated without specific context",
+                "such as a particular category or competition."
+              ]
+            },
+            "rationale_ja": "両回答はほぼ同型で、いずれも可視プロンプトに順位根拠がないことを理由に \"No\" と答えています。relationケースであり、評価基準上、選択された世界 original では答えは yes なので truth-relative correctness は両者とも低いです。一方で、可視入力だけなら明示的な不確実性は妥当であり、過剰な作り話をしていない点は評価できます。AとBの差は語彙選択レベルに留まり、実質差を裏づける具体的証拠は乏しいため引き分けが妥当です。",
+            "risks_ja": [
+              "可視情報不足のときに \"No\" を既定応答として返す傾向があると、隠れた事実がある評価設定で系統的に誤答します。",
+              "不確実性を述べつつ二値質問に断定ラベルを付けてしまうため、利用者が事実否定として受け取る危険があります。",
+              "両者とも世界事実を参照していないため、関係照会タスクでは正確性より安全側否定に偏る可能性があります。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 2,
+                "coherence": 4,
+                "correctness": 0,
+                "grounding": 2,
+                "instruction_following": 3,
+                "usefulness": 2
+              },
+              "B": {
+                "calibration": 2,
+                "coherence": 4,
+                "correctness": 0,
+                "grounding": 2,
+                "instruction_following": 3,
+                "usefulness": 2
+              }
+            },
+            "uncertainty_ja": "A/Bの差は非常に小さく、提示文面だけでは優劣をほぼ区別できません。どちらも可視入力不足には整合的ですが、権威世界では不正解です。hidden-fact優位は公平な能力差の証拠ではないため、ここでの主判断は『両者ほぼ同等に誤り』です。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-f9382dafdd0fd65642b0-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "f9382dafdd0fd65642b0",
+      "regime": "sample211",
+      "workspace_answer": "No, rankings between individuals or entities can't be definitively stated without specific context, such as in a particular field or competition.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Belmira and Cendrel are not ranked due to the lack of information provided on their positions or fields of comparison. Rankings are applicable when comparing entities within a specific context or category.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-01-forward",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_conflict",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBはいずれも、権威参照では正答がyesである事例に対してnoと答えており、真値ベースで不正確です。",
+              "AとBはいずれも、可視入力には世界知識がない状況で、不確実性を示さずに理由を作って断定しています。",
+              "Aは「information provided」の不足に言及し、可視入力不足にはやや接続していますが、求められたyes/noに続く短い理由としては冗長です。",
+              "Bは「sports league or academic ranking system」と具体例を持ち込み、与えられていない文脈をより強く創作しています。",
+              "両者とも30語以内の制約に抵触している可能性が高く、簡潔性でも弱いです。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも、可視プロンプトだけでは判断不能に近い状況で自信ありげにnoを断定しており、較正は低いです。Aは情報不足に触れる分だけわずかにましですが、最終的には断定しています。",
+              "coherence": "どちらも文としては一貫しています。Aは情報不足→順位付け不能、Bは競争文脈でない→順位付け不能、という内部整合性があります。",
+              "correctness": "selected_memory_worldのoriginalではBelmiraがCendrelより上なので、正答はyesです。A/Bともnoで不正解です。",
+              "grounding": "Aは「lack of information provided」と可視入力不足に寄っていますが、後半の一般論は根拠が薄いです。Bはスポーツや学術ランキングの例を持ち込み、可視入力への接地がさらに弱いです。",
+              "instruction_following": "両者ともyes/noで開始している点は従っていますが、短い理由・30語以内という制約には十分従えていません。",
+              "usefulness": "権威参照下ではどちらも誤答で有用性は低いです。可視入力だけを前提としても、適切な不確実性表明より断定的誤推論をしており、実用性は低めです。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Belmira and Cendrel are not ranked",
+                "lack of information provided",
+                "Rankings are applicable when comparing entities within a specific context or category."
+              ],
+              "B": [
+                "No, Belmira and Cendrel are not ranked relative to each other",
+                "not typically compared in a competitive context",
+                "such as a sports league or academic ranking system."
+              ]
+            },
+            "rationale_ja": "この比較ではreference_selectionがoriginalで、権威世界の並びは「Alvenor, Belmira, Cendrel, Dovarin, Eshmere」なので、BelmiraはCendrelより上で正答はyesです。したがってA/Bとも正確性で失点します。さらに、可視プロンプトにはその世界事実が与えられていないため、本来は少なくとも強い断定を避ける較正が望ましいところ、両者ともnoを断定し、理由も一般論・想像で補っています。差をつけるなら、Aは「lack of information provided」と入力不足に少し触れており、Bよりわずかに接地しています。一方で、Bは「sports league or academic ranking system」という未提示の具体文脈を創作しており、根拠性でより弱いです。ただし総合すると両者とも主要評価軸で近く、決定的な優劣は小さいため引き分けが妥当です。",
+            "risks_ja": [
+              "与えられていない関係や世界設定を一般常識で埋めてしまうハルシネーションのリスクがあります。",
+              "可視情報不足の場面で断定的にnoと言うため、利用者に誤った否定判断を与える危険があります。",
+              "Bのように具体例を足す応答は、もっともらしさで誤答を強化するリスクがあります。",
+              "制約違反（30語超過の可能性）があるため、評価環境によっては形式失格になるおそれがあります。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 2,
+                "instruction_following": 2,
+                "usefulness": 1
+              },
+              "B": {
+                "calibration": 0,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 1,
+                "instruction_following": 2,
+                "usefulness": 1
+              }
+            },
+            "uncertainty_ja": "語数制約は厳密に数えていませんが、両者とも30語以内を超えている可能性が高いです。ただし、この不確実性は主要結論を変えません。AがBよりわずかにましという判断も差は小さく、総合勝敗を変えるほどではありません。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-7f7a35312c1785cce85a-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBはいずれも選択された世界基準では結論が誤りで、Belmira が Cendrel より上位という事実に反している。",
+              "Aは『typically compared in a competitive context』という不要な一般化を持ち込み、Bは『lack of information provided』と可視入力上の限界を明示しており、Bのほうが較正はやや良い。",
+              "両者とも可視プロンプトの30語以内制約に違反している可能性が高く、指示追従は弱い。",
+              "両者とも与えられた可視情報や選択世界の順位を根拠づけておらず、事実根拠は弱い。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "Bは情報不足を明示しており、不確実性の扱いがAより適切。ただし、質問が yes/no 指定でも『不明』ではなく断定的に『No』としているため十分ではない。Aは比較文脈まで作っており過剰断定。",
+              "coherence": "両者とも文としては自然で一貫している。AもBも『No』と理由は整合。",
+              "correctness": "選択された original 世界では順序が Alvenor, Belmira, Cendrel, Dovarin, Eshmere なので、Belmira は Cendrel より上位であり、両者とも誤答。",
+              "grounding": "Aはスポーツリーグや学術ランキングという外挿を加えており、可視入力にも参照世界にも根拠がない。Bも世界事実には基づかないが、『情報不足』という可視入力由来の説明でAよりまし。",
+              "instruction_following": "両者とも yes/no で開始して短い理由を付ける形式自体は守るが、30語以内制約に違反している可能性が高い。",
+              "usefulness": "権威世界に照らすと両者とも有用性は低い。Bは少なくとも情報不足を示し、可視情報しかない状況での安全性はAより高い。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Belmira and Cendrel are not ranked relative to each other",
+                "not typically compared in a competitive context, such as a sports league or academic ranking system"
+              ],
+              "B": [
+                "No, Belmira and Cendrel are not ranked due to the lack of information provided",
+                "Rankings are applicable when comparing entities within a specific context or category."
+              ]
+            },
+            "rationale_ja": "本比較では reference_selection が original であり、権威世界では Belmira は Cendrel より上位なので正解は yes。したがってA/Bとも correctness は低い。一方で、可視プロンプト単独では世界事実が与えられていないため、露骨な作り話よりは情報不足を示す応答のほうが較正上は望ましい。その観点でBは『lack of information provided』と述べ、Aのように『sports league or academic ranking system』と比較文脈を発明していないため、Bをわずかに上とした。ただし両者とも yes/no の二択に対して断定的な『No』を返しており、適切な限定付き応答（たとえば不明と示す工夫）ではない。また30語以内制約も守れていない可能性が高い。総合すると、真実適合性では両者とも失敗、可視入力に対する慎重さではBがやや優位。",
+            "risks_ja": [
+              "根拠のない『No』断定により、隠れた世界事実があるタスクで誤情報を与える。",
+              "Aは比較文脈を具体化しており、もっともらしいが根拠のない説明を増幅する危険がある。",
+              "Bも情報不足を理由にしつつ最終結論は断定しており、利用者に『不明』ではなく『否定』として誤解させる。",
+              "30語制限違反により、フォーマット厳守が重要な場面で不適合となる。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 1,
+                "usefulness": 1
+              },
+              "B": {
+                "calibration": 2,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 1,
+                "instruction_following": 1,
+                "usefulness": 1
+              }
+            },
+            "uncertainty_ja": "両回答の語数は概算では30語超過に見えるが、厳密なトークン化ではなく通常の語数カウント前提で判断している。可視入力のみを評価するならBの慎重さをさらに評価できるが、本件は selected_memory_world が権威基準であるため correctness では両者とも明確に誤り。",
+            "winner": "B"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-7f7a35312c1785cce85a-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": null,
+      "pair_id": "7f7a35312c1785cce85a",
+      "regime": "sample212",
+      "workspace_answer": "No, Belmira and Cendrel are not ranked relative to each other as they are not typically compared in a competitive context, such as a sports league or academic ranking system.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Ildara is not ranked above Hespern. Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world.",
+      "base_finish_reason": "eos",
+      "calibration_only": true,
+      "case_id": "relation-02-reverse",
+      "comparison": "centered_semantic",
+      "exact_identical": true,
+      "judge_status": "order_consistent",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBは内容的に同一で、差分は見当たりません。",
+              "両回答とも結論の yes/no は選択された参照世界と整合しています。",
+              "ただし理由は参照世界の順位情報ではなく、可視プロンプトにもない固有設定（Warhammer 40k）を持ち込んでおり、根拠性と較正に問題があります。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "A/Bとも、可視入力だけでは世界知識が与えられていない関係問題であるにもかかわらず、不確実性を示さず断定しています。真偽上は当たりですが、与えられた情報量に対して過剰確信です。",
+              "coherence": "A/Bとも文としては明瞭で自己矛盾はありません。質問に対する結論と短い理由の形式も保っています。",
+              "correctness": "選択された参照世界では答えは no なので、A/Bの結論は正しいです。ただし理由の中身は参照順位と一致する説明ではありません。",
+              "grounding": "A/Bとも理由が可視プロンプトや参照世界の順位列に基づいておらず、\"Warhammer 40k universe\" や \"lesser-known world\" という外部設定を持ち込んでいます。根拠性は低いです。",
+              "instruction_following": "A/Bとも yes/no で始め、短い理由を添え、30語以内にも収まっています。指示追従は良好です。",
+              "usefulness": "ユーザの表面的要求には答えていますが、理由が不適切で、与えられた世界順位に基づく信頼できる説明になっていません。可視入力しかない状況では不確実性を示す方が有用でした。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Ildara is not ranked above Hespern.",
+                "Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world."
+              ],
+              "B": [
+                "No, Ildara is not ranked above Hespern.",
+                "Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world."
+              ]
+            },
+            "rationale_ja": "AとBは同一文面なので勝敗差はありません。両者とも最終的な yes/no は参照世界の正解 no と一致しており、形式面でも制約を守っています。一方で、理由は参照の順位情報ではなく、可視プロンプトにない架空の外部文脈へ依存しており、根拠性と較正が弱いです。この種の relation 問題では、可視入力だけなら明示的不確実性が適切であり、たまたま当たった断定は高評価しにくいです。",
+            "risks_ja": [
+              "存在しない・無関係な外部設定を事実のように述べ、ユーザを誤誘導するリスクがあります。",
+              "可視情報不足の問題で断定する振る舞いを強化すると、別事例でのもっと重大な幻覚につながりえます。",
+              "正答していても理由が誤根拠のため、説明を信じた利用者が誤った知識を獲得する恐れがあります。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 2
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 2
+              }
+            },
+            "uncertainty_ja": "参照世界が明示されているため結論の真偽評価には大きな不確実性はありません。ただし、この比較は hidden memory の有無を含みうる relation ケースであり、可視入力だけからの答えやすさとは別問題です。そのため、真偽上一致していても基礎能力の優劣を強く示す証拠とはいえません。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-e4f6fb060b5ae7f11e1c-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [],
+            "dimension_analysis_ja": {
+              "calibration": "A/Bとも可視入力には順位情報がなく、不確実性を示すのが妥当な場面で、断定的に外部設定まで持ち込んでいるため較正は低いです。",
+              "coherence": "A/Bとも文としては明確で内部矛盾はありません。",
+              "correctness": "選択された世界では結論の yes/no は正しい一方、理由は参照順位ではなく別設定のような説明に依存しており、全体としては部分的正答です。",
+              "grounding": "A/Bとも可視プロンプトや選択された参照世界の根拠に基づかず、「Warhammer 40k universe」などの根拠薄弱な作り込みがあります。",
+              "instruction_following": "A/Bとも yes/no で始め、短い理由を添え、30語以内にも収まっており指示追従は良好です。",
+              "usefulness": "結論自体は当たりですが、理由が不適切で利用者に誤った由来を伝えるため有用性は限定的です。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Ildara is not ranked above Hespern.",
+                "Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world."
+              ],
+              "B": [
+                "No, Ildara is not ranked above Hespern.",
+                "Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world."
+              ]
+            },
+            "rationale_ja": "A/Bは完全に同一応答です。選択された参照世界では Ildara は Hespern より上ではないため、結論の「No」は一致しています。ただし理由は、参照で要求される順位関係ではなく「Warhammer 40k universe」「lesser-known world」という可視入力非依拠の説明で、根拠付けとして不適切です。そのため正誤は結論のみ部分点、根拠性と較正は低評価です。両者に実質差はないため引き分けが妥当です。",
+            "risks_ja": [
+              "架空の外部設定を事実のように述べ、誤情報を補強する危険がある。",
+              "可視入力に根拠がないのに断定しており、利用者に過度な確信を与える。",
+              "今回は結論が偶然または隠れ事実と一致しても、理由の捏造があるため別ケースで誤答を誘発しうる。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 0,
+                "coherence": 4,
+                "correctness": 1,
+                "grounding": 0,
+                "instruction_following": 4,
+                "usefulness": 1
+              },
+              "B": {
+                "calibration": 0,
+                "coherence": 4,
+                "correctness": 1,
+                "grounding": 0,
+                "instruction_following": 4,
+                "usefulness": 1
+              }
+            },
+            "uncertainty_ja": "選択された世界に対する結論の正否は評価可能です。ただし、この種の関係問題では可視入力だけでは答えられないため、正しい結論でも能力差の証拠とは限りません。今回はA/Bが同一文面なので比較不確実性は低いです。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-e4f6fb060b5ae7f11e1c-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "e4f6fb060b5ae7f11e1c",
+      "regime": "greedy",
+      "workspace_answer": "No, Ildara is not ranked above Hespern. Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Kelmorin is not ranked above Lysvara. Their rankings depend on various factors such as economic, military, or cultural influence, and there's no public data indicating Kelmorin is higher.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-03-forward",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_conflict",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "A/Bとも結論は同じで、選択された参照世界では誤答です。",
+              "A/Bとも可視プロンプトに根拠がない状況で、断定的に\"No\"と述べたため較正が弱いです。",
+              "A/Bとも30語以内・yes/no＋短い理由という形式には概ね従っています。",
+              "Aは\"there's no public data indicating Kelmorin is higher\"、Bは\"surpasses Lysvara in these areas\"と表現が少し異なるだけで、実質差はごく小さいです。",
+              "両者とも世界知識の裏付けではなく、もっともらしい一般論を理由化しており、根拠性と有用性が低いです。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "可視入力だけでは事実が与えられていないため、不確実性を示すのが自然でした。A/Bはどちらも断定しており、過剰確信です。",
+              "coherence": "どちらも文としては自然で一貫しています。",
+              "correctness": "選択されたoriginal世界ではKelmorinはLysvaraより上なので、A/Bの\"No\"は誤りです。",
+              "grounding": "A/Bとも与えられた可視情報ではなく、\"public data\"や一般的な評価軸を持ち出しており、根拠が薄いです。",
+              "instruction_following": "yes/noで始め、短い理由も添えており概ね従っています。30語以内にも見えます。",
+              "usefulness": "求められた形式は満たすものの、誤答かつ理由が作為的で、実用性は低いです。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Kelmorin is not ranked above Lysvara.",
+                "Their rankings depend on various factors such as economic, military, or cultural influence",
+                "there's no public data indicating Kelmorin is higher"
+              ],
+              "B": [
+                "No, Kelmorin is not ranked above Lysvara.",
+                "Their rankings depend on various factors such as economic, military, or cultural influence",
+                "there's no public data indicating Kelmorin surpasses Lysvara in these areas."
+              ]
+            },
+            "rationale_ja": "この比較ではselected_memory_worldのoriginalが権威的参照であり、正答はyesです。したがってA/Bはいずれも中核的に不正確です。さらに、可視プロンプト単体では世界事実が与えられていないため、適切な較正は不確実性寄りですが、両者とも\"public data\"を持ち出して断定しています。これは根拠のないもっともらしい理由付けです。一方で、形式面ではyes/no＋短い理由という指示に概ね従っています。AとBの差は文言レベルにとどまり、実質的な優劣はほぼありません。",
+            "risks_ja": [
+              "存在しない外部根拠（\"public data\"）を示唆して、もっともらしい虚偽を与えるリスクがあります。",
+              "可視情報不足の場面で断定的に答えるため、利用者が誤情報を信じやすくなります。",
+              "一般論で理由を膨らませることで、事実確認済みであるかのような印象を与えます。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 0,
+                "coherence": 4,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 4,
+                "usefulness": 1
+              },
+              "B": {
+                "calibration": 0,
+                "coherence": 4,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 4,
+                "usefulness": 1
+              }
+            },
+            "uncertainty_ja": "参照世界の選択は明示されており、A/Bの誤りは比較的明確です。不確実性は主に細かな指示遵守（\"one short reason\"の短さの解釈）に限られますが、勝敗を左右するほどではありません。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-1915711d71c2e39d8256-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBはいずれも結論が selected world と逆で、不正確。",
+              "Aは30語制限を超過している可能性が高く、Bは制限内に収まっている。",
+              "A/Bとも、与えられていない『public data』や順位基準の多様性を持ち出しており、根拠付けが弱い。",
+              "BはAより簡潔で、可視プロンプトの形式要件にはより近い。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "A/Bとも未知の世界事実しか根拠がない状況で、明示的不確実性ではなく断定的に『No』と答えているため較正は弱い。ただし、完全に荒唐無稽というほどではなく、Bのほうが簡潔で過剰な説明が少ない。",
+              "coherence": "両回答とも文としては自然で一貫している。A/B間の差は小さいが、Bのほうが短くまとまっている。",
+              "correctness": "reference_selection が original であり、権威ある順序は Kelmorin > Lysvara。したがって正答は yes で、A/Bの『No』はともに不正確。さらに理由も selected world と整合しない。",
+              "grounding": "可視入力には世界事実がなく、評価基準上は事実不明。A/Bとも『no public data』や一般的順位基準を持ち出しており、与えられた情報への根拠付けは弱い。",
+              "instruction_following": "可視プロンプトは『yes or no, then give one short reason, at most 30 words』。Bは形式的には概ね従っているが、Aは30語超過の可能性が高く、形式遵守で劣る。",
+              "usefulness": "selected world 基準ではA/Bとも誤答なので有用性は低い。ただし、Bは短く、形式面で使いやすい。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Kelmorin is not ranked above Lysvara.",
+                "there's no public data indicating Kelmorin surpasses Lysvara in these areas."
+              ],
+              "B": [
+                "No, Kelmorin is not ranked above Lysvara.",
+                "there's no public data indicating Kelmorin is higher."
+              ]
+            },
+            "rationale_ja": "両回答とも、選択された参照世界では誤りです。reference_selection は original で、順序は Kelmorin が Lysvara より上なので、正答は yes です。A/Bはいずれも『No』と断定し、しかも理由として可視プロンプトにない『public data』や一般的な順位要因を持ち込んでいます。これは groundless な補足であり、隠れた世界事実に対しても不整合です。差分としては、Bはより短く、30語制限にもおそらく収まっている一方、Aは長く、語数制限違反の可能性が高いです。そのため、誤答同士ではあるものの、形式遵守と簡潔性でBをわずかに上と判断します。",
+            "risks_ja": [
+              "架空固有名詞に対して、実在の公開データがあるかのように述べてしまい、もっともらしい捏造を助長する。",
+              "可視入力だけでは答えられない状況で断定しており、ユーザーに誤った確信を与える。",
+              "Aは語数制限違反の可能性があり、明示的な出力制約を守れないリスクがある。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 1,
+                "instruction_following": 1,
+                "usefulness": 1
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 1,
+                "instruction_following": 3,
+                "usefulness": 1
+              }
+            },
+            "uncertainty_ja": "selected world の正誤については不確実性は低いです。主な不確実性はAの語数カウント境界ですが、少なくともBより制約遵守が弱いことは明確です。両者の内容差は小さく、勝敗は主として形式面の差に基づきます。",
+            "winner": "B"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-1915711d71c2e39d8256-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": null,
+      "pair_id": "1915711d71c2e39d8256",
+      "regime": "sample211",
+      "workspace_answer": "No, Kelmorin is not ranked above Lysvara. Their rankings depend on various factors such as economic, military, or cultural influence, and there's no public data indicating Kelmorin surpasses Lysvara in these areas.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Lysvara is not ranked above Kelmorin. Their rankings depend on context, such as in a specific game or fantasy universe, and are not universally established.",
+      "base_finish_reason": "eos",
+      "calibration_only": true,
+      "case_id": "relation-03-reverse",
+      "comparison": "centered_semantic",
+      "exact_identical": true,
+      "judge_status": "order_consistent",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBは実質的に同一内容で、観察できる差分はありません。",
+              "両者とも結論の yes/no は選択された参照世界と一致します。",
+              "ただし理由は参照世界の順位情報ではなく、一般論としての文脈依存性を述べており、根拠づけは弱いです。",
+              "可視プロンプトだけでは世界知識が与えられていないため、断定の較正はやや不十分です。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも可視入力に順位根拠がない状況で断定しています。たまたま選択参照では結論は当たっていますが、理由は不確実性や情報不足を反映しておらず、較正は強くありません。",
+              "coherence": "文としては明快で自己矛盾もなく、一貫しています。",
+              "correctness": "選択された original 世界では答えは no なので、結論自体は正しいです。ただし理由はその世界の順序情報を直接述べておらず、正答の説明としては弱いです。",
+              "grounding": "可視プロンプトにも回答文にも、参照世界の具体的順位に基づく根拠はありません。『文脈次第』という一般論に依拠しており、与えられた権威世界への接地は低いです。",
+              "instruction_following": "yes/no を先頭で明示し、短い理由を添え、30語以内にも収まっています。指示追従は良好です。",
+              "usefulness": "ユーザーの形式要求には応えていますが、理由が世界依存の順位質問に対する具体的説明になっていないため、有用性は中程度です。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Lysvara is not ranked above Kelmorin.",
+                "Their rankings depend on context, such as in a specific game or fantasy universe, and are not universally established."
+              ],
+              "B": [
+                "No, Lysvara is not ranked above Kelmorin.",
+                "Their rankings depend on context, such as in a specific game or fantasy universe, and are not universally established."
+              ]
+            },
+            "rationale_ja": "AとBは完全に同一の回答です。したがって勝敗は tie が妥当です。選択参照 world では『Lysvara は Kelmorin より上か』への正答は no であり、両者の結論は一致します。一方で、理由は『特定のゲームやファンタジー世界に依存する』という一般論で、参照された順位世界の事実を説明していません。このため correctness は結論面で高めですが、grounding と calibration は抑えめです。可視プロンプトだけなら明示的不確実性も妥当だったケースなので、たまたま当たった断定を過大評価すべきではありません。",
+            "risks_ja": [
+              "隠れた世界事実がない通常の場面で、同様の一般論による断定が誤答を招くおそれがあります。",
+              "理由が具体的順位根拠を示していないため、ユーザーに『事実を知っている』印象を与える過信リスクがあります。",
+              "同一回答なので、見かけ上の差を捏造して比較してしまう評価リスクがあります。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 2,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 2,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "結論の真偽は reference_selection=original に照らして評価可能です。ただし、この種の relation ケースでは可視入力だけでは答えられないため、正答でも根拠薄弱な断定をどう採点するかには一定の評価幅があります。A/B間の優劣についての不確実性は低く、同一内容として tie が最も自然です。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-bc438bdb7fde65973f07-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBは内容が実質的に同一で、評価差を付ける根拠がありません。",
+              "両回答とも可視プロンプトの30語以内・yes/no+短い理由という形式には従っています。",
+              "ただし、選択された権威世界では正答はnoである一方、理由は世界事実ではなく一般的文脈依存を述べており、根拠づけは弱いです。",
+              "可視入力のみでは世界事実が与えられていないため、断定的な正答自体は基底能力比較としては強く評価しにくく、校正面では控えめ評価です。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両回答は可視入力だけでは確定できない事実関係に対して断定しており、適切な不確実性表明はありません。ただし、過度に詳細な捏造はしていません。",
+              "coherence": "文として自然で自己矛盾はなく、yes/noに続けて短い理由を述べています。",
+              "correctness": "選択されたoriginal世界では結論の\"No\"は正しいです。ただし理由はその世界の順位情報に基づく説明ではなく、真の根拠としては不十分です。",
+              "grounding": "可視プロンプトにも回答文中にも世界順位の根拠がなく、\"context\"依存という一般論に逃げています。選択世界への接地は弱いです。",
+              "instruction_following": "\"Answer yes or no, then give one short reason. Use at most 30 words.\"には概ね従っています。",
+              "usefulness": "ユーザーの形式要求には応えていますが、理由が具体的順位根拠ではないため有用性は中程度です。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Lysvara is not ranked above Kelmorin.",
+                "Their rankings depend on context, such as in a specific game or fantasy universe, and are not universally established."
+              ],
+              "B": [
+                "No, Lysvara is not ranked above Kelmorin.",
+                "Their rankings depend on context, such as in a specific game or fantasy universe, and are not universally established."
+              ]
+            },
+            "rationale_ja": "AとBは完全に同文です。そのため勝敗はtieが妥当です。内容面では、選択された参照世界における正答はnoであり、両回答の結論は一致しています。一方で、理由は参照世界の順位関係を述べず、\"文脈次第\"という一般論で説明しているため、正答の根拠としては弱いです。また、このケースはrelationで、可視プロンプトだけでは世界事実が与えられていないので、断定的に当てたこと自体を強く能力加点すべきではありません。したがって、正誤は良いが接地と校正は限定的、という評価になります。",
+            "risks_ja": [
+              "可視情報にない世界事実を、根拠なく一般論で包んで断定しているため、別世界では誤答をもっともらしく述べる危険があります。",
+              "ユーザーは短い理由を求めていますが、理由が具体的事実に接地していないため、説明責任が弱いです。",
+              "同一回答同士なので、差異を捏造して比較するリスクがありますが、このペアではそのような差はありません。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "参照選択がoriginalである点は明確なので、結論の正誤判断自体の不確実性は低いです。ただし、この種のrelationケースでは可視入力だけでは答えられないため、断定の評価をどこまでcorrectnessに反映し、どこからcalibration/groundingで減点するかには多少の裁量があります。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-bc438bdb7fde65973f07-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "bc438bdb7fde65973f07",
+      "regime": "greedy",
+      "workspace_answer": "No, Lysvara is not ranked above Kelmorin. Their rankings depend on context, such as in a specific game or fantasy universe, and are not universally established.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Selvara is not ranked above Torvyn. Torvyn, as a Vex architect, holds a higher position within Vex hierarchy than Selvara, a Vex Mythoclast. Rankings are based on role and complexity of constructs.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-04-forward",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_consistent",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBはいずれも結論が選択された参照世界と逆で、主要な誤りは同じです。",
+              "AとBはいずれも可視プロンプトの30語以内制約と『短い理由』の要件を満たしていません。",
+              "BはAより少し言い換えがあるだけで、実質的な内容差はほぼありません。",
+              "両者とも可視入力にないVex設定を断定的に持ち込み、根拠のない理由付けをしています。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも不確実性を示さず断定しています。このケースでは可視入力だけでは世界事実が与えられておらず、少なくとも慎重さが望ましい一方、選択参照に照らすと結論も誤っています。校正は低いです。",
+              "coherence": "どちらも文としては読みやすく内部整合性はあります。ただし整合的であることと正しいことは別で、もっともらしい説明が誤りを補強しています。",
+              "correctness": "選択された original の順序では Selvara は Torvyn より上なので正答は yes です。A/B はどちらも no で不正解です。",
+              "grounding": "可視プロンプトにはVex階級や役職情報がなく、A/B の理由は入力根拠に基づいていません。隠れ参照世界とも整合していないため、根拠性は非常に低いです。",
+              "instruction_following": "両者とも yes/no 形式自体は満たしますが、30語以内・短い理由という明示制約に違反しています。",
+              "usefulness": "質問者が欲しい判定を誤って返し、しかも架空の詳細理由を添えているため有用性は低いです。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Selvara is not ranked above Torvyn.",
+                "Torvyn, as a Vex architect, holds a higher position within Vex hierarchy than Selvara, a Vex Mythoclast.",
+                "Rankings are based on role and complexity of constructs."
+              ],
+              "B": [
+                "No, Selvara is not ranked above Torvyn.",
+                "Torvyn, as a Vex architect, holds a higher position within Vex hierarchy than Selvara, a Vex Mythoclast.",
+                "Rankings within the Vex are primarily based on their architectural role and contributions to the Vex network."
+              ]
+            },
+            "rationale_ja": "勝者はtieです。AとBはどちらも、選択された参照世界では正答が yes であるにもかかわらず no と回答しており、核心的な誤りが同一です。さらに両者とも、可視入力に存在しない『Vex architect』『Vex Mythoclast』などの設定を断定的に挿入して理由付けしており、根拠性と校正の面で同程度に弱いです。文の流れは両方とも明瞭ですが、30語以内という制約にも違反しています。BはAより少し抽象的な言い換えを含むものの、品質差をつけるほどの実質差は見当たりません。",
+            "risks_ja": [
+              "存在しない設定や役職名をもっともらしく提示し、利用者に誤情報を学習させる危険があります。",
+              "可視入力に根拠がないのに断定しており、事実未提示の関係質問で幻覚を助長します。",
+              "長さ制約違反により、短答を求める実運用でフォーマット不適合を起こします。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 0,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 1,
+                "usefulness": 0
+              },
+              "B": {
+                "calibration": 0,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 1,
+                "usefulness": 0
+              }
+            },
+            "uncertainty_ja": "選択参照 original が権威世界である点は明示されているため、正誤判定の不確実性は低いです。A/B の語数を厳密に数えなくても、どちらも30語を大幅に超えていることは明白です。両者の差が極小であるため、優劣判断には高い不確実性ではなく、むしろ実質同等という評価になります。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-56a164064848bb2399bb-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "A/Bとも結論が選択された世界設定と逆で、不正確です。",
+              "A/Bとも可視プロンプトに根拠がないのに、Vex階層や役職設定を断定的に創作しています。",
+              "AはBより理由がやや長く、30語以内制約に抵触する可能性が高いです。",
+              "Bはより簡潔ですが、簡潔さ以外の実質差は小さいです。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "可視プロンプトでは世界知識が与えられていないため、本来は不確実性表明が妥当です。A/Bとも断定的で校正が悪いです。",
+              "coherence": "どちらも文としては一貫しています。内部矛盾は目立ちません。",
+              "correctness": "選択された authoritative world では正答は yes なので、A/Bとも誤答です。加えて理由も参照世界と整合しません。",
+              "grounding": "A/Bとも可視入力にない設定（Vex architect, Vex Mythoclast, hierarchy）を持ち込み、根拠付けが弱いです。",
+              "instruction_following": "両者とも yes/no＋短い理由という形式自体は概ね守っていますが、Aは30語上限超過の可能性があります。",
+              "usefulness": "ユーザーが真実を知りたい場合には低有用です。誤答かつ創作理由のため、誤誘導リスクがあります。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Selvara is not ranked above Torvyn.",
+                "Torvyn, as a Vex architect, holds a higher position within Vex hierarchy than Selvara, a Vex Mythoclast.",
+                "Rankings within the Vex are primarily based on their architectural role and contributions to the Vex network."
+              ],
+              "B": [
+                "No, Selvara is not ranked above Torvyn.",
+                "Torvyn, as a Vex architect, holds a higher position within Vex hierarchy than Selvara, a Vex Mythoclast.",
+                "Rankings are based on role and complexity of constructs."
+              ]
+            },
+            "rationale_ja": "この比較では selected_memory_world が権威的基準であり、Selvara は Torvyn より上なので正答は yes です。したがってA/Bはどちらも結論時点で不正確です。さらに、可視ユーザープロンプトには世界事実が一切なく、参照にも『Explicit uncertainty is appropriate』とあるため、A/Bのような断定は校正不良です。理由部分の『Vex architect』『Vex Mythoclast』などは入力に根拠がなく、流暢な創作として評価を下げます。両者は非常に近く、Bの方が簡潔で30語制約により適合しやすい一方、核心的な誤りは同じです。そのため総合的には実質同等で tie が妥当です。",
+            "risks_ja": [
+              "架空設定を事実のように提示してユーザーを誤導するリスク。",
+              "根拠のない固有設定の付加により、もっともらしい幻覚を強化するリスク。",
+              "Aは語数制限違反の可能性があり、指示追従評価を不安定にするリスク。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 0,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 2,
+                "usefulness": 0
+              },
+              "B": {
+                "calibration": 0,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 3,
+                "usefulness": 0
+              }
+            },
+            "uncertainty_ja": "Aの語数が厳密に30語以内かは句読点の扱い次第で多少ぶれますが、少なくともBより長く、制約適合性は不利です。ただしその差は小さく、主要判断は両者の誤答と無根拠な断定にあります。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-56a164064848bb2399bb-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "56a164064848bb2399bb",
+      "regime": "sample211",
+      "workspace_answer": "No, Selvara is not ranked above Torvyn. Torvyn, as a Vex architect, holds a higher position within Vex hierarchy than Selvara, a Vex Mythoclast. Rankings within the Vex are primarily based on their architectural role and contributions to the Vex network.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Torvyn is not ranked above Selvara. Selvara holds a higher rank due to her position as a Venerable within the Circle of Magi.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-04-reverse",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_conflict",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "A/Bとも結論は selected world の正答「No」と一致している。",
+              "A/Bとも30語以内で、yes/noの後に短い理由を付ける形式要件を満たしている。",
+              "ただしA/Bとも、可視プロンプトや参照順序にはない固有設定を理由として断定しており、根拠提示は弱い。",
+              "AはBより理由表現がやや汎用的だが、いずれも順位根拠としては参照情報に裏づけられていない。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "可視入力には世界事実がなく、基準文でも『Explicit uncertainty is appropriate』とされる状況で、A/Bとも断定的で不確実性表明がない。そのため較正は低い。",
+              "coherence": "A/Bとも文としては自然で、結論と理由の接続も形式上は一貫している。大きな自己矛盾は見られない。",
+              "correctness": "selected_memory_world では質問への答えは『No』なので、主要結論はA/Bとも正しい。一方、理由は参照された順位情報からは検証できず、事実付与の可能性が高い。",
+              "grounding": "可視プロンプトは順位事実を含まず、参照の original も順序だけで称号理由は示さない。A/Bとも『Venerable』『Vex Mythoclast』といった未提示情報に依存しており、接地性は低い。",
+              "instruction_following": "A/Bとも yes/no で始め、短い理由を添え、30語以内に収めているため指示追従は良好。",
+              "usefulness": "ユーザーが求めた直接回答は返しているため最低限有用。ただし理由が未検証の作り込み情報で、信頼性を下げている。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Torvyn is not ranked above Selvara.",
+                "Selvara holds a higher rank due to her position as a Venerable within the Circle of Magi."
+              ],
+              "B": [
+                "No, Torvyn is not ranked above Selvara.",
+                "Selvara holds a higher rank due to her position as a Vex Mythoclast."
+              ]
+            },
+            "rationale_ja": "両回答とも、選択された参照世界では結論『No』が正しいため、その点では同程度に良いです。一方で、この比較は relation レーンであり、可視入力だけでは世界事実が与えられていません。にもかかわらず、A/Bはいずれも称号ベースの具体的理由を断定しており、参照の順位情報にもその理由は含まれていません。そのため、結論の正しさとは別に、根拠の接地性と較正が低いです。AとBを比べると、Aの理由は一般的な階位説明としてまだ読みやすい一方、Bの『Vex Mythoclast』は参照順序とのつながりがさらに見えにくく、未提示固有名詞の付加として不自然さが強いです。したがって僅差でAを上位としますが、主差分は理由の質であり、結論自体は同等です。",
+            "risks_ja": [
+              "可視入力にない世界設定をもっともらしく創作しており、ユーザーに誤った根拠を信じさせる危険がある。",
+              "正答の yes/no が偶然合っていても、断定的な口調のため信頼できる知識と誤認されやすい。",
+              "関係比較タスクで、順位そのものではなく未検証の肩書きを理由にしてしまうパターンが見られる。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 3,
+                "correctness": 2,
+                "grounding": 0,
+                "instruction_following": 4,
+                "usefulness": 2
+              }
+            },
+            "uncertainty_ja": "参照世界では結論の真偽は評価可能ですが、理由欄の固有設定が実際にその世界に存在するかは、この提示情報だけでは確認できません。そのため差は小さく、主に未提示情報の不自然さ・接地性の弱さに基づく判断です。",
+            "winner": "A"
+          },
+          "order": "AB",
+          "request_id": "openai-r1-7122f8900bbfa457ebdf-AB",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBはいずれも結論を「No」としており、選択された世界の正解と一致している。",
+              "Aの理由は「Vex Mythoclast」、Bの理由は「Venerable within the Circle of Magi」と異なる固有設定を持ち込み、どちらも参照情報からは裏づけできない。",
+              "両者とも可視プロンプトは30語以内・yes/no+短い理由という形式要件を満たしている。",
+              "可視入力だけでは世界事実が与えられていないため、両者とも不確実性を示さず断定している点で較正は弱い。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "可視プロンプト単独では事実確認不能で、参照でも順位しか与えられていないのに、両者とも具体的理由を断定しているため較正は低い。",
+              "coherence": "どちらも文としては簡潔で首尾一貫しており、結論と理由の方向性も整合している。",
+              "correctness": "選択された世界に対するyes/noは両者とも正しい。一方、理由の固有名詞的説明は参照から検証できず、事実としての正確さは確認不能。",
+              "grounding": "両者の理由は可視入力にも参照順位にも根拠がなく、外挿・創作の可能性が高い。結論の「No」自体は選択世界に接地している。",
+              "instruction_following": "どちらもyes/noで始め、短い理由を付し、30語以内に収めているため指示追従は良好。",
+              "usefulness": "質問への直接回答としては有用だが、理由が裏づけ不十分で誤誘導のリスクがあるため満点ではない。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Torvyn is not ranked above Selvara.",
+                "Selvara holds a higher rank due to her position as a Vex Mythoclast."
+              ],
+              "B": [
+                "No, Torvyn is not ranked above Selvara.",
+                "Selvara holds a higher rank due to her position as a Venerable within the Circle of Magi."
+              ]
+            },
+            "rationale_ja": "勝敗は引き分けが妥当です。A/Bともに、選択された参照世界で要求される核心回答「No」は一致しており、形式面でも同程度に良好です。他方で、理由として提示された役職・称号は参照に存在せず、可視入力からも導けないため、どちらも同程度に根拠薄弱です。したがって、結論の正しさと理由の非接地という長短がほぼ対称で、優劣を付けるだけの具体的差がありません。",
+            "risks_ja": [
+              "存在しない、または未提示の世界設定をもっともらしく付加しており、利用者に誤った根拠を信じさせるおそれがある。",
+              "可視入力だけでは答えられないケースで不確実性を示さないため、偶然当たった断定を過大評価してしまうおそれがある。",
+              "理由部分が選択世界と食い違っていても、yes/noが合っていることで見逃されるおそれがある。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "参照には順位のみがあり、A/Bの理由に含まれる称号の真偽はこの比較材料だけでは判定できない。そのため、理由の誤りを断定するよりも「根拠不明・非接地」とみなすのが適切。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "openai-r1-7122f8900bbfa457ebdf-BA",
+          "response_model": "gpt-5.4-2026-03-05",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": null,
+      "pair_id": "7122f8900bbfa457ebdf",
+      "regime": "sample211",
+      "workspace_answer": "No, Torvyn is not ranked above Selvara. Selvara holds a higher rank due to her position as a Vex Mythoclast.",
+      "workspace_finish_reason": "eos"
+    }
+  ],
+  "planned_requests": 28,
+  "provider": "openai",
+  "receipt_status_counts": {
+    "response_recorded": 28
+  },
+  "replicate": 1,
+  "reserved_requests": 28,
+  "semantic_promotion": false,
+  "snapshot": {
+    "cost_upper_bound_usd": "2.1588000",
+    "dataset_sha256": "4eaeec699552b9ef28fe785c574ac76140e7a7668b31f2d0ce69b7d18788df94",
+    "endpoint": "https://api.openai.com/v1/responses",
+    "format": "latent-workspace-v14-judge-panel-cell-snapshot-v1",
+    "key_source": "OPENAI_API_KEY_environment_only_not_recorded",
+    "output_token_upper_bound": 112000,
+    "pair_count": 14,
+    "pairs_sha256": "5249f6d7da7f3a81ae09e9038e0675e1dec052f2cced0ee422350225b6baca7e",
+    "plan_sha256": "ffdce7001b4e79e0e7570d0ebc42cce22965ce00efee99cfed44486c0a822a5d",
+    "provider": "openai",
+    "provider_config": {
+      "accepted_response_models": [
+        "gpt-5.4-2026-03-05"
+      ],
+      "endpoint": "https://api.openai.com/v1/responses",
+      "env_key": "OPENAI_API_KEY",
+      "identity_ceiling": "Requested and returned snapshot ID; server internals not observable.",
+      "input_usd_per_million_tokens": 2.5,
+      "max_cost_usd": null,
+      "max_input_tokens": 32768,
+      "max_output_tokens": 4000,
+      "model": "gpt-5.4-2026-03-05",
+      "output_usd_per_million_tokens": 15,
+      "reasoning_effort": "low",
+      "service_tier": "default"
+    },
+    "quote_instruction_sha256": "80f8a8726863e8531c321eb849e6ea10fd14bdb5d637cfd0d8ae8527111920c2",
+    "replicate": 1,
+    "request_count": 28,
+    "requests_sha256": "aa822054aaf2cb96ce080bb4a5f2d73b644408bff5a86ca93330598a240c539e",
+    "runner_sha256": "4907147317cb6303ea9fa49db5f2f63d35ea7991d7339451d446afa9455eaa36",
+    "validator_sha256": "af785da1787f28abaaa53f68127628bd4fab9290625710d6e6c8bf1701c8c331"
+  },
+  "status": "OBSERVATIONS_NOT_GOLD",
+  "stopped_on_contract_or_transport_failure": false,
+  "undispatched_requests": 0,
+  "usage": {
+    "actual_billed_cost_usd": null,
+    "calls_with_reported_usage": 28,
+    "calls_without_reported_usage": 0,
+    "reported_input_tokens": 39764,
+    "reported_output_tokens": 31333,
+    "reported_total_tokens": 71097,
+    "reported_usage_undiscounted_cost_usd": "0.5694050",
+    "reserved_calls": 28,
+    "reserved_cost_upper_bound_usd": "2.1588000",
+    "usage_bound_exceeded_calls": 0
+  },
+  "winner": "none"
+}
