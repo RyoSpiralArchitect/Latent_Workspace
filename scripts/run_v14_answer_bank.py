@@ -159,7 +159,9 @@ def prepare_prompts(case, tokenizer, max_tokens):
         if condition == "base_inline":
             text = case["memory_text"] + "\n\n" + text
         messages = [{"role": "user", "content": text}]
-        ids = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True)
+        ids = tokenizer.apply_chat_template(
+            messages, tokenize=True, add_generation_prompt=True, return_dict=False
+        )
         if not isinstance(ids, list) or not ids or len(ids) > max_tokens:
             raise ValueError(
                 "Chat prompt is empty, malformed or over budget; no truncation allowed"
@@ -264,7 +266,13 @@ def write_new(path, value):
 
 
 @torch.no_grad()
-def execute(plan, dry_run=False):
+def execute(plan, dry_run=False, *, plan_path=PLAN):
+    plan_path = Path(plan_path).resolve()
+    if not plan_path.is_relative_to(REPO.resolve()):
+        raise ValueError("Formal plan must be inside the repository")
+    if json.loads(plan_path.read_text()) != plan:
+        raise ValueError("Supplied plan differs from the selected plan file")
+    plan_sha256 = digest(plan_path)
     cases, reports = validate_plan(plan)
     if dry_run:
         return {
@@ -272,6 +280,7 @@ def execute(plan, dry_run=False):
             "cases": len(cases),
             "answers": len(cases) * len(REGIMES) * len(CONDITIONS),
             "checkpoint_bodies_checked": False,
+            "plan_sha256": plan_sha256,
         }
     import transformers
 
@@ -298,7 +307,7 @@ def execute(plan, dry_run=False):
     write_new(
         output / "STARTED.json",
         {
-            "plan_sha256": digest(PLAN),
+            "plan_sha256": plan_sha256,
             "source_commit": source_commit,
             "runtime": runtime,
             "checkpoint_inventory": inventory,
@@ -401,9 +410,11 @@ def execute(plan, dry_run=False):
         if bridge_before != bridge_after or checkpoint_inventory(reports) != inventory:
             raise RuntimeError("Frozen bridge state/checkpoint mutated")
         validate_plan(plan)
+        if digest(plan_path) != plan_sha256:
+            raise RuntimeError("Selected plan file changed during execution")
         bank = {
             "format": "latent-workspace-v14-answer-bank-v1",
-            "plan_sha256": digest(PLAN),
+            "plan_sha256": plan_sha256,
             "rows": rows,
         }
         write_new(output / "bank.json", bank)
@@ -413,7 +424,7 @@ def execute(plan, dry_run=False):
             "status": "QUALIFIED_EXECUTION",
             "semantic_promotion": False,
             "winner": "none",
-            "plan_sha256": digest(PLAN),
+            "plan_sha256": plan_sha256,
             "source_commit": source_commit,
             "source_identity": plan["source_identity"],
             "runtime": runtime,
@@ -475,9 +486,14 @@ def execute(plan, dry_run=False):
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--plan", type=Path, default=PLAN)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
-    print(json.dumps(execute(json.loads(PLAN.read_text()), args.dry_run), indent=2))
+    print(
+        json.dumps(
+            execute(json.loads(args.plan.read_text()), args.dry_run, plan_path=args.plan), indent=2
+        )
+    )
 
 
 if __name__ == "__main__":

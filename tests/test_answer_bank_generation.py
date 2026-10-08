@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -176,10 +177,16 @@ def test_prompt_drift_fails_closed():
 
 
 class Tokenizer:
-    def apply_chat_template(self, messages, tokenize, add_generation_prompt):
+    def apply_chat_template(self, messages, tokenize, add_generation_prompt, return_dict=None):
         assert add_generation_prompt
         rendered = "[INST]" + messages[0]["content"] + "[/INST]"
-        return list(rendered.encode()) if tokenize else rendered
+        if tokenize:
+            ids = list(rendered.encode())
+            # Transformers 5.15 defaults to BatchEncoding; require the explicit
+            # legacy/list return contract rather than relaxing the token gate.
+            return ids if return_dict is False else {"input_ids": ids}
+        assert return_dict is None
+        return rendered
 
 
 def test_prompt_builder_keeps_reference_and_rubric_out_of_forward():
@@ -312,3 +319,34 @@ def test_native_ordinary_forward_gate_is_exact_not_tolerant():
     assert runner.ordinary_base_gate(Backend(0), [1, 2])["full_logits_exact"]
     with pytest.raises(RuntimeError, match="differs"):
         runner.ordinary_base_gate(Backend(1e-5), [1, 2])
+
+
+def test_selected_retry_plan_digest_is_bound_in_dry_run(tmp_path, monkeypatch):
+    plan_path = tmp_path / "RETRY_PLAN.json"
+    plan = {"retry": "new output; no old plan overwrite"}
+    plan_path.write_text(json.dumps(plan))
+    monkeypatch.setattr(runner, "REPO", tmp_path)
+    monkeypatch.setattr(runner, "validate_plan", lambda value: ([{}] * 16, {}))
+    result = runner.execute(plan, dry_run=True, plan_path=plan_path)
+    assert result["plan_sha256"] == runner.digest(plan_path)
+    assert result["answers"] == 336 and result["status"] == "PREPARED_NOT_RUN"
+    with pytest.raises(ValueError, match="selected plan file"):
+        runner.execute({"retry": "different"}, dry_run=True, plan_path=plan_path)
+
+
+def test_cli_threads_selected_plan_path_into_execution(tmp_path, monkeypatch, capsys):
+    plan_path = tmp_path / "RETRY_PLAN.json"
+    plan_path.write_text(json.dumps({"retry": True}))
+    seen = []
+
+    def execute(plan, dry_run, *, plan_path):
+        seen.append((plan, dry_run, plan_path))
+        return {"status": "PREPARED_NOT_RUN"}
+
+    monkeypatch.setattr(runner, "execute", execute)
+    monkeypatch.setattr(
+        runner.sys, "argv", ["run_v14_answer_bank.py", "--plan", str(plan_path), "--dry-run"]
+    )
+    runner.main()
+    assert seen == [({"retry": True}, True, plan_path)]
+    assert json.loads(capsys.readouterr().out)["status"] == "PREPARED_NOT_RUN"
