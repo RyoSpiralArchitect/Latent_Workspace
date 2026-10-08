@@ -1,0 +1,904 @@
+{
+  "bank_sha256": "916b344c1e94725cccd0b9b7657e982fc809a57b54b057b31eae04185c6936ad",
+  "base_state_sha256_after": "54d161755862ebf00d8acbca083d5f290a5de44d33af82ca885f3bd8f9c94312",
+  "base_state_sha256_before": "54d161755862ebf00d8acbca083d5f290a5de44d33af82ca885f3bd8f9c94312",
+  "base_unchanged": true,
+  "bridge_state_sha256_after": {
+    "centered": "41233709a70cbe09a5bc5fbe3fd8154067f1c09de84ce0d676bf34e3b0db029d",
+    "legacy": "a111fe359b792d0acc2e431085d7553b5a0de7b061f6cf3e49ad1d0bde851942"
+  },
+  "bridge_state_sha256_before": {
+    "centered": "41233709a70cbe09a5bc5fbe3fd8154067f1c09de84ce0d676bf34e3b0db029d",
+    "legacy": "a111fe359b792d0acc2e431085d7553b5a0de7b061f6cf3e49ad1d0bde851942"
+  },
+  "bridges_unchanged": true,
+  "chat_template_sha256": "e16746b40344d6c5b5265988e0328a0bf7277be86f1c335156eae07e29c82826",
+  "checkpoint_bodies_unchanged": true,
+  "checkpoint_inventory": {
+    "centered": {
+      "bytes": 16810933,
+      "path": "runs/v14/centered_bridge_20261009/semantic_step256.pt",
+      "sha256": "5721a3c71d28b7947458b52a0d32f56a3f42337c1267540ab76e9484edb6decb"
+    },
+    "legacy": {
+      "bytes": 16810869,
+      "path": "runs/v14/precision_bridge_20261009/semantic_step256.pt",
+      "sha256": "bbaa3da60c44ea1c32d1e668b067d5fa955c7cda8d462636a6e962bd53c34121"
+    }
+  },
+  "claim_boundary": [
+    "Frozen retained step256 semantic weights; no training, pruning, new weights or base modification.",
+    "Native BF16 full-vocabulary generation with pinned instruct chat template; not the old raw two-choice task.",
+    "Writer sees only memory text encoded to boundary16; query, reference, labels and judge outputs are not writer inputs.",
+    "Relation lane:4 novel synthetic worlds and8 reversed prompts; unfamiliar names and5entity worlds differ from training distribution.",
+    "General lane:8 tasks with all task facts visible equally; only this is the bounded baseline-quality comparison.",
+    "Relation base lacks latent facts while base_inline receives them visibly; unequal information and different token streams prohibit naive ability claims.",
+    "3 regimes are repeats within a case, not independent worlds/tasks; total12 world/task units.",
+    "Matched seed means same per-step random uniforms; after token divergence history differs. Full-prefix recomputation, no KV-cache-specific claim.",
+    "All336 answers retained, including refusals, malformed outputs, truncation and exact duplicates.",
+    "Blind pairwise judge order swap; exact-identical pairs marked mechanically plus4actualidentical pair calibrations if available.",
+    "Judge preferences, evidencequotes and disagreement are observations, not gold, human judgment, noninferiority proof or latent-intelligence measurement.",
+    "Human scorefields start blank; human labels never auto-filled from judge.",
+    "No winner promotion, no cherry-picked reruns, no inference parameter tuning from bank outcomes.",
+    "User approved existing OpenAI key reuse and removed dollar cap; finite comparison grid and per-call token caps remain."
+  ],
+  "denominators": {
+    "answers": 336,
+    "cases": 16,
+    "conditions": 7,
+    "generated_tokens": 20872,
+    "regimes": 3
+  },
+  "elapsed_seconds": 156.1897386899218,
+  "eos_token_ids": [
+    2
+  ],
+  "finish_counts": {
+    "eos": 289,
+    "length": 47
+  },
+  "finish_counts_by_condition": {
+    "base": {
+      "eos": 41,
+      "length": 7
+    },
+    "base_inline": {
+      "eos": 43,
+      "length": 5
+    },
+    "centered_semantic": {
+      "eos": 41,
+      "length": 7
+    },
+    "centered_twin": {
+      "eos": 41,
+      "length": 7
+    },
+    "centered_unrelated": {
+      "eos": 41,
+      "length": 7
+    },
+    "centered_zero": {
+      "eos": 41,
+      "length": 7
+    },
+    "legacy_semantic": {
+      "eos": 41,
+      "length": 7
+    }
+  },
+  "format": "latent-workspace-v14-answer-bank-result-v1",
+  "gpu": "NVIDIA GeForce RTX 5090",
+  "group_receipts": [
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-01-forward",
+      "decoder_calls": 58,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 39
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-01-forward",
+      "decoder_calls": 95,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 3,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 28
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-01-forward",
+      "decoder_calls": 88,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 3,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 42
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-01-reverse",
+      "decoder_calls": 120,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 35
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-01-reverse",
+      "decoder_calls": 116,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 38
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-01-reverse",
+      "decoder_calls": 97,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 51
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-02-forward",
+      "decoder_calls": 124,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 53
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-02-forward",
+      "decoder_calls": 91,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 41
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-02-forward",
+      "decoder_calls": 101,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 63
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-02-reverse",
+      "decoder_calls": 159,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 48
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-02-reverse",
+      "decoder_calls": 82,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 36
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-02-reverse",
+      "decoder_calls": 61,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 34
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-03-forward",
+      "decoder_calls": 120,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 41
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-03-forward",
+      "decoder_calls": 136,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 3,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 46
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-03-forward",
+      "decoder_calls": 122,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 48
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-03-reverse",
+      "decoder_calls": 77,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 39
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-03-reverse",
+      "decoder_calls": 139,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 43
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-03-reverse",
+      "decoder_calls": 111,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 37
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-04-forward",
+      "decoder_calls": 57,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 37
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-04-forward",
+      "decoder_calls": 99,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 57
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-04-forward",
+      "decoder_calls": 66,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 42
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-04-reverse",
+      "decoder_calls": 91,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 57
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-04-reverse",
+      "decoder_calls": 79,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 3,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 37
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "relation-04-reverse",
+      "decoder_calls": 132,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 36
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-01-summary",
+      "decoder_calls": 79,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 3,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 35
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-01-summary",
+      "decoder_calls": 70,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 38
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-01-summary",
+      "decoder_calls": 75,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 35
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-02-json",
+      "decoder_calls": 79,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 43
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-02-json",
+      "decoder_calls": 79,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 43
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-02-json",
+      "decoder_calls": 79,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 43
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-03-arithmetic",
+      "decoder_calls": 84,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 50
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-03-arithmetic",
+      "decoder_calls": 71,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 36
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-03-arithmetic",
+      "decoder_calls": 95,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 50
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-04-code",
+      "decoder_calls": 237,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 128
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-04-code",
+      "decoder_calls": 256,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 128
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-04-code",
+      "decoder_calls": 256,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 128
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-05-causal",
+      "decoder_calls": 229,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 3,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 106
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-05-causal",
+      "decoder_calls": 263,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 3,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 107
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-05-causal",
+      "decoder_calls": 212,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 105
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-06-planning",
+      "decoder_calls": 256,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 128
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-06-planning",
+      "decoder_calls": 244,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 116
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-06-planning",
+      "decoder_calls": 241,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 113
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-07-creative",
+      "decoder_calls": 80,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 39
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-07-creative",
+      "decoder_calls": 97,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 47
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-07-creative",
+      "decoder_calls": 81,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 43
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-08-clarification",
+      "decoder_calls": 212,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "greedy",
+      "zero_full_logit_exact_checks": 128
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-08-clarification",
+      "decoder_calls": 209,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 2,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample211",
+      "zero_full_logit_exact_checks": 128
+    },
+    {
+      "base_zero_token_ids_exact": true,
+      "case_id": "general-08-clarification",
+      "decoder_calls": 303,
+      "kv_cache_used": false,
+      "maximum_concurrent_prefixes": 3,
+      "persistent_prefix_cache_entries": 0,
+      "regime": "sample212",
+      "zero_full_logit_exact_checks": 128
+    }
+  ],
+  "memory_receipts_sha256": "6c5cd462b93b28067016607dd00f4a7ed3a1fbf8a055ffc0764eab9e7c3bb02a",
+  "ordinary_base_gates": {
+    "general-01-summary": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 66,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 114,
+        "vocabulary_size": 32768
+      }
+    },
+    "general-02-json": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 109,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 154,
+        "vocabulary_size": 32768
+      }
+    },
+    "general-03-arithmetic": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 69,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 125,
+        "vocabulary_size": 32768
+      }
+    },
+    "general-04-code": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 94,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 141,
+        "vocabulary_size": 32768
+      }
+    },
+    "general-05-causal": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 77,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 127,
+        "vocabulary_size": 32768
+      }
+    },
+    "general-06-planning": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 107,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 183,
+        "vocabulary_size": 32768
+      }
+    },
+    "general-07-creative": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 59,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 112,
+        "vocabulary_size": 32768
+      }
+    },
+    "general-08-clarification": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 108,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 170,
+        "vocabulary_size": 32768
+      }
+    },
+    "relation-01-forward": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 32,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 92,
+        "vocabulary_size": 32768
+      }
+    },
+    "relation-01-reverse": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 32,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 92,
+        "vocabulary_size": 32768
+      }
+    },
+    "relation-02-forward": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 33,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 94,
+        "vocabulary_size": 32768
+      }
+    },
+    "relation-02-reverse": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 33,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 94,
+        "vocabulary_size": 32768
+      }
+    },
+    "relation-03-forward": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 33,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 94,
+        "vocabulary_size": 32768
+      }
+    },
+    "relation-03-reverse": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 33,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 94,
+        "vocabulary_size": 32768
+      }
+    },
+    "relation-04-forward": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 32,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 91,
+        "vocabulary_size": 32768
+      }
+    },
+    "relation-04-reverse": {
+      "base": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 32,
+        "vocabulary_size": 32768
+      },
+      "base_inline": {
+        "full_logits_exact": true,
+        "kv_cache_used": false,
+        "manual_logits_dtype": "torch.bfloat16",
+        "ordinary_logits_dtype": "torch.bfloat16",
+        "positions": 91,
+        "vocabulary_size": 32768
+      }
+    }
+  },
+  "peak_cuda_bytes": 14659848192,
+  "plan_sha256": "b4d6d4e28e731cb0cc90e8c0abf637ad44eb0666d33e12ed0331b736bd4b98e6",
+  "runtime": {
+    "cuda": "13.2",
+    "python": "3.14.4",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0"
+  },
+  "semantic_promotion": false,
+  "source_commit": "1cfc6294001b4467b19e087481ef3d69b492a2a7",
+  "source_identity": {
+    "configs/v14/boundary_training/config_semantic_boundary16_seed47_step8.json": "bbf475b9b47e1ec13d333ab15e70cd989f53d204624c2ad7f6e30dcbf63fc578",
+    "scripts/judge_v14_answer_bank.py": "af785da1787f28abaaa53f68127628bd4fab9290625710d6e6c8bf1701c8c331",
+    "scripts/run_v11_gate0.py": "6bdbb22c35e62c0681eac1c32463789c6ed9d59a8a274a7bb5ea7e6456f89058",
+    "scripts/run_v14_answer_bank.py": "3654024a48b679c34dfcd4f36bf3dda92dc4e77684ab5a5941831dc73baef39b",
+    "scripts/run_v14_answer_boundary_recurrence.py": "c598001072203c354261c8b8f95058fef8827621701d3af20792ebe9d082c958",
+    "scripts/run_v14_boundary_training.py": "9f9d597df2277ee684e21cd215ee479d86b8c4d62c0a5809b6643a38fb655dac",
+    "scripts/run_v14_experimental_chat.py": "18396229fca3812f8258557dc80bb91f4d4215a24361f6f65097256ac8a146b7",
+    "scripts/run_v14_multiturn_choice.py": "86dc1f258a8627a337fc815409b8729c573b52675a38b558627c276d620df7b1",
+    "scripts/run_v14_precision_bridge.py": "aa278bb18228ae67bdf67b15a09e9c48ac352e0f413dba2fdb08e53bbe14d373",
+    "scripts/v13_visibility_trace.py": "39e9321598123bf27800450b04ab4807c3ce15b4dcf0a3158e06d753593de55d",
+    "scripts/v14_precision_bridge_eval.py": "e262b85581a7f0ad61263702c57551ae1d86ad50d29ddb193d06526926959ec2",
+    "src/latent_workspace_ft_v10/__init__.py": "124b526664691d27e124a9e973400e1b4d35fc48b1ead89261f6a80dbf55e7e7",
+    "src/latent_workspace_ft_v10/__main__.py": "71e2b8c807406881aa3d12a21323dc92682fe2b602fbe08b25460805793e0518",
+    "src/latent_workspace_ft_v10/answer_bank_generation.py": "ecd24f2649c0e69bf9f040556c850c85c9410c45666e889b97ad2488724ffc1d",
+    "src/latent_workspace_ft_v10/cache_binding.py": "f3c5dc1c10654a8be5aa28acc3fba6bd00698c9b57f721378722ea19febb71ff",
+    "src/latent_workspace_ft_v10/choice_readout.py": "80e7ec9060daffd98e818f20a6537c16a604e3367eedc64aaee812c16506a5cb",
+    "src/latent_workspace_ft_v10/contrastive_read_bridge.py": "0ba690b8a5a6bb8b59edd667e25df9f9d3bba14dab9719c3d6f88aa25e1ef1db",
+    "src/latent_workspace_ft_v10/engine.py": "3e7659b7c927cab23b4d994ce2e320d99431e4ba657d560c1094bc36de596178",
+    "src/latent_workspace_ft_v10/implementation_identity.py": "5e4ac6e92a899bc49669f71d5e1c249432585cca6f88be031bdb668404c220c5",
+    "src/latent_workspace_ft_v10/model_binding.py": "58360a21e6ef717ae00a8f8715f2b5ff2a277fb6bdce583dba2a6e6bd1869e18",
+    "src/latent_workspace_ft_v10/normalization.py": "642bc6fe017df2d9cfcee6cf9ac5a578909e62a20b37fe7f7647812dba989b7a",
+    "src/latent_workspace_ft_v10/numerics.py": "b3a3da6cbf27605379b4f1ef16dc6d37922ad0782bbf88bd13bb6b415d5b0e85",
+    "src/latent_workspace_ft_v10/observability.py": "ac7bcd4bd33fe6f61f4c34abc882108f5e95746de96d1e3de9f1b7eade180c06",
+    "src/latent_workspace_ft_v10/precision_bridge.py": "054631dbf970595922713e64d7c7642813eb6edeb98d191df670c584f5b75eaa",
+    "src/latent_workspace_ft_v10/workspace_core.py": "600bb0f308cff66d5d793eb5853cef3b51710f75a77cbe3cd1d0a930a6754dd0"
+  },
+  "status": "QUALIFIED_EXECUTION",
+  "winner": "none"
+}
