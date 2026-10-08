@@ -1,0 +1,48 @@
+{
+  "format": "latent-workspace-v14-gemini-panel-plan-v1",
+  "created_date": "2026-10-09",
+  "parent_panel_plan": {
+    "path": "configs/v14/JUDGE_PANEL_PLAN.json",
+    "sha256": "ffdce7001b4e79e0e7570d0ebc42cce22965ce00efee99cfed44486c0a822a5d"
+  },
+  "dataset": {
+    "path": "data/v14_judge_panel/selection.json",
+    "sha256": "4eaeec699552b9ef28fe785c574ac76140e7a7668b31f2d0ce69b7d18788df94"
+  },
+  "source_identity": {
+    "scripts/run_v14_gemini_panel.py": "d9031dff42e5063ed42856f757e77510fe9828b7039e1cce5dec8e17c089f96f",
+    "scripts/run_v14_judge_panel.py": "4907147317cb6303ea9fa49db5f2f63d35ea7991d7339451d446afa9455eaa36",
+    "scripts/judge_v14_answer_bank.py": "af785da1787f28abaaa53f68127628bd4fab9290625710d6e6c8bf1701c8c331",
+    "provenance/pilots/v14_judge_extension_20261009/PROTOCOL.md": "d9b5de11fec1458d719279d4b8c9f54e61f68eec7a12afe352a352ffc1b78e10"
+  },
+  "replicates": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "max_calls_per_cell": 28,
+  "planned_requests": 140,
+  "providers": {
+    "gemini": {
+      "model": "gemini-3.7-flash",
+      "accepted_response_models": [
+        "gemini-3.7-flash"
+      ],
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent",
+      "env_key": "GEMINI_API_KEY",
+      "max_output_tokens": 4000,
+      "max_input_tokens": 32768,
+      "temperature": 1,
+      "random_seed_base": 1001,
+      "thinking_level": "LOW",
+      "input_usd_per_million_tokens": 0.75,
+      "output_usd_per_million_tokens": 3.75,
+      "max_cost_usd": null,
+      "identity_ceiling": "Stable requested ID does not establish immutable weights; canary returned unexpected gemini-3.8-flash.",
+      "execution_gate": "BLOCKED_requested_model_mismatch"
+    }
+  },
+  "study_scope": "Same blinded selection/schema/rubric; no generation or training; no repair."
+}
