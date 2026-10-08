@@ -27,6 +27,7 @@ ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/" + MODEL + 
 PROVIDERS = {"gemini": {"model": MODEL, "endpoint": ENDPOINT, "env_key": "GEMINI_API_KEY"}}
 INSTRUCTIONS = panel.INSTRUCTIONS
 RECEIPT_FAILURES = panel.RECEIPT_FAILURES
+EXECUTION_GATES = {"READY", "BLOCKED_requested_model_mismatch"}
 
 
 def resolve(path):
@@ -63,6 +64,9 @@ def validate_plan(plan, provider, replicate):
         raise ValueError("Gemini must use the exact original selected dataset")
     _, dataset_path, pairs, cases = panel.validate_plan(parent, "openai", replicate)
     config = plan["providers"][provider]
+    gate = config.get("execution_gate", "READY")
+    if not isinstance(gate, str) or gate not in EXECUTION_GATES:
+        raise ValueError("Unknown Gemini execution gate")
     for key, value in PROVIDERS[provider].items():
         if config.get(key) != value:
             raise ValueError("Fixed Gemini model, endpoint or key source changed")
@@ -272,6 +276,8 @@ def execute(
     plan_path, output = Path(plan_path), Path(output)
     plan = prior.load_json(plan_path)
     config, dataset_path, pairs, cases = validate_plan(plan, provider, replicate)
+    if execute_api and config.get("execution_gate", "READY") != "READY":
+        raise ValueError("Gemini execution gate is not READY; no output or request reserved")
     requests = prepare_requests(plan, provider, replicate, config, pairs, cases)
     snapshot = {
         "format": "latent-workspace-v14-judge-panel-cell-snapshot-v1",

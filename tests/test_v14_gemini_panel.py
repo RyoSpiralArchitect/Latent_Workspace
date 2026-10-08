@@ -224,6 +224,39 @@ def test_dry_run_no_key_or_api_and_exact_resume(frozen_plan):
         run.execute(path, "gemini", 1, root / "output", resume=True)
 
 
+def test_blocked_gate_prevents_reservation_key_access_and_dispatch(frozen_plan, monkeypatch):
+    path, plan, root = frozen_plan
+    plan["providers"]["gemini"]["execution_gate"] = "BLOCKED_requested_model_mismatch"
+    run.prior.write_json(path, plan)
+
+    class NoCredentialAccess(dict):
+        def get(self, *_args, **_kwargs):
+            pytest.fail("Blocked execution accessed credentials")
+
+    monkeypatch.setattr(run.os, "environ", NoCredentialAccess())
+    with pytest.raises(ValueError, match="execution gate is not READY"):
+        run.execute(path, "gemini", 0, root / "blocked", execute_api=True,
+                    transport=lambda *_: pytest.fail("Blocked execution dispatched"))
+    assert not (root / "blocked").exists()
+    report = run.execute(path, "gemini", 0, root / "dry", execute_api=False,
+                         transport=lambda *_: pytest.fail("Dry run dispatched"))
+    assert report["status"] == "PREPARED_NOT_DISPATCHED"
+    assert report["provider_config"]["execution_gate"] == "BLOCKED_requested_model_mismatch"
+    assert not (root / "dry" / "requests").exists()
+
+
+@pytest.mark.parametrize("gate", ["UNKNOWN", "ready", "", None, False, ["READY"]])
+@pytest.mark.parametrize("execute_api", [False, True])
+def test_unknown_execution_gate_fails_closed_without_output(frozen_plan, gate, execute_api):
+    path, plan, root = frozen_plan
+    plan["providers"]["gemini"]["execution_gate"] = gate
+    run.prior.write_json(path, plan)
+    with pytest.raises(ValueError, match="Unknown Gemini execution gate"):
+        run.execute(path, "gemini", 0, root / "output", execute_api=execute_api,
+                    transport=lambda *_: pytest.fail("Unknown gate dispatched"))
+    assert not (root / "output").exists()
+
+
 def test_execute_complete_and_resume_never_redispatch_or_record_key(frozen_plan):
     path, _, root = frozen_plan
     secret = "SYNTHETIC_SECRET_MUST_NOT_APPEAR"
