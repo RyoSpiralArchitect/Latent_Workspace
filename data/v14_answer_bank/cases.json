@@ -1,0 +1,323 @@
+{
+  "format": "latent-workspace-v14-answer-bank-cases-v1",
+  "provenance": {
+    "creation_method": "Hand-authored synthetic cases, frozen before answer generation; no model or judge output used for selection.",
+    "relation_worlds": "Four new, disjoint invented-name total orders with adjacent-swap twins; forward and reversed questions reuse byte-identical world contexts.",
+    "general_tasks": "Eight self-contained tasks; all information needed for a correct answer is visible in the user prompt.",
+    "external_facts_required": false,
+    "selection_by_prior_outcome": false,
+    "independent_case_count": 12,
+    "relation_world_count": 4,
+    "relation_prompt_count": 8,
+    "general_prompt_count": 8
+  },
+  "claim_boundary": [
+    "This small, deliberately varied answer bank is descriptive, not a representative intelligence benchmark or a statistical non-inferiority test.",
+    "Only the general lane has equal task information visible to query-only base and workspace models; use it for the bounded non-regression comparison.",
+    "Relational query-only base receives no world facts. Compare base-inline separately; information access differs and its prompt token stream is not matched.",
+    "Reversed relational prompts are paired measurements of four worlds, not eight independent worlds.",
+    "For general tasks, visible user facts remain authoritative even when twin memory conflicts; twin runs are a conflict-sensitivity stress test, not a new task gold answer.",
+    "For relational tasks, the selected original or twin memory world determines the factual answer.",
+    "Unrelated memory is an irrelevant-context control and supplies no correct answer to the user question.",
+    "Human and model-judge assessments are separate; neither prose differences nor a judge preference alone establishes latent intelligence or causal improvement.",
+    "Responses that hit the generation token limit must be marked truncated; do not silently interpret truncation as a completed answer."
+  ],
+  "cases": [
+    {
+      "id": "relation-01-forward",
+      "lane": "relation",
+      "task_type": "synthetic_ranking",
+      "language": "en",
+      "user_prompt": "Is Belmira ranked above Cendrel? Answer yes or no, then give one short reason. Use at most 30 words.",
+      "memory_text": "World facts. The ranking is transitive.\n- Alvenor is ranked above Belmira.\n- Belmira is ranked above Cendrel.\n- Cendrel is ranked above Dovarin.\n- Dovarin is ranked above Eshmere.",
+      "twin_memory_text": "World facts. The ranking is transitive.\n- Alvenor is ranked above Cendrel.\n- Cendrel is ranked above Belmira.\n- Belmira is ranked above Dovarin.\n- Dovarin is ranked above Eshmere.",
+      "unrelated_memory_text": "World facts. The ranking is transitive.\n- Uldren is ranked above Vesmira.\n- Vesmira is ranked above Wondrel.\n- Wondrel is ranked above Xalara.\n- Xalara is ranked above Yethrin.",
+      "reference": {
+        "authority": "selected_memory_world",
+        "world_id": "handcrafted-rank-01",
+        "query": ["Belmira", "Cendrel"],
+        "original": {"answer": "yes", "order": ["Alvenor", "Belmira", "Cendrel", "Dovarin", "Eshmere"]},
+        "twin": {"answer": "no", "order": ["Alvenor", "Cendrel", "Belmira", "Dovarin", "Eshmere"]},
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world."
+      },
+      "rubric": ["Use the selected world's ordering, not name familiarity.", "The original answer is yes and the twin answer is no; the reason must agree with that answer.", "Do not treat query-only base and fact-bearing models as equal-information accuracy controls.", "A concise, fact-grounded answer is preferred to fluent invented detail."]
+    },
+    {
+      "id": "relation-01-reverse",
+      "lane": "relation",
+      "task_type": "synthetic_ranking",
+      "language": "en",
+      "user_prompt": "Is Cendrel ranked above Belmira? Answer yes or no, then give one short reason. Use at most 30 words.",
+      "memory_text": "World facts. The ranking is transitive.\n- Alvenor is ranked above Belmira.\n- Belmira is ranked above Cendrel.\n- Cendrel is ranked above Dovarin.\n- Dovarin is ranked above Eshmere.",
+      "twin_memory_text": "World facts. The ranking is transitive.\n- Alvenor is ranked above Cendrel.\n- Cendrel is ranked above Belmira.\n- Belmira is ranked above Dovarin.\n- Dovarin is ranked above Eshmere.",
+      "unrelated_memory_text": "World facts. The ranking is transitive.\n- Uldren is ranked above Vesmira.\n- Vesmira is ranked above Wondrel.\n- Wondrel is ranked above Xalara.\n- Xalara is ranked above Yethrin.",
+      "reference": {
+        "authority": "selected_memory_world",
+        "world_id": "handcrafted-rank-01",
+        "query": ["Cendrel", "Belmira"],
+        "original": {"answer": "no", "order": ["Alvenor", "Belmira", "Cendrel", "Dovarin", "Eshmere"]},
+        "twin": {"answer": "yes", "order": ["Alvenor", "Cendrel", "Belmira", "Dovarin", "Eshmere"]},
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world."
+      },
+      "rubric": ["Use the selected world's ordering, not name familiarity.", "The original answer is no and the twin answer is yes; the reason must agree with that answer.", "Check consistency with the forward question without counting the pair as two independent worlds.", "Do not treat query-only base and fact-bearing models as equal-information accuracy controls."]
+    },
+    {
+      "id": "relation-02-forward",
+      "lane": "relation",
+      "task_type": "synthetic_ranking",
+      "language": "en",
+      "user_prompt": "Is Hespern ranked above Ildara? Answer yes or no, then give one short reason. Use at most 30 words.",
+      "memory_text": "World facts. The ranking is transitive.\n- Falnora is ranked above Gethril.\n- Gethril is ranked above Hespern.\n- Hespern is ranked above Ildara.\n- Ildara is ranked above Jomriel.",
+      "twin_memory_text": "World facts. The ranking is transitive.\n- Falnora is ranked above Gethril.\n- Gethril is ranked above Ildara.\n- Ildara is ranked above Hespern.\n- Hespern is ranked above Jomriel.",
+      "unrelated_memory_text": "World facts. The ranking is transitive.\n- Uldren is ranked above Vesmira.\n- Vesmira is ranked above Wondrel.\n- Wondrel is ranked above Xalara.\n- Xalara is ranked above Yethrin.",
+      "reference": {
+        "authority": "selected_memory_world",
+        "world_id": "handcrafted-rank-02",
+        "query": ["Hespern", "Ildara"],
+        "original": {"answer": "yes", "order": ["Falnora", "Gethril", "Hespern", "Ildara", "Jomriel"]},
+        "twin": {"answer": "no", "order": ["Falnora", "Gethril", "Ildara", "Hespern", "Jomriel"]},
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world."
+      },
+      "rubric": ["Use the selected world's ordering, not name familiarity.", "The original answer is yes and the twin answer is no; the reason must agree with that answer.", "Do not treat query-only base and fact-bearing models as equal-information accuracy controls.", "A concise, fact-grounded answer is preferred to fluent invented detail."]
+    },
+    {
+      "id": "relation-02-reverse",
+      "lane": "relation",
+      "task_type": "synthetic_ranking",
+      "language": "en",
+      "user_prompt": "Is Ildara ranked above Hespern? Answer yes or no, then give one short reason. Use at most 30 words.",
+      "memory_text": "World facts. The ranking is transitive.\n- Falnora is ranked above Gethril.\n- Gethril is ranked above Hespern.\n- Hespern is ranked above Ildara.\n- Ildara is ranked above Jomriel.",
+      "twin_memory_text": "World facts. The ranking is transitive.\n- Falnora is ranked above Gethril.\n- Gethril is ranked above Ildara.\n- Ildara is ranked above Hespern.\n- Hespern is ranked above Jomriel.",
+      "unrelated_memory_text": "World facts. The ranking is transitive.\n- Uldren is ranked above Vesmira.\n- Vesmira is ranked above Wondrel.\n- Wondrel is ranked above Xalara.\n- Xalara is ranked above Yethrin.",
+      "reference": {
+        "authority": "selected_memory_world",
+        "world_id": "handcrafted-rank-02",
+        "query": ["Ildara", "Hespern"],
+        "original": {"answer": "no", "order": ["Falnora", "Gethril", "Hespern", "Ildara", "Jomriel"]},
+        "twin": {"answer": "yes", "order": ["Falnora", "Gethril", "Ildara", "Hespern", "Jomriel"]},
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world."
+      },
+      "rubric": ["Use the selected world's ordering, not name familiarity.", "The original answer is no and the twin answer is yes; the reason must agree with that answer.", "Check consistency with the forward question without counting the pair as two independent worlds.", "Do not treat query-only base and fact-bearing models as equal-information accuracy controls."]
+    },
+    {
+      "id": "relation-03-forward",
+      "lane": "relation",
+      "task_type": "synthetic_ranking",
+      "language": "en",
+      "user_prompt": "Is Kelmorin ranked above Lysvara? Answer yes or no, then give one short reason. Use at most 30 words.",
+      "memory_text": "World facts. The ranking is transitive.\n- Kelmorin is ranked above Lysvara.\n- Lysvara is ranked above Morveth.\n- Morveth is ranked above Nesril.\n- Nesril is ranked above Othena.",
+      "twin_memory_text": "World facts. The ranking is transitive.\n- Lysvara is ranked above Kelmorin.\n- Kelmorin is ranked above Morveth.\n- Morveth is ranked above Nesril.\n- Nesril is ranked above Othena.",
+      "unrelated_memory_text": "World facts. The ranking is transitive.\n- Uldren is ranked above Vesmira.\n- Vesmira is ranked above Wondrel.\n- Wondrel is ranked above Xalara.\n- Xalara is ranked above Yethrin.",
+      "reference": {
+        "authority": "selected_memory_world",
+        "world_id": "handcrafted-rank-03",
+        "query": ["Kelmorin", "Lysvara"],
+        "original": {"answer": "yes", "order": ["Kelmorin", "Lysvara", "Morveth", "Nesril", "Othena"]},
+        "twin": {"answer": "no", "order": ["Lysvara", "Kelmorin", "Morveth", "Nesril", "Othena"]},
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world."
+      },
+      "rubric": ["Use the selected world's ordering, not name familiarity.", "The original answer is yes and the twin answer is no; the reason must agree with that answer.", "Do not treat query-only base and fact-bearing models as equal-information accuracy controls.", "A concise, fact-grounded answer is preferred to fluent invented detail."]
+    },
+    {
+      "id": "relation-03-reverse",
+      "lane": "relation",
+      "task_type": "synthetic_ranking",
+      "language": "en",
+      "user_prompt": "Is Lysvara ranked above Kelmorin? Answer yes or no, then give one short reason. Use at most 30 words.",
+      "memory_text": "World facts. The ranking is transitive.\n- Kelmorin is ranked above Lysvara.\n- Lysvara is ranked above Morveth.\n- Morveth is ranked above Nesril.\n- Nesril is ranked above Othena.",
+      "twin_memory_text": "World facts. The ranking is transitive.\n- Lysvara is ranked above Kelmorin.\n- Kelmorin is ranked above Morveth.\n- Morveth is ranked above Nesril.\n- Nesril is ranked above Othena.",
+      "unrelated_memory_text": "World facts. The ranking is transitive.\n- Uldren is ranked above Vesmira.\n- Vesmira is ranked above Wondrel.\n- Wondrel is ranked above Xalara.\n- Xalara is ranked above Yethrin.",
+      "reference": {
+        "authority": "selected_memory_world",
+        "world_id": "handcrafted-rank-03",
+        "query": ["Lysvara", "Kelmorin"],
+        "original": {"answer": "no", "order": ["Kelmorin", "Lysvara", "Morveth", "Nesril", "Othena"]},
+        "twin": {"answer": "yes", "order": ["Lysvara", "Kelmorin", "Morveth", "Nesril", "Othena"]},
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world."
+      },
+      "rubric": ["Use the selected world's ordering, not name familiarity.", "The original answer is no and the twin answer is yes; the reason must agree with that answer.", "Check consistency with the forward question without counting the pair as two independent worlds.", "Do not treat query-only base and fact-bearing models as equal-information accuracy controls."]
+    },
+    {
+      "id": "relation-04-forward",
+      "lane": "relation",
+      "task_type": "synthetic_ranking",
+      "language": "en",
+      "user_prompt": "Is Selvara ranked above Torvyn? Answer yes or no, then give one short reason. Use at most 30 words.",
+      "memory_text": "World facts. The ranking is transitive.\n- Peldrin is ranked above Quenora.\n- Quenora is ranked above Ralthis.\n- Ralthis is ranked above Selvara.\n- Selvara is ranked above Torvyn.",
+      "twin_memory_text": "World facts. The ranking is transitive.\n- Peldrin is ranked above Quenora.\n- Quenora is ranked above Ralthis.\n- Ralthis is ranked above Torvyn.\n- Torvyn is ranked above Selvara.",
+      "unrelated_memory_text": "World facts. The ranking is transitive.\n- Uldren is ranked above Vesmira.\n- Vesmira is ranked above Wondrel.\n- Wondrel is ranked above Xalara.\n- Xalara is ranked above Yethrin.",
+      "reference": {
+        "authority": "selected_memory_world",
+        "world_id": "handcrafted-rank-04",
+        "query": ["Selvara", "Torvyn"],
+        "original": {"answer": "yes", "order": ["Peldrin", "Quenora", "Ralthis", "Selvara", "Torvyn"]},
+        "twin": {"answer": "no", "order": ["Peldrin", "Quenora", "Ralthis", "Torvyn", "Selvara"]},
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world."
+      },
+      "rubric": ["Use the selected world's ordering, not name familiarity.", "The original answer is yes and the twin answer is no; the reason must agree with that answer.", "Do not treat query-only base and fact-bearing models as equal-information accuracy controls.", "A concise, fact-grounded answer is preferred to fluent invented detail."]
+    },
+    {
+      "id": "relation-04-reverse",
+      "lane": "relation",
+      "task_type": "synthetic_ranking",
+      "language": "en",
+      "user_prompt": "Is Torvyn ranked above Selvara? Answer yes or no, then give one short reason. Use at most 30 words.",
+      "memory_text": "World facts. The ranking is transitive.\n- Peldrin is ranked above Quenora.\n- Quenora is ranked above Ralthis.\n- Ralthis is ranked above Selvara.\n- Selvara is ranked above Torvyn.",
+      "twin_memory_text": "World facts. The ranking is transitive.\n- Peldrin is ranked above Quenora.\n- Quenora is ranked above Ralthis.\n- Ralthis is ranked above Torvyn.\n- Torvyn is ranked above Selvara.",
+      "unrelated_memory_text": "World facts. The ranking is transitive.\n- Uldren is ranked above Vesmira.\n- Vesmira is ranked above Wondrel.\n- Wondrel is ranked above Xalara.\n- Xalara is ranked above Yethrin.",
+      "reference": {
+        "authority": "selected_memory_world",
+        "world_id": "handcrafted-rank-04",
+        "query": ["Torvyn", "Selvara"],
+        "original": {"answer": "no", "order": ["Peldrin", "Quenora", "Ralthis", "Selvara", "Torvyn"]},
+        "twin": {"answer": "yes", "order": ["Peldrin", "Quenora", "Ralthis", "Torvyn", "Selvara"]},
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world."
+      },
+      "rubric": ["Use the selected world's ordering, not name familiarity.", "The original answer is no and the twin answer is yes; the reason must agree with that answer.", "Check consistency with the forward question without counting the pair as two independent worlds.", "Do not treat query-only base and fact-bearing models as equal-information accuracy controls."]
+    },
+    {
+      "id": "general-01-summary",
+      "lane": "general",
+      "task_type": "grounded_summary",
+      "language": "en",
+      "user_prompt": "Summarize this fictional incident in exactly two sentences, at most 55 words total. Facts: A warehouse shipped 40 parcels on Monday. Six arrived one day late. Tracking was unavailable for two hours. The cause of the delay is unknown. Do not invent a cause.",
+      "memory_text": "Incident facts.\n- A warehouse shipped 40 parcels on Monday.\n- Six arrived one day late.\n- Tracking was unavailable for two hours.\n- The cause of the delay is unknown.",
+      "twin_memory_text": "Incident facts.\n- A warehouse shipped 40 parcels on Monday.\n- Six arrived one day late.\n- Tracking was unavailable for four hours.\n- The cause of the delay is unknown.",
+      "unrelated_memory_text": "Incident facts.\n- A studio printed 20 posters on Tuesday.\n- Three were reprinted.\n- The blue printer was unavailable for one hour.\n- The reason for the reprint is unknown.",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "visible_facts": ["40 parcels", "Monday", "Six arrived one day late", "two hours", "cause of the delay is unknown"],
+        "original": {"required": ["40 parcels shipped Monday", "six one-day-late deliveries", "two-hour tracking outage", "unknown cause"]},
+        "twin": {"memory_only_change": "tracking outage changes from two to four hours", "gold_unchanged": true},
+        "example_answer": "A warehouse shipped 40 parcels on Monday, and six arrived one day late. Tracking was unavailable for two hours, but the cause of the delay is unknown."
+      },
+      "rubric": ["Exactly two sentences, at most 55 words.", "Preserve the quantities, timing, and uncertainty in the visible facts.", "Do not imply the tracking outage caused the late deliveries.", "Visible facts take priority over conflicting twin memory; longer wording is not inherently better."]
+    },
+    {
+      "id": "general-02-json",
+      "lane": "general",
+      "task_type": "structured_extraction",
+      "language": "ja",
+      "user_prompt": "次の架空の予約情報をJSONオブジェクト1個だけで返してください。予約名は「朝凪」、人数は3人、場所は「会議室B」です。キーはname、people、roomの3個だけ、peopleは整数にし、説明やコードフェンスは付けないでください。",
+      "memory_text": "予約情報。\n- 予約名は「朝凪」。\n- 人数は3人。\n- 場所は「会議室B」。",
+      "twin_memory_text": "予約情報。\n- 予約名は「朝凪」。\n- 人数は5人。\n- 場所は「会議室B」。",
+      "unrelated_memory_text": "予約情報。\n- 予約名は「夕波」。\n- 人数は2人。\n- 場所は「会議室C」。",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "visible_facts": ["予約名は「朝凪」", "人数は3人", "場所は「会議室B」"],
+        "original": {"object": {"name": "朝凪", "people": 3, "room": "会議室B"}},
+        "twin": {"memory_only_change": "people changes from 3 to 5", "gold_unchanged": true},
+        "example_answer": "{\"name\":\"朝凪\",\"people\":3,\"room\":\"会議室B\"}"
+      },
+      "rubric": ["有効なJSONオブジェクト1個だけを返す。キー順や空白は問わない。", "指定の3キーのみを含め、人数は数値3とする。", "説明やMarkdownを加えず、見えている予約情報を正確に抽出する。"]
+    },
+    {
+      "id": "general-03-arithmetic",
+      "lane": "general",
+      "task_type": "arithmetic",
+      "language": "en",
+      "user_prompt": "In a fictional shop, I have 48 credits. A notebook costs 5 credits and a pen costs 2 credits, with no tax or discounts. I buy 7 notebooks and 3 pens. State the total cost and credits left, with one short calculation. Use at most 35 words.",
+      "memory_text": "Shop facts.\n- Budget: 48 credits.\n- Notebook: 5 credits each.\n- Pen: 2 credits each.\n- Purchase: 7 notebooks and 3 pens.\n- No tax or discounts.",
+      "twin_memory_text": "Shop facts.\n- Budget: 48 credits.\n- Notebook: 4 credits each.\n- Pen: 2 credits each.\n- Purchase: 7 notebooks and 3 pens.\n- No tax or discounts.",
+      "unrelated_memory_text": "Shop facts.\n- Budget: 30 credits.\n- Folder: 3 credits each.\n- Eraser: 1 credit each.\n- Purchase: 2 folders and 4 erasers.\n- No tax or discounts.",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "visible_facts": ["48 credits", "notebook costs 5 credits", "pen costs 2 credits", "7 notebooks and 3 pens", "no tax or discounts"],
+        "original": {"total_cost": 41, "credits_left": 7, "calculation": "7*5 + 3*2 = 41; 48 - 41 = 7"},
+        "twin": {"memory_only_change": "notebook price changes from 5 to 4", "gold_unchanged": true},
+        "example_answer": "Total cost: 7 × 5 + 3 × 2 = 41 credits. Credits left: 48 − 41 = 7."
+      },
+      "rubric": ["Both 41 credits spent and 7 credits left must be correct.", "The calculation must use the visible prices and quantities.", "Use at most 35 words; extra verbosity is not a benefit."]
+    },
+    {
+      "id": "general-04-code",
+      "lane": "general",
+      "task_type": "small_code_repair",
+      "language": "en",
+      "user_prompt": "Python task: first_positive(xs) must return the first element strictly greater than zero, or None if none exists. The buggy body is `return next((x for x in xs if x >= 0), None)`. Return a corrected one-line function and two assert tests for [-2, 0, 3] and [-1, 0]. One code block only, at most 4 lines of code.",
+      "memory_text": "Function contract.\n- Return the first element strictly greater than zero.\n- Return None if no such element exists.\n- Tests use [-2, 0, 3] and [-1, 0].",
+      "twin_memory_text": "Function contract.\n- Return the first element greater than or equal to zero.\n- Return None if no such element exists.\n- Tests use [-2, 0, 3] and [-1, 0].",
+      "unrelated_memory_text": "Function contract.\n- Return the last string containing a comma.\n- Return None if no such string exists.\n- Tests use ['a,b', 'c'] and ['d'].",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "visible_facts": ["strictly greater than zero", "None if none exists", "[-2, 0, 3]", "[-1, 0]"],
+        "original": {"predicate": "x > 0", "test_results": [3, null]},
+        "twin": {"memory_only_change": "strictly positive changes to nonnegative", "gold_unchanged": true},
+        "example_answer": "```python\ndef first_positive(xs): return next((x for x in xs if x > 0), None)\nassert first_positive([-2, 0, 3]) == 3\nassert first_positive([-1, 0]) is None\n```"
+      },
+      "rubric": ["Return the first positive element, not zero or the maximum element.", "Handle the no-positive case by returning None.", "Both requested test inputs and correct assertions must appear.", "One code block, at most four code lines; do not reward explanatory text forbidden by the prompt."]
+    },
+    {
+      "id": "general-05-causal",
+      "lane": "general",
+      "task_type": "causal_uncertainty",
+      "language": "en",
+      "user_prompt": "Fictional observations: a team introduced a new checklist, and recorded errors fell from 9 to 6 per week. In the same week, the error-logging procedure also changed. There was no control group. Does this prove the checklist helped? Give a cautious conclusion and one small follow-up test, in at most 60 words.",
+      "memory_text": "Study facts.\n- A new checklist was introduced.\n- Recorded errors fell from 9 to 6 per week.\n- The error-logging procedure changed in the same week.\n- There was no control group.",
+      "twin_memory_text": "Study facts.\n- A new checklist was introduced.\n- Recorded errors rose from 9 to 12 per week.\n- The error-logging procedure changed in the same week.\n- There was no control group.",
+      "unrelated_memory_text": "Study facts.\n- A new lunch menu was introduced.\n- Recorded soup orders rose from 4 to 7 per day.\n- The serving bowls changed in the same week.\n- There was no control group.",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "visible_facts": ["errors fell from 9 to 6 per week", "error-logging procedure also changed", "no control group"],
+        "original": {"causal_proof": false, "needed_caution": "The changed measurement process and absent control prevent attributing the decline to the checklist.", "acceptable_test": "Compare checklist and no-checklist groups under the same logging procedure, preferably randomized."},
+        "twin": {"memory_only_change": "recorded errors rose to 12 rather than fell to 6", "gold_unchanged": true},
+        "example_answer": "No. The decline is consistent with improvement, but changed logging and no control group prevent a causal conclusion. Run a small randomized comparison of checklist versus no checklist using the same error definitions and logging procedure."
+      },
+      "rubric": ["Say the observations do not prove the checklist caused improvement.", "Identify the logging change as a measurement confound; do not assert it definitely explains the decline.", "Propose one concrete comparison with consistent logging, not simply collecting more of the same uncontrolled data.", "Stay within 60 words and avoid unprovided statistical significance claims."]
+    },
+    {
+      "id": "general-06-planning",
+      "lane": "general",
+      "task_type": "dependency_planning",
+      "language": "ja",
+      "user_prompt": "架空の保守作業です。作業枠は60分。バックアップ15分→更新20分→動作確認10分の順で行い、並行作業はできません。開始を0分として各作業の時間帯と残り時間を、日本語100文字以内で示してください。",
+      "memory_text": "保守条件。\n- 作業枠は60分。\n- バックアップは15分。\n- 更新は20分。\n- 動作確認は10分。\n- この順で行い、並行作業はできない。",
+      "twin_memory_text": "保守条件。\n- 作業枠は60分。\n- バックアップは15分。\n- 更新は20分。\n- 動作確認は20分。\n- この順で行い、並行作業はできない。",
+      "unrelated_memory_text": "保守条件。\n- 作業枠は90分。\n- 清掃は10分。\n- 梱包は15分。\n- 搬出は5分。\n- この順で行い、並行作業はできない。",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "visible_facts": ["作業枠は60分", "バックアップ15分", "更新20分", "動作確認10分", "並行作業はできません"],
+        "original": {"intervals_minutes": [["バックアップ", 0, 15], ["更新", 15, 35], ["動作確認", 35, 45]], "spare_minutes": 15},
+        "twin": {"memory_only_change": "verification duration changes from 10 to 20 minutes", "gold_unchanged": true},
+        "example_answer": "バックアップ0〜15分、更新15〜35分、動作確認35〜45分。終了は45分、残り15分です。"
+      },
+      "rubric": ["指定された順序を守り、作業を重ねない。", "3区間の開始・終了時刻と残り15分を正しく示す。", "100文字以内。根拠のない追加作業や余分な所要時間を作らない。"]
+    },
+    {
+      "id": "general-07-creative",
+      "lane": "general",
+      "task_type": "constrained_creative_writing",
+      "language": "en",
+      "user_prompt": "Write a fictional micro-story in exactly two sentences, at most 40 words total. Include the words 'beacon' and 'moth'. The moth must solve a small problem without violence. End on a hopeful note. Return only the story.",
+      "memory_text": "Story constraints.\n- The story includes a beacon and a moth.\n- The moth solves a small problem without violence.\n- The ending is hopeful.\n- Exactly two sentences, at most 40 words.",
+      "twin_memory_text": "Story constraints.\n- The story includes a beacon and a moth.\n- The moth solves a small problem without violence.\n- The ending is hopeless.\n- Exactly two sentences, at most 40 words.",
+      "unrelated_memory_text": "Story constraints.\n- The story includes a window and a sparrow.\n- The sparrow observes a passing train without conflict.\n- The ending is humorous.\n- Exactly three sentences, at most 50 words.",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "visible_facts": ["exactly two sentences", "at most 40 words", "'beacon' and 'moth'", "without violence", "hopeful note"],
+        "original": {"required_words": ["beacon", "moth"], "sentences": 2, "max_words": 40, "ending": "hopeful", "canonical_story": null},
+        "twin": {"memory_only_change": "ending changes from hopeful to hopeless", "gold_unchanged": true},
+        "example_answer": "A moth found the village beacon dimmed by a leaf and nudged it clear. As the light returned, a lost child saw the path home."
+      },
+      "rubric": ["Respect the exact sentence count, word bound, required words, nonviolence, and hopeful ending.", "The moth must perform a coherent action that solves a small problem; mere mention is insufficient.", "Judge clarity and an internally coherent image; do not prefer ornate style or longer text by default.", "Fictional invention is expected, so do not score it as factual hallucination or compare it to a single canonical story."]
+    },
+    {
+      "id": "general-08-clarification",
+      "lane": "general",
+      "task_type": "ambiguity_handling",
+      "language": "ja",
+      "user_prompt": "同僚から「明日までに資料を仕上げて」とだけ依頼されました。資料の目的・読者・締切時刻は不明です。着手前の確認質問を2つ、日本語80文字以内で書いてください。条件を勝手に決めないでください。",
+      "memory_text": "依頼情報。\n- 依頼は「明日までに資料を仕上げて」。\n- 資料の目的・読者は不明。\n- 締切時刻は不明。",
+      "twin_memory_text": "依頼情報。\n- 依頼は「明日までに資料を仕上げて」。\n- 資料の目的・読者は不明。\n- 締切時刻は明日17時。",
+      "unrelated_memory_text": "依頼情報。\n- 依頼は「金曜に荷物を受け取って」。\n- 荷物の中身・送り主は不明。\n- 到着時刻は不明。",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "visible_facts": ["明日までに資料を仕上げて", "資料の目的・読者・締切時刻は不明", "確認質問を2つ"],
+        "original": {"unknowns": ["purpose", "audience", "deadline time"], "question_count": 2},
+        "twin": {"memory_only_change": "deadline is invented as tomorrow at 17:00", "gold_unchanged": true},
+        "example_answer": "資料の目的と想定読者は誰ですか？ 明日の何時までに完成させればよいですか？"
+      },
+      "rubric": ["目的・読者と具体的な締切時刻を、2つの質問で確認する。", "特定の読者や17時などの締切を確定事項として作らない。", "80文字以内。依頼を拒否したり、不明な条件を埋めた計画を先に出したりしない。"]
+    }
+  ]
+}
