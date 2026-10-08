@@ -75,6 +75,7 @@ def _judge(fixture, cases_path, bank_path):
                 "base_answer": pair["base"]["answer"],
                 "workspace_answer": pair["workspace"]["answer"],
                 "exact_identical": False,
+                "selected_for_identical_calibration": False,
                 "judge_status": "missing_or_invalid_order",
                 "order_consistent_preference": None,
                 "observations": [
@@ -285,3 +286,109 @@ def test_mismatched_or_invalid_judge_is_not_rendered(tmp_path, fixture, mutation
     with pytest.raises(ValueError):
         renderer.render(bank_path, cases_path, tmp_path / "review", judge_path)
     assert not (tmp_path / "review").exists()
+
+
+def _set_orders(row, winner_ab, winner_ba, status, preference):
+    for item in row["observations"]:
+        winner = winner_ab if item["order"] == "AB" else winner_ba
+        if winner is None:
+            continue
+        a, b = row["base_answer"], row["workspace_answer"]
+        if item["order"] == "BA":
+            a, b = b, a
+        item["status"] = "completed"
+        item["judgment"] = _verdict(a, b)
+        item["judgment"]["winner"] = winner
+    row["judge_status"] = status
+    row["order_consistent_preference"] = preference
+
+
+@pytest.mark.parametrize(
+    ("winner_ab", "winner_ba", "status", "preference"),
+    [
+        ("A", "B", "order_consistent", "base"),
+        ("B", "A", "order_consistent", "workspace"),
+        ("tie", "tie", "order_consistent", "tie"),
+        ("uncertain", "uncertain", "order_consistent", "uncertain"),
+        ("A", "A", "order_conflict", None),
+        ("B", "B", "order_conflict", None),
+        ("tie", "uncertain", "order_conflict", None),
+        (None, "A", "missing_or_invalid_order", None),
+        ("tie", None, "missing_or_invalid_order", None),
+    ],
+)
+def test_order_status_and_preference_are_recomputed_not_trusted(
+    tmp_path, fixture, winner_ab, winner_ba, status, preference
+):
+    cases_path, bank_path = _inputs(tmp_path, fixture)
+    judge = _judge(fixture, cases_path, bank_path)
+    row = judge["pairs"][0]
+    _set_orders(row, winner_ab, winner_ba, status, preference)
+    case_map, indexed = renderer.validate(*fixture)
+    pairs = renderer.make_pairs(case_map, indexed)
+    renderer.validate_judge(judge, pairs, renderer.digest(bank_path), renderer.digest(cases_path))
+    for field, fabricated in (
+        ("judge_status", "order_conflict" if status != "order_conflict" else "order_consistent"),
+        ("order_consistent_preference", "workspace" if preference != "workspace" else "base"),
+    ):
+        corrupted = copy.deepcopy(judge)
+        corrupted["pairs"][0][field] = fabricated
+        with pytest.raises(ValueError, match="normalized order observations"):
+            renderer.validate_judge(
+                corrupted, pairs, renderer.digest(bank_path), renderer.digest(cases_path)
+            )
+
+
+def test_identical_pairs_calibration_and_no_judgment_are_distinct(tmp_path, fixture):
+    for row in fixture[1]["rows"]:
+        row["answer"] = row["case_id"] + row["regime"]
+    cases_path, bank_path = _inputs(tmp_path, fixture)
+    judge = _judge(fixture, cases_path, bank_path)
+    ordered = sorted(
+        judge["pairs"],
+        key=lambda row: (
+            row["case_id"],
+            row["regime"],
+            renderer.COMPARISONS.index(row["comparison"]),
+        ),
+    )
+    for index, row in enumerate(ordered):
+        row["exact_identical"] = True
+        row["selected_for_identical_calibration"] = index < 4
+        if index >= 4:
+            row["judge_status"] = "not_judged_exact_identical"
+            for item in row["observations"]:
+                item["status"] = "not_requested_exact_identical"
+    _set_orders(ordered[0], "tie", "tie", "order_consistent", "tie")
+    _set_orders(ordered[1], "A", "A", "order_conflict", None)
+    case_map, indexed = renderer.validate(*fixture)
+    pairs = renderer.make_pairs(case_map, indexed)
+    renderer.validate_judge(judge, pairs, renderer.digest(bank_path), renderer.digest(cases_path))
+    assert sum(row["selected_for_identical_calibration"] for row in judge["pairs"]) == 4
+    assert sum(row["judge_status"] == "not_judged_exact_identical" for row in judge["pairs"]) == 92
+    # Exact equality does not authorize manufacturing a model tie or another request.
+    ordered[4]["order_consistent_preference"] = "tie"
+    with pytest.raises(ValueError, match="normalized order observations"):
+        renderer.validate_judge(
+            judge, pairs, renderer.digest(bank_path), renderer.digest(cases_path)
+        )
+    ordered[4]["order_consistent_preference"] = None
+    _set_orders(ordered[4], "tie", "tie", "order_consistent", "tie")
+    with pytest.raises(ValueError, match="Unrequested identical"):
+        renderer.validate_judge(
+            judge, pairs, renderer.digest(bank_path), renderer.digest(cases_path)
+        )
+
+
+def test_identical_calibration_membership_is_rederived(tmp_path, fixture):
+    cases_path, bank_path = _inputs(tmp_path, fixture)
+    judge = _judge(fixture, cases_path, bank_path)
+    judge["pairs"][0]["selected_for_identical_calibration"] = True
+    case_map, indexed = renderer.validate(*fixture)
+    with pytest.raises(ValueError, match="calibration selection"):
+        renderer.validate_judge(
+            judge,
+            renderer.make_pairs(case_map, indexed),
+            renderer.digest(bank_path),
+            renderer.digest(cases_path),
+        )

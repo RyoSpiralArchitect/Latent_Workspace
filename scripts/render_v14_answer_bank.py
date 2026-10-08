@@ -177,6 +177,18 @@ def validate_judge(judge, pairs, bank_sha, cases_sha):
     ):
         raise ValueError("Judge snapshot refers to different bank or cases")
     expected = {pair["pair_id"]: pair for pair in pairs}
+    canonical_pairs = sorted(
+        pairs,
+        key=lambda pair: (pair["case_id"], pair["regime"], COMPARISONS.index(pair["comparison"])),
+    )
+    identical_calibration = {
+        pair["pair_id"]
+        for pair in [
+            pair
+            for pair in canonical_pairs
+            if pair["base"]["answer"] == pair["workspace"]["answer"]
+        ][:4]
+    }
     seen = set()
     for row in judge["pairs"]:
         if row["pair_id"] not in expected or row["pair_id"] in seen:
@@ -194,6 +206,9 @@ def validate_judge(judge, pairs, bank_sha, cases_sha):
         identical = pair["base"]["answer"] == pair["workspace"]["answer"]
         if row["exact_identical"] is not identical:
             raise ValueError("Judge text-identity receipt disagrees")
+        calibration_selected = row["pair_id"] in identical_calibration
+        if row["selected_for_identical_calibration"] is not calibration_selected:
+            raise ValueError("Identical calibration selection changed")
         if row["judge_status"] not in (
             "not_judged_exact_identical",
             "missing_or_invalid_order",
@@ -210,10 +225,15 @@ def validate_judge(judge, pairs, bank_sha, cases_sha):
         observations = row["observations"]
         if len(observations) != 2 or {item["order"] for item in observations} != {"AB", "BA"}:
             raise ValueError("Judge orders are incomplete or duplicated")
+        normalized_winners = []
         for item in observations:
             if item["request_id"] != row["pair_id"] + "-" + item["order"]:
                 raise ValueError("Judge request identity mismatch")
             verdict = item["judgment"]
+            if identical and not calibration_selected:
+                if item["status"] != "not_requested_exact_identical" or verdict is not None:
+                    raise ValueError("Unrequested identical pair contains a judgment")
+                continue
             if verdict is None:
                 if item["status"] == "completed":
                     raise ValueError("Completed judgment has no verdict")
@@ -225,6 +245,12 @@ def validate_judge(judge, pairs, bank_sha, cases_sha):
                 "uncertain",
             ):
                 raise ValueError("Unknown judgment status or winner label")
+            base_side, workspace_side = ("A", "B") if item["order"] == "AB" else ("B", "A")
+            normalized_winners.append(
+                {base_side: "base", workspace_side: "workspace"}.get(
+                    verdict["winner"], verdict["winner"]
+                )
+            )
             answer_sides = (
                 (pair["base"], pair["workspace"])
                 if item["order"] == "AB"
@@ -245,6 +271,19 @@ def validate_judge(judge, pairs, bank_sha, cases_sha):
                     for quote in quotes
                 ):
                     raise ValueError("Judge quotation is not answer evidence")
+        expected_status, expected_preference = "missing_or_invalid_order", None
+        if identical and not calibration_selected:
+            expected_status = "not_judged_exact_identical"
+        elif len(normalized_winners) == 2:
+            if normalized_winners[0] == normalized_winners[1]:
+                expected_status, expected_preference = "order_consistent", normalized_winners[0]
+            else:
+                expected_status = "order_conflict"
+        if (row["judge_status"], row["order_consistent_preference"]) != (
+            expected_status,
+            expected_preference,
+        ):
+            raise ValueError("Judge status/preference disagrees with normalized order observations")
     if seen != set(expected) or judge["pair_count"] != 96:
         raise ValueError("Incomplete judge pair grid")
 
@@ -348,7 +387,9 @@ def judge_review(judge):
         blocks += ["状態: NOT_PROVIDED。判定も点数も作成していません。"]
     else:
         blocks += [
-            "AB/BAの両順序を省略せず記録します。ここでのA/BはLLMへの提示順で、HUMAN_REVIEW.mdのA/Bとは別です。",
+            "AB/BAの両順序を省略せず記録します。ここでのA/BはLLMへの提示順で、HUMAN_REVIEW.mdのA/Bとは別です。"
+            "順序による判定不一致は同点に直さず、order_conflictとして残します。"
+            "順序平均の点差があっても、選好が一致したことにはなりません。",
             pre(
                 {
                     "pair_count": judge["pair_count"],
