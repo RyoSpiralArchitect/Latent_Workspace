@@ -15,9 +15,8 @@ import v15_elicitation_inputs as old
 from v13_task_fixture import NAMES, TEMPLATES, _parse_context, _parse_query, symbolic_oracle
 from v15_assay_summary import parse_functional_answer
 from v15_completion_mass import analyze_row, bind_aliases
+from v15_cue_span import bind_cue_question_span
 from verify_ft_beta_query_pool import require
-
-from latent_workspace_ft_v10.reader_query import bind_question_span
 
 REPO = Path(__file__).resolve().parents[1]
 SEED, FAMILIES = 15002, 16
@@ -139,8 +138,12 @@ def render_case(tokenizer, *, query, context, renderer, cue, information):
         for suffix in (" no", " yes")
     ]
     span = asdict(
-        bind_question_span(
-            tokenizer, raw_query=query, rendered_prefix=text, expected_prefix_ids=ids
+        bind_cue_question_span(
+            tokenizer,
+            raw_query=query,
+            rendered_prefix=text,
+            expected_prefix_ids=ids,
+            allow_native_end=renderer == "native_chat" and cue == "absent",
         )
     )
     # Convert tuples now so saved JSON and regenerated in-memory receipts agree.

@@ -6,6 +6,7 @@ import inspect
 import itertools
 import json
 from collections import Counter, defaultdict
+from types import SimpleNamespace
 
 import pytest
 import run_v15_cue_confirmation as runner
@@ -15,6 +16,7 @@ from test_run_v15_elicitation import TinyBase
 from test_v15_completion_mass import alias
 from test_v15_elicitation_inputs import CONTEXT, QUERY, ToyTokenizer
 from v13_task_fixture import _parse_context, _parse_query, symbolic_oracle
+from v15_cue_span import bind_cue_question_span
 
 from latent_workspace_ft_v10.answer_bank_generation import matched_uniform
 from latent_workspace_ft_v10.v15_readout import NativeWorkspaceReadout
@@ -22,6 +24,87 @@ from latent_workspace_ft_v10.v15_readout import NativeWorkspaceReadout
 
 class Tokenizer(ToyTokenizer):
     markers = {**ToyTokenizer.markers, " No": 10003, " Yes": 10004}
+
+
+class AdjacentEndTokenizer(Tokenizer):
+    all_special_ids = [1, 2, 3]
+    added_tokens_decoder = {3: SimpleNamespace(special=True)}
+
+    def get_added_vocab(self):
+        return {"[/INST]": 3}
+
+    def convert_ids_to_tokens(self, token):
+        return {1: "<s>", 2: "[INST]", 3: "[/INST]"}[token]
+
+    def apply_chat_template(self, messages, *, tokenize, add_generation_prompt):
+        text = "<s>[INST] " + messages[0]["content"] + "[/INST]"
+        return {"input_ids": self.encode(text, add_special_tokens=False)} if tokenize else text
+
+
+def test_adjacent_native_end_is_bound_without_changing_text_or_ids():
+    tokenizer = AdjacentEndTokenizer()
+    row = contract.render_case(
+        tokenizer,
+        query=QUERY,
+        context=CONTEXT,
+        renderer="native_chat",
+        cue="absent",
+        information="inline",
+    )
+    assert row["text"].endswith("?[/INST]")
+    assert row["prompt_ids"] == tokenizer.encode(row["text"], add_special_tokens=False)
+    assert row["span"]["token_indices"][-1] == len(row["prompt_ids"]) - 2
+    assert row["prompt_ids"][-1] == 3
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "not_authorized",
+        "not_special",
+        "literal",
+        "extra_suffix",
+        "prefix",
+        "cross_offset",
+        "end_offset",
+        "slow",
+    ],
+)
+def test_adjacent_native_end_rejects_ambiguous_bindings(mutation):
+    tokenizer = AdjacentEndTokenizer()
+    text = "<s>[INST] " + QUERY[:-8] + "[/INST]"
+    if mutation == "extra_suffix":
+        text += "evil"
+    ids = tokenizer.encode(text, add_special_tokens=False)
+    if mutation == "not_special":
+        tokenizer.added_tokens_decoder = {3: SimpleNamespace(special=False)}
+    if mutation == "literal":
+        tokenizer.convert_ids_to_tokens = lambda _: "different"
+    if mutation == "prefix":
+        ids[0] = 500
+    if mutation == "slow":
+        tokenizer.is_fast = False
+    if mutation in ("cross_offset", "end_offset"):
+        original = tokenizer.tokenize_offsets
+
+        def broken(value):
+            tokens, offsets = original(value)
+            if value == text:
+                if mutation == "cross_offset":
+                    offsets[-2] = (offsets[-2][0], offsets[-1][1])
+                else:
+                    offsets[-1] = (offsets[-1][0] + 1, offsets[-1][1])
+            return tokens, offsets
+
+        tokenizer.tokenize_offsets = broken
+    with pytest.raises(ValueError):
+        bind_cue_question_span(
+            tokenizer,
+            raw_query=QUERY,
+            rendered_prefix=text,
+            expected_prefix_ids=ids,
+            allow_native_end=mutation != "not_authorized",
+        )
 
 
 @pytest.fixture(scope="module")

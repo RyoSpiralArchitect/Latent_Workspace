@@ -38,6 +38,7 @@ ADDITIONS = (
     "configs/v15/CUE_CONFIRMATION_INPUTS.json",
     "docs/v15/CUE_CONFIRMATION_PLAN.md",
     "scripts/v15_cue_contract.py",
+    "scripts/v15_cue_span.py",
     "scripts/run_v15_cue_confirmation.py",
     "scripts/verify_v15_cue_confirmation.py",
     "tests/test_v15_cue_confirmation.py",

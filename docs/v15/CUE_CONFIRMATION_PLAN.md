@@ -45,6 +45,19 @@ Absent cue uses the same envelope with the one declared removal; independently
 rebind offsets and entire prefix IDs. The canonical query metadata is not fed
 to the model by the span binder. Verify text/tokenized chat-template agreement.
 
+Tokenizer-only preflight at source `d5fc915` found the native no-cue prefix ends
+with `?[/INST]`, while the historical binder assumed whitespace after `?`.
+No model was loaded or scored. Before GPU execution, add an assay-local adapter:
+the entire non-whitespace terminal suffix must encode as one tokenizer-declared
+special token whose literal spelling and final offset exactly cover that suffix.
+Question offsets must be complete, contiguous and disjoint from the marker.
+Do not insert whitespace, change prefix IDs or modify the historical binder.
+This is a token-boundary implementation correction, not a prompt or gate change.
+The pinned tokenizer maps `[/INST]` to ID 4 and marks that added token
+`special=True`, although `all_special_ids` only contains BOS/EOS/UNK. Inspect
+the anchored added-token declaration and literal vocabulary mapping, not that
+incomplete high-level special-ID list. This is checked before any model scoring.
+
 Check ordinary/base versus shared full-sequence, full-vocabulary native logits
 on every initial prefix. All generation and forced-alias readouts also check
 the historical native implementation. No workspace reader is loaded. A zero
