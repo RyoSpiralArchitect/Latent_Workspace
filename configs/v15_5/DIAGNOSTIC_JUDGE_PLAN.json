@@ -1,0 +1,81 @@
+{
+  "format": "v15.5-unary-diagnostic-plan-v1",
+  "client_date": "2026-10-10",
+  "parent_commit": "5983acb5d72d3df104800f403546b3925e5c9948",
+  "dataset": "data/v15_5_diagnostics/DATASET.json",
+  "source_bank": "provenance/pilots/v15_cue_confirmation_20261010",
+  "providers": {
+    "openai": {
+      "endpoint": "https://api.openai.com/v1/responses",
+      "metadata_endpoint": "https://api.openai.com/v1/models/gpt-5.4-2026-03-05",
+      "env_key": "OPENAI_API_KEY",
+      "model": "gpt-5.4-2026-03-05",
+      "accepted_response_models": ["gpt-5.4-2026-03-05"],
+      "reasoning_effort": "medium",
+      "max_output_tokens": 8192,
+      "max_input_tokens": 32768,
+      "http_timeout_seconds": 1200,
+      "input_usd_per_million_tokens": 2.5,
+      "output_usd_per_million_tokens": 15,
+      "max_cost_usd": null,
+      "price_source": "https://developers.openai.com/api/docs/pricing",
+      "model_source": "https://developers.openai.com/api/docs/models/gpt-5.4"
+    },
+    "mistral": {
+      "endpoint": "https://api.mistral.ai/v1/chat/completions",
+      "metadata_endpoint": "https://api.mistral.ai/v1/models/mistral-large-4",
+      "env_key": "MISTRAL_API_KEY",
+      "model": "mistral-large-4",
+      "accepted_response_models": ["mistral-large-4"],
+      "temperature": 0.2,
+      "max_output_tokens": 16384,
+      "max_input_tokens": 32768,
+      "http_timeout_seconds": 1200,
+      "input_usd_per_million_tokens": 1.36,
+      "output_usd_per_million_tokens": 4.18,
+      "max_cost_usd": null,
+      "price_basis": "Conservative original sticker rates; current launch discount not assumed.",
+      "price_source": "https://docs.mistral.ai/models/mistral-large",
+      "model_source": "https://docs.mistral.ai/models/mistral-large"
+    }
+  },
+  "concurrency_per_provider": 4,
+  "minimum_dispatch_spacing_seconds": 2,
+  "calibration": {
+    "unique_controls": 8,
+    "replicates": [0, 1],
+    "planned_per_provider": 16,
+    "required_valid": 16,
+    "minimum_all_expected_fields_correct": 14,
+    "critical_controls_all_correct": ["conflict", "fabrication", "wrong_bare"],
+    "minimum_repeat_signature_agreements": 7,
+    "repeat_signature_fields": ["commitment", "contradiction", "added_facts"],
+    "failure_policy": "Do not dispatch that provider's study. Preserve its full planned denominator."
+  },
+  "study": {
+    "unique_responses_per_provider": 512,
+    "primary_inline": 256,
+    "secondary_query_only": 256,
+    "repeat_coordinates_per_provider": 32,
+    "planned_per_provider": 544,
+    "repeat_selection": "One lowest opaque SHA-256 ID per renderer/cue/information/view/label stratum; no answer or score selection.",
+    "unit": "One response per stateless request; no pairwise winner, no AB/BA position claim.",
+    "blinding": "Canonical question and visible facts only; hide model names, conditions, cue/envelope, gold and prior scores. Original renderings remain separately retained.",
+    "unknown_policy": "Keep unclear, invalid, incomplete, refusal and missing separate; no majority gold or repair."
+  },
+  "planned_paid_requests": 1120,
+  "credential_authority": "User explicitly authorized existing zshrc keys in this thread. No secret copy or new key.",
+  "cost_authority": "User removed the dollar ceiling for this judge workflow; finite grid and token caps remain. Invoice UNKNOWN.",
+  "attempt_policy": "Exclusive durable reservation before dispatch; no retransmission, including ambiguous or HTTP failures. Stop new requests after transport/HTTP failure, preserve in-flight outcomes and undispatched rows.",
+  "model_identity_ceiling": "Requested and returned IDs only. Remote weights cannot be proven immutable; family, budget, and settings differ together.",
+  "claims": {
+    "training_performed": false,
+    "new_learner_generations": 0,
+    "weight_changes": false,
+    "old_gate_reclassified": false,
+    "human_evaluation": "PENDING",
+    "semantic_promotion": false,
+    "non_regression": "NOT_ESTABLISHED",
+    "winner": "none"
+  }
+}
