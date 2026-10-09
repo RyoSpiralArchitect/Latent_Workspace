@@ -13,6 +13,9 @@ not a released or quality-qualified FT-beta model.
 4. [CPU learner audit, steps 1–2](../../provenance/pilots/ft_beta_learner_audit_20261009/README.md):
    new train-only native/zero checks, loss-specific reciprocal gradients, and a
    VRAM gate before any learner change. No optimizer updates or GPU execution.
+5. [Matched reader-query micro-fit, step 3](../../provenance/pilots/ft_beta_query_pool_20261010/README.md):
+   two frozen-backbone CUDA cells completed on 2026-10-10; identical endpoint
+   accuracy, a readout-cap ceiling, and failed fact-order robustness. No promotion.
 
 The English synthesis is an analyst summary, not replacement translations or
 new judge verdicts. Original Japanese reports and sealed proposals remain unchanged:
@@ -21,6 +24,7 @@ new judge verdicts. Original Japanese reports and sealed proposals remain unchan
 Their earlier Mistral availability/capacity statements describe their historical
 stages; the new 16k packet is the current comparison receipt.
 
-No new training, target-model generation, judge API calls, weight changes, or
-historical label repair are part of this documentation update. PR review and
-experimental qualification are different milestones.
+The original 2026-10-09 synthesis did not run new training, generation, judge
+calls, or historical label repair. The separately sealed 2026-10-10 micro-fit
+does update only compact bridge weights; it is not a quality qualification.
+PR review and experimental qualification remain different milestones.

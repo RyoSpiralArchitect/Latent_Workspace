@@ -1,0 +1,45 @@
+{
+  "format": "ft-beta-query-pool-tests-v1",
+  "local_selected_tests_passed": 169,
+  "local_test_files": [
+    "tests/test_reader_query.py",
+    "tests/test_ft_beta_query_pool_eval.py",
+    "tests/test_ft_beta_query_pool_runner.py",
+    "tests/test_verify_ft_beta_query_pool.py",
+    "tests/test_ft_beta_readout_cap.py",
+    "tests/test_ft_beta_learner_audit_runner.py",
+    "tests/test_learner_gradient_audit.py",
+    "tests/test_bridge_reader_panel.py",
+    "tests/test_precision_bridge.py"
+  ],
+  "furnace_pre_run_cpu_tests_passed": 102,
+  "furnace_pre_run_test_files": [
+    "tests/test_reader_query.py",
+    "tests/test_ft_beta_query_pool_eval.py",
+    "tests/test_ft_beta_query_pool_runner.py",
+    "tests/test_learner_gradient_audit.py",
+    "tests/test_bridge_reader_panel.py",
+    "tests/test_precision_bridge.py"
+  ],
+  "furnace_test_environment": {"CUDA_VISIBLE_DEVICES": "", "PYTHONPATH": "src:scripts"},
+  "furnace_pinned_tokenizer_cpu_span_checks": 16,
+  "ruff_new_sources_and_tests": "PASS",
+  "git_diff_check": "PASS",
+  "portable_raw_bundle_verification": "PASS",
+  "posthoc_cap_audit": {
+    "file": "READOUT_CAP_AUDIT.json",
+    "sha256": "d63c80286372c49be4f1a2096dca7d43323e4ae0543192d8d1acf1c660bead36",
+    "audit_source_sha256": "bae8d632457b681fd10e2a95dfaff1e11948fe09b8d0ac33ec0b89af7049483c",
+    "cuda_initialized": false,
+    "raw_receipt_hashes_rechecked": 5,
+    "scalar_summary_reconstruction_test": "PASS",
+    "separate_from_original_32_file_raw_index": true
+  },
+  "notes": [
+    "Initial remote test collection lacked PYTHONPATH and failed before execution; corrected explicit src:scripts command passed.",
+    "The local Mac did not contain the pinned tokenizer cache. Real-tokenizer preflight used the existing Furnace cache on CPU, offline, without downloading weights.",
+    "One formal GPU execution completed. No failed GPU run, tolerance relaxation, cap change or automatic training retry.",
+    "Selected tests only; this is not a repository-wide suite claim. The historical unrelated projected-V exact-zero toy issue was not modified.",
+    "Portable validation checks receipts/scalar arithmetic, not absent model or checkpoint bodies. Post-hoc CPU audit reads only two cached head rows."
+  ]
+}
