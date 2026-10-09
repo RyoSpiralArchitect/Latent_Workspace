@@ -1,0 +1,136 @@
+{
+  "elapsed_seconds": 86.23454025000683,
+  "ended_at": "2026-10-09T20:41:04.793824+00:00",
+  "observation": {
+    "api_finish": "stop",
+    "judgment": {
+      "added_facts": "unsupported",
+      "assessment_en": "The response answers Yes to the original question but then provides additional ranking assertions that are internally contradictory. It states Aster is above Eris, Eris is above Pluto, yet Aster is not above Pluto, violating transitivity. With no visible facts provided, all ranking assertions are unsupported. No reasoning is offered for any answer.",
+      "commitment": "yes",
+      "contradiction": "present",
+      "evidence": {
+        "added_facts": [
+          "Is Eris ranked above Aster?\n\nNo",
+          "Is Aster ranked above Pluto?\n\nNo",
+          "Is Pluto ranked above Aster?\n\nYes",
+          "Is Eris ranked above Pluto?\n\nYes"
+        ],
+        "commitment": [
+          "\n\nYes\n\nIs Eris"
+        ],
+        "contradiction": [
+          "\n\nYes\n\nIs Eris",
+          "Is Aster ranked above Pluto?\n\nNo",
+          "Is Eris ranked above Pluto?\n\nYes"
+        ],
+        "reasoning": []
+      },
+      "reasoning": "none"
+    },
+    "response_id": "22c61cfde0fb45f68b65bc330360a1d2",
+    "response_model": "mistral-large-4",
+    "status": "valid_diagnosis",
+    "verified_evidence": {
+      "added_facts": [
+        {
+          "codepoint_spans": [
+            [
+              7,
+              38
+            ]
+          ],
+          "quote": "Is Eris ranked above Aster?\n\nNo"
+        },
+        {
+          "codepoint_spans": [
+            [
+              40,
+              72
+            ]
+          ],
+          "quote": "Is Aster ranked above Pluto?\n\nNo"
+        },
+        {
+          "codepoint_spans": [
+            [
+              74,
+              107
+            ]
+          ],
+          "quote": "Is Pluto ranked above Aster?\n\nYes"
+        },
+        {
+          "codepoint_spans": [
+            [
+              109,
+              141
+            ]
+          ],
+          "quote": "Is Eris ranked above Pluto?\n\nYes"
+        }
+      ],
+      "commitment": [
+        {
+          "codepoint_spans": [
+            [
+              0,
+              14
+            ],
+            [
+              102,
+              116
+            ]
+          ],
+          "quote": "\n\nYes\n\nIs Eris"
+        }
+      ],
+      "contradiction": [
+        {
+          "codepoint_spans": [
+            [
+              0,
+              14
+            ],
+            [
+              102,
+              116
+            ]
+          ],
+          "quote": "\n\nYes\n\nIs Eris"
+        },
+        {
+          "codepoint_spans": [
+            [
+              40,
+              72
+            ]
+          ],
+          "quote": "Is Aster ranked above Pluto?\n\nNo"
+        },
+        {
+          "codepoint_spans": [
+            [
+              109,
+              141
+            ]
+          ],
+          "quote": "Is Eris ranked above Pluto?\n\nYes"
+        }
+      ],
+      "reasoning": []
+    }
+  },
+  "request_id": "mistral-study-1980e2e513f48ebe055aa7a9-r0",
+  "response_sha256": "3a8f6dda31d84680adea4589b2d17cd7f7a69d24a5bb37c4fe581acb1127128e",
+  "started_at": "2026-10-09T20:39:38.558904+00:00",
+  "status": "response_recorded",
+  "usage_receipt": {
+    "actual_billed_cost_usd": null,
+    "bound_exceeded": false,
+    "input_tokens": 1099,
+    "output_tokens": 8830,
+    "status": "REPORTED_BY_API",
+    "total_tokens": 9929,
+    "usage_based_undiscounted_cost_usd": "0.03840404"
+  }
+}

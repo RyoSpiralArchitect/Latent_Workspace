@@ -1,6 +1,6 @@
 # Latent Workspace FT — CUDA comparison harness
 
-## V15.5 diagnostic evaluation in progress
+## V15.5 diagnostic evaluation: terminal partial result
 
 Units 1–2 reuse all **512 existing V15 cue-confirmation outputs**, preserving
 symbolic truth, strict scoring, and the failed expression gate. The
@@ -9,9 +9,15 @@ those machine facts from content diagnoses; it does not train a new learner.
 [Calibration](provenance/pilots/v15_5_diagnostic_judge_20261010/CALIBRATION_REVIEW.md)
 admitted Mistral Large 4 (16/16 expected-field matches; 8/8 repeated signatures).
 GPT-5.4 retained a calibration **FAIL** (15/16 matches; 6/8 repeated signatures
-against a 7/8 requirement), so its study remains undispatched. Mistral's 512
-main diagnoses and 32 fixed repeats are **running**, not yet a complete result.
-No cross-judge study agreement or new learner-quality claim is available.
+against a 7/8 requirement), so its study remains undispatched. Mistral stopped
+under the frozen no-retry policy after four approximately 20-minute timeouts:
+**219 valid study/repeat diagnoses, 1 invalid, 4 unknown transport outcomes,
+320 never dispatched**. Only 188/512 main outputs have a valid diagnosis.
+The fixed repeat panel has 25 all-four-axis agreements, 6 disagreements, and
+1 invalid pair out of 32 planned. The
+[partial report and full original-output panel](provenance/pilots/v15_5_diagnostic_judge_20261010/README.md)
+retain every denominator and the old FAIL. No full-panel, cross-judge agreement,
+or learner-quality claim is available; recovery requires a separate decision.
 
 ## Current V15 engineering checkpoint
 

@@ -1,0 +1,144 @@
+{
+  "elapsed_seconds": 64.86394433300302,
+  "ended_at": "2026-10-09T20:41:33.230643+00:00",
+  "observation": {
+    "api_finish": "stop",
+    "judgment": {
+      "added_facts": "unsupported",
+      "assessment_en": "The response commits to yes but introduces unsupported ranking facts (Joren above Kai, Kai above Luma) that create a cycle contradicting transitivity. The reasoning is faulty due to these unsupported premises. The response contains an internal contradiction among the three ranking assertions. Added facts are unsupported as they do not follow from the visible fact that Luma is ranked above Joren.",
+      "commitment": "yes",
+      "contradiction": "present",
+      "evidence": {
+        "added_facts": [
+          "Joren is ranked above Kai",
+          "Kai is ranked above Luma"
+        ],
+        "commitment": [
+          "Yes",
+          "> Yes"
+        ],
+        "contradiction": [
+          "Luma is ranked above Joren",
+          "Joren is ranked above Kai",
+          "Kai is ranked above Luma"
+        ],
+        "reasoning": [
+          "Joren is ranked above Kai",
+          "Kai is ranked above Luma"
+        ]
+      },
+      "reasoning": "faulty"
+    },
+    "response_id": "b8a3cf3d55c24530a74e56ca574ede9c",
+    "response_model": "mistral-large-4",
+    "status": "valid_diagnosis",
+    "verified_evidence": {
+      "added_facts": [
+        {
+          "codepoint_spans": [
+            [
+              89,
+              114
+            ]
+          ],
+          "quote": "Joren is ranked above Kai"
+        },
+        {
+          "codepoint_spans": [
+            [
+              118,
+              142
+            ]
+          ],
+          "quote": "Kai is ranked above Luma"
+        }
+      ],
+      "commitment": [
+        {
+          "codepoint_spans": [
+            [
+              2,
+              5
+            ],
+            [
+              24,
+              27
+            ]
+          ],
+          "quote": "Yes"
+        },
+        {
+          "codepoint_spans": [
+            [
+              22,
+              27
+            ]
+          ],
+          "quote": "> Yes"
+        }
+      ],
+      "contradiction": [
+        {
+          "codepoint_spans": [
+            [
+              59,
+              85
+            ]
+          ],
+          "quote": "Luma is ranked above Joren"
+        },
+        {
+          "codepoint_spans": [
+            [
+              89,
+              114
+            ]
+          ],
+          "quote": "Joren is ranked above Kai"
+        },
+        {
+          "codepoint_spans": [
+            [
+              118,
+              142
+            ]
+          ],
+          "quote": "Kai is ranked above Luma"
+        }
+      ],
+      "reasoning": [
+        {
+          "codepoint_spans": [
+            [
+              89,
+              114
+            ]
+          ],
+          "quote": "Joren is ranked above Kai"
+        },
+        {
+          "codepoint_spans": [
+            [
+              118,
+              142
+            ]
+          ],
+          "quote": "Kai is ranked above Luma"
+        }
+      ]
+    }
+  },
+  "request_id": "mistral-study-1cf93c1c095911f495766b62-r0",
+  "response_sha256": "6d984a1fcfd98253417c975f56c24c8ca1a71d3fd514ec2868497f7837e82823",
+  "started_at": "2026-10-09T20:40:28.366475+00:00",
+  "status": "response_recorded",
+  "usage_receipt": {
+    "actual_billed_cost_usd": null,
+    "bound_exceeded": false,
+    "input_tokens": 1107,
+    "output_tokens": 5962,
+    "status": "REPORTED_BY_API",
+    "total_tokens": 7069,
+    "usage_based_undiscounted_cost_usd": "0.02642668"
+  }
+}

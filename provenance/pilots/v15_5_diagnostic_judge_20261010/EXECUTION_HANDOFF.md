@@ -2,6 +2,15 @@
 
 Client date: 2026-10-10. This file records the launch, not a completed study.
 
+**Terminal update, 2026-10-10 06:36:40 JST:** Mistral ended with
+`HALTED_NO_RETRY`: 219 valid study/repeat diagnoses, one invalid, four timeout
+outcomes with unknown remote execution, and 320 never dispatched. The process
+has exited. The exclusive `analysis/` snapshot has been written and verified;
+the combined status remains `INCOMPLETE_OR_CALIBRATION_BLOCKED`. See
+[the partial report](README.md). Do not resume or regenerate analysis in place.
+Recovery needs a separate explicit decision; the launch instructions below are
+historical. Pause the completion heartbeat after publishing this terminal record.
+
 - Repository: `/Users/ryohiga/SpiralReality/worktrees/latent-workspace-ft-v14-semantic-chat`.
 - Branch: `SpiralReality/v15-5-judge-diagnostics`.
 - Remote: `https://github.com/RyoSpiralArchitect/Latent_Workspace.git`.

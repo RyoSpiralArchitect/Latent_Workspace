@@ -2,7 +2,59 @@
 
 Client date: 2026-10-10. **POST-RESULT DESIGN; new learning NOT EXECUTED**.
 
-## Latest update: fresh cue confirmation failed; keep observables separate
+## Latest update: V15.5 diagnostic judging is partial, not a learner result
+
+The [V15.5 result](../../provenance/pilots/v15_5_diagnostic_judge_20261010/README.md)
+retains the original 512 outputs, but only 188 have valid main Mistral diagnoses
+(95 inline, 93 query-only). Four API calls timed out and 320 remained undispatched;
+the no-retry rule was enforced. OpenAI's study remained blocked by its frozen
+calibration failure. There is no complete two-setting panel or new training.
+
+The partial observations distinguish a verbose correct response, a yes/no answer
+that conflicts with its own explanation, a short EOS-terminated wrong answer,
+and a correct conclusion supported by a false premise. They cannot establish
+which failure dominates the full bank. The fixed repeats have 25 four-axis
+agreements, six disagreements and one invalid pair out of 32. Commitment agrees
+in all 31 valid pairs, but explanation/added-fact interpretation is less stable;
+repeatability is not correctness and those categories are not training gold.
+
+Carry these distinctions into a **proposed** V15.5 learner experiment:
+
+1. Preserve the old free-generation FAIL. Qualify the intended instrument on a
+   separately frozen untouched panel before learning; complete-answer choice
+   scoring, if chosen, remains a separately named observable, not a repaired
+   free-generation score.
+2. The first candidate completion factor is native full-vocabulary answer-token
+   CE versus that **same** native CE plus EOS supervision after the verified
+   correct answer. Hold initialization, examples, update count, readout, reader,
+   residual cap and precision fixed. Use teacher-forced answer prefixes only as
+   declared training targets, with the original question binding preserved.
+   Comparing old FP32 candidate CE against native answer-plus-EOS would change
+   two factors and cannot isolate EOS. Nonzero gradients alone are insufficient:
+   check finite-update native logits and actual generated outputs.
+3. Apply completion supervision only where the task explicitly requires a
+   one-word answer. Unconditional stopping can solidify a wrong answer; do not
+   globally shorten free-form responses or treat completed-path ranking as proof
+   that the model already knows the answer. Measure commitment, contradiction,
+   grounding and termination separately, with invalid/truncated rows retained.
+4. Keep matched intact/twin content direction, reciprocal questions, written-
+   zero/unrelated controls and fact-order robustness as independent tests. An
+   aligned-serialization learner change remains a separate experiment, not an
+   extra factor in the first completion cell. Preserve the pinned-base correctness
+   floor and the earlier concise, calibrated verification behavior on fresh,
+   matched qualitative tasks; this base-only diagnostic requalifies neither.
+5. Revise evaluator definitions only in a new version: distinguish world facts
+   from lack-of-information meta-statements, asserted facts from hypothetical
+   premises, and observed explanations from unfinished continuations. Confirm
+   on untouched controls, without retrying the old controls until they pass or
+   converting preferred diagnostic prose into response-supervision targets.
+
+No learner factor is selected as proven by this partial result. No recovery call
+or further experiment is authorized here. A separately approved continuation
+could target only the 320 never-dispatched requests while preserving the four
+ambiguous calls and the invalid repeat; it must not overwrite the original cell.
+
+## Earlier update: fresh cue confirmation failed; keep observables separate
 
 The prospective cue-by-envelope comparison proposed below is now
 [complete](../../provenance/pilots/v15_cue_confirmation_20261010/README.md):
