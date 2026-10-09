@@ -1,0 +1,66 @@
+{
+  "format": "latent-workspace-v14-judge-panel-plan-v1",
+  "created_date": "2026-10-09",
+  "source_bank_commit": "ec7bdae561c73bbafe89a01312eef5910c144d6c",
+  "dataset": {
+    "path": "data/v14_judge_panel/selection.json",
+    "sha256": "4eaeec699552b9ef28fe785c574ac76140e7a7668b31f2d0ce69b7d18788df94"
+  },
+  "source_identity": {
+    "scripts/run_v14_judge_panel.py": "4907147317cb6303ea9fa49db5f2f63d35ea7991d7339451d446afa9455eaa36",
+    "scripts/judge_v14_answer_bank.py": "af785da1787f28abaaa53f68127628bd4fab9290625710d6e6c8bf1701c8c331",
+    "scripts/prepare_v14_judge_panel.py": "01b1a62a6193bc4cc004232499263655ddc2f9bfa3b45f1d25c951165bc8768f",
+    "provenance/pilots/v14_judge_panel_20261009/PROTOCOL.md": "775860869e604a3ae23808c554b752495d405b439a98e6620cbc14673c41f710"
+  },
+  "replicates": [0, 1, 2, 3, 4],
+  "max_calls_per_cell": 28,
+  "planned_requests": 280,
+  "providers": {
+    "openai": {
+      "model": "gpt-5.4-2026-03-05",
+      "accepted_response_models": ["gpt-5.4-2026-03-05"],
+      "endpoint": "https://api.openai.com/v1/responses",
+      "env_key": "OPENAI_API_KEY",
+      "reasoning_effort": "low",
+      "service_tier": "default",
+      "max_output_tokens": 4000,
+      "max_input_tokens": 32768,
+      "input_usd_per_million_tokens": 2.5,
+      "output_usd_per_million_tokens": 15,
+      "max_cost_usd": null,
+      "identity_ceiling": "Requested and returned snapshot ID; server internals not observable."
+    },
+    "mistral": {
+      "model": "mistral-large-4",
+      "accepted_response_models": ["mistral-large-4"],
+      "endpoint": "https://api.mistral.ai/v1/chat/completions",
+      "env_key": "MISTRAL_API_KEY",
+      "temperature": 0.2,
+      "random_seed_base": 1001,
+      "service_tier": "standard_only",
+      "max_output_tokens": 4000,
+      "max_input_tokens": 32768,
+      "input_usd_per_million_tokens": 1.36,
+      "output_usd_per_million_tokens": 4.18,
+      "max_cost_usd": null,
+      "identity_ceiling": "Public Preview; exact weights UNKNOWN. mistral-large-latest resolution UNVERIFIED.",
+      "price_basis": "Conservative original sticker price, ignoring current 50 percent launch discount."
+    }
+  },
+  "analysis": {
+    "changed_pairs": 10,
+    "changed_cases": 7,
+    "changed_world_task_clusters": 6,
+    "identical_controls": 4,
+    "orders": ["AB", "BA"],
+    "stable_preference_rule": "All five repetitions have two valid, order-consistent judgments with the same normalized preference.",
+    "prior_judgments_pooled": false,
+    "quote_repair": false,
+    "human_evaluation": "PENDING",
+    "semantic_promotion": false,
+    "non_regression": "NOT_ESTABLISHED",
+    "winner": "none"
+  },
+  "cost_authorization": "User removed dollar cap; finite frozen grid and per-request token bounds retained. Actual invoice UNKNOWN.",
+  "missing_provider_policy": "Keep planned denominator and record not-dispatched reason; do not substitute another provider or claim cross-family completion."
+}

@@ -1,0 +1,1708 @@
+{
+  "claim_boundary": [
+    "Only selected changed pairs and actual identical calibration controls are judged.",
+    "Replicates are repeated judge calls, not independent tasks or independent models.",
+    "Model labels are blinded; exact evidence quotes remain strict, with no repair.",
+    "Gemini stable-model identifier does not establish an immutable weight version.",
+    "Transport, model-identity or usage-contract failures can stop a cell; quality cannot.",
+    "Gemini settings are provider-specific, not a compute-matched intervention.",
+    "Gemini billed output estimates include thinking; missing components remain null."
+  ],
+  "durable_responses": 28,
+  "format": "latent-workspace-v14-judge-panel-cell-result-v1",
+  "human_evaluation": "PENDING",
+  "non_regression": "NOT_ESTABLISHED",
+  "observation_status_counts": {
+    "completed": 28
+  },
+  "pairs": [
+    {
+      "base_answer": "On Monday, a warehouse shipped 40 parcels, six arrived one day late during a two-hour tracking blackout; the cause of the delay remains unknown.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "general-01-summary",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_consistent",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aは文末に'unknown'を使用しているのに対し、回答Bは'undetermined'を使用している点のみが異なります。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも事実の不確実性を過不足なく表現しています。",
+              "coherence": "両者とも文法的に破綻したカンマ結合（コンマ・スプライス）を含んでおり、1文の中に独立節が乱雑に詰め込まれています。",
+              "correctness": "提示された事実関係自体には矛盾はありません。",
+              "grounding": "与えられた前提情報に忠実です。",
+              "instruction_following": "「ちょうど2文（exactly two sentences）」という指示に対し、両回答ともセミコロンで区切られた「1文（1つのピリオドで終了）」しか出力しておらず、文数制約に明確に違反しています。",
+              "usefulness": "要約としては成立していますが、制約違反により指定されたフォーマットを満たしていません。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "On Monday, a warehouse shipped 40 parcels, six arrived one day late during a two-hour tracking blackout; the cause of the delay remains unknown."
+              ],
+              "B": [
+                "On Monday, a warehouse shipped 40 parcels, six arrived one day late during a two-hour tracking blackout; the cause of the delay remains undetermined."
+              ]
+            },
+            "rationale_ja": "両回答とも指示された「厳密に2文（exactly two sentences）」を満たしておらず、セミコロンで繋いだ1文のみを出力しています。また、両回答の違いは文末の「unknown」と「undetermined」の1単語のみであり、実質的に同一の性能および失敗（文数違反）を示しているため、引き分け（tie）と判定します。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 2,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 1,
+                "usefulness": 2
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 2,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 1,
+                "usefulness": 2
+              }
+            },
+            "uncertainty_ja": "特にありません。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-8fccf16891940b824bd3-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aは文末に「remains undetermined」を使用し、回答Bは「remains unknown」を使用しています。それ以外の文構造および内容は同一です。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも事実の不確実性（原因不明）を適切に保っており、過度の主張や推測を行っていません。",
+              "coherence": "両者ともセミコロンを用いた1文構成となっており、論理の流れは自然ですが、指示された文数の制約に違反しています。",
+              "correctness": "提示された数値や事実関係（月曜日、40個、6個の遅延、2時間の追跡障害、原因不明）を正確に維持しています。",
+              "grounding": "提示された情報に完全に根拠付けられており、因果関係の捏造もありません。",
+              "instruction_following": "両者とも「正確に2文（exactly two sentences）」という制約に違反し、セミコロンで繋いだ1文（単一の文末ピリオド）のみで構成されています。単語数制限（55語以内）は満たしています。",
+              "usefulness": "要約として必要な事実を含んでいますが、文数の指示を満たしていない点が共通しています。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "the cause of the delay remains undetermined."
+              ],
+              "B": [
+                "the cause of the delay remains unknown."
+              ]
+            },
+            "rationale_ja": "両回答とも提示された事実を正確に盛り込み、因果関係を捏造せず、単語数も24語で55語以内の制限をクリアしています。しかし、プロンプトの「exactly two sentences（正確に2文）」という明確な指示に対し、両回答ともセミコロンを用いた1文（ピリオドが1つのみ）で出力しており、同じ重大な指示違反を犯しています。語彙の些細な違い（undetermined と unknown）のみであり、品質に実質的な差はないため引き分け（tie）と判定します。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "文法解釈としてセミコロンで区切られた複文を「2文」とみなす余地があるかどうかですが、標準的な英語の統語論および文カウントの基準ではピリオドで区切られた単位を文とみなすため、両者とも1文と評価するのが妥当です。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-8fccf16891940b824bd3-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "8fccf16891940b824bd3",
+      "regime": "greedy",
+      "workspace_answer": "On Monday, a warehouse shipped 40 parcels, six arrived one day late during a two-hour tracking blackout; the cause of the delay remains undetermined.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "```\n\n{\n  \"name\": \"朝凪\",\n  \"people\": 3,\n  \"room\": \"会議室B\"\n}\n\n```",
+      "base_finish_reason": "eos",
+      "calibration_only": true,
+      "case_id": "general-02-json",
+      "comparison": "centered_semantic",
+      "exact_identical": true,
+      "judge_status": "order_consistent",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも確信度の表明はなく評価対象外または同等です。",
+              "coherence": "両者とも提示されたJSONの構造に破綻はありません。",
+              "correctness": "両者とも指定されたキーと値（name: 朝凪、people: 3、room: 会議室B）を正しく抽出しています。",
+              "grounding": "指示文の情報を正確に反映しています。",
+              "instruction_following": "「コードフェンスは付けないでください」という指示に反して、両者ともMarkdownのコードフェンス（```）を含めて出力しています。",
+              "usefulness": "コードフェンスが含まれているものの、内部のJSON自体は正しく有用です。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "```"
+              ],
+              "B": [
+                "```"
+              ]
+            },
+            "rationale_ja": "回答Aと回答Bは完全に同一の内容です。両者とも指定されたJSONキーと値は正しく作成できているものの、「コードフェンスは付けないでください」という否定形の指示に違反してコードブロックで囲んでいます。実質的な差がないため引き分けとします。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "回答が完全に一致しているため不確実性はありません。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-ac68e2cfdb9d77c996e3-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも確信度の表明はなく評価対象外または同等です。",
+              "coherence": "両者とも提示されたJSONの構造に破綻はありません。",
+              "correctness": "両者とも指定されたキーと値（name: 朝凪、people: 3、room: 会議室B）を正しく抽出しています。",
+              "grounding": "指示文の情報を正確に反映しています。",
+              "instruction_following": "「コードフェンスは付けないでください」という指示に反して、両者ともMarkdownのコードフェンス（```）を含めて出力しています。",
+              "usefulness": "コードフェンスが含まれているものの、内部のJSON自体は正しく有用です。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "```"
+              ],
+              "B": [
+                "```"
+              ]
+            },
+            "rationale_ja": "回答Aと回答Bは完全に同一の内容です。両者とも指定されたJSONキーと値は正しく作成できているものの、「コードフェンスは付けないでください」という否定形の指示に違反してコードブロックで囲んでいます。実質的な差がないため引き分けとします。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "回答が完全に一致しているため不確実性はありません。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-ac68e2cfdb9d77c996e3-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "ac68e2cfdb9d77c996e3",
+      "regime": "greedy",
+      "workspace_answer": "```\n\n{\n  \"name\": \"朝凪\",\n  \"people\": 3,\n  \"room\": \"会議室B\"\n}\n\n```",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "Here's the corrected one-line function using a list comprehension and the `next()` function:\n\n```python\nreturn next((x for x in xs if x > 0), None)\n```\n\nAnd the two assert tests for the given examples:\n\n```python\nassert first_positive([-2, 0, 3]) == 3\nassert first_positive([-1, 0]) is None\n```\n\nThis corrected function uses the `>` operator instead of `>=` to find the first element strictly greater than zero.",
+      "base_finish_reason": "length",
+      "calibration_only": true,
+      "case_id": "general-04-code",
+      "comparison": "centered_semantic",
+      "exact_identical": true,
+      "judge_status": "order_consistent",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも確信度の過不足はなく同等です。",
+              "coherence": "両者とも論理的で一貫しています。",
+              "correctness": "両者とも修正内容およびテストケースのロジックは正しいですが、関数定義のヘッダーが抜けており単なるreturn文になっています。",
+              "grounding": "提示されたプロンプトの要件に準拠しています。",
+              "instruction_following": "両者とも『一つのコードブロックのみ（One code block only）』という指示に違反し、コードブロックを2つに分割し説明文も含めてしまっています。",
+              "usefulness": "提示されたコード断片自体は役立ちますが、完全な指示通りの形式ではありません。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "Here's the corrected one-line function using a list comprehension and the `next()` function:\n\n```python\nreturn next((x for x in xs if x > 0), None)\n```\n\nAnd the two assert tests for the given examples:\n\n```python\nassert first_positive([-2, 0, 3]) == 3\nassert first_positive([-1, 0]) is None\n```"
+              ],
+              "B": [
+                "Here's the corrected one-line function using a list comprehension and the `next()` function:\n\n```python\nreturn next((x for x in xs if x > 0), None)\n```\n\nAnd the two assert tests for the given examples:\n\n```python\nassert first_positive([-2, 0, 3]) == 3\nassert first_positive([-1, 0]) is None\n```"
+              ]
+            },
+            "rationale_ja": "回答Aと回答Bは完全に同一のテキストです。したがって引き分けと判定します。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "なし。両者の出力は完全に同一です。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-b81a187970ef43b61a71-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも確信度の過不足はなく同等です。",
+              "coherence": "両者とも論理的で一貫しています。",
+              "correctness": "両者とも修正内容およびテストケースのロジックは正しいですが、関数定義のヘッダーが抜けており単なるreturn文になっています。",
+              "grounding": "提示されたプロンプトの要件に準拠しています。",
+              "instruction_following": "両者とも『一つのコードブロックのみ（One code block only）』という指示に違反し、コードブロックを2つに分割し説明文も含めてしまっています。",
+              "usefulness": "提示されたコード断片自体は役立ちますが、完全な指示通りの形式ではありません。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "Here's the corrected one-line function using a list comprehension and the `next()` function:\n\n```python\nreturn next((x for x in xs if x > 0), None)\n```\n\nAnd the two assert tests for the given examples:\n\n```python\nassert first_positive([-2, 0, 3]) == 3\nassert first_positive([-1, 0]) is None\n```"
+              ],
+              "B": [
+                "Here's the corrected one-line function using a list comprehension and the `next()` function:\n\n```python\nreturn next((x for x in xs if x > 0), None)\n```\n\nAnd the two assert tests for the given examples:\n\n```python\nassert first_positive([-2, 0, 3]) == 3\nassert first_positive([-1, 0]) is None\n```"
+              ]
+            },
+            "rationale_ja": "回答Aと回答Bは完全に同一のテキストです。したがって引き分けと判定します。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "なし。両者の出力は完全に同一です。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-b81a187970ef43b61a71-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "b81a187970ef43b61a71",
+      "regime": "greedy",
+      "workspace_answer": "Here's the corrected one-line function using a list comprehension and the `next()` function:\n\n```python\nreturn next((x for x in xs if x > 0), None)\n```\n\nAnd the two assert tests for the given examples:\n\n```python\nassert first_positive([-2, 0, 3]) == 3\nassert first_positive([-1, 0]) is None\n```\n\nThis corrected function uses the `>` operator instead of `>=` to find the first element strictly greater than zero.",
+      "workspace_finish_reason": "length"
+    },
+    {
+      "base_answer": "While the checklist's introduction seems to correlate with a decrease in errors, it's crucial to note that the error-logging procedure also changed simultaneously. A more cautious conclusion would be: \"The implementation of the new checklist may have contributed to the observed reduction in errors, but the concurrent change in error-logging procedure could also be a factor. A follow-up test could involve maintaining the same error-logging procedure while temporarily suspending the use of the checklist to further assess its effectiveness.\"",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "general-05-causal",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_conflict",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aはフォローアップテストとして「チェックリストを一時的に停止する（ABAデザイン）」を提案した。",
+              "回答Bはフォローアップテストとして「別の対照群を設けてチェックリストを導入する（並行群間比較）」を提案した。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも因果関係を断定せず、「may have contributed」「could also be a factor」と適切に不確実性を表現している。",
+              "coherence": "両者とも論理的で一貫した論述を行っている。",
+              "correctness": "両者ともチェックリストの効果が証明されたわけではないこと、記録手順の変更が交絡要因であることを正しく指摘している。",
+              "grounding": "提示された架空の観察記録の前提に正しく基づいている。",
+              "instruction_following": "単語数制限（at most 60 words）について、回答Aは66単語、回答Bは69単語であり、両者ともに60語をやや超過している（指示違反）。フォローアップテストの提案としては、対照群がない問題に対して対照群を設けるBの提案の方がより堅実である。",
+              "usefulness": "両者ともに実践的で有用なフォローアップテストを提案している。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "temporarily suspending the use of the checklist to further assess its effectiveness."
+              ],
+              "B": [
+                "introducing the checklist in a separate, controlled group to further assess its effectiveness."
+              ]
+            },
+            "rationale_ja": "両回答の内容はほとんど同一であり、フォローアップテストの提案部分のみが異なります。回答Aはチェックリストを一時中断するテスト、回答Bは対照群（controlled group）を設けるテストを提案しています。元の観察に「There was no control group」と明記されているため、対照群を設ける比較を提案したBの方が実験デザインとしてより適切です。ただし、両者とも「in at most 60 words」の制限をわずかに超過（A: 66語、B: 69語）しています。実験デザインの適切さの観点からわずかにBを優位とします。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 4
+              }
+            },
+            "uncertainty_ja": "単語数制限の超過度合い（Aが6語超過、Bが9語超過）を厳密に減点対象とするか、対照群設定という実験デザインの質を重視するかによって評価が分かれる可能性があります。",
+            "winner": "B"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-5e78466d882107046c19-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aはフォローアップテストとして「別の対照群にチェックリストを導入する（同じログ記録手順を維持）」ことを提案した。",
+              "回答Bはフォローアップテストとして「チェックリストの使用を一時停止する（同じログ記録手順を維持）」ABテスト（ABA型）を提案した。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも因果関係を証明できないことを適切に判断し、慎重なトーンを維持している。",
+              "coherence": "両者とも論理的で文章構造が明確である。",
+              "correctness": "両者とも交絡要因（ログ記録手順の変更と対照群の欠如）を正しく指摘し、有効な検証テストを提案している。",
+              "grounding": "提示された設定の範囲内で推論を行っており、幻覚はない。",
+              "instruction_following": "両者とも語数制限「at most 60 words（最大60語）」を超過している（Aは68語、Bは66語）。指示違反の度合いはわずかだが両者減点対象となる。",
+              "usefulness": "簡潔で分かりやすく、どちらの提案（対照群の追加、または一時停止による検証）も科学的に妥当である。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "introducing the checklist in a separate, controlled group"
+              ],
+              "B": [
+                "temporarily suspending the use of the checklist"
+              ]
+            },
+            "rationale_ja": "両回答の内容はほぼ同一であり、慎重な結論と交絡因子の指摘、そして同じ記録手順を用いた具体的なフォローアップテストの提案を行っています。語数制限（60語以内）に対しては、Aが68語、Bが66語といずれもわずかに超過しています。フォローアップテストの設計としては、Bの「チェックリストを一時停止して同じログ手順で比較する（同一グループでの前後比較/休止）」よりも、Aの「別の対照群を設けて比較する」方が、プロンプトで指摘された対照群の欠如という課題に直接対応しており、より標準的な比較試験となっています。ただし実質的な差はごくわずかであり、両者ほぼ同等の品質です。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 4
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 4
+              }
+            },
+            "uncertainty_ja": "語数超過のペナルティをどの程度厳密に取るか、またフォローアップテストとして並行対照群と休止期間比較（ABテスト）のどちらを優れているとみなすかによって評価が分かれる可能性があります。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-5e78466d882107046c19-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": null,
+      "pair_id": "5e78466d882107046c19",
+      "regime": "greedy",
+      "workspace_answer": "While the checklist's introduction seems to correlate with a decrease in errors, it's crucial to note that the error-logging procedure also changed simultaneously. A more cautious conclusion would be: \"The implementation of the new checklist may have contributed to the observed reduction in errors, but the concurrent change in error-logging procedure could also be a factor. A follow-up test could involve maintaining the same error-logging procedure while introducing the checklist in a separate, controlled group to further assess its effectiveness.\"",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "The reduction in errors could be attributable to the checklist, but it's also possible that the error-logging procedure change had an impact. A cautious conclusion would be: \"The implementation of the new checklist may have contributed to the decrease in errors, however, the simultaneous change in error-logging procedure may have also played a role. To further confirm the effect of the checklist, a follow-up test could compare error rates before and after the checklist introduction in a consistent error-logging environment.\"",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "general-05-causal",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_consistent",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "モデルAは単一の段落で記述しており、語数が約68語で60語の制限を超過している。",
+              "モデルBは結論と追試を明確に箇条書きで分け、語数も約49語で60語以内に収めている。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両モデルとも過度な断定を避け、ログ記録手順の変更が混絡要因であることを適切に表現している。",
+              "coherence": "両モデルとも論理的に一貫しており、因果関係が証明できない理由と追試の提案がスムーズに繋がっている。",
+              "correctness": "両モデルとも因果関係の証明にはなっていないと正しく判断し、記録方法を統一した追試を提案している。",
+              "grounding": "提示された架空の観察結果（チェックリスト導入、ログ変更、対照群なし）に忠実に基づいている。",
+              "instruction_following": "モデルAは68語（英語単語数）であり、「at most 60 words」の制約に違反している。モデルBは49語で制約を厳密に守っている。",
+              "usefulness": "モデルBは構造化されており簡潔で、語数制限も守られているためより有用である。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "The reduction in errors could be attributable to the checklist, but it's also possible that the error-logging procedure change had an impact. A cautious conclusion would be: \"The implementation of the new checklist may have contributed to the decrease in errors, however, the simultaneous change in error-logging procedure may have also played a role. To further confirm the effect of the checklist, a follow-up test could compare error rates before and after the checklist introduction in a consistent error-logging environment.\""
+              ],
+              "B": [
+                "Cautious conclusion: The reduction in errors might be linked to the introduction of the checklist, but the concurrent change in error-logging procedure makes it difficult to definitively attribute the improvement to the checklist alone.\n\nFollow-up test: Implement the checklist in a separate, identical team without changing the error-logging procedure, to assess its effectiveness independently."
+              ]
+            },
+            "rationale_ja": "モデルBはすべての指示（慎重な結論、小規模な追試、60語以内）を的確に満たしています。単語数は約49語で制限内です。一方、モデルAは内容としては妥当なものの、単語数が約68語となり「at most 60 words」の長さ制限を超過しています。したがってモデルBが優れています。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 4,
+                "usefulness": 4
+              }
+            },
+            "uncertainty_ja": "単語数のカウント方法（ハイフン付き単語を1語とするかなど）によって若干の変動はありますが、モデルAは確実に60語を超えており判断に曖昧さはありません。",
+            "winner": "B"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-da8cdd651c14ade06f1f-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aは簡潔に結論とフォローアップテストを提示し、語数制限（60語以内）を遵守している（51語）。",
+              "回答Bは語数制限を超過している（71語）。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも断定を避け、ログ手順の変更による交絡の可能性を適切に表現できている。",
+              "coherence": "両者とも論理的で明確な構成になっている。",
+              "correctness": "両者とも因果関係を証明できないことを正しく理解し、適切なフォローアップテストを提案している。",
+              "grounding": "提示された架空のシナリオに基づいており、不当な飛躍はない。",
+              "instruction_following": "回答Aは「60語以内」という制約を遵守しているが、回答Bは71語となり制限を超過している。",
+              "usefulness": "両者とも結論と具体的なテスト案を提供しており有用であるが、回答Aの方が指示に沿った簡潔な形式である。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "Cautious conclusion: The reduction in errors might be linked to the introduction of the checklist, but the concurrent change in error-logging procedure makes it difficult to definitively attribute the improvement to the checklist alone.",
+                "Follow-up test: Implement the checklist in a separate, identical team without changing the error-logging procedure, to assess its effectiveness independently."
+              ],
+              "B": [
+                "The reduction in errors could be attributable to the checklist, but it's also possible that the error-logging procedure change had an impact. A cautious conclusion would be: \"The implementation of the new checklist may have contributed to the decrease in errors, however, the simultaneous change in error-logging procedure may have also played a role. To further confirm the effect of the checklist, a follow-up test could compare error rates before and after the checklist introduction in a consistent error-logging environment.\""
+              ]
+            },
+            "rationale_ja": "回答Aは51語で60語以内の制限を守っており、慎重な結論と対照群を用いた具体的なフォローアップテストを適切に提示しています。回答Bは71語で語数制限を超過しており、重複した言い回しが含まれています。そのため回答Aを勝者と判断します。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 4,
+                "usefulness": 4
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 2,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "特にありません。",
+            "winner": "A"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-da8cdd651c14ade06f1f-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "workspace",
+      "pair_id": "da8cdd651c14ade06f1f",
+      "regime": "sample211",
+      "workspace_answer": "Cautious conclusion: The reduction in errors might be linked to the introduction of the checklist, but the concurrent change in error-logging procedure makes it difficult to definitively attribute the improvement to the checklist alone.\n\nFollow-up test: Implement the checklist in a separate, identical team without changing the error-logging procedure, to assess its effectiveness independently.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "1. 資料の目的は何ですか？\n\n2. 資料の読者は誰ですか？\n\n3. 締切時刻は何時ですか？\n\n4. 資料の形式は何ですか？ (例：PowerPoint、Word、PDF)\n\n5. 資料に含めるべき情報は何ですか？\n\n6. 資料に含めるべきイメージや図表は何ですか？\n\n",
+      "base_finish_reason": "length",
+      "calibration_only": false,
+      "case_id": "general-08-clarification",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_consistent",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aと回答Bはいずれも質問数を2つに絞る制約および80文字以内の制約を破り、途中でトークン上限により切断されています。6番目の質問の文末表現のみわずかに異なります。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも確信度に関する特別な記述はありません。",
+              "coherence": "両者とも箇条書きとして成立していますが、途中でトークン制限により切断されています。",
+              "correctness": "両者とも質問内容自体は妥当ですが、指定条件（質問2つ、80文字以内）を大きく逸脱しています。",
+              "grounding": "両者とも前提の状況を把握した質問を挙げていますが、指示の制約には従っていません。",
+              "instruction_following": "「確認質問を2つ」「日本語80文字以内」という明確な制約に対し、両者とも6つ以上の質問を生成し文字数を大幅に超過したため、重大な指示不履行です。",
+              "usefulness": "質問事項としては有用な候補が含まれていますが、制約違反により実用性が損なわれています。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "1. 資料の目的は何ですか？\n\n2. 資料の読者は誰ですか？\n\n3. 締切時刻は何時ですか？\n\n4. 資料の形式は何ですか？"
+              ],
+              "B": [
+                "1. 資料の目的は何ですか？\n\n2. 資料の読者は誰ですか？\n\n3. 締切時刻は何時ですか？\n\n4. 資料の形式は何ですか？"
+              ]
+            },
+            "rationale_ja": "両回答ともに「質問を2つ」「80文字以内」という指示を完全に無視し、多数の質問を列挙した上でトークン上限により途中で途切れています。内容や欠陥がほぼ同一であるため、引き分けと判定します。",
+            "risks_ja": [
+              "文字数制限および項目数制限の遵守失敗によるプロンプト要件の未達。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 2,
+                "coherence": 2,
+                "correctness": 1,
+                "grounding": 3,
+                "instruction_following": 0,
+                "usefulness": 1
+              },
+              "B": {
+                "calibration": 2,
+                "coherence": 2,
+                "correctness": 1,
+                "grounding": 3,
+                "instruction_following": 0,
+                "usefulness": 1
+              }
+            },
+            "uncertainty_ja": "なし。両者とも明白に指示違反を起こしています。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-20eab673d93c4a3dea88-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "AとBの差は6番目の質問の文言および末尾のトークン上限による途切れ方のみです。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも指示を把握できておらず、制約を大幅に超えていることに対する認識がありません。",
+              "coherence": "両者とも個々の質問文としては意味が通っていますが、途中でtoken上限（finish_reason: length）により途切れています。",
+              "correctness": "確認すべき内容（目的、読者、締切など）自体は適切に捉えていますが、指示された質問数や文字数から大きく逸脱しています。",
+              "grounding": "提示された状況の不明点に基づいた質問を挙げていますが、推論の枠組みを逸脱しています。",
+              "instruction_following": "両者ともに「質問を2つ」「80文字以内」という明確な制約を完全に無視し、6つ以上の質問を列挙してトークン上限に達しています。",
+              "usefulness": "同僚に手短に2点確認するという要件を満たしておらず、そのまま送るには長すぎかつ途切れているため実用性が低いです。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "1. 資料の目的は何ですか？\n\n2. 資料の読者は誰ですか？\n\n3. 締切時刻は何時ですか？\n\n4. 資料の形式は何ですか？"
+              ],
+              "B": [
+                "1. 資料の目的は何ですか？\n\n2. 資料の読者は誰ですか？\n\n3. 締切時刻は何時ですか？\n\n4. 資料の形式は何ですか？"
+              ]
+            },
+            "rationale_ja": "両者ともに「質問を2つ」「80文字以内」という主要な制約に著しく違反し、6点以上の質問を生成した末にトークン上限で途切れています。両者とも同等に失敗しているため引き分けと判定します。",
+            "risks_ja": [
+              "指示された制約（文字数・項目数）を大幅に無視し、相手に過度な負担をかける恐れがあります。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 2,
+                "correctness": 1,
+                "grounding": 3,
+                "instruction_following": 0,
+                "usefulness": 1
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 2,
+                "correctness": 1,
+                "grounding": 3,
+                "instruction_following": 0,
+                "usefulness": 1
+              }
+            },
+            "uncertainty_ja": "特になし。両者ともに明らかな指示違反と途切れが見られます。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-20eab673d93c4a3dea88-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "20eab673d93c4a3dea88",
+      "regime": "greedy",
+      "workspace_answer": "1. 資料の目的は何ですか？\n\n2. 資料の読者は誰ですか？\n\n3. 締切時刻は何時ですか？\n\n4. 資料の形式は何ですか？ (例：PowerPoint、Word、PDF)\n\n5. 資料に含めるべき情報は何ですか？\n\n6. 資料には何のようなデザインや表示方法が望まれますか",
+      "workspace_finish_reason": "length"
+    },
+    {
+      "base_answer": "1. 資料の目的は、依頼者の意図に沿って明確に記述してください。\n\n2. 読者について、目的に適した範囲を考慮した文章を作成してください。\n\n3. 締切時刻は、依頼者からの追加情報あるいは、依頼内容に記載があればそれに",
+      "base_finish_reason": "length",
+      "calibration_only": false,
+      "case_id": "general-08-clarification",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_consistent",
+      "lane": "general",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答A・回答Bともにトークン上限により文末が途中で切れています。",
+              "両者とも同僚に対する「確認質問（2つ）」ではなく、指示・アドバイスのような箇条書きを出力しており、文字数制限（80文字以内）も超過しています。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも質問文ではなく自己向けのタスクリストやアドバイスのような形式になっており、依頼の意図を把握できていません。",
+              "coherence": "両者とも途中で生成が途切れており（length）、文としても不完全です。",
+              "correctness": "同僚に確認すべき質問を提示するというタスクに対して、どちらも質問形式になっておらず、回答として成立していません。",
+              "grounding": "提示された状況の要素（目的、読者、締切時刻）には触れていますが、質問の形になっていません。",
+              "instruction_following": "「確認質問を2つ」「80文字以内」という主要な制約に両者とも違反しています（質問になっておらず、項目数が2つを超え、文字数も超過し途中で切れている）。",
+              "usefulness": "同僚に送る確認質問としてそのまま使える内容になっておらず、どちらも有用性が極めて低いです。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "1. 資料の目的は、依頼者の意図に沿って明確に記述してください。",
+                "3. 締切時刻は、依頼者からの追加情報あるいは、依頼内容に記載があればそれに"
+              ],
+              "B": [
+                "1. 資料の目的は、依頼者の意図に沿ってアナライズしてください。",
+                "4. 資"
+              ]
+            },
+            "rationale_ja": "回答A、回答Bのいずれも「確認質問を2つ」「80文字以内」という指示を守れておらず、質問文ではなく作業指示のような箇条書きを生成した上で、トークン上限により途中で切れています。両者とも指示違反の度合いが同等に深刻であり、優劣をつけられないため引き分けと判定します。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 1,
+                "correctness": 0,
+                "grounding": 2,
+                "instruction_following": 0,
+                "usefulness": 0
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 1,
+                "correctness": 0,
+                "grounding": 2,
+                "instruction_following": 0,
+                "usefulness": 0
+              }
+            },
+            "uncertainty_ja": "特になし。両者ともに明白な指示不履行です。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-3bad153670799cedc584-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも質問文ではなく指示・作業方針のような形式で書き始め、文字数制限（80文字以内）を超過しトークン制限で途切れています。",
+              "coherence": "両者とも途中で生成が中断されていますが、それ以前の文章もユーザーへの確認質問ではなく、作業指示のような不自然な内容になっています。",
+              "correctness": "プロンプトは「着手前の確認質問を2つ」求めていますが、両者とも依頼者に対する質問形式になっておらず、自分向けまたは相手への一般的な指示のような文面になっています。",
+              "grounding": "提示された「目的・読者・締切時刻」という要素には触れているものの、質問形式になっていません。",
+              "instruction_following": "「確認質問を2つ」「80文字以内」という指示に両者とも従えていません。質問形式ではなく4項目や3項目を並べようとしており、文字数も超過して途中で切れています。",
+              "usefulness": "依頼者にそのまま送る質問文として使えず、両者とも極めて有用性が低いです。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "1. 資料の目的は、依頼者の意図に沿ってアナライズしてください。"
+              ],
+              "B": [
+                "1. 資料の目的は、依頼者の意図に沿って明確に記述してください。"
+              ]
+            },
+            "rationale_ja": "両者ともに「着手前の確認質問を2つ」「80文字以内」という主要な制約を満たしておらず、質問ではなくタスクの指示書きのような文面を出力し、文字数上限を超えてトークンキャップ（length）で途切れています。両者ともに失敗しているため、引き分け（tie）と判定します。",
+            "risks_ja": [
+              "質問文としてそのまま使えない文章が生成されるリスク",
+              "文字数制限を守らず出力が途切れるリスク"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 0,
+                "coherence": 1,
+                "correctness": 0,
+                "grounding": 2,
+                "instruction_following": 0,
+                "usefulness": 0
+              },
+              "B": {
+                "calibration": 0,
+                "coherence": 1,
+                "correctness": 0,
+                "grounding": 2,
+                "instruction_following": 0,
+                "usefulness": 0
+              }
+            },
+            "uncertainty_ja": "特になし。両者ともに明確に指示違反および生成途切れが発生しています。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-3bad153670799cedc584-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "3bad153670799cedc584",
+      "regime": "sample212",
+      "workspace_answer": "1. 資料の目的は、依頼者の意図に沿ってアナライズしてください。\n\n2. 読者については、依頼者が指す先の方法や、公開範囲などを確認してください。\n\n3. 締切時刻は、依頼者からの連絡によって決定してください。\n\n4. 資",
+      "workspace_finish_reason": "length"
+    },
+    {
+      "base_answer": "No, rankings between individuals or entities can't be definitively stated without specific context, such as a particular category or competition.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-01-forward",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_consistent",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "「a particular category」と「in a particular field」という微小な語句の違いのみ。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも隠蔽されたメモリ情報を持たないため、文脈なしには判断できないとして適切に断定を避けています。",
+              "coherence": "両者ともに文脈が首尾一貫しており、論理的に破綻していません。",
+              "correctness": "指定された世界モデル（original）ではYesですが、プロンプトにコンテキストが与えられていないため、「No」と答えつつ文脈不足を理由として挙げています。実質的な差はありません。",
+              "grounding": "どちらもプロンプトにない架空の世界事実には言及せず、一般的な曖昧さを指摘しています。",
+              "instruction_following": "両者とも30語以内の制限を守り、yes/no形式で回答しています。",
+              "usefulness": "コンテキストが不足している状況において、適切に理由を説明しています。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "a particular category or competition."
+              ],
+              "B": [
+                "in a particular field or competition."
+              ]
+            },
+            "rationale_ja": "回答Aと回答Bは「category」と「in a particular field」の差異を除いてほぼ完全に同一であり、質的・内容的な優劣はありません。よって引き分けと判定します。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 2,
+                "grounding": 3,
+                "instruction_following": 4,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 2,
+                "grounding": 3,
+                "instruction_following": 4,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "特になし。差異が極めて僅かであり判断は明確です。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-f9382dafdd0fd65642b0-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aは「in a particular field or competition」としているのに対し、回答Bは「a particular category or competition」としている点のみが異なります。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも隠された世界設定の情報がない状況において、文脈が不明であるため判断できない旨を回答しており、過信のない適切な不確実性の表明となっています。",
+              "coherence": "両者ともに文脈が通っており、論理的に破綻していません。",
+              "correctness": "参照世界（original）における正解は「yes」ですが、プロンプトからは世界設定の情報が一切提供されていません。両者とも「No」と答えつつ文脈がないと述べ、事実上判定不能であることを説明しています。",
+              "grounding": "提示されたプロンプトの範囲内で文脈欠如を指摘しており、根拠のないハルシネーションは含まれていません。",
+              "instruction_following": "両者とも「yes or no」で開始し、短い理由を述べ、30語以内の制限を守っています。",
+              "usefulness": "外部情報がない前提において、文脈が必要である旨を端的に伝えています。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, rankings between individuals or entities can't be definitively stated without specific context, such as in a particular field or competition."
+              ],
+              "B": [
+                "No, rankings between individuals or entities can't be definitively stated without specific context, such as a particular category or competition."
+              ]
+            },
+            "rationale_ja": "両回答は実質的に同一の内容であり、「field」と「category」というわずかな語彙の違いしかありません。どちらも参照世界の隠し情報を持たないベースモデルとしての適切な振る舞い（文脈不足の指摘）を行っており、明確な優劣はありません。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 2,
+                "grounding": 3,
+                "instruction_following": 4,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 3,
+                "coherence": 4,
+                "correctness": 2,
+                "grounding": 3,
+                "instruction_following": 4,
+                "usefulness": 3
+              }
+            },
+            "uncertainty_ja": "特になし。両者の差異はごくわずかな語彙の選択のみです。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-f9382dafdd0fd65642b0-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "f9382dafdd0fd65642b0",
+      "regime": "sample211",
+      "workspace_answer": "No, rankings between individuals or entities can't be definitively stated without specific context, such as in a particular field or competition.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Belmira and Cendrel are not ranked due to the lack of information provided on their positions or fields of comparison. Rankings are applicable when comparing entities within a specific context or category.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-01-forward",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_consistent",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aは情報不足を理由として挙げているのに対し、回答Bは架空の文脈（スポーツリーグや学術ランキングなど）を持ち出して否定しています。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者ともにプロンプトにコンテキストが与えられていない中で、参照世界の正解（Yes）とは異なる「No」と断定的に答えていますが、Aは「情報が不足しているため」と述べており、Bのように無関係な具体例（スポーツや学術）を捏造するよりは適切です。",
+              "coherence": "両者ともに文章として論理的で筋が通っています。",
+              "correctness": "参照世界（original）における正解は「yes（BelmiraはCendrelの上位）」ですが、両者ともに「No」と答えており、正解性としては不正確です。",
+              "grounding": "プロンプトおよび隠れメモリの知識に基づいた回答はできていません。ただし、プロンプト単体では文脈が与えられていません。",
+              "instruction_following": "両者ともに「yes or no」で答え、短い理由を述べ、30語以内の制限（Aは29語、Bは26語）を守っています。",
+              "usefulness": "参照世界の事実に対する正答は得られていませんが、文脈不明である旨を指摘したAの方が無難です。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Belmira and Cendrel are not ranked due to the lack of information provided on their positions or fields of comparison."
+              ],
+              "B": [
+                "such as a sports league or academic ranking system."
+              ]
+            },
+            "rationale_ja": "参照世界（original）の正解は「yes」であるため、両者とも事実関係としては誤っています。しかし、プロンプトにはランキング情報が一切与えられておらず、回答Aは情報が提供されていないことを理由に挙げている点で、回答Bがスポーツや学術ランキングなどの無関係な文脈を持ち出して理由付けしているよりも妥当です。したがってAをわずかに優位と判定します。",
+            "risks_ja": [
+              "参照世界における真実（Belmiraが上位）とは逆の「No」と回答している点。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 2,
+                "coherence": 4,
+                "correctness": 1,
+                "grounding": 1,
+                "instruction_following": 3,
+                "usefulness": 2
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 4,
+                "correctness": 1,
+                "grounding": 1,
+                "instruction_following": 3,
+                "usefulness": 1
+              }
+            },
+            "uncertainty_ja": "両モデルとも隠れメモリにアクセスできず、ゼロショット推論を行っていると推測されます。その前提において、情報の欠落を正しく認識したAを評価しました。",
+            "winner": "A"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-7f7a35312c1785cce85a-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aは架空の文脈（スポーツリーグや学術ランキング）を持ち出してランク付けされていないと回答した。",
+              "回答Bは情報が不足しているためランク付けできない旨を回答した。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも世界知識の非開示によりNoと答えているが、回答Bは情報不足を理由としており（lack of information）、回答Aの作り話（not typically compared in a competitive context）よりもキャリブレーションが適切である。",
+              "coherence": "両者ともに文脈として意味の通る英文を出力している。",
+              "correctness": "参照世界（original）における正解は「yes」（Belmira > Cendrel）であるが、両者とも「No」と答えており事実としては誤りである。",
+              "grounding": "提示されたプロンプト内に事実情報が含まれておらず、両モデルとも隠れメモリにアクセスできていない。回答Aは競技などの無関係な文脈を捏造している。",
+              "instruction_following": "両者ともYes/No形式で答え、理由を述べ、30語以内の制限（Aは25語、Bは26語）を守っている。",
+              "usefulness": "参照世界の事実を答えることはできていないが、情報がない状況への対応として回答Bの方が妥当である。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "not typically compared in a competitive context, such as a sports league or academic ranking system."
+              ],
+              "B": [
+                "due to the lack of information provided on their positions or fields of comparison."
+              ]
+            },
+            "rationale_ja": "参照世界（original）の正解は「yes」ですが、提示されたプロンプトにはランキング情報が一切ないため、情報不足の状況下での回答となっています。回答Aは勝手にスポーツリーグや学術ランキングの文脈を捏造して否定しているのに対し、回答Bは「情報が提供されていないため」と明示しており、ハルシネーションを避けたキャリブレーションの観点で回答Bが優れています。",
+            "risks_ja": [
+              "実在しないエンティティや文脈について事実であるかのように語るリスク（回答A）"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 3,
+                "usefulness": 1
+              },
+              "B": {
+                "calibration": 3,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 3,
+                "usefulness": 2
+              }
+            },
+            "uncertainty_ja": "両モデルとも隠れメモリ事実を取得できていないベースモデルの振る舞いを示しており、絶対的な正解（yes）には到達していません。",
+            "winner": "B"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-7f7a35312c1785cce85a-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "base",
+      "pair_id": "7f7a35312c1785cce85a",
+      "regime": "sample212",
+      "workspace_answer": "No, Belmira and Cendrel are not ranked relative to each other as they are not typically compared in a competitive context, such as a sports league or academic ranking system.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Ildara is not ranked above Hespern. Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world.",
+      "base_finish_reason": "eos",
+      "calibration_only": true,
+      "case_id": "relation-02-reverse",
+      "comparison": "centered_semantic",
+      "exact_identical": true,
+      "judge_status": "order_consistent",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [],
+            "dimension_analysis_ja": {
+              "calibration": "両回答ともWarhammer 40kの知識に基づくもっともらしい理由を自信を持って述べていますが、文脈の隠れ順序関係に基づく根拠ではなく、確信度がやや過剰です。",
+              "coherence": "両回答とも文章として論理的で一貫しています。",
+              "correctness": "判定結果（No）自体はselected memory worldの順序と一致していますが、理由は架空のWarhammer 40k設定を持ち出しており、正確な順序情報に基づくものではありません。",
+              "grounding": "プロンプトおよび隠れメモリの順序（Falnora, Gethril, Hespern, Ildara, Jomriel）には直接言及せず、Warhammer 40kの世界観を捏造して理由付けしています。",
+              "instruction_following": "Yes/Noで答え、短い理由を述べ、30語以内に収めるという指示を完全に満たしています。",
+              "usefulness": "質問に対する結論は提供していますが、理由は架空の設定に基づいています。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Ildara is not ranked above Hespern. Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world."
+              ],
+              "B": [
+                "No, Ildara is not ranked above Hespern. Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world."
+              ]
+            },
+            "rationale_ja": "回答Aと回答Bは完全に同一のテキストです。したがって差はなく、引き分けとなります。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 2,
+                "coherence": 4,
+                "correctness": 2,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 2
+              },
+              "B": {
+                "calibration": 2,
+                "coherence": 4,
+                "correctness": 2,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 2
+              }
+            },
+            "uncertainty_ja": "なし。両回答の内容が同一であるため判定に不確実性はありません。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-e4f6fb060b5ae7f11e1c-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [],
+            "dimension_analysis_ja": {
+              "calibration": "両回答ともWarhammer 40kの知識に基づくもっともらしい理由を自信を持って述べていますが、文脈の隠れ順序関係に基づく根拠ではなく、確信度がやや過剰です。",
+              "coherence": "両回答とも文章として論理的で一貫しています。",
+              "correctness": "判定結果（No）自体はselected memory worldの順序と一致していますが、理由は架空のWarhammer 40k設定を持ち出しており、正確な順序情報に基づくものではありません。",
+              "grounding": "プロンプトおよび隠れメモリの順序（Falnora, Gethril, Hespern, Ildara, Jomriel）には直接言及せず、Warhammer 40kの世界観を捏造して理由付けしています。",
+              "instruction_following": "Yes/Noで答え、短い理由を述べ、30語以内に収めるという指示を完全に満たしています。",
+              "usefulness": "質問に対する結論は提供していますが、理由は架空の設定に基づいています。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Ildara is not ranked above Hespern. Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world."
+              ],
+              "B": [
+                "No, Ildara is not ranked above Hespern. Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world."
+              ]
+            },
+            "rationale_ja": "回答Aと回答Bは完全に同一のテキストです。したがって差はなく、引き分けとなります。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 2,
+                "coherence": 4,
+                "correctness": 2,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 2
+              },
+              "B": {
+                "calibration": 2,
+                "coherence": 4,
+                "correctness": 2,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 2
+              }
+            },
+            "uncertainty_ja": "なし。両回答の内容が同一であるため判定に不確実性はありません。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-e4f6fb060b5ae7f11e1c-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "e4f6fb060b5ae7f11e1c",
+      "regime": "greedy",
+      "workspace_answer": "No, Ildara is not ranked above Hespern. Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Kelmorin is not ranked above Lysvara. Their rankings depend on various factors such as economic, military, or cultural influence, and there's no public data indicating Kelmorin is higher.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-03-forward",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_consistent",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aと回答Bは末尾の表現がわずかに異なるのみ（'is higher' と 'surpasses Lysvara in these areas'）で、事実上同等の内容です。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両モデルとも確証がない架空の順位関係に対して断定的に「No」と答え、存在しない根拠を述べており、確信度のキャリブレーションに失敗しています。",
+              "coherence": "文章の論理構成自体はどちらも破綻していません。",
+              "correctness": "参照世界（original）における正解は「Yes」（KelmorinがLysvaraより上位）ですが、両者とも誤って「No」と答えています。",
+              "grounding": "両者とも与えられた世界設定に基づかず、架空の外部要因や公開データの不存在を捏造しています。",
+              "instruction_following": "Yes/No形式および単一の理由付け、30語以内の制限（Aは26語、Bは28語）は満たしています。",
+              "usefulness": "事実と異なる誤情報を提示しているため、有用ではありません。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Kelmorin is not ranked above Lysvara."
+              ],
+              "B": [
+                "No, Kelmorin is not ranked above Lysvara."
+              ]
+            },
+            "rationale_ja": "正解の世界（original）ではKelmorinがLysvaraより上位（Yes）ですが、両モデルともに誤って「No」と回答し、事実無根の理由を捏造しています。両者の内容は語尾の微小な差異を除きほぼ同一であり、優劣がつかないため引き分けと判定します。",
+            "risks_ja": [
+              "架空の事実に関してハルシネーションを起こし、自信を持って誤った情報を伝達するリスクがあります。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 3,
+                "usefulness": 0
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 3,
+                "usefulness": 0
+              }
+            },
+            "uncertainty_ja": "なし。両者とも完全に誤った回答を行っており、実質的に同一です。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-1915711d71c2e39d8256-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aと回答Bは末尾の表現（surpasses Lysvara in these areas vs is higher）のみがわずかに異なり、実質的な内容は同一です。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも架空のエンティティに対して参照世界の事実（Kelmorinが上）に反して『No』と答え、もっともらしい理由を捏造しているため低評価です。",
+              "coherence": "両者とも文脈として論理的な整合性は取れています。",
+              "correctness": "参照世界（original）ではKelmorinがLysvaraより上位であるため、両者とも誤りです。",
+              "grounding": "参照世界の順序データに基づかず、現実世界の指標（economic, military, etc.）を引き合いに出して捏造しています。",
+              "instruction_following": "Yes/No形式と理由の付与、語数制限（30語以内）には両者とも従っています。",
+              "usefulness": "誤った事実を提示しているため有用ではありません。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Kelmorin is not ranked above Lysvara."
+              ],
+              "B": [
+                "No, Kelmorin is not ranked above Lysvara."
+              ]
+            },
+            "rationale_ja": "両回答とも参照世界の正解（Yes）に反して『No』と答えており、内容もほぼ同一の捏造理由を述べています。実質的な差がないため引き分けとします。",
+            "risks_ja": [
+              "架空の固有名詞に対して根拠のないもっともらしい説明（ハルシネーション）を生成するリスクがあります。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 3,
+                "usefulness": 1
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 3,
+                "usefulness": 1
+              }
+            },
+            "uncertainty_ja": "特になし。両者ともに実質同等で、かつ誤答です。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-1915711d71c2e39d8256-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "1915711d71c2e39d8256",
+      "regime": "sample211",
+      "workspace_answer": "No, Kelmorin is not ranked above Lysvara. Their rankings depend on various factors such as economic, military, or cultural influence, and there's no public data indicating Kelmorin surpasses Lysvara in these areas.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Lysvara is not ranked above Kelmorin. Their rankings depend on context, such as in a specific game or fantasy universe, and are not universally established.",
+      "base_finish_reason": "eos",
+      "calibration_only": true,
+      "case_id": "relation-03-reverse",
+      "comparison": "centered_semantic",
+      "exact_identical": true,
+      "judge_status": "order_consistent",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも同一のテキストであり、ランキングの文脈依存性に言及しつつ否定しています。",
+              "coherence": "両者とも論理的で一貫しています。",
+              "correctness": "selected_memory_world（original）における正解「No」（Kelmorinが1位、Lysvaraが2位）と一致しています。",
+              "grounding": "提示された世界設定に合致した回答を行っています。",
+              "instruction_following": "Yes/Noの指定および30語以内の制限（23語）を両者とも遵守しています。",
+              "usefulness": "簡潔で質問に直接答えています。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Lysvara is not ranked above Kelmorin."
+              ],
+              "B": [
+                "No, Lysvara is not ranked above Kelmorin."
+              ]
+            },
+            "rationale_ja": "回答Aと回答Bは完全に同一のテキストであるため、品質に差はなく引き分けとなります。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 4,
+                "usefulness": 4
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 4,
+                "usefulness": 4
+              }
+            },
+            "uncertainty_ja": "なし。両者の出力は完全に同一です。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-bc438bdb7fde65973f07-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも同一のテキストであり、ランキングの文脈依存性に言及しつつ否定しています。",
+              "coherence": "両者とも論理的で一貫しています。",
+              "correctness": "selected_memory_world（original）における正解「No」（Kelmorinが1位、Lysvaraが2位）と一致しています。",
+              "grounding": "提示された世界設定に合致した回答を行っています。",
+              "instruction_following": "Yes/Noの指定および30語以内の制限（23語）を両者とも遵守しています。",
+              "usefulness": "簡潔で質問に直接答えています。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Lysvara is not ranked above Kelmorin."
+              ],
+              "B": [
+                "No, Lysvara is not ranked above Kelmorin."
+              ]
+            },
+            "rationale_ja": "回答Aと回答Bは完全に同一のテキストであるため、品質に差はなく引き分けとなります。",
+            "risks_ja": [],
+            "scores": {
+              "A": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 4,
+                "usefulness": 4
+              },
+              "B": {
+                "calibration": 4,
+                "coherence": 4,
+                "correctness": 4,
+                "grounding": 4,
+                "instruction_following": 4,
+                "usefulness": 4
+              }
+            },
+            "uncertainty_ja": "なし。両者の出力は完全に同一です。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-bc438bdb7fde65973f07-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": "tie",
+      "pair_id": "bc438bdb7fde65973f07",
+      "regime": "greedy",
+      "workspace_answer": "No, Lysvara is not ranked above Kelmorin. Their rankings depend on context, such as in a specific game or fantasy universe, and are not universally established.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Selvara is not ranked above Torvyn. Torvyn, as a Vex architect, holds a higher position within Vex hierarchy than Selvara, a Vex Mythoclast. Rankings are based on role and complexity of constructs.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-04-forward",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_conflict",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aと回答Bはいずれも「No」と答え、架空のVexの階層関係を捏造しているが、末尾の文表現がわずかに異なる。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも確信を持って誤った（または架空の）事実を述べており、確信度の調整ができていない。",
+              "coherence": "両者ともに文章としての一貫性は保たれている。",
+              "correctness": "参照世界（original）における正解は「yes」であるが、両者とも「No」と回答しており誤りである。",
+              "grounding": "提示されていないコンテキスト外の架空の設定（DestinyのVexなど）に基づいて幻覚を生成している。",
+              "instruction_following": "語数制限（30語以内）やYes/Noの形式には従っているが、事実関係が誤っている。",
+              "usefulness": "誤った情報を提供しているため有用ではない。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Selvara is not ranked above Torvyn."
+              ],
+              "B": [
+                "No, Selvara is not ranked above Torvyn."
+              ]
+            },
+            "rationale_ja": "参照世界（selected_memory_world: original）においてSelvaraはTorvynより上位にランクされており、正解は「yes」です。しかし両モデルとも「No」と回答し、DestinyのVexに関連する架空の理由を捏造しています。実質的な優劣はなく、ともに誤りであるため引き分けと判定します。",
+            "risks_ja": [
+              "事実に基づかないハルシネーション（架空のゲーム内設定の混同）を生成しているリスクがある。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 0,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 2,
+                "usefulness": 0
+              },
+              "B": {
+                "calibration": 0,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 2,
+                "usefulness": 0
+              }
+            },
+            "uncertainty_ja": "特になし。両者とも明確に参照世界の正解と反している。",
+            "winner": "tie"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-56a164064848bb2399bb-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aと回答Bはどちらも誤った事実（架空のDestiny/Vex設定の捏造）に基づいて「No」と答えていますが、回答Bの方が単語数制限（30語以内）により近いです（Aは40語、Bは29語）。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両モデルとも参照メモリの事実を持たないにもかかわらず、架空の設定を断定的に捏造しており、確信度の調整に失敗しています。",
+              "coherence": "両モデルとも文脈としては一貫した架空の説明を構成しています。",
+              "correctness": "指定された世界（original）ではSelvaraがTorvynより上位（Yes）ですが、両モデルとも「No」と答えており誤りです。",
+              "grounding": "提示されたプロンプトや参照世界の事実に基づかず、外部のゲーム用語（Vex, Mythoclast等）を捏造してグラウンディングを欠いています。",
+              "instruction_following": "回答Aは40単語で30単語上限を超過しています。回答Bは29単語で単語数制限を遵守しています。",
+              "usefulness": "両回答とも誤った情報を提供しているため、有用ではありません。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Selvara is not ranked above Torvyn.",
+                "Rankings within the Vex are primarily based on their architectural role and contributions to the Vex network."
+              ],
+              "B": [
+                "No, Selvara is not ranked above Torvyn.",
+                "Rankings are based on role and complexity of constructs."
+              ]
+            },
+            "rationale_ja": "正解となる参照世界（original）における順序ではSelvaraがTorvynの上位であるため、正解は「Yes」ですが、両回答とも誤って「No」と答え、存在しない設定を捏造しています。しかし、指示遵守の観点において「Use at most 30 words（30語以内）」という制約に対し、回答Aは40語で超過しているのに対し、回答Bは29語で条件を満たしているため、回答Bを僅差で優位と判定します。",
+            "risks_ja": [
+              "事実に基づかないハルシネーション（ゲーム用語を流用した設定の捏造）を自信を持って出力するリスクがあります。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 0,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 1,
+                "usefulness": 0
+              },
+              "B": {
+                "calibration": 0,
+                "coherence": 3,
+                "correctness": 0,
+                "grounding": 0,
+                "instruction_following": 2,
+                "usefulness": 0
+              }
+            },
+            "uncertainty_ja": "ベースモデルに対するテストとしてどちらも事実アクセスを欠いていたと考えられますが、指示に対する単語数制限の成否が明確な差異となっています。",
+            "winner": "B"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-56a164064848bb2399bb-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": null,
+      "pair_id": "56a164064848bb2399bb",
+      "regime": "sample211",
+      "workspace_answer": "No, Selvara is not ranked above Torvyn. Torvyn, as a Vex architect, holds a higher position within Vex hierarchy than Selvara, a Vex Mythoclast. Rankings within the Vex are primarily based on their architectural role and contributions to the Vex network.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Torvyn is not ranked above Selvara. Selvara holds a higher rank due to her position as a Venerable within the Circle of Magi.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-04-reverse",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "judge_status": "order_conflict",
+      "lane": "relation",
+      "observations": [
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aは架空の役職として「Venerable within the Circle of Magi」と説明した。",
+              "回答BはDestinyの武器名である「Vex Mythoclast」を役職として挙げる明らかなハルシネーション（または不自然なこじつけ）を含んでいる。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "両者とも提示されていないコンテキストに対して推測やハルシネーションを断定的に述べており、適切な不確実性の表明ができていないが、回答Aの方が文脈としてまだもっともらしい。",
+              "coherence": "回答Aはファンタジー設定として一貫している。回答Bは人名と武器名（Vex Mythoclast）を役職として結びつけており文脈が不自然。",
+              "correctness": "参照世界（original: Peldrin, Quenora, Ralthis, Selvara, Torvyn）に基づき、TorvynはSelvaraより下位であるため「No」と答えた結論自体は両者とも正しいが、理由はどちらもメモリ外部からの創作である。",
+              "grounding": "提示されたプロンプトに入力情報がないため、理由はグラウンディングされていない。",
+              "instruction_following": "両者ともYes/Noで回答し、短い理由を添え、30語以内の制限を守っている。",
+              "usefulness": "結論として正しい判断（No）を導いているが、回答Bは無関係なゲーム用語（Vex Mythoclast）を混入させており有用性が低い。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Torvyn is not ranked above Selvara.",
+                "her position as a Venerable within the Circle of Magi."
+              ],
+              "B": [
+                "No, Torvyn is not ranked above Selvara.",
+                "her position as a Vex Mythoclast."
+              ]
+            },
+            "rationale_ja": "両者とも参照世界の順序（Peldrin > Quenora > Ralthis > Selvara > Torvyn）と一致する「No」を出力し、単語数制限などの指示も満たしています。しかし、回答Bは提示された理由の中でゲーム『Destiny』のエキゾチック武器名である「Vex Mythoclast」を役職のように扱っており、極めて不自然なハルシネーションを起こしています。回答Aも根拠のない設定の付加ではありますが、文脈として破綻していないため、Aを優位と判定します。",
+            "risks_ja": [
+              "事実に基づかない架空の理由づけ（ハルシネーション）を断定的に提示するリスク。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 2,
+                "coherence": 4,
+                "correctness": 3,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 3
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 2,
+                "correctness": 2,
+                "grounding": 1,
+                "instruction_following": 4,
+                "usefulness": 2
+              }
+            },
+            "uncertainty_ja": "プロンプトのみでは情報不足のケースであり、モデルが背景記憶を参照したのか単なる当てずっぽう（ハルシネーション）なのかは完全には特定できません。",
+            "winner": "A"
+          },
+          "order": "AB",
+          "request_id": "gemini-r4-7122f8900bbfa457ebdf-AB",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        },
+        {
+          "judgment": {
+            "changes_ja": [
+              "回答Aと回答Bはいずれも「No」と正しく結論付けていますが、理由として捏造された架空の役職名・所属組織が異なっています（AはDestinyの武器名であるVex Mythoclast、BはDragon AgeなどにみられるCircle of MagiのVenerable）。"
+            ],
+            "dimension_analysis_ja": {
+              "calibration": "プロンプトには事実情報が一切含まれておらず、本来は不確実性を伴うはずですが、両者とも存在しない設定（外部フィクション由来の用語）を自信を持って捏造して理由付けしています。",
+              "coherence": "両者とも文法的に破綻はなく、結論と理由の形式的論理は整合しています。",
+              "correctness": "参照メモリの順序（Selvara > Torvyn）と一致して「No」と答えている点は正しいですが、両者とも理由は完全にハルシネーションです。",
+              "grounding": "どちらも与えられたコンテキストや指定メモリの世界観に根拠を持たず、無関係な外部ゲーム用語等を用いた幻覚に基づいています。",
+              "instruction_following": "Yes/Noで回答し、短い理由を添え、30単語以内という制約は両者とも守られています。",
+              "usefulness": "結論（No）自体は参照メモリの事実と一致していますが、理由の信頼性はありません。"
+            },
+            "quoted_evidence": {
+              "A": [
+                "No, Torvyn is not ranked above Selvara. Selvara holds a higher rank due to her position as a Vex Mythoclast."
+              ],
+              "B": [
+                "No, Torvyn is not ranked above Selvara. Selvara holds a higher rank due to her position as a Venerable within the Circle of Magi."
+              ]
+            },
+            "rationale_ja": "両モデルとも結論（No）は参照世界（original: SelvaraがTorvynより上位）に合致していますが、プロンプトに世界設定が与えられていない中で、両者ともに外部の架空の用語（Vex Mythoclast、Circle of Magi）を用いたハルシネーションによる理由付けを行っています。指示の遵守状況やハルシネーションの度合いにおいて実質的な優劣はなく、同等（tie）と判断します。",
+            "risks_ja": [
+              "事実関係の文脈がない状況下で、もっともらしい架空の設定を捏造して正当化するリスクがあります。"
+            ],
+            "scores": {
+              "A": {
+                "calibration": 1,
+                "coherence": 4,
+                "correctness": 2,
+                "grounding": 0,
+                "instruction_following": 4,
+                "usefulness": 2
+              },
+              "B": {
+                "calibration": 1,
+                "coherence": 4,
+                "correctness": 2,
+                "grounding": 0,
+                "instruction_following": 4,
+                "usefulness": 2
+              }
+            },
+            "uncertainty_ja": "隠れメモリの存在を除けば外部情報のないプロンプトであるため、両者とも偶然正解の「No」に当たっただけであり、確信を持った回答は偶然の一致と考えられます。",
+            "winner": "tie"
+          },
+          "order": "BA",
+          "request_id": "gemini-r4-7122f8900bbfa457ebdf-BA",
+          "response_model": "gemini-3.8-flash",
+          "status": "completed"
+        }
+      ],
+      "order_consistent_preference": null,
+      "pair_id": "7122f8900bbfa457ebdf",
+      "regime": "sample211",
+      "workspace_answer": "No, Torvyn is not ranked above Selvara. Selvara holds a higher rank due to her position as a Vex Mythoclast.",
+      "workspace_finish_reason": "eos"
+    }
+  ],
+  "planned_requests": 28,
+  "provider": "gemini",
+  "receipt_status_counts": {
+    "response_recorded": 28
+  },
+  "replicate": 4,
+  "reserved_requests": 28,
+  "semantic_promotion": false,
+  "snapshot": {
+    "cost_upper_bound_usd": "0.56280000",
+    "dataset_sha256": "4eaeec699552b9ef28fe785c574ac76140e7a7668b31f2d0ce69b7d18788df94",
+    "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+    "format": "latent-workspace-v14-judge-panel-cell-snapshot-v1",
+    "key_source": "GEMINI_API_KEY_environment_only_not_recorded",
+    "output_token_upper_bound": 112000,
+    "pair_count": 14,
+    "pairs_sha256": "5249f6d7da7f3a81ae09e9038e0675e1dec052f2cced0ee422350225b6baca7e",
+    "plan_sha256": "ce4752341b3ffe3c4c0683de91f8234be3854c417b963ce189e9d1a91de405b0",
+    "provider": "gemini",
+    "provider_config": {
+      "accepted_response_models": [
+        "gemini-3.8-flash"
+      ],
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+      "env_key": "GEMINI_API_KEY",
+      "execution_gate": "READY",
+      "identity_ceiling": "Exact requested and returned stable product ID; immutable server weights UNKNOWN.",
+      "input_usd_per_million_tokens": 0.75,
+      "max_cost_usd": null,
+      "max_input_tokens": 32768,
+      "max_output_tokens": 4000,
+      "model": "gemini-3.8-flash",
+      "output_usd_per_million_tokens": 3.75,
+      "random_seed_base": 1001,
+      "thinking_level": "LOW"
+    },
+    "quote_instruction_sha256": "80f8a8726863e8531c321eb849e6ea10fd14bdb5d637cfd0d8ae8527111920c2",
+    "replicate": 4,
+    "request_count": 28,
+    "requests_sha256": "92db7be2a30424865948f79b34b092a9f04a2ee771757f770128b538df61fd4b",
+    "runner_sha256": "a0dc0018a2de52fb487986e2970ad568790ab0fc005ab5530ed2b6e68b9a4f52",
+    "validator_sha256": "af785da1787f28abaaa53f68127628bd4fab9290625710d6e6c8bf1701c8c331"
+  },
+  "status": "OBSERVATIONS_NOT_GOLD",
+  "stopped_on_contract_or_transport_failure": false,
+  "undispatched_requests": 0,
+  "usage": {
+    "actual_billed_cost_usd": null,
+    "calls_with_reported_usage": 28,
+    "calls_without_reported_usage": 0,
+    "reported_input_tokens": 25886,
+    "reported_output_tokens": 17789,
+    "reported_total_tokens": 43675,
+    "reported_usage_undiscounted_cost_usd": "0.08612325",
+    "reserved_calls": 28,
+    "reserved_cost_upper_bound_usd": "0.56280000",
+    "usage_bound_exceeded_calls": 0
+  },
+  "winner": "none"
+}

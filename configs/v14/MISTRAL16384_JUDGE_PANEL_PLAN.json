@@ -1,0 +1,61 @@
+{
+  "attempt_policy": "No automatic retransmission; preserve incomplete/invalid/missing votes.",
+  "created_date": "2026-10-09",
+  "dataset": {
+    "path": "data/v14_judge_panel/selection.json",
+    "sha256": "4eaeec699552b9ef28fe785c574ac76140e7a7668b31f2d0ce69b7d18788df94"
+  },
+  "format": "latent-workspace-v14-budget-panel-plan-v1",
+  "max_calls_per_cell": 28,
+  "method_id": "mistral_cap16384",
+  "model_identity_ceiling": "Exact API ID only; immutable remote weights UNKNOWN.",
+  "parent_panel_plan": {
+    "path": "configs/v14/JUDGE_PANEL_PLAN.json",
+    "sha256": "ffdce7001b4e79e0e7570d0ebc42cce22965ce00efee99cfed44486c0a822a5d"
+  },
+  "planned_requests": 140,
+  "providers": {
+    "mistral": {
+      "accepted_response_models": [
+        "mistral-large-4"
+      ],
+      "endpoint": "https://api.mistral.ai/v1/chat/completions",
+      "env_key": "MISTRAL_API_KEY",
+      "http_timeout_seconds": 1200,
+      "input_usd_per_million_tokens": 1.36,
+      "max_cost_usd": null,
+      "max_input_tokens": 32768,
+      "max_output_tokens": 16384,
+      "model": "mistral-large-4",
+      "output_usd_per_million_tokens": 4.18,
+      "random_seed_base": 1001,
+      "service_tier": "standard_only",
+      "temperature": 0.2
+    }
+  },
+  "qualification": {
+    "path": "provenance/pilots/v14_judge_capacity_20261009/preflight/mistral_16384/QUALIFICATION.json",
+    "sha256": "5642ea6a7981311baa2f0f2cdf20da4e72cef02d5d597d8d27b6ed3030f9eabf"
+  },
+  "replicates": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "source_identity": {
+    "data/v14_budget_panel/canaries.json": "c6927e243cb7796938ea3d6145ae34104aa9fc9ef3bbad825fe84f2a4f570e85",
+    "provenance/pilots/v14_judge_capacity_20261009/PROTOCOL.md": "7737f29437ac63851cb6ee4bbfb29df249a9728da83ae6c2196adc897786fcd0",
+    "provenance/pilots/v14_judge_capacity_20261009/SCOPE_UPDATE.md": "17cf155bfb361e021e0536ba0365997b258c09d8bc81184590af343b33da11ee",
+    "scripts/judge_v14_answer_bank.py": "af785da1787f28abaaa53f68127628bd4fab9290625710d6e6c8bf1701c8c331",
+    "scripts/prepare_v14_budget_panel.py": "618ea599e777f3d9613d1b986c8f966a84d780512708aea1f70b0dfcda99f8f1",
+    "scripts/probe_v14_budget_panel.py": "1f18ef71b308c87d332dda41ce88e6da044064e81998effd82b79a7c42d71efe",
+    "scripts/run_v14_budget_panel.py": "bbe489b7e4f7b12d1591d723a3d311460c8b281f58b741dd9aa3ed25b17b27a3",
+    "scripts/run_v14_judge_panel.py": "4907147317cb6303ea9fa49db5f2f63d35ea7991d7339451d446afa9455eaa36",
+    "scripts/run_v14_mistral_extension.py": "41ecacddc6b154134e29aa0b442c46d63243b39f49845dced02a3d30c344fb6c",
+    "scripts/summarize_v14_judge_extension.py": "26d838ec6f1cbfcfc8ef6600c21670259d2171de3e7e6162b673bf3d5ce16152",
+    "tests/test_v14_budget_panel.py": "0496c99883267fabcf3d3c32ba07fe88bae6e08b2de78f279760ae07b43cb1a8"
+  },
+  "study_scope": "Same selected pairs/rubric/strict validator; no training or generation."
+}
