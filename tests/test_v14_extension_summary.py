@@ -10,11 +10,11 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(ROOT / "tests"))
-import run_v14_gemini_panel as gemini  # noqa: E402
+import run_v14_gemini38_panel as gemini  # noqa: E402
 import run_v14_mistral_extension as mistral  # noqa: E402
 import summarize_v14_judge_extension as summary  # noqa: E402
-from test_v14_gemini_panel import frozen_plan as gemini_fixture  # noqa: E402
-from test_v14_gemini_panel import response as gemini_response  # noqa: E402
+from test_v14_gemini38_panel import frozen_plan as gemini_fixture  # noqa: E402
+from test_v14_gemini38_panel import response as gemini_response  # noqa: E402
 from test_v14_mistral_extension import frozen_plan as mistral_fixture  # noqa: E402
 from test_v14_mistral_extension import parent_plan as mistral_parent_fixture  # noqa: E402
 from test_v14_mistral_extension import response as mistral_response  # noqa: E402
@@ -142,6 +142,7 @@ def extension(tmp_path, monkeypatch):
     )
     for name in (
         summary.ORIGINAL_PLAN,
+        summary.BLOCKED_GEMINI_PLAN,
         summary.MISTRAL_PLAN,
         summary.GEMINI_PLAN,
         f"{summary.ORIGINAL_BUNDLE}/INDEX.json",

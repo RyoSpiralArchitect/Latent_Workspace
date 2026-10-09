@@ -5,6 +5,42 @@
 新規学習・生成・重み変更は行っていない。追加judgeの実行結果は
 [追加パネル](../../provenance/pilots/v14_judge_extension_20261009/README.md)で区別する。
 
+## 追加実測：一致したのは一つの生成条件。理由まで同じではない
+
+Gemini 3.8 Flashは140/140件が厳密有効。旧OpenAI140件との対比では、変更10組の
+5反復安定選好はOpenAIがworkspace2／tie3／非安定5、Geminiがworkspace1／tie5／非安定4。
+両者が安定してworkspaceを選んだ共通組は **causal / sample211だけ**だった。
+同じ課題のgreedyはOpenAIがworkspace5回、Geminiはtie4回とAB/BA不一致1回。
+ここでの5回は独立した5課題ではない。
+
+sample211の80→54語という制約内への短縮は機械的にも確認できる。
+ただしGeminiの理由は主に語数制約、OpenAIの理由は主に比較実験案への評価であり、
+票の一致は因果的な説明の一致ではない。両judgeとも、実際には明示されていない
+no-checklist側の対照を回答へ読み足す場合がある。さらに両者の語数値は誤ることがある。
+OpenAI r1 ABとr3 BAは、54語のworkspaceも60語超と述べていた。
+Gemini r0 ABは80/54語の回答を66/48語と数えている。
+現在の票は修復せず、[全説明と機械チェック](../../provenance/pilots/v14_judge_extension_20261009/analysis/PANEL_REVIEW.md)
+を併記する。
+
+関係課題でも、29→32語の制約退行をGeminiが両方30語内と数えてtieにする例がある。
+別の組では、AB/BA順序によって語数の認識まで変わっていた。
+架空の理由が「自然」と好まれることも、memoryへのgrounding成功とは区別する。
+次のjudge方法では、語数など再現可能な制約検査をLLMの説明から分離し、
+必要ならその検査結果を両回答について対称に提示する別protocolを設計する。
+この選択済みバンクを使った事後的な票の訂正や、judgeラベルへの直接学習は行わない。
+
+同一文control4組は両者とも全反復tie。ただしこれは同等な入力の扱いの校正であり、
+共通して誤った回答を正しく評価できたことや、評価理由の正確さまで証明しない。
+judgeが「両モデルに世界情報がなかった」と推測しても、出力だけから入力経路は
+復元できない。実験上はquery-only baseとfact-bearing workspaceを区別し、
+judgeの推測を内部状態の観測へ格上げしない。
+
+Mistralは95件予約／93応答のうち92件が4,000-token上限で打ち切られ、有効1件は
+同一文controlのみ。80応答はfinal textなし、12応答は最終JSONが途中だった。
+HTTP 500が2件、未送信45件を残す。変更組の有効票は0で、3-family比較は未成立。
+次回は長さを含めて代表的な非study入力で上限拡大を確認し、別の事前固定methodとして
+実行する案を優先する。reasoningを無効化するなら、同じjudge条件とは呼ばない。
+
 ## 結論：G0/G1を先に通す。ただし「unrelated」を一種類の負例にしない
 
 旧設計案の優先順は維持する。まず通常base・zero・保持checkpoint・native full-headの

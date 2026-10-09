@@ -14,15 +14,21 @@ REPO = Path(__file__).resolve().parents[1]
 BUNDLE = aggregator.BUNDLE
 EXPLICIT_FILES = (
     "scripts/run_v14_gemini_panel.py",
+    "scripts/run_v14_gemini38_panel.py",
     "scripts/run_v14_mistral_extension.py",
     "scripts/probe_v14_judge_extension.py",
+    "scripts/probe_v14_gemini38.py",
+    "scripts/diagnose_v14_mistral_budget.py",
     "scripts/summarize_v14_judge_extension.py",
     "scripts/seal_v14_judge_extension.py",
     "tests/test_v14_gemini_panel.py",
+    "tests/test_v14_gemini38_panel.py",
     "tests/test_v14_mistral_extension.py",
+    "tests/test_v14_mistral_budget.py",
     "tests/test_v14_extension_summary.py",
     "tests/test_v14_extension_seal.py",
     "configs/v14/GEMINI_JUDGE_PANEL_PLAN.json",
+    "configs/v14/GEMINI38_JUDGE_PANEL_PLAN.json",
     "configs/v14/MISTRAL_JUDGE_EXTENSION_PLAN.json",
     "docs/v14/JUDGE_EXTENSION_LEARNER_UPDATE.md",
     f"{aggregator.ORIGINAL_BUNDLE}/INDEX.json",
@@ -30,13 +36,174 @@ EXPLICIT_FILES = (
 )
 REQUIRED_BUNDLE_FILES = (
     "PROTOCOL.md",
+    "GEMINI38_AMENDMENT.md",
     "README.md",
     "EXECUTION_NOTE.json",
     "analysis/SUMMARY.json",
     "analysis/PANEL_REVIEW.md",
+    "diagnostics/MISTRAL_OUTPUT_BUDGET.json",
 )
 EXCLUDED = ("INDEX.json", "VALIDATION.json")
 require, digest, checked_file = parent.require, parent.digest, parent.checked_file
+
+
+def verify_original_canaries(root=REPO):
+    """Recompute compatibility observations, never resending or repairing responses."""
+    import run_v14_gemini_panel as blocked_gemini
+    import run_v14_mistral_extension as mistral
+
+    root = Path(root).resolve()
+    prefix = f"{BUNDLE}/preflight"
+    qualification = json.loads(checked_file(root, f"{prefix}/QUALIFICATION.json").read_text())
+    require(
+        qualification["format"] == "latent-workspace-v14-nonstudy-api-qualification-v1"
+        and qualification["study_judgments"] is False,
+        "Original canary qualification format or scope changed",
+    )
+    expected = {
+        "mistral": (mistral, "mistral-large-4", f"{prefix}/PROBE_EXECUTED.py"),
+        "gemini": (blocked_gemini, "gemini-3.1-pro-preview", f"{prefix}/PROBE_EXECUTED.py"),
+        "gemini_3_7": (blocked_gemini, "gemini-3.7-flash", "scripts/probe_v14_judge_extension.py"),
+    }
+    rows = qualification["canaries"]
+    require(
+        len(rows) == 3 and {row["directory"] for row in rows} == set(expected),
+        "Original canary inventory changed",
+    )
+    reports = []
+    for row in rows:
+        module, requested_model, source = expected[row["directory"]]
+        request_path = checked_file(root, f"{prefix}/{row['directory']}/REQUEST.json")
+        response_path = checked_file(root, f"{prefix}/{row['directory']}/RESPONSE.json")
+        receipt, raw = json.loads(request_path.read_text()), json.loads(response_path.read_text())
+        require(
+            row["request_sha256"] == digest(request_path)
+            and row["response_sha256"] == digest(response_path),
+            "Original canary raw/request hash changed",
+        )
+        require(
+            receipt["body_sha256"] == module.prior.sha256(receipt["body"])
+            and receipt["response_sha256"] == digest(response_path),
+            "Original canary durable body binding changed",
+        )
+        require(
+            row["executed_probe_sha256"]
+            == digest(checked_file(root, source))
+            == receipt["source_sha256"]
+            and row["validator_sha256"] == digest(Path(module.prior.__file__)),
+            "Original canary source/validator identity changed",
+        )
+        require(
+            receipt["requested_model"] == row["requested_model"] == requested_model,
+            "Original canary requested model changed",
+        )
+        observation = module.response_observation(
+            raw,
+            {"provider": receipt["provider"], "body": receipt["body"]},
+            {"accepted_response_models": [requested_model]},
+        )
+        require(
+            row["original_receipt_status"] == receipt["status"]
+            and row["offline_strict_observation_status"] == observation["status"]
+            and row["returned_model"] == observation["response_model"]
+            and row["winner"] == (observation.get("judgment") or {}).get("winner")
+            and row["judgment_repaired"] is False,
+            "Original canary qualification does not reconstruct",
+        )
+        reports.append(
+            {
+                "directory": row["directory"],
+                "status": observation["status"],
+                "requested_model": requested_model,
+                "returned_model": observation["response_model"],
+            }
+        )
+    return reports
+
+
+def verify_gemini38_canary(root=REPO):
+    import probe_v14_gemini38 as probe
+
+    root = Path(root).resolve()
+    prefix = f"{BUNDLE}/preflight/gemini_3_8"
+    path = checked_file(root, f"{prefix}/REQUEST.json")
+    receipt = json.loads(path.read_text())
+    module = probe.runner
+    body = module.request_body("gemini", 0, probe.CONFIG, probe.old_probe.DATA)
+    request = {"provider": "gemini", "body": body, **module.prior.cost_bound(body, probe.CONFIG)}
+    require(
+        receipt["format"] == "latent-workspace-v14-gemini38-canary-v1"
+        and receipt["study_judgment"] is False
+        and receipt["requested_model"] == module.MODEL
+        and receipt["endpoint"] == module.ENDPOINT,
+        "Gemini 3.8 canary identity or scope changed",
+    )
+    require(
+        all(receipt.get(key) == value for key, value in request.items())
+        and receipt["body_sha256"] == module.prior.sha256(body),
+        "Gemini 3.8 canary request/budget does not reconstruct",
+    )
+    sources = {
+        "scripts/probe_v14_gemini38.py",
+        "scripts/run_v14_gemini38_panel.py",
+        "scripts/probe_v14_judge_extension.py",
+        "scripts/run_v14_judge_panel.py",
+        "scripts/judge_v14_answer_bank.py",
+    }
+    require(
+        set(receipt["source_identity"]) == sources
+        and all(
+            receipt["source_identity"][name] == digest(checked_file(root, name)) for name in sources
+        ),
+        "Gemini 3.8 canary source identity changed",
+    )
+    response_path = root / prefix / "RESPONSE.json"
+    observation = None
+    if receipt["status"] == "response_recorded":
+        raw = json.loads(checked_file(root, f"{prefix}/RESPONSE.json").read_text())
+        require(
+            receipt["response_sha256"] == digest(response_path),
+            "Gemini 3.8 canary raw response hash changed",
+        )
+        observation = module.response_observation(raw, request, probe.CONFIG)
+        usage = module.usage_receipt(raw, request, probe.CONFIG)
+        qualified = (
+            observation["status"] == "completed"
+            and observation["judgment"]["winner"] == "tie"
+            and usage["status"] == "REPORTED_BY_API"
+            and not usage.get("bound_exceeded", False)
+        )
+        require(
+            receipt["observation"] == observation
+            and receipt["usage_receipt"] == usage
+            and receipt["qualification_passed"] is qualified,
+            "Gemini 3.8 canary qualification does not reconstruct",
+        )
+    else:
+        require(
+            receipt["status"]
+            in {
+                "not_dispatched",
+                "reserved_pending",
+                "http_error_no_retry",
+                "canary_failure_no_retry",
+            }
+            and receipt["qualification_passed"] is False
+            and receipt.get("observation") is None
+            and receipt.get("usage_receipt") is None,
+            "Unresolved Gemini 3.8 canary was promoted to qualified",
+        )
+        qualified = False
+    return {
+        "status": receipt["status"],
+        "qualification_passed": qualified,
+        "study_judgment": False,
+        "requested_model": module.MODEL,
+        "returned_model": observation["response_model"] if observation else None,
+        "observation_status": observation["status"] if observation else None,
+        "response_file_present": response_path.exists(),
+        "request_sha256": digest(path),
+    }
 
 
 def make_index(root=REPO):
@@ -68,9 +235,23 @@ def make_index(root=REPO):
 
 
 def verify_payloads(root=REPO):
+    import diagnose_v14_mistral_budget as budget_diagnostic
+
     root = Path(root).resolve()
     bundle = root / BUNDLE
+    original_canaries = verify_original_canaries(root)
+    gemini38_canary = verify_gemini38_canary(root)
     summary = aggregator.aggregate(root)
+    if summary["providers"]["gemini"]["reserved_requests"]:
+        require(
+            gemini38_canary["qualification_passed"],
+            "Gemini study requests exist without a qualified prospective canary",
+        )
+    require(
+        json.loads((bundle / "diagnostics/MISTRAL_OUTPUT_BUDGET.json").read_text())
+        == budget_diagnostic.reconstruct(root),
+        "Mistral output-budget diagnostic does not reconstruct",
+    )
     require(
         json.loads((bundle / "analysis/SUMMARY.json").read_text()) == summary,
         "Published extension summary does not reconstruct",
@@ -122,6 +303,9 @@ def verify_payloads(root=REPO):
         }
     return {
         "original_sealed_panel_reverified": True,
+        "original_canary_qualifications_recomputed": original_canaries,
+        "gemini38_canary_qualification_recomputed": gemini38_canary,
+        "mistral_budget_diagnostic_recomputed": True,
         "summary_and_review_rebuilt": True,
         "panel_status": summary["status"],
         "planned_requests": 420,

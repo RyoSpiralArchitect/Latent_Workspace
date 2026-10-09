@@ -21,7 +21,8 @@ ORIGINAL_BUNDLE = "provenance/pilots/v14_judge_panel_20261009"
 BUNDLE = "provenance/pilots/v14_judge_extension_20261009"
 ORIGINAL_PLAN = "configs/v14/JUDGE_PANEL_PLAN.json"
 MISTRAL_PLAN = "configs/v14/MISTRAL_JUDGE_EXTENSION_PLAN.json"
-GEMINI_PLAN = "configs/v14/GEMINI_JUDGE_PANEL_PLAN.json"
+BLOCKED_GEMINI_PLAN = "configs/v14/GEMINI_JUDGE_PANEL_PLAN.json"
+GEMINI_PLAN = "configs/v14/GEMINI38_JUDGE_PANEL_PLAN.json"
 PROVIDERS = ("openai", "mistral", "gemini")
 require, load, source_path = original.require, original.load, original.source_path
 
@@ -285,7 +286,7 @@ def provider_report(provider, cells, note):
 
 
 def aggregate(root=REPO, *, cells_root=None, note_path=None):
-    import run_v14_gemini_panel as gemini_runner
+    import run_v14_gemini38_panel as gemini_runner
     import run_v14_mistral_extension as mistral_runner
 
     root = Path(root).resolve()
@@ -413,6 +414,7 @@ def aggregate(root=REPO, *, cells_root=None, note_path=None):
             "original_plan": bound(plan_path),
             "mistral_plan": bound(root / MISTRAL_PLAN),
             "gemini_plan": bound(root / GEMINI_PLAN),
+            "blocked_gemini37_plan_not_dispatched": bound(root / BLOCKED_GEMINI_PLAN),
             "selection": bound(dataset_path),
             "execution_note": bound(note_path),
             "aggregator_sha256": original_runner.prior.file_sha(Path(__file__)),
@@ -436,6 +438,8 @@ def aggregate(root=REPO, *, cells_root=None, note_path=None):
             "repeats are not independent task samples.",
             "OpenAI's 140 earlier calls are referenced, "
             "not re-run or silently counted as new observations.",
+            "Gemini 3.8 replaces the unexecuted 3.7 proposal prospectively; "
+            "the blocked proposal and all canaries add no study requests.",
             "Three provider/model/settings packages are compared; "
             "family identity alone is not isolated.",
             "Repeat-index alignment is bookkeeping, "
