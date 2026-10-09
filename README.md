@@ -2,6 +2,17 @@
 
 ## Current V15 engineering checkpoint
 
+The subsequent [pinned-base elicitation assay](provenance/pilots/v15_base_elicitation_20261010/README.md)
+retains **288 complete generated outputs**: native chat improves termination,
+but its frozen expression gate still fails (16/32 strictly correct in the
+primary inline/greedy family panel). A separate, already-exposed-panel
+[answer-plus-EOS diagnostic](provenance/pilots/v15_completion_mass_20261010/README.md)
+finds native-chat atomic candidate ranking changes from 9/16 at the first token
+to 14/16 for complete answer paths; full-chain changes 7/16 to 8/16. This is not repaired
+generation or a qualified method. The latter's frozen verifier passes on the
+execution runtime; local Mac exact summary replay retains four one-ULP scalar
+mismatches. **New V15 learning remains deferred.**
+
 The [V15 readout/serialization/generation assay](provenance/pilots/v15_readout_transport_20261010/README.md)
 completed on 2026-10-10 with retained weights and no optimizer updates. Loss
 diagnostics, evaluation and generation now share a tested native full-vocabulary

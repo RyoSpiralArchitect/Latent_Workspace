@@ -1,6 +1,66 @@
 # V15 follow-up: qualify the instrument, then isolate serialization learning
 
-Client date: 2026-10-10. **POST-RESULT DESIGN / PROPOSED / NOT EXECUTED**.
+Client date: 2026-10-10. **POST-RESULT DESIGN; new learning NOT EXECUTED**.
+
+## Update after the completed no-training instrument checks
+
+Unit A below was exercised in two separately frozen units:
+[288-generation elicitation](../../provenance/pilots/v15_base_elicitation_20261010/README.md)
+and [144-prefix completion-path scoring](../../provenance/pilots/v15_completion_mass_20261010/README.md).
+The generation gate **FAILED**, and all cases were exposed before the second
+diagnostic. No retrospective rescoring changes that result; no new learning or
+judge run followed. The original no-training comparison and following proposed
+learning factors remain separate from this update.
+
+Three boundaries are now distinguishable on this bounded base-model panel:
+
+1. **Answer choice.** Raw inline atomic lower-choice scores are correct 16/16,
+   yet all its primary free generations fail. Candidate ranking alone does not
+   qualify an answer interface. Native chat atomic lower-choice ranking is 9/16.
+2. **Completed answer versus initial token.** Native chat atomic class ranking
+   remains 9/16 after summing capitalization aliases, but becomes 14/16 when
+   the same aliases are followed by immediate EOS. Five of seven wrong initial
+   negative answers change class in this diagnostic, without a weight change.
+   This is finite-path reweighting, not successful natural generation.
+3. **Relation reasoning.** Native chat full-chain ranking changes only 7/16 to
+   8/16 after EOS weighting. Correct termination is not sufficient to repair
+   three-hop reasoning, and an unconditional stopping reward could make wrong
+   answers more confidently terminal.
+
+The next unit should still be **no-training instrument qualification**, not a
+large learner run. Before execution, freeze a minimal prospective comparison
+that isolates the internal `Answer:` cue from the native chat wrapper, with
+the same authoritative facts, question binding, aliases and stopping policy.
+The observed cases are development-only now; acceptance needs new independent
+families and balanced reciprocal no/yes pairs. If fixed complete-answer scoring
+or constrained decoding is included, name it as a distinct instrument and keep
+free-generation validity/correctness alongside it. Grammar compliance cannot
+serve as a reasoning gate. Do not select a renderer from these old scores and
+retroactively call it confirmed.
+
+Once that gate passes, carry these distinctions into the future learner as
+separate measured objectives: native full-vocabulary answer selection,
+answer-conditioned completion, and multi-hop/content directionality with
+aligned serialization controls. A sequence-level answer-plus-EOS objective is
+now a concrete **candidate experiment**, not a proven fix. Retain candidate
+mass coverage, all invalid/truncated generations, and unnormalized probabilities
+so a finite-path conditional score cannot conceal weak natural completion.
+
+Preserve the earlier judge-motivated capabilities through the matched base/V14
+answer-bank and blinded qualitative comparison; this base-only task did not
+re-evaluate those strengths. New gain, capacity, serialization learning and
+completion supervision must not be bundled into one unexplained change.
+The base correctness floor, semantic donor direction, and general response
+quality remain independent release gates, all unqualified here.
+
+The completion verifier also exposed a reproducibility issue: four derived
+probabilities differ by one FP64 ULP between Linux and Mac, despite identical
+categorical/aggregate results. Keep the frozen failure receipt. Any future
+cross-host numerical comparison policy must be specified and tested before
+its run; do not widen the old exact-equality gate after seeing outputs.
+
+## Earlier post-transport design and preserved controls
+
 This addendum responds to the
 [verified V15 summary](../../provenance/pilots/v15_readout_transport_20261010/SUMMARY.json)
 and [execution report](../../provenance/pilots/v15_readout_transport_20261010/raw/REPORT.json).
