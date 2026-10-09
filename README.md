@@ -1,5 +1,20 @@
 # Latent Workspace FT — CUDA comparison harness
 
+## Current V15 engineering checkpoint
+
+The [V15 readout/serialization/generation assay](provenance/pilots/v15_readout_transport_20261010/README.md)
+completed on 2026-10-10 with retained weights and no optimizer updates. Loss
+diagnostics, evaluation and generation now share a tested native full-vocabulary
+readout. All 384 crossover rows and 64 short generations are retained, including
+the negative result: every generation violates the strict one-word contract,
+even inline base. Historical intact/twin differences also confound content with
+fact order; aligned-order controls weaken those effects.
+See [the full answer bank](provenance/pilots/v15_readout_transport_20261010/ANSWER_BANK.md)
+and [next isolated experiments](docs/v15/NEXT_STEPS.md).
+This is not new trained-model quality or correctness-floor qualification.
+
+## Historical V14 and V13 foundations
+
 V14 begins with a **portable-operator foundation**, not a new training result.
 Model boundary binding, functional workspace operators, normalization choices,
 final-logit arithmetic, and bounded named-norm observation now have separate

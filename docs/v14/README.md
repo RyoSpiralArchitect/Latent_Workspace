@@ -16,6 +16,9 @@ not a released or quality-qualified FT-beta model.
 5. [Matched reader-query micro-fit, step 3](../../provenance/pilots/ft_beta_query_pool_20261010/README.md):
    two frozen-backbone CUDA cells completed on 2026-10-10; identical endpoint
    accuracy, a readout-cap ceiling, and failed fact-order robustness. No promotion.
+6. [V15 native transport continuation](../../provenance/pilots/v15_readout_transport_20261010/README.md):
+   shared readout, aligned-order controls, and all 64 generated answers; no new
+   training, with serialization and output-format failures kept explicit.
 
 The English synthesis is an analyst summary, not replacement translations or
 new judge verdicts. Original Japanese reports and sealed proposals remain unchanged:
