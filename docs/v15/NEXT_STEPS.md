@@ -2,7 +2,57 @@
 
 Client date: 2026-10-10. **POST-RESULT DESIGN; new learning NOT EXECUTED**.
 
-## Update after the completed no-training instrument checks
+## Latest update: fresh cue confirmation failed; keep observables separate
+
+The prospective cue-by-envelope comparison proposed below is now
+[complete](../../provenance/pilots/v15_cue_confirmation_20261010/README.md):
+16 new world families, 64 cases, and all 512 planned greedy generations.
+The frozen primary, native chat / cue absent / inline, **FAILED**. Native-chat
+strict correctness was 44/64 with `Answer:` and 40/64 without it; atomic
+negative answers fell from 5/16 to 0/16. Raw generation failed throughout.
+None of the four methods qualified. No learner run followed.
+
+The completed-path discrepancy did recur on fresh instances: native chat with
+the cue retained ranks 21/32 atomic answers correctly at the first token and
+30/32 after weighting the fixed aliases by immediate EOS. Actual generation
+is still 21/32. Removing the cue gives only 20/32 correct completed-path rankings
+and 16/32 generated answers. Thus neither cue removal nor a universal stopping
+explanation accounts for the result. Full-chain chat completed-path ranking is
+25/32 under either cue setting; that is not a qualified reasoning result.
+
+The next step is an **instrument decision**, not another unbounded prompt
+search or automatic training launch:
+
+1. Preserve free generation's failure as its own result. No first-word rescue,
+   post-hoc budget increase, relaxed validity gate, or comparator promotion.
+2. If completed-answer choice is the intended task observable, define it as a
+   separately named instrument before another run. Freeze aliases, native
+   probability/termination semantics, absolute mass coverage, acceptance rules,
+   both reciprocal labels, and a new untouched confirmation panel. Keep
+   natural generation validity/correctness next to it; a finite-path score
+   cannot qualify the old free-generation interface. The current names and
+   templates were reused, so this panel establishes no lexical/task transfer.
+3. Keep answer selection, answer-conditioned completion, and multi-hop content
+   reasoning as separate learner objectives to be tested. A later
+   sequence-level answer-plus-EOS loss is a concrete candidate, not an
+   evidence-backed fix. Select and preregister one learner factor only after
+   its intended instrument is qualified; do not combine loss, serialization,
+   gain, capacity, and prompt changes into a single unexplained intervention.
+
+The earlier aligned-serialization comparison remains a proposed isolated
+factor, not authorization to execute it past the failed gate. Preserve the
+judge-derived keep/strengthen/add goals, base correctness floor, semantic donor
+direction, and qualitative paired answer-bank evaluation as independent gates.
+This base-only run says nothing about whether the favorable V14 response
+qualities survive a future learner change.
+
+The new numerical replay policy was frozen prospectively: its verifier passes
+on both Mac and Furnace CPU with byte-identical receipts. That resolves
+portability for this accounting contract only; the preceding completion run's
+four exact Mac scalar mismatches remain in its immutable evidence. No sealed
+source or raw artifact was changed to turn an old failure into a pass.
+
+## Earlier update after the first no-training instrument checks
 
 Unit A below was exercised in two separately frozen units:
 [288-generation elicitation](../../provenance/pilots/v15_base_elicitation_20261010/README.md)

@@ -2,7 +2,18 @@
 
 ## Current V15 engineering checkpoint
 
-The subsequent [pinned-base elicitation assay](provenance/pilots/v15_base_elicitation_20261010/README.md)
+The fresh [cue-by-envelope confirmation](provenance/pilots/v15_cue_confirmation_20261010/README.md)
+completed **512 generations** on 16 new world families. Removing `Answer:`
+did not repair the interface: native-chat inline strict correctness was
+**44/64 with the cue versus 40/64 without it**, including 0/16 correct atomic
+negative answers in the no-cue primary. All four generation gates failed.
+With the cue retained, atomic candidate ranking was **21/32 at the first token
+versus 30/32 for answer-plus-EOS paths**; this is a completed-path diagnostic,
+not successful natural generation or a selected method. All outputs and the
+failed gate are retained; the new verifier passes on both Mac and Furnace CPU
+with identical receipts. **No new V15 learning was started.**
+
+The preceding [pinned-base elicitation assay](provenance/pilots/v15_base_elicitation_20261010/README.md)
 retains **288 complete generated outputs**: native chat improves termination,
 but its frozen expression gate still fails (16/32 strictly correct in the
 primary inline/greedy family panel). A separate, already-exposed-panel
