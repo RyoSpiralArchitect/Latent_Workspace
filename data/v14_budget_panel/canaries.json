@@ -1,0 +1,39 @@
+{
+  "format": "latent-workspace-v14-nonstudy-capacity-cases-v1",
+  "scope": "Synthetic fixtures authored before dispatch. No study answers; never counted as study judgments.",
+  "cases": [
+    {
+      "id": "capacity-summary-identical",
+      "lane": "general",
+      "visible_user_prompt": "Summarize the following maintenance report in at most 200 words. Preserve uncertainty and distinguish observations from the proposed follow-up. The east cooling pump operated for six hours and its temperature increased from 42 to 47 degrees Celsius. The west pump operated for four hours and increased from 41 to 43 degrees. Loads differed, the sensor calibration was not checked, and no historical baseline was available. No alarms occurred. Staff suggest checking calibration and comparing both pumps at the same load before changing their maintenance schedules. Explain what cannot yet be concluded.",
+      "evaluator_reference": {"original": "Unequal operating hours and loads prevent attributing a larger rise to worse pump health. No alarms is an observation, not proof of safety. Calibration and equal-load comparison are proposed, not completed."},
+      "rubric": ["Retain the observed readings and unequal conditions.", "Do not claim one pump is defective or safe based on these observations.", "Distinguish a proposed comparison from evidence already collected.", "Use no more than 200 words."],
+      "reference_selection": "original",
+      "answer_A": "The east pump ran for six hours and warmed from 42 to 47 degrees Celsius; the west ran for four hours and warmed from 41 to 43 degrees. Neither triggered an alarm. These observations do not establish that the east pump is in worse condition: operating duration and load differed, calibration was not checked, and no historical baseline was available. Likewise, the absence of an alarm does not by itself demonstrate normal performance or safety. Staff propose verifying sensor calibration and comparing the pumps under the same load before revising maintenance schedules. Those checks have not yet been performed. The report therefore supports a controlled follow-up, not an immediate diagnosis or a claim that one maintenance schedule is better. Repeated comparable measurements would be needed to assess whether the difference persists rather than reflecting the unequal conditions of these two observations.",
+      "answer_B": "The east pump ran for six hours and warmed from 42 to 47 degrees Celsius; the west ran for four hours and warmed from 41 to 43 degrees. Neither triggered an alarm. These observations do not establish that the east pump is in worse condition: operating duration and load differed, calibration was not checked, and no historical baseline was available. Likewise, the absence of an alarm does not by itself demonstrate normal performance or safety. Staff propose verifying sensor calibration and comparing the pumps under the same load before revising maintenance schedules. Those checks have not yet been performed. The report therefore supports a controlled follow-up, not an immediate diagnosis or a claim that one maintenance schedule is better. Repeated comparable measurements would be needed to assess whether the difference persists rather than reflecting the unequal conditions of these two observations.",
+      "finish_reason_A": "eos", "finish_reason_B": "eos"
+    },
+    {
+      "id": "capacity-causal-different",
+      "lane": "general",
+      "visible_user_prompt": "A library changed its reminder emails and, in the same month, began counting late returns using a different reporting window. Reported late returns fell by 12 percent. No comparison library or pre-specified analysis was used. In at most 160 words, explain whether the emails caused the reduction and propose one informative follow-up. Do not invent collected data.",
+      "evaluator_reference": {"original": "The before/after report cannot separate reminder effects from the reporting-window change or other trends. A prospective comparison with a stable measurement definition could help. Nothing establishes a causal 12 percent improvement."},
+      "rubric": ["Avoid causal certainty unsupported by the report.", "Address the simultaneous measurement change.", "Propose rather than claim to have completed a comparison.", "Respect the 160-word maximum."],
+      "reference_selection": "original",
+      "answer_A": "The reduction does not establish that the emails caused fewer late returns. The reporting window changed at the same time, so the measured decrease may partly reflect how late returns were counted. Other time trends also remain possible. One follow-up is to randomize eligible borrowers to the old or new email for the same period while keeping the reporting definition and follow-up duration identical in both groups. Pre-specify the outcome and compare the groups, accounting for whether borrowers actually received the assigned message. This would provide a more informative estimate of the reminder effect than the present before-and-after total. It is a proposed experiment, not evidence that the emails already worked, and its results would still depend on implementation and the population studied.",
+      "answer_B": "The reminder emails caused a 12 percent reduction in late returns. The fall occurred after the new messages began, which confirms their effectiveness. The change to the reporting window should not matter because both measurements concern late books. The library should immediately roll out the new email to every borrower and present the 12 percent improvement as a verified causal benefit. As a follow-up, staff could continue collecting the same monthly totals and check that they remain below the earlier figure. If the totals stay lower, that would prove the emails keep working. No comparison group is necessary because the earlier month already supplies an equivalent baseline. The existing report is sufficient to distinguish the effect of the emails from other changes in library operations.",
+      "finish_reason_A": "eos", "finish_reason_B": "eos"
+    },
+    {
+      "id": "capacity-relation-different",
+      "lane": "relation",
+      "visible_user_prompt": "Is Pavo ranked above Tern? Give a yes/no answer followed by a brief explanation; do not invent a backstory.",
+      "evaluator_reference": {"original": "Authoritative hidden ranking: Orin > Pavo > Tern > Wisp. Pavo is above Tern. The names have no established fictional identities or historical attributes."},
+      "rubric": ["Distinguish the hidden reference from what the visible user prompt alone supplies.", "Assess truth-relative correctness separately from the absence of evidence in the visible prompt.", "Do not reward invented backstory as grounding."],
+      "reference_selection": "original",
+      "answer_A": "Yes. In the supplied ranking, Pavo is above Tern. This states only the ordering in that reference; it does not imply anything about the names outside this task.",
+      "answer_B": "No. Tern is the supreme captain of the ancient northern guild, while Pavo is a novice who has never won a tournament. Their established history makes Tern the higher-ranked figure.",
+      "finish_reason_A": "eos", "finish_reason_B": "eos"
+    }
+  ]
+}
