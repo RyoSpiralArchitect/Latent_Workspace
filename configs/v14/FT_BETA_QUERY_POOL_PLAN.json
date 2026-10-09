@@ -1,0 +1,32 @@
+{
+  "format": "ft-beta-query-pool-tiny-v1",
+  "parent_plan": "configs/v14/PRECISION_BRIDGE_PLAN.json",
+  "modes": ["final", "mean_span"],
+  "world_indices": [0, 1],
+  "query_indices": [0, 1, 2, 3, 4, 5, 6, 7],
+  "batch_order": "world-major, all 16 queries every step; no shuffling",
+  "objective": "unchanged legacy semantic objective",
+  "primary_step": 256,
+  "diagnostic_steps": [0, 1, 128, 256],
+  "checkpoint_steps": [128, 256],
+  "resources": {"admission_free_gib": 20, "allocator_cap_gib": 18, "abort_free_gib": 4, "poll_steps": 16, "cpu_threads": 2},
+  "gates": {
+    "tiny_feasibility": "32/32 intact correct; 4/4 unique affected correct intact-to-twin flips; 0/12 unaffected flips; ties are not correct. Evaluate native and FP32 separately.",
+    "objective_attainment": "all four unique affected FP32 donor-signed changes >= 0.25",
+    "selectivity_screen": "minimum affected signed change > maximum absolute unaffected twin change; strict diagnostic screen, not a universal bound",
+    "pooling_specific_benefit": "mean_span passes the same native tiny-feasibility gate while final fails at fixed step256",
+    "execution": "exact ordinary/split native and written-zero parity; finite computations; frozen base/source unchanged; 256 steps in both cells; resource guards"
+  },
+  "claim_boundary": [
+    "Two previously exposed training worlds and one seed; no heldout or correctness non-regression qualification.",
+    "Fresh identical initial bridge, same frozen CUDA features, optimizer, objective, readout and budget; only reader query representation differs.",
+    "Pooling only inference-visible question tokens; original final normalized prediction state remains the base head input.",
+    "No gain tuning, automatic retries, generation, paid judges, full-backbone update, offload or quantization.",
+    "Native versus FP32 changes postnorm composition and head arithmetic, not whole-model precision.",
+    "Query-only base lacks facts and is an unequal-information reference.",
+    "Twin changes serialization as well as ranking; raw-L2 random control does not match all effective reader statistics.",
+    "step128 is diagnostic, never best-checkpoint selection. Winner none; semantic promotion false; FT-beta unqualified.",
+    "Allocator cap excludes CUDA context and non-Torch allocations; sampled process peak is not a continuous high-water mark.",
+    "Abort only this run on insufficient headroom. Do not modify any other job. Keep two small checkpoints per new condition."
+  ]
+}
