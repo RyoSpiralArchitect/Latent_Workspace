@@ -10,6 +10,9 @@ not a released or quality-qualified FT-beta model.
    experiments and a zero-tolerance pinned-base correctness exit contract.
 3. [Sealed final judge packet](../../provenance/pilots/v14_judge_capacity_20261009/README.md):
    raw responses, full Japanese judgments, executable reconstruction, and hashes.
+4. [CPU learner audit, steps 1–2](../../provenance/pilots/ft_beta_learner_audit_20261009/README.md):
+   new train-only native/zero checks, loss-specific reciprocal gradients, and a
+   VRAM gate before any learner change. No optimizer updates or GPU execution.
 
 The English synthesis is an analyst summary, not replacement translations or
 new judge verdicts. Original Japanese reports and sealed proposals remain unchanged:
