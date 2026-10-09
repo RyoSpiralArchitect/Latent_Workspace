@@ -1,17 +1,25 @@
 # V15.5 continuation 01 execution handoff
 
-Client date: 2026-10-10 (Asia/Tokyo). **RUNNING**, not a completed result.
-The following authorized scope must not expand automatically.
+Client date: 2026-10-10 (Asia/Tokyo). **TERMINAL: HALTED_NO_RETRY**.
+The process exited at **08:00:02 JST**. The continuation has 155 valid diagnoses,
+four ambiguous timeout outcomes and 161 never-dispatched requests. Combined
+main coverage is 343/512; study plus repeats has 374 valid, one invalid, eight
+unknown and 161 never dispatched. OpenAI remains blocked. See the
+[terminal results](README.md) and [FINISHED.json](mistral/study/FINISHED.json).
+
+The heartbeat was paused at Ryō's explicit request before termination and must
+remain paused. Publication continued directly in this chat. No further paid
+call, retry or continuation is authorized. The instructions below retain launch
+lineage and offline verification commands; they are not a command to relaunch.
 
 Launch confirmed at **07:02:25 JST** (`2026-10-09T22:02:25.402258+00:00`).
 Paid continuation source: `92bd66a0024f8c4b4442d1addfa4105f60287b96`, pushed
 before dispatch. Owned Python PID: **77732**; local exec session: **37079**.
-An attached `caffeinate` process prevents idle sleep during this run. The
-existing completion heartbeat is ACTIVE on a ten-minute interval with the
-continuation-only scope; it must not start any model call. The source seal is
+An attached `caffeinate` process prevented idle sleep during the run. The
+completion heartbeat is now PAUSED; it must not start any model call. The source seal is
 `9048e149936b45e4564bdf93934b45bf5eabd54485cae34aecac8d471c7bb111`.
 Read [STARTED.json](mistral/study/STARTED.json) for the authoritative launch
-receipt and `mistral/study/FINISHED.json` for the eventual terminal receipt.
+receipt and `mistral/study/FINISHED.json` for the terminal receipt.
 
 ## Exact scope and lineage
 
@@ -66,7 +74,9 @@ verify without rewriting. The original analysis is never changed. The combined
 view preserves every original reservation, all 512 main records, 32 fixed repeat
 coordinates, both calibrations, and the 1,120-request original plan denominator.
 It counts calibration usage once and links each main Mistral row to its raw
-source bundle. At best, 508/512 main diagnoses will be valid; four remain unknown.
+source bundle. The prelaunch coverage ceiling was 508/512. The terminal result
+is 343 valid main diagnoses, eight unknown outcomes and 161 never dispatched;
+the original four unknown outcomes were not resolved or replaced.
 
 Prepare an English results README here with all completed/invalid/unknown/
 undispatched denominators, repeat disagreements, usage, exact original-output
@@ -82,7 +92,9 @@ spaces inside original-output fences. Scan for credentials/unrelated content.
 Check branch/remote/staged diff, then commit and push **only this branch**. Do not
 create or merge a PR. Record local checks separately from CI (no workflow here).
 
-Update the existing heartbeat `v15-5-judge-run-completion` to monitor only this
-new continuation while running. Keep routine progress quiet; report completion,
-failure or a required decision in Japanese. Pause it after recording the terminal
-handoff, including a partial terminal result if another failure occurs.
+Do not reactivate `v15-5-judge-run-completion`; Ryō requested direct work instead.
+Both the original and continuation cells are terminal and cannot be resumed.
+The exclusive combined analysis has been written and verified. After publishing
+this partial result, request a decision before any new transport experiment or
+the remaining 161 never-dispatched calls. Never retry the eight ambiguous calls
+or replace the invalid repeat merely to complete a denominator.

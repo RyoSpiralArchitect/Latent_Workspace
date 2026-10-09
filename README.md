@@ -1,32 +1,34 @@
 # Latent Workspace FT — CUDA comparison harness
 
-## V15.5 diagnostic evaluation: bounded continuation running
+## V15.5 diagnostic evaluation: continuation closed as partial
 
-An explicitly approved [continuation of the 320 never-dispatched Mistral calls](provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010/README.md)
-started on 2026-10-10 at 07:02 JST from pushed source `92bd66a`.
-It preserves the original bundle, all four ambiguous timeout outcomes, the
-invalid repeat and OpenAI's calibration FAIL. No old call is retried and no
-learner is trained. Terminal results are pending; at best the combined main
-diagnostic coverage can reach 508/512. The following describes the immutable
-original partial result, not current live continuation counts.
+The [authorized 320-call continuation](provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010/README.md)
+ended on 2026-10-10 at 08:00 JST with **155 valid diagnoses, four new ambiguous
+timeouts and 161 never-dispatched requests**. Combined with the immutable
+[original partial run](provenance/pilots/v15_5_diagnostic_judge_20261010/README.md),
+main coverage is **343/512**; study plus fixed repeats has 374 valid, one invalid,
+eight unknown and 161 undispatched coordinates. No call was retried. The
+heartbeat is paused at Ryō's request; further recovery needs a new decision.
 
-Units 1–2 reuse all **512 existing V15 cue-confirmation outputs**, preserving
-symbolic truth, strict scoring, and the failed expression gate. The
-[frozen unary-judge protocol](docs/v15_5/DIAGNOSTIC_JUDGE_PROTOCOL.md) separates
-those machine facts from content diagnoses; it does not train a new learner.
-[Calibration](provenance/pilots/v15_5_diagnostic_judge_20261010/CALIBRATION_REVIEW.md)
-admitted Mistral Large 4 (16/16 expected-field matches; 8/8 repeated signatures).
-GPT-5.4 retained a calibration **FAIL** (15/16 matches; 6/8 repeated signatures
-against a 7/8 requirement), so its study remains undispatched. Mistral stopped
-under the frozen no-retry policy after four approximately 20-minute timeouts:
-**219 valid study/repeat diagnoses, 1 invalid, 4 unknown transport outcomes,
-320 never dispatched**. Only 188/512 main outputs have a valid diagnosis.
-The fixed repeat panel has 25 all-four-axis agreements, 6 disagreements, and
-1 invalid pair out of 32 planned. The
-[partial report and full original-output panel](provenance/pilots/v15_5_diagnostic_judge_20261010/README.md)
-retain every denominator and the old FAIL. No full-panel, cross-judge agreement,
-or learner-quality claim is available. Only the separately recorded 320-call
-continuation is authorized; any further recovery requires another decision.
+The [frozen unary-judge protocol](docs/v15_5/DIAGNOSTIC_JUDGE_PROTOCOL.md) reuses
+512 existing pinned-base outputs on 16 correlated world clusters, not new
+learner generations. [Calibration](provenance/pilots/v15_5_diagnostic_judge_20261010/CALIBRATION_REVIEW.md)
+admitted Mistral (16/16 expected matches, 8/8 equal repeat signatures) and blocked
+OpenAI (15/16 matches, 6/8 equal against a 7/8 requirement); all 544 OpenAI study
+calls remain undispatched. The Mistral fixed-repeat panel remains 25 equal,
+six differing and one invalid pair out of 32. There is no two-judge consensus.
+
+Renderer stratification matters: among **87 diagnosed native-chat inline
+outputs**, 29 strict failures comprise 13 internal contradictions, 13 wrong
+commitments, two format-only candidates and one grounding case. All 82 diagnosed
+inline length failures belong to raw rendering; two native length stops in the
+full bank have no diagnosis. A stopping-only explanation is insufficient for
+the observed native failures. Missingness is not assumed random.
+
+The [combined literal panel](provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010/analysis/DIAGNOSTIC_PANEL.md)
+and [bounded next-step proposal](docs/v15/NEXT_STEPS.md) preserve the old **FAIL**,
+strict scores, unknowns and all source records. No learner was trained; no
+quality, non-regression, semantic-mechanism or winner claim is established.
 
 ## Current V15 engineering checkpoint
 

@@ -1,0 +1,100 @@
+{
+  "elapsed_seconds": 40.421528165999916,
+  "ended_at": "2026-10-09T22:14:30.954524+00:00",
+  "observation": {
+    "api_finish": "stop",
+    "judgment": {
+      "added_facts": "unsupported",
+      "assessment_en": "The response commits to yes for the original question but then adds multiple unsupported assertions about rankings (Luma vs Kestrel, Kestrel vs Zeta, etc.) despite visible_facts being empty. No explanation is provided for any answer. The additional answers are internally consistent with each other but are not grounded in any supplied facts. The text is truncated mid-question.",
+      "commitment": "yes",
+      "contradiction": "absent",
+      "evidence": {
+        "added_facts": [
+          "Is Luma ranked above Kestrel? Answer: no",
+          "Is Kestrel ranked above Kestrel? Answer: no",
+          "Is Luma ranked above Luma? Answer: no",
+          "Is Kestrel ranked above Zeta? Answer: yes"
+        ],
+        "commitment": [
+          "yes"
+        ],
+        "contradiction": [],
+        "reasoning": []
+      },
+      "reasoning": "none"
+    },
+    "response_id": "be1bb83c353a4cb0b73b12605e387a95",
+    "response_model": "mistral-large-4",
+    "status": "valid_diagnosis",
+    "verified_evidence": {
+      "added_facts": [
+        {
+          "codepoint_spans": [
+            [
+              5,
+              45
+            ]
+          ],
+          "quote": "Is Luma ranked above Kestrel? Answer: no"
+        },
+        {
+          "codepoint_spans": [
+            [
+              47,
+              90
+            ]
+          ],
+          "quote": "Is Kestrel ranked above Kestrel? Answer: no"
+        },
+        {
+          "codepoint_spans": [
+            [
+              92,
+              129
+            ]
+          ],
+          "quote": "Is Luma ranked above Luma? Answer: no"
+        },
+        {
+          "codepoint_spans": [
+            [
+              131,
+              172
+            ]
+          ],
+          "quote": "Is Kestrel ranked above Zeta? Answer: yes"
+        }
+      ],
+      "commitment": [
+        {
+          "codepoint_spans": [
+            [
+              0,
+              3
+            ],
+            [
+              169,
+              172
+            ]
+          ],
+          "quote": "yes"
+        }
+      ],
+      "contradiction": [],
+      "reasoning": []
+    }
+  },
+  "request_id": "mistral-study-8295523292c405752c5b1eb2-r0",
+  "response_sha256": "d6dde6bb781c219f9d534f6aba2ed072bcdd1b923afa2283864f53c5b4ed7544",
+  "started_at": "2026-10-09T22:13:50.532334+00:00",
+  "status": "response_recorded",
+  "usage_receipt": {
+    "actual_billed_cost_usd": null,
+    "bound_exceeded": false,
+    "input_tokens": 1104,
+    "output_tokens": 4974,
+    "status": "REPORTED_BY_API",
+    "total_tokens": 6078,
+    "usage_based_undiscounted_cost_usd": "0.02229276"
+  }
+}

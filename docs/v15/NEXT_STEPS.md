@@ -2,67 +2,74 @@
 
 Client date: 2026-10-10. **POST-RESULT DESIGN; new learning NOT EXECUTED**.
 
-## Latest update: V15.5 diagnostic judging is partial, not a learner result
+## Latest update: native answer content is not reducible to stopping
 
-The approved [320-call continuation](../../provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010/README.md)
-is now running from pushed source `92bd66a`. It sends only the original
-never-dispatched Mistral r0 requests, without changing the model, bodies, seeds,
-budgets, rubric, gates or the original record. Four ambiguous original calls,
-the invalid repeat and OpenAI's study remain untouched. Combined terminal
-analysis is pending; the observations and proposals below still refer to the
-original partial snapshot, not a completed continuation.
+The [continuation result](../../provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010/README.md)
+is terminal, **HALTED_NO_RETRY**, not a completed judge panel. Its 155 valid new
+diagnoses bring main coverage to **343/512**: 171 inline and 172 query-only.
+There are now eight ambiguous main calls and 161 never dispatched. The original
+invalid repeat and OpenAI's calibration FAIL plus 544 undispatched study calls
+remain unchanged. All original records, settings, bodies and gates are preserved;
+the heartbeat is paused and no learner run is authorized.
 
-The [V15.5 result](../../provenance/pilots/v15_5_diagnostic_judge_20261010/README.md)
-retains the original 512 outputs, but only 188 have valid main Mistral diagnoses
-(95 inline, 93 query-only). Four API calls timed out and 320 remained undispatched;
-the no-retry rule was enforced. OpenAI's study remained blocked by its frozen
-calibration failure. There is no complete two-setting panel or new training.
+The renderer split materially sharpens the earlier proposal. Of 87 diagnosed
+native-chat inline outputs, 58 strictly succeed and 29 fail: **13 contradiction,
+13 wrong-commitment, two format-only candidates, one grounding failure**. All
+13 contradiction cases have a negative symbolic answer; the wrong-commitment
+cases include nine negative and four positive answers. These are descriptive
+observations, not rates for all 128 native outputs or causal learner evidence.
 
-The partial observations distinguish a verbose correct response, a yes/no answer
-that conflicts with its own explanation, a short EOS-terminated wrong answer,
-and a correct conclusion supported by a false premise. They cannot establish
-which failure dominates the full bank. The fixed repeats have 25 four-axis
-agreements, six disagreements and one invalid pair out of 32. Commitment agrees
-in all 31 valid pairs, but explanation/added-fact interpretation is less stable;
-repeatability is not correctness and those categories are not training gold.
+All 82 diagnosed inline length stops are from raw rendering. The complete bank
+also contains two native-chat length stops, but neither has a diagnosis here.
+Pooling raw truncation with native answer/explanation conflict would therefore
+overstate the case for an EOS-only native fix. A visible explanation supporting
+the opposite answer is a consistency defect, not proof of hidden correct
+reasoning that can simply be read out. Short EOS-terminated wrong answers
+independently rule out termination as a universal content repair.
 
-Carry these distinctions into a **proposed** V15.5 learner experiment:
+The unchanged fixed repeats remain 25 equal, six differing and one invalid pair
+out of 32; commitment agrees in all 31 valid pairs, while reasoning/added-fact
+interpretation is less stable. These are not training gold. Missing judgments
+are not assumed random, and the old strict scores remain 84/256 inline and
+1/256 query-only. No old gate is rescued.
 
-1. Preserve the old free-generation FAIL. Qualify the intended instrument on a
-   separately frozen untouched panel before learning; complete-answer choice
-   scoring, if chosen, remains a separately named observable, not a repaired
-   free-generation score.
-2. The first candidate completion factor is native full-vocabulary answer-token
-   CE versus that **same** native CE plus EOS supervision after the verified
-   correct answer. Hold initialization, examples, update count, readout, reader,
-   residual cap and precision fixed. Use teacher-forced answer prefixes only as
-   declared training targets, with the original question binding preserved.
-   Comparing old FP32 candidate CE against native answer-plus-EOS would change
-   two factors and cannot isolate EOS. Nonzero gradients alone are insufficient:
-   check finite-update native logits and actual generated outputs.
-3. Apply completion supervision only where the task explicitly requires a
-   one-word answer. Unconditional stopping can solidify a wrong answer; do not
-   globally shorten free-form responses or treat completed-path ranking as proof
-   that the model already knows the answer. Measure commitment, contradiction,
-   grounding and termination separately, with invalid/truncated rows retained.
-4. Keep matched intact/twin content direction, reciprocal questions, written-
-   zero/unrelated controls and fact-order robustness as independent tests. An
-   aligned-serialization learner change remains a separate experiment, not an
-   extra factor in the first completion cell. Preserve the pinned-base correctness
-   floor and the earlier concise, calibrated verification behavior on fresh,
-   matched qualitative tasks; this base-only diagnostic requalifies neither.
-5. Revise evaluator definitions only in a new version: distinguish world facts
-   from lack-of-information meta-statements, asserted facts from hypothetical
-   premises, and observed explanations from unfinished continuations. Confirm
-   on untouched controls, without retrying the old controls until they pass or
-   converting preferred diagnostic prose into response-supervision targets.
+Carry these distinctions into **proposed, separately authorized** learner work:
 
-No learner factor is selected as proven by this partial result. The separately
-approved 320-call continuation is the only additional execution scope. It cannot
-overwrite the original cell or retry its ambiguous calls or invalid repeat.
-Any new recovery, learner run or evaluator revision still needs a separate
-decision; the eventual combined diagnosis will inform proposals, not authorize
-their execution.
+1. **Qualify the observable first.** Preserve free-generation FAIL. Use an
+   untouched, separately frozen panel for the intended interface; if complete-
+   answer choice is chosen, name and qualify it separately. Do not convert a
+   favorable later clause into the answer or relax the old parser/gate.
+2. **Prioritize answer content and question binding in the native path.** Check
+   balanced reciprocal labels, verified graph truth and original question/fact
+   binding in full-vocabulary answer-token CE. Inspect a finite-update change
+   in native logits and actual tokens, not merely a nonzero gradient or a
+   correct teacher-forced continuation. The observed negative-answer conflicts
+   justify a targeted diagnostic, not label-conditioned rescue or automatic
+   supervision from judge prose.
+3. **Keep stopping as its own controlled factor.** Native answer CE versus the
+   **same** CE plus verified-answer-conditioned EOS remains a candidate pair.
+   Hold initialization, data, update count, readout, reader, residual cap and
+   precision fixed. Old FP32 candidate CE versus native answer-plus-EOS changes
+   two factors and cannot isolate EOS. Apply completion supervision only to the
+   declared one-word task; it can harden a wrong answer and must not globally
+   shorten free text. This is not the single established cause of native failure.
+4. **Preserve independent workspace and behavior gates.** Keep matched intact/
+   twin donor direction, reciprocal queries, written-zero/unrelated controls,
+   fact-order robustness and a pinned-base correctness floor. Test preservation
+   of the earlier concise, calibrated verification behavior on fresh, matched
+   qualitative answer banks. An aligned-serialization change is a separate
+   experiment, not another factor silently added to the CE/EOS comparison.
+5. **Version evaluator repairs separately.** Clarify world facts versus
+   meta-statements, hypothetical premises versus assertions, and incomplete
+   explanations. Confirm on untouched controls. Do not repair the frozen
+   evidence/rubric or treat repeatable single-family labels as human truth.
+
+No learner factor is proven by this base-only partial diagnostic. The current
+execution scope is closed. After two timeout batches, first choose whether to
+do a bounded transport diagnosis before authorizing the **161 never-dispatched
+requests** in another separately recorded run. The eight ambiguous calls and
+invalid repeat remain excluded. No new model request, source-seal change,
+learner experiment, provider substitution or PR merge follows automatically.
 
 ## Earlier update: fresh cue confirmation failed; keep observables separate
 
