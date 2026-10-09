@@ -1,0 +1,24 @@
+{
+  "format": "v15-native-readout-transport-v1",
+  "predecessor_bundle": "provenance/pilots/ft_beta_query_pool_20261010",
+  "model_parent": "configs/v14/PRECISION_BRIDGE_PLAN.json",
+  "worlds": [0, 1],
+  "queries": [0, 1, 2, 3, 4, 5, 6, 7],
+  "modes": ["final", "mean_span"],
+  "orders": ["original", "canonical", "canonical_reverse"],
+  "checkpoint_step": 256,
+  "optimizer_steps": 0,
+  "max_delta_norm": 1.0,
+  "mean_reduction": "CPU FP32, matching retained checkpoint training",
+  "resources": {"admission_free_gib": 20, "allocator_cap_gib": 18, "abort_free_gib": 4, "poll_steps": 16, "cpu_threads": 2},
+  "generation": {
+    "worlds": [0, 1], "queries": [0, 1], "side": 0,
+    "regimes": [{"id": "greedy", "seed": 0, "temperature": 0.0}, {"id": "sample211", "seed": 211, "temperature": 0.7}],
+    "conditions": ["base", "base_inline", "final_intact", "final_twin", "final_zero", "mean_intact", "mean_twin", "mean_zero"],
+    "max_new_tokens": 64,
+    "expected_sequences": 64,
+    "parser": "whole stripped answer yes/no, casefolded; lowercase compliance separate; length-truncated is incorrect",
+    "history": "full-prefix recomputation; no KV cache or continuous state carry"
+  },
+  "claims": {"winner": "none", "semantic_promotion": false, "non_regression": "NOT_ESTABLISHED", "quality_judging": "NOT_RUN"}
+}
