@@ -67,8 +67,31 @@ def verify_payloads(root, plan_path):
         (directory / "analysis/PANEL_REVIEW.md").read_text() == summary.render(result),
         "Published reader does not reconstruct",
     )
+    base.require(
+        run.prior.load_json(directory / "analysis/STRICT_DIAGNOSTICS.json")
+        == summary.diagnostics(result, root=root),
+        "Published strict diagnostics do not reconstruct",
+    )
     plan = run.prior.load_json(plan_path)
     gate = probe.verify((root / plan["qualification"]["path"]).parent)
+    compared_requests = 0
+    for r in range(5):
+        old_cell = root / summary.previous.BUNDLE / "cells/mistral" / f"r{r}"
+        new_cell = directory / "cells" / plan["method_id"] / f"r{r}"
+        old_requests = run.prior.load_json(old_cell / "PREPARED_REQUESTS.json")["requests"]
+        new_requests = run.prior.load_json(new_cell / "PREPARED_REQUESTS.json")["requests"]
+        base.require(len(old_requests) == len(new_requests) == 28, "Comparison grid changed")
+        for old, new in zip(old_requests, new_requests, strict=True):
+            expected_body = {
+                **old["body"],
+                "max_tokens": plan["providers"]["mistral"]["max_output_tokens"],
+            }
+            base.require(
+                new["body"] == expected_body
+                and new["evaluator_input_sha256"] == old["evaluator_input_sha256"],
+                "Mistral API request changed beyond the output cap",
+            )
+            compared_requests += 1
     note = run.prior.load_json(directory / "EXECUTION_NOTE.json")
     fresh = result["providers"]["mistral_enlarged"]
     for field in ("planned_requests", "reserved_requests", "durable_responses", "valid_judgments"):
@@ -117,6 +140,7 @@ def verify_payloads(root, plan_path):
         "previous_sealed_bundle_reverified": True,
         "metadata": meta_reports,
         "raw_summary_reader_reconstructed": True,
+        "only_max_tokens_changed_request_comparisons": compared_requests,
         "winner": "none",
         "semantic_promotion": False,
     }

@@ -7,6 +7,8 @@ import argparse
 import copy
 import html
 import json
+import statistics
+from collections import Counter
 from pathlib import Path
 
 import run_v14_budget_panel as run
@@ -179,11 +181,89 @@ def render(summary):
     return "\n\n".join(blocks) + "\n"
 
 
+def diagnostics(result, *, root=REPO):
+    """Explain strict rejections without repairing JSON, quotes, or excluded votes."""
+    root = Path(root).resolve()
+    method = result["providers"]["mistral_enlarged"]
+    cells = root / BUNDLE / "cells" / method["method_id"]
+    rows, output_tokens, finishes = [], [], Counter()
+    for path in sorted(cells.glob("r*/requests/*.json")):
+        receipt = run.prior.load_json(path)
+        observation = receipt.get("observation", {})
+        usage = receipt.get("usage_receipt", {})
+        if usage.get("status") == "REPORTED_BY_API":
+            output_tokens.append(usage["output_tokens"])
+        if receipt["status"] != "response_recorded":
+            continue
+        raw_path = path.parent.parent / "responses" / path.name
+        raw = run.prior.load_json(raw_path)
+        finishes[str(observation.get("api_finish_reason") or "unknown")] += 1
+        if observation.get("status") != "invalid_judgment":
+            continue
+        row = {
+            "request_id": receipt["request_id"],
+            "pair_id": receipt["pair_id"],
+            "replicate": receipt["replicate"],
+            "order": receipt["order"],
+            "observation_error": observation.get("error"),
+            "raw_response_path": str(raw_path.relative_to(root)),
+            "raw_response_sha256": run.prior.file_sha(raw_path),
+            "exact_quote_mismatches": [],
+            "vote_excluded": True,
+            "repaired": False,
+        }
+        try:
+            text = run.mistral.final_text(raw["choices"][0]["message"]["content"])
+            verdict = json.loads(text)
+            if not isinstance(verdict, dict):
+                raise ValueError("Nonobject judge JSON")
+            data = json.loads(receipt["body"]["messages"][1]["content"])
+            evidence = verdict.get("quoted_evidence", {})
+            if isinstance(evidence, dict):
+                for side in ("A", "B"):
+                    if isinstance(evidence.get(side), list):
+                        for quote in evidence[side]:
+                            if isinstance(quote, str) and quote not in data["answer_" + side]:
+                                row["exact_quote_mismatches"].append(
+                                    {
+                                        "assigned_side": side,
+                                        "quote": quote,
+                                        "answer_sha256": run.prior.sha256(data["answer_" + side]),
+                                    }
+                                )
+            run.prior.validate_judgment(verdict, data["answer_A"], data["answer_B"])
+        except (ValueError, TypeError, KeyError, IndexError) as error:
+            row["validator_error_type"] = type(error).__name__
+            # No exception text fallback or corrected judgment is promoted to a vote.
+        rows.append(row)
+    cap = method["config"]["max_output_tokens"]
+    return {
+        "format": "latent-workspace-v14-budget-strict-diagnostics-v1",
+        "method_id": method["method_id"],
+        "plan": result["inputs"]["plan"],
+        "finish_reason_counts": dict(sorted(finishes.items())),
+        "reported_output_tokens": {
+            "calls": len(output_tokens),
+            "min": min(output_tokens) if output_tokens else None,
+            "median": statistics.median(output_tokens) if output_tokens else None,
+            "max": max(output_tokens) if output_tokens else None,
+            "above_old_4000_cap": sum(v > 4000 for v in output_tokens),
+            "at_new_cap": sum(v == cap for v in output_tokens),
+        },
+        "invalid_judgments": len(rows),
+        "rejections": rows,
+        "claim_boundary": "Mechanical diagnostics only. Invalid votes stay excluded; no repair.",
+    }
+
+
 def publish(plan_path, *, root=REPO):
     result = aggregate(plan_path, root=root)
     output = Path(root) / BUNDLE / "analysis"
     output.mkdir(parents=True, exist_ok=False)
     run.prior.write_json(output / "SUMMARY.json", result, exclusive=True)
+    run.prior.write_json(
+        output / "STRICT_DIAGNOSTICS.json", diagnostics(result, root=root), exclusive=True
+    )
     with (output / "PANEL_REVIEW.md").open("x", encoding="utf-8") as stream:
         stream.write(render(result))
     return result

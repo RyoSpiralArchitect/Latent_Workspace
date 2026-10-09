@@ -48,6 +48,14 @@ def published(frozen, monkeypatch):  # noqa: F811
             }
         )
     old_dir = root / report.previous.BUNDLE
+    for r in range(5):
+        new_cell = root / report.BUNDLE / "cells" / plan["method_id"] / f"r{r}"
+        copied = report.run.prior.load_json(new_cell / "PREPARED_REQUESTS.json")
+        for row in copied["requests"]:
+            row["body"]["max_tokens"] = 4000
+        report.run.prior.write_json(
+            old_dir / "cells/mistral" / f"r{r}" / "PREPARED_REQUESTS.json", copied
+        )
     report.run.prior.write_json(old_dir / "INDEX.json", {"test_only": True})
     old = {
         "providers": {
@@ -123,6 +131,7 @@ def test_separate_methods_stable_counts_and_idempotent_verification(published):
     assert seal.seal(root, path)["status"] == "SEALED_INTEGRITY_ONLY"
     receipt = seal.verify(root, path, write_receipt=True)
     assert receipt["raw_summary_reader_reconstructed"]
+    assert receipt["only_max_tokens_changed_request_comparisons"] == 140
     assert seal.verify(root, path) == receipt
     with pytest.raises(FileExistsError):
         report.publish(path, root=root)
@@ -158,3 +167,70 @@ def test_payload_reconstruction_catches_wrong_prose_counts(published):
     p.write_text(json.dumps(note))
     with pytest.raises(ValueError, match="count differs"):
         seal.verify_payloads(root, path)
+
+
+@pytest.mark.parametrize("change", ["temperature", "evaluator_input"])
+def test_only_cap_comparison_rejects_other_changes(published, change):
+    root, path, _ = published
+    p = root / report.previous.BUNDLE / "cells/mistral/r0/PREPARED_REQUESTS.json"
+    data = json.loads(p.read_text())
+    if change == "temperature":
+        data["requests"][0]["body"]["temperature"] = 0.7
+    else:
+        data["requests"][0]["evaluator_input_sha256"] = "changed"
+    p.write_text(json.dumps(data))
+    with pytest.raises(ValueError, match="beyond the output cap"):
+        seal.verify_payloads(root, path)
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {"quoted_evidence": {"A": ["such as in a category"], "B": []}},
+        ["not a judgment object"],
+    ],
+)
+def test_diagnostics_explains_but_never_repairs_invalid_quotes(tmp_path, payload):
+    cell = tmp_path / report.BUNDLE / "cells/synthetic/r0"
+    raw = {"choices": [{"message": {"content": json.dumps(payload)}}]}
+    report.run.prior.write_json(cell / "responses/test.json", raw)
+    report.run.prior.write_json(
+        cell / "requests/test.json",
+        {
+            "request_id": "test",
+            "pair_id": "synthetic",
+            "replicate": 0,
+            "order": "AB",
+            "status": "response_recorded",
+            "body": {
+                "messages": [
+                    {},
+                    {
+                        "content": json.dumps(
+                            {"answer_A": "such as a category", "answer_B": "another answer"}
+                        )
+                    },
+                ]
+            },
+            "observation": {
+                "status": "invalid_judgment",
+                "api_finish_reason": "stop",
+                "error": "schema_or_quote_check",
+            },
+            "usage_receipt": {"status": "REPORTED_BY_API", "output_tokens": 9000},
+        },
+    )
+    result = {
+        "providers": {
+            "mistral_enlarged": {"method_id": "synthetic", "config": {"max_output_tokens": 16384}}
+        },
+        "inputs": {"plan": {"test_only": True}},
+    }
+    diagnostic = report.diagnostics(result, root=tmp_path)
+    assert diagnostic["invalid_judgments"] == 1
+    rejection = diagnostic["rejections"][0]
+    assert rejection["vote_excluded"] and rejection["repaired"] is False
+    assert rejection["validator_error_type"] == "ValueError"
+    assert "judgment" not in rejection and "winner" not in rejection
+    assert bool(rejection["exact_quote_mismatches"]) is isinstance(payload, dict)
+    assert diagnostic["reported_output_tokens"]["above_old_4000_cap"] == 1
