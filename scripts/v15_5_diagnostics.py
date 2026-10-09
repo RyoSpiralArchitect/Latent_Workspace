@@ -129,7 +129,7 @@ def oracle(case):
         "answer": ("no", "yes")[label],
         "proof_path": proof,
         "proof_direction": "forward" if positive else "reverse",
-        "edges": facts,
+        "edges": [list(edge) for edge in facts],
     }
 
 

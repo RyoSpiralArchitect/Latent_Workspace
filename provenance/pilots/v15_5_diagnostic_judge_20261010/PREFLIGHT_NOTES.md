@@ -23,3 +23,24 @@ and adds a dataset serialization round-trip test before any paid call.
 
 All 512 original responses, machine labels, calibration expectations, requested
 judge settings, request bodies, and acceptance thresholds remain unchanged.
+
+## Corrected preflight before paid inference
+
+The failed snapshot is commit `5b2ad6a`. The two updated source hashes cover
+the JSON-native edge representation and its round-trip regression test only.
+All four frozen request-manifest hashes, instructions, schema, dataset bytes,
+and prospective acceptance rules exactly match the failed snapshot.
+
+The corrected selected suite passed **241 tests in 20.36 seconds**, including
+47 new diagnostic tests; Ruff passed. `load_frozen()` verified 79 source/input
+files and all 1,120 prepared requests. Both official model-metadata GETs then
+returned the exact requested model IDs. These metadata reads were not paid
+inference, calibration judgments, or study observations.
+
+```sh
+PYTHONPATH=src:scripts .venv/bin/pytest -q \
+  tests/test_v15_5_diagnostics.py tests/test_v15_cue_confirmation.py \
+  tests/test_judge_v14_answer_bank.py tests/test_v14_judge_panel.py \
+  tests/test_v14_mistral_extension.py tests/test_v14_budget_panel.py \
+  tests/test_verify_v14_answer_bank_judge.py
+```

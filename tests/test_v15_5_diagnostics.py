@@ -101,6 +101,10 @@ def test_repeats_are_balanced_not_change_selected(data):
     assert len(groups) == 32
 
 
+def test_dataset_is_json_round_trip_stable(data):
+    assert json.loads(json.dumps(data, ensure_ascii=False)) == data
+
+
 @pytest.mark.parametrize("provider", run.PROVIDERS)
 @pytest.mark.parametrize("phase,count", [("calibration", 16), ("study", 544)])
 def test_requests_and_blinding(data, plan, provider, phase, count):
