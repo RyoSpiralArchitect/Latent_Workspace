@@ -1,6 +1,14 @@
 # Latent Workspace FT — CUDA comparison harness
 
-## V15.5 diagnostic evaluation: terminal partial result
+## V15.5 diagnostic evaluation: bounded continuation running
+
+An explicitly approved [continuation of the 320 never-dispatched Mistral calls](provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010/README.md)
+started on 2026-10-10 at 07:02 JST from pushed source `92bd66a`.
+It preserves the original bundle, all four ambiguous timeout outcomes, the
+invalid repeat and OpenAI's calibration FAIL. No old call is retried and no
+learner is trained. Terminal results are pending; at best the combined main
+diagnostic coverage can reach 508/512. The following describes the immutable
+original partial result, not current live continuation counts.
 
 Units 1–2 reuse all **512 existing V15 cue-confirmation outputs**, preserving
 symbolic truth, strict scoring, and the failed expression gate. The
@@ -17,7 +25,8 @@ The fixed repeat panel has 25 all-four-axis agreements, 6 disagreements, and
 1 invalid pair out of 32 planned. The
 [partial report and full original-output panel](provenance/pilots/v15_5_diagnostic_judge_20261010/README.md)
 retain every denominator and the old FAIL. No full-panel, cross-judge agreement,
-or learner-quality claim is available; recovery requires a separate decision.
+or learner-quality claim is available. Only the separately recorded 320-call
+continuation is authorized; any further recovery requires another decision.
 
 ## Current V15 engineering checkpoint
 

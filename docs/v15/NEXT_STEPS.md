@@ -4,6 +4,14 @@ Client date: 2026-10-10. **POST-RESULT DESIGN; new learning NOT EXECUTED**.
 
 ## Latest update: V15.5 diagnostic judging is partial, not a learner result
 
+The approved [320-call continuation](../../provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010/README.md)
+is now running from pushed source `92bd66a`. It sends only the original
+never-dispatched Mistral r0 requests, without changing the model, bodies, seeds,
+budgets, rubric, gates or the original record. Four ambiguous original calls,
+the invalid repeat and OpenAI's study remain untouched. Combined terminal
+analysis is pending; the observations and proposals below still refer to the
+original partial snapshot, not a completed continuation.
+
 The [V15.5 result](../../provenance/pilots/v15_5_diagnostic_judge_20261010/README.md)
 retains the original 512 outputs, but only 188 have valid main Mistral diagnoses
 (95 inline, 93 query-only). Four API calls timed out and 320 remained undispatched;
@@ -49,10 +57,12 @@ Carry these distinctions into a **proposed** V15.5 learner experiment:
    on untouched controls, without retrying the old controls until they pass or
    converting preferred diagnostic prose into response-supervision targets.
 
-No learner factor is selected as proven by this partial result. No recovery call
-or further experiment is authorized here. A separately approved continuation
-could target only the 320 never-dispatched requests while preserving the four
-ambiguous calls and the invalid repeat; it must not overwrite the original cell.
+No learner factor is selected as proven by this partial result. The separately
+approved 320-call continuation is the only additional execution scope. It cannot
+overwrite the original cell or retry its ambiguous calls or invalid repeat.
+Any new recovery, learner run or evaluator revision still needs a separate
+decision; the eventual combined diagnosis will inform proposals, not authorize
+their execution.
 
 ## Earlier update: fresh cue confirmation failed; keep observables separate
 

@@ -1,7 +1,17 @@
 # V15.5 continuation 01 execution handoff
 
-Client date: 2026-10-10 (Asia/Tokyo). **FROZEN_NOT_DISPATCHED** at this prelaunch
-checkpoint. The following authorized scope must not expand automatically.
+Client date: 2026-10-10 (Asia/Tokyo). **RUNNING**, not a completed result.
+The following authorized scope must not expand automatically.
+
+Launch confirmed at **07:02:25 JST** (`2026-10-09T22:02:25.402258+00:00`).
+Paid continuation source: `92bd66a0024f8c4b4442d1addfa4105f60287b96`, pushed
+before dispatch. Owned Python PID: **77732**; local exec session: **37079**.
+An attached `caffeinate` process prevents idle sleep during this run. The
+existing completion heartbeat is ACTIVE on a ten-minute interval with the
+continuation-only scope; it must not start any model call. The source seal is
+`9048e149936b45e4564bdf93934b45bf5eabd54485cae34aecac8d471c7bb111`.
+Read [STARTED.json](mistral/study/STARTED.json) for the authoritative launch
+receipt and `mistral/study/FINISHED.json` for the eventual terminal receipt.
 
 ## Exact scope and lineage
 
