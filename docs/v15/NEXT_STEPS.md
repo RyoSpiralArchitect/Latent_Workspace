@@ -1,8 +1,43 @@
-# V15 follow-up: native learner exercised; isolate content-selective learning
+# V15 follow-up: live native backward qualified; finite full updates remain next
 
 Client date: 2026-10-10. **POST-RESULT DESIGN; bounded learner pilot complete**.
 
-## Current decision: return to the FT learner without further judge collection
+## Current unit: live 7B backward and CPU restoration, without an optimizer
+
+The [new separate contract](FULL_UPDATE_BACKWARD.md) and
+[completed real-model probe](../../provenance/pilots/v15_full_update_backward_20261010/README.md)
+connect the conceptually V14.5 frozen-native milestone to full-update V15 without
+renaming historical evidence. Both exact initial and retained step-8 bridge
+states completed three exposed pairs. All 291 base tensors had finite nonzero
+gradients; the retained state reached context-to-writer and question-to-reader
+inputs. All 317 restored gradients per state equalled a same-order CPU reference.
+This is not GPU-add/optimizer parity or a full 16-pair training window.
+
+No weights changed, no optimizer was constructed, and no new generations/judges
+ran. Native zero/historical controls matched. The 28.22-GiB Torch allocation peak
+coexists with a 1.21-GiB minimum sampled free-device counter; an optimizer step's
+temporary memory has not been qualified. Reader-question gradients remained
+very small, so successful backward is not successful content-selective learning.
+
+The next **proposed, separately bounded** unit is:
+
+1. Complete the balanced 16-pair accumulation window and verify reduction/order
+   without importing the present partial window's 4-yes/2-no imbalance into FT.
+2. Audit one actual update with declared base/bridge optimizer policy, parameter
+   change counts (including BF16 update visibility), native current-theta zero
+   parity, complete optimizer/RNG ownership and exact checkpoint save/reload.
+3. Compare a fresh matched frozen/full pair. A switch from historical bridge
+   AdamW to Adafactor needs a fresh frozen Adafactor control. Do not change
+   unfreezing, reader, alias objective and EOS simultaneously.
+4. Retain the independent pinned-original-base correctness floor and fresh
+   qualitative behavior bank. Zero matching an updated backbone is not proof of
+   preserving the original base. Old FAIL, winner none and non-regression
+   unestablished remain; the judge heartbeat stays paused.
+
+Items above were not launched by the backward probe. Full trainer/resume support,
+optimizer fit, finite-update directionality and useful generation remain open.
+
+## Prior decision: return to the FT learner without further judge collection
 
 Ryō chose to use the valid existing diagnoses and resume learner work. The
 [separate eight-update engineering plan](../v15_5/NATIVE_ANSWER_LEARNER.md)

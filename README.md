@@ -1,5 +1,24 @@
 # Latent Workspace FT — CUDA comparison harness
 
+## V14.5 to full-update V15: real 7B backward qualified, no optimizer update
+
+The separate [live-native contracts](docs/v15/FULL_UPDATE_BACKWARD.md) preserve
+the old frozen path and recompute current-backbone features. The
+[completed no-step probe](provenance/pilots/v15_full_update_backward_20261010/README.md)
+ran two diagnostic states × three exposed pairs: all 291 base tensors received
+finite nonzero gradients, and the retained bridge carried gradients through
+both memory and reader inputs. Each state's 317 restored gradient tensors
+matched a same-order CPU reference exactly. Native/zero and historical choice
+controls remained exact; all weights were unchanged.
+
+The six backward passes took 106.13 seconds with 28.22 GiB peak Torch allocation;
+sampled free device memory reached 1.21 GiB, so optimizer headroom is not yet
+qualified. There were no optimizer steps, new generations or judge calls.
+The next proposal is a bounded complete-window/one-update/resume audit, not
+automatic long training. Useful content learning and original-base preservation
+remain unestablished; old **FAIL** and **winner: none** are unchanged. The native
+frozen-base milestone is conceptually V14.5; historical `v15_5` paths are retained.
+
 ## V15.5 learner restart: native path exercised, no winning arm
 
 Diagnostic judge collection is closed at its valid observed coverage. The
