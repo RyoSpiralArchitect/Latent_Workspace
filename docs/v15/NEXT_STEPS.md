@@ -1,8 +1,49 @@
-# V15 follow-up: live native backward qualified; finite full updates remain next
+# V15 follow-up: improve question/content binding before finite full updates
 
 Client date: 2026-10-10. **POST-RESULT DESIGN; bounded learner pilot complete**.
 
-## Current unit: live 7B backward and CPU restoration, without an optimizer
+## Current unit: reader mechanism improved; learnability is the next question
+
+Ryō prioritized the tiny reader-question gradient over immediately starting
+full-backbone updates. The [prospective reader protocol](READER_MODULATION.md)
+and [completed frozen-checkpoint comparison](../../provenance/pilots/v15_reader_modulation_20261010/README.md)
+change only question/value modulation before the existing output projection.
+The candidate adds no parameters, uses the same weights/cap/native path, and
+does not replace the historical implementation.
+
+At retained step 8, mean reader-local query gradient rose **324.40×**, intact
+reciprocal correction distance **418.13×**, and a norm-matched direction effect
+remains. But all **32/32** native truth-bearing vectors still match the old
+reader, correctness remains **16/32**, and correct donor flips remain **0/4**.
+Common slots and unrelated facts yield similar question differences. Therefore
+the result qualifies a stronger route, not content binding, a winner or a base
+floor. Initial zero `up` still blocks upstream gradients; it now yields less
+donor-gradient cancellation at `up`, without establishing a useful update.
+
+Next **proposed, not executed**:
+
+1. Freeze a short, bridge-only, matched legacy/candidate learning comparison
+   from the same fresh seed-47 tensors. Keep AdamW, complete balanced 16-pair
+   windows, losses, cap, native readout, data order and budget unchanged.
+   The retained-checkpoint intervention is not a substitute for retraining.
+2. Track donor direction, reciprocal binding, actual native changes and
+   per-loss cancellation alongside accuracy. Keep unaffected/unrelated and
+   content-free carrier/random controls. A larger gradient or lower CE cannot
+   select the reader. No strength sweep or simultaneous EOS/alias change.
+3. If the small learning task cannot bind memory to the question, revisit its
+   representation before escalating. Only a separately frozen fresh matched
+   evaluation and later answer bank can establish the original-base floor and
+   useful generative behavior. Preserve all exposed-set and failure records.
+4. Resume the full-window/one-update/resume audit below only after this reader
+   decision. Match the chosen reader and bridge optimizer in both frozen/full
+   arms so that unfreezing remains the only new factor.
+
+The reader comparison completed once with **512 rows / 320 reader leaves**,
+199 selected local and Furnace tests, zero updates/generations/judge calls and
+unchanged weights. All old gates and judge missingness remain; no heartbeat
+was restarted. A full-model finite update is still untested.
+
+## Prior completed unit: live 7B backward and CPU restoration, without an optimizer
 
 The [new separate contract](FULL_UPDATE_BACKWARD.md) and
 [completed real-model probe](../../provenance/pilots/v15_full_update_backward_20261010/README.md)
@@ -19,7 +60,8 @@ coexists with a 1.21-GiB minimum sampled free-device counter; an optimizer step'
 temporary memory has not been qualified. Reader-question gradients remained
 very small, so successful backward is not successful content-selective learning.
 
-The next **proposed, separately bounded** unit is:
+The following **proposed, separately bounded** unit is deferred behind the
+reader-learning work above:
 
 1. Complete the balanced 16-pair accumulation window and verify reduction/order
    without importing the present partial window's 4-yes/2-no imbalance into FT.
