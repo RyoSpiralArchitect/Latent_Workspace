@@ -1,0 +1,31 @@
+{
+  "schema": "v15-reader-modulation-no-step-v1",
+  "parent_plan": "configs/v15/FULL_UPDATE_BACKWARD_PLAN.json",
+  "states": ["initial_seed47", "retained_answer_step8"],
+  "arms": ["legacy", "query_modulated"],
+  "modulation_strength": 0.25,
+  "worlds": [0, 1],
+  "queries": [0, 1, 2, 3, 4, 5, 6, 7],
+  "controls": ["intact", "twin", "zero", "unrelated", "carrier", "random", "permuted_intact", "common_intact"],
+  "random_seed": 470015,
+  "reader": "final",
+  "eos_weight": 0.0,
+  "feature_policy": "pinned frozen base; detached cached features; independent FP32 query leaves for reader-route gradients only",
+  "scope": "Two already-exposed training worlds; fixed checkpoint intervention, not retraining or a held-out comparison",
+  "optimizer_steps": 0,
+  "optimizer_constructed": false,
+  "new_generations": 0,
+  "new_judge_calls": 0,
+  "resources": {
+    "admission_free_gib": 20,
+    "allocator_cap_gib": 18,
+    "abort_free_gib": 4,
+    "cpu_threads": 2,
+    "max_elapsed_seconds": 900,
+    "disk_free_gib": 20
+  },
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED",
+  "no_retry": true
+}
