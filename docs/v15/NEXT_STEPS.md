@@ -2,7 +2,40 @@
 
 Client date: 2026-10-10. **POST-RESULT DESIGN; bounded learner pilot complete**.
 
-## Current unit: reader mechanism improved; learnability is the next question
+## Current unit: factor audit identifies the signal that training must grow
+
+The [completed no-update audit](../../provenance/pilots/v15_reader_factors_20261010/README.md)
+holds the retained weights fixed and decomposes 64 four-corner blocks into
+common (C), question (Q), memory (M) and interaction (I). It localizes the next
+question; it does not train or select a reader. The projection's leading
+singular direction carries **87.966884%** of its energy, and the modulated
+mean-slot/actual mean-I-norm ratio is **99.839031%**. Mean slots still encode
+world-dependent information; that control removes slot diversity, not all
+content. Random memories also produce large interactions without factual labels.
+
+At the affected reciprocal pairs, even the modulated donor-directed I axis
+remains much smaller than abs(M); one local sign also changes through the cap.
+Both native conditions remain **16/32 correct and 0/4 donor flips**. The donor
+hinge already exists: when both reciprocal hinges are active, their sum cancels
+M and targets I. A redundant donor objective, global gain increase or automatic
+top-singular-vector removal is therefore not the next justified change.
+
+Keep the short matched fresh reader-learning comparison below as the next
+**proposed, unlaunched** unit. Add predeclared C/Q/M/I, output-spectrum and cap
+checkpoints alongside both signed native reciprocal margins, per-loss/update
+effects and mean/random controls. Ask whether the stronger route can *learn*
+binding with the old losses, rather than treating larger Q or lower CE as proof.
+Only if this fails should a separate one-factor design change common-output /
+relational-interaction parameterization or update allocation. Do not use the
+paired-world diagnostic factors as a deployment-time oracle. Full-backbone
+updates, heldout original-base floor and behavior qualification remain later.
+
+The probe used no autograd or updates and preserved all weights and old seals;
+232 local/Furnace tests and 14 offline post-result tests passed. No generation,
+judge call, weight pruning or monitoring restart occurred. Old FAIL and closed
+judge missingness stay unchanged.
+
+## Prior reader-modulation result: learnability is the next question
 
 Ryō prioritized the tiny reader-question gradient over immediately starting
 full-backbone updates. The [prospective reader protocol](READER_MODULATION.md)

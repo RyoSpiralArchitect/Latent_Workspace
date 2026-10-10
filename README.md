@@ -1,5 +1,27 @@
 # Latent Workspace FT — CUDA comparison harness
 
+## V15 reader factor audit: localize binding failure before more learning
+
+The [new no-update factor audit](provenance/pilots/v15_reader_factors_20261010/README.md)
+separates common, question, memory and question × memory corrections in 64
+four-corner blocks. The retained output projection puts **87.966884%** of its
+squared-Frobenius energy into one singular direction. The modulated reader's
+mean-slot/actual interaction-norm ratio is **99.839031%**: large interaction
+magnitude does not establish differentiated fact selection (mean slots still
+contain world information). At both affected reciprocal pairs, donor-directed
+interaction remains much smaller than memory bias; cap anisotropy adds another
+local constraint but cannot alone explain the failure.
+
+All 64 actual-memory native vectors match previous results: **16/32 correct and
+0/4 donor flips per reader**. No weights changed; no autograd, training,
+generation or judge calls ran. 232 local/Furnace prelaunch tests and 14 offline
+post-result tests passed. The existing loss already targets reciprocal donor
+direction; simply adding a similarly named loss would duplicate supervision.
+Next, test whether fresh matched short reader training grows useful interaction
+under unchanged losses/cap/native scoring before full updates. Removing common
+directions or raising the cap is not an established repair. Old **FAIL / winner:
+none / non-regression unestablished** and closed judge missingness remain.
+
 ## V15 reader refinement: question sensitivity improved; semantic result unchanged
 
 The [new opt-in reader](docs/v15/READER_MODULATION.md) adds one parameter-free,
