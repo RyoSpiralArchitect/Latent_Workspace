@@ -2,6 +2,40 @@
 
 Client date: 2026-10-10. **POST-RESULT DESIGN; bounded learner pilot complete**.
 
+## Readout decomposition now measured; model-native adapter added
+
+The [adapter contract](READOUT_ADAPTERS.md) separates the model-independent
+reader/CE route from architecture-owned normalization, native head arithmetic
+and output transforms. [The retained-state audit](../../provenance/pilots/v15_readout_adapters_20261010/README.md)
+is exact on 192/192 old/new full-logit outputs and 64/64 written-zero controls.
+All 16 affected hidden differences survive, and all 64 pairs change some native
+vocabulary logits, but 0/16 affected no/yes pairs change at the native head.
+Their intended projected direction is only 2/4 per state; full-update hidden
+casting reverses one direction. The only native no/yes gap change among all 64
+pairs is on an unaffected question. Thus neither total hidden erasure nor
+missing full-head wiring is an adequate explanation of the remaining failure.
+
+Next, preserve the adapter boundary while separating these factors:
+
+1. **State-owner migration, unchanged algorithm.** Bind adapter identity and
+   its native arithmetic contract into a new complete-window/resume owner.
+   Repeat exact next-update replay before replacing the sealed Mistral runner.
+   The new readout/CE tests alone do not qualify that migration.
+2. **Useful interaction, not just sensitivity.** Test separately allocated
+   common-response and question/content-interaction paths under matched
+   parameter/resource controls. Keep common behavior and query-independent
+   writing; do not erase the common component or duplicate the donor loss.
+3. **Transport, explicitly a separate numerical intervention.** If testing
+   an FP32/output-precision route, put it in a named adapter with a matched
+   direct-base control. This is not native-equivalent arithmetic. The observed
+   mixed projected directions preclude treating precision/cap alone as a fix.
+4. **Immutable original-base preservation.** Own the original reference in
+   checkpoint metadata, separately from current-theta zero identity and the
+   semantic factor. Previous full-update base regressions are still unresolved.
+
+No new training/generation/judge budget is implied. The existing FAIL gate,
+non-regression NOT_ESTABLISHED, no winner, and closed judge missingness remain.
+
 ## Current unit: complete native full-update learner, not a content-binding winner
 
 The [native learner contract](NATIVE_LEARNER.md) defines V15 as the full,

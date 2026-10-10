@@ -1,5 +1,27 @@
 # Latent Workspace FT — CUDA comparison harness
 
+## V15 readout adapters: native equivalence, separate semantic and transport failures
+
+The [opt-in model-independent readout core](docs/v15/READOUT_ADAPTERS.md) now
+delegates normalization, head execution and post-head transformations to an
+explicit native-model adapter. Tiny GPT-2/Mistral/OLMo2/Gemma2 tests cover
+FP32/BF16 outputs and live gradients; this is not universal model qualification.
+The sealed optimizer/resume runner remains unchanged.
+
+A [read-only retained-Mistral audit](provenance/pilots/v15_readout_adapters_20261010/README.md)
+reproduces **192/192 old/new full-logit outputs** and **64/64 written-zero
+identities**. All **16/16 affected pairs retain native hidden differences**,
+yet their two answer logits remain identical at the native head. All **64/64
+pairs change other vocabulary logits**, without changing the greedy next token.
+The intended projected donor direction is only **2/4 per state**; one direction
+reverses during hidden casting in the full-updated state. One native answer-gap
+change occurs on an **unaffected** pair. Neither more visible logits nor higher
+precision alone establishes content binding.
+
+No new training, learner sequences or judges ran. The next factors separate
+semantic selection, explicitly controlled adapter precision and immutable
+original-base preservation. **Old FAIL / winner: none remain unchanged.**
+
 ## V15 native learner: full updates and exact resume; content binding still open
 
 The [new end-to-end state owner](docs/v15/NATIVE_LEARNER.md) now connects live
