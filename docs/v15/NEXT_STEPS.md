@@ -1,8 +1,18 @@
 # V15 follow-up: qualify the instrument, then isolate serialization learning
 
-Client date: 2026-10-10. **POST-RESULT DESIGN; new learning NOT EXECUTED**.
+Client date: 2026-10-10. **POST-RESULT DESIGN; new engineering pilot prepared**.
 
-## Latest update: native answer content is not reducible to stopping
+## Current decision: return to the FT learner without further judge collection
+
+Ryō chose to use the valid existing diagnoses and resume learner work. The
+[separate eight-update engineering plan](../v15_5/NATIVE_ANSWER_LEARNER.md)
+implements matched native answer CE versus the same CE plus verified-answer-
+conditioned EOS, with the pinned backbone frozen. This is a bounded new scope,
+not a successful qualification of the old instrument or the generalization
+study below. Execution results are pending. Do not retry any judge call or
+reactivate the paused heartbeat. No preferred generated answer becomes gold.
+
+## Prior evidence: native answer content is not reducible to stopping
 
 The [continuation result](../../provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010/README.md)
 is terminal, **HALTED_NO_RETRY**, not a completed judge panel. Its 155 valid new

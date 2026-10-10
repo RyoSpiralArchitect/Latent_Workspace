@@ -1,5 +1,16 @@
 # Latent Workspace FT — CUDA comparison harness
 
+## V15.5 learner restart: native answer/completion engineering pilot
+
+Diagnostic judge collection is closed at its valid observed coverage. The
+[new learner plan](docs/v15_5/NATIVE_ANSWER_LEARNER.md) resumes the FT line with
+two matched eight-update workspace-only arms: native full-vocabulary answer CE,
+and the same CE plus correct-answer-conditioned EOS. New implementation and
+validation are in progress; execution results are not yet available. No judge
+text becomes a training target. The prior expression FAIL and independent
+base-floor requirements remain unchanged; this is not full-backbone training
+or a qualified FT-beta candidate.
+
 ## V15.5 diagnostic evaluation: continuation closed as partial
 
 The [authorized 320-call continuation](provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010/README.md)
