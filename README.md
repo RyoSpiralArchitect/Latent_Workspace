@@ -1,5 +1,34 @@
 # Latent Workspace FT — CUDA comparison harness
 
+## V15 native learner: full updates and exact resume; content binding still open
+
+The [new end-to-end state owner](docs/v15/NATIVE_LEARNER.md) now connects live
+question/context features, writer/reader, native readout, complete-window CPU
+accumulation, all-base FP32-master updates, and optimizer/RNG checkpoint resume.
+The [completed pinned-Mistral pilot](provenance/pilots/v15_native_learner_20261010/README.md)
+retains **1,152 evaluation rows and 160 greedy sequences**. Both the frozen and
+full arms reproduce the next update exactly after checkpoint reload; all 291
+physical base tensors change in their FP32 masters, including all 65 RMSNorm
+tensors. Native BF16 changes are counted separately. Full-process peak Torch
+allocation is **27.751 GiB**, with **2.203 GiB** minimum sampled device free.
+
+This is engineering qualification, not a semantic win. Fresh legacy/modulated
+reader training remains **16/32 correct and 0/4 donor flips**. The full arm reaches
+**18/32**, but with **3 repairs and 1 new error** relative to original base;
+its updated base without workspace is **15/32**. All four final comparisons
+still have **0/4 donor flips, 0/4 strict workspace generation and identical
+intact/twin tokens on 4/4 queries**. Current-base zero identity does not establish
+original-base preservation. [Literal outputs](provenance/pilots/v15_native_learner_20261010/GENERATION_BANK.md),
+eight retained-checkpoint receipts and exact replay evidence are published.
+
+V15 now denotes the full native learner; the prior frozen-native milestone is
+conceptually V14.5 without changing historical paths. [Next design factors](docs/v15/NEXT_STEPS.md)
+separate common response from useful question/content interaction and make
+pinned-original reference ownership explicit. No redundant donor loss, automatic
+longer run or winning model is inferred. Old **FAIL / winner: none / non-regression
+unestablished** and closed judge missingness remain. The sections below retain
+the preceding results and their then-current proposals.
+
 ## V15 reader factor audit: localize binding failure before more learning
 
 The [new no-update factor audit](provenance/pilots/v15_reader_factors_20261010/README.md)

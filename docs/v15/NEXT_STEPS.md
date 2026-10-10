@@ -1,8 +1,68 @@
-# V15 follow-up: improve question/content binding before finite full updates
+# V15 follow-up: usable binding and an immutable original-base reference
 
 Client date: 2026-10-10. **POST-RESULT DESIGN; bounded learner pilot complete**.
 
-## Current unit: factor audit identifies the signal that training must grow
+## Current unit: complete native full-update learner, not a content-binding winner
+
+The [native learner contract](NATIVE_LEARNER.md) defines V15 as the full,
+explicitly owned chain from current question/context features through the
+writer/reader and native head to complete-window updates and resumable state.
+The [completed paired pilot](../../provenance/pilots/v15_native_learner_20261010/README.md)
+implemented and exercised it, preserving the historical frozen-native path.
+Both frozen and full step-1 checkpoints replay update 2 exactly, including
+optimizer/RNG and native weights. All 291 base masters change, including all
+65 RMSNorm masters; native BF16 changes are separately recorded. This is a
+substantial engineering milestone, not proof that intermediate differences
+already encode usable answers.
+
+The newly completed reader comparison does **not** choose a semantic winner.
+Both fresh eight-update readers remain 16/32 correct, with 0/4 correct donor
+flips. The full two-update arm reaches 18/32, but still has 0/4 donor flips and
+0/4 strict workspace generations; intact/twin tokens are identical on 4/4
+queries. Its exposed workspace predictions repair three original-base errors
+and introduce one; the updated backbone alone is 15/32 (two repairs, three
+new errors). Those paired changes matter more than the aggregate gain alone.
+All 1,152 evaluation rows and 160 sequences are retained, not fresh heldout evidence.
+
+### Preserve, improve and add — separate factors
+
+1. **Preserve the working chain and useful common behavior.** Keep native
+   arithmetic, written-zero identity, query-independent writing, matched bridge
+   AdamW, separate base/bridge clipping, CPU master ownership, exact resume and
+   literal generation receipts. Do not erase the dominant output direction:
+   the prior qualitative bank does not authorize discarding common-response
+   changes merely because they are not donor-selective.
+2. **Improve the representation/update path, not duplicate supervision.** The
+   donor hinge already targets reciprocal interaction, yet fresh modulation
+   and these finite full updates did not produce native donor direction. A
+   next prospective factor can separate common-response and question/content
+   interaction channels and their allocated update/norm budgets, under a
+   matched parameter/resource control. A query-role antisymmetric relation
+   route is a design candidate, not a demonstrated fix; query spans must be
+   bound from input text alone, with no answer, donor-side or factor-analysis
+   inputs at inference. First inspect actual update allocation and quantization;
+   this short result does not prove that longer training could never work.
+3. **Add immutable preservation-reference ownership.** The present unrelated
+   target follows current theta; native zero identity therefore cannot protect
+   the pinned original. A future teacher/control bank must be captured from
+   the pinned original, held fixed, hashed and owned in resume metadata. Keep
+   that preservation factor separate from the relation-reader factor so its
+   cost and tradeoff can be measured. Do not conflate preserving known correct
+   behavior with copying all original errors or freezing every useful change.
+4. **Advance only by new, matched evidence.** Re-establish native reciprocal
+   direction and stability controls before a larger FT claim; then require a
+   separately frozen fresh original-base floor and a matched answer bank.
+   Token style changes, lower CE, greater gradient norms or current-base
+   parity cannot substitute. No judge explanation is a gold training target.
+
+The bounded pilot is finished; no automatic longer training, model change,
+threshold relaxation, additional judge dispatch, monitoring restart or deletion
+of old weights follows. Old **FAIL / winner:none / non-regression unestablished**
+and historical judge missingness remain. The earlier proposals below are kept
+as chronology; their full-update deferral has been superseded by this completed
+engineering pilot, not by a semantic-promotion decision.
+
+## Prior unit: factor audit identifies the signal that training must grow
 
 The [completed no-update audit](../../provenance/pilots/v15_reader_factors_20261010/README.md)
 holds the retained weights fixed and decomposes 64 four-corner blocks into
