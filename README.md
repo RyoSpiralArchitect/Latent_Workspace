@@ -1,15 +1,28 @@
 # Latent Workspace FT — CUDA comparison harness
 
-## V15.5 learner restart: native answer/completion engineering pilot
+## V15.5 learner restart: native path exercised, no winning arm
 
 Diagnostic judge collection is closed at its valid observed coverage. The
 [new learner plan](docs/v15_5/NATIVE_ANSWER_LEARNER.md) resumes the FT line with
 two matched eight-update workspace-only arms: native full-vocabulary answer CE,
-and the same CE plus correct-answer-conditioned EOS. New implementation and
-validation are in progress; execution results are not yet available. No judge
-text becomes a training target. The prior expression FAIL and independent
-base-floor requirements remain unchanged; this is not full-backbone training
-or a qualified FT-beta candidate.
+and the same CE plus correct-answer-conditioned EOS. The
+[completed CUDA pilot](provenance/pilots/v15_5_native_answer_20261010/README.md)
+retains **576 evaluation rows and 80 greedy sequences**. Native logits changed;
+answer-only training changed text for 2/4 exposed queries, but intact/twin tokens
+remained identical for 4/4 in both arms. Choice accuracy stayed 8/16 per factual
+condition, affected donor changes stayed zero, and workspace generation remained
+0/4 strict-correct with 4/4 length stops per arm/checkpoint. EOS CE fell only in
+the EOS-trained arm, without improved observed termination. **No winner.**
+
+The run took 70.01 seconds with a 14.13 GiB Torch allocation peak on Furnace.
+232 selected tests passed locally and on the execution host; offline receipts
+replay. [All outputs](provenance/pilots/v15_5_native_answer_20261010/GENERATION_BANK.md)
+and per-condition checkpoints are retained. No additional judge call or weight
+deletion occurred. No judge text became a training target. The prior expression
+FAIL and independent base-floor requirements remain unchanged; this is neither
+full-backbone training nor a qualified FT-beta candidate. The
+[next proposal](docs/v15/NEXT_STEPS.md) prioritizes content-selective learning
+and per-loss gradient diagnostics over automatically extending this pilot.
 
 ## V15.5 diagnostic evaluation: continuation closed as partial
 
@@ -38,10 +51,11 @@ the observed native failures. Missingness is not assumed random.
 
 The [combined literal panel](provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010/analysis/DIAGNOSTIC_PANEL.md)
 and [bounded next-step proposal](docs/v15/NEXT_STEPS.md) preserve the old **FAIL**,
-strict scores, unknowns and all source records. No learner was trained; no
+strict scores, unknowns and all source records. No learner was trained in that
+diagnostic collection; no
 quality, non-regression, semantic-mechanism or winner claim is established.
 
-## Current V15 engineering checkpoint
+## Earlier V15 no-training engineering checkpoints
 
 The fresh [cue-by-envelope confirmation](provenance/pilots/v15_cue_confirmation_20261010/README.md)
 completed **512 generations** on 16 new world families. Removing `Answer:`
@@ -52,7 +66,7 @@ With the cue retained, atomic candidate ranking was **21/32 at the first token
 versus 30/32 for answer-plus-EOS paths**; this is a completed-path diagnostic,
 not successful natural generation or a selected method. All outputs and the
 failed gate are retained; the new verifier passes on both Mac and Furnace CPU
-with identical receipts. **No new V15 learning was started.**
+with identical receipts. **No new V15 learning was started in that assay.**
 
 The preceding [pinned-base elicitation assay](provenance/pilots/v15_base_elicitation_20261010/README.md)
 retains **288 complete generated outputs**: native chat improves termination,
@@ -63,7 +77,7 @@ finds native-chat atomic candidate ranking changes from 9/16 at the first token
 to 14/16 for complete answer paths; full-chain changes 7/16 to 8/16. This is not repaired
 generation or a qualified method. The latter's frozen verifier passes on the
 execution runtime; local Mac exact summary replay retains four one-ULP scalar
-mismatches. **New V15 learning remains deferred.**
+mismatches. **New V15 learning was deferred at that checkpoint.**
 
 The [V15 readout/serialization/generation assay](provenance/pilots/v15_readout_transport_20261010/README.md)
 completed on 2026-10-10 with retained weights and no optimizer updates. Loss

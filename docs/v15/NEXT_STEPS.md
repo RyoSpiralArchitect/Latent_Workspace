@@ -1,6 +1,6 @@
-# V15 follow-up: qualify the instrument, then isolate serialization learning
+# V15 follow-up: native learner exercised; isolate content-selective learning
 
-Client date: 2026-10-10. **POST-RESULT DESIGN; new engineering pilot prepared**.
+Client date: 2026-10-10. **POST-RESULT DESIGN; bounded learner pilot complete**.
 
 ## Current decision: return to the FT learner without further judge collection
 
@@ -9,8 +9,54 @@ Ryō chose to use the valid existing diagnoses and resume learner work. The
 implements matched native answer CE versus the same CE plus verified-answer-
 conditioned EOS, with the pinned backbone frozen. This is a bounded new scope,
 not a successful qualification of the old instrument or the generalization
-study below. Execution results are pending. Do not retry any judge call or
+study below. The [completed results](../../provenance/pilots/v15_5_native_answer_20261010/README.md)
+retain 576 evaluation rows and all 80 bounded greedy sequences. Do not retry any judge call or
 reactivate the paused heartbeat. No preferred generated answer becomes gold.
+
+Both native objectives produced finite parameter updates and observable native
+logit changes. Answer-only training changed the generated text for 2/4 exposed
+queries, but intact/twin tokens matched for all 4/4 in each arm. All four
+truth-bearing choice conditions stayed at 8/16; the four affected donor-margin
+changes stayed exactly zero. Both arms' workspace generation stayed 0/4 strict
+correct and 4/4 length-limited at each measured step. EOS supervision reduced
+teacher-forced EOS CE without improving observed termination. Lower losses or
+different wording do not select a winner; the old FAIL remains unchanged.
+
+This closes the missing finite-update/native-generation engineering path, not
+the content-use problem. FP32 residual norms approached the cap-one bound while
+intact/twin two-choice score vectors remained equal for 16/16 prefixes. That
+is consistent with a shared output bias, not proof that all latent semantic
+information is absent. All 26 bridge tensors had nonzero aggregate gradient
+norms by update 8, which cannot rule out per-loss cancellation or weak content
+selectivity. No full-tensor causal decomposition was performed.
+
+### Next bounded learner priority (proposed, not executed)
+
+1. **Keep the shared native path and sealed controls.** Preserve the graph
+   oracle, independent frozen base, written-zero parity, original question
+   anchor, exact generation outputs, and separate answer/EOS loss weights.
+2. **Decompose content versus common output shift before more updates.** On
+   train-only worlds, record per-loss writer/Q/K/V/output gradient norms and
+   alignment, reciprocal-query cancellation, intact/twin residual differences,
+   common components, cap compression, answer-alias redistribution, and native
+   versus pre-cast donor margins.
+   An aggregate gradient, saturated norm or changed top-1 token is not enough.
+   Use those measurements to choose one next factor: e.g. reader binding or
+   content-dependent objective/parameterization. Do not silently combine these
+   with a larger cap or a longer run.
+3. **Keep completion separately observable.** Compare the correct-answer
+   teacher-forced prefix with prefixes actually reached in greedy generation.
+   Do not turn a smaller EOS loss into a stopping-success claim or use it to
+   harden a wrong first answer. No additional judge is needed for this result.
+4. **Retain the original keep/strengthen/add exit contract.** Only fresh,
+   matched task/world controls and answer banks can establish preservation of
+   useful calibrated responses, grounded improvements and the independent
+   base correctness floor. Random/schema controls, natural multi-turn behavior,
+   qualitative sentinel preservation and human review remain outstanding.
+
+The completed engineering scope does not authorize automatic longer training,
+full-backbone updates, revised scoring thresholds, new judge collection, weight
+deletion or release promotion. Checkpoints 4 and 8 of each arm remain on Furnace.
 
 ## Prior evidence: native answer content is not reducible to stopping
 
@@ -20,7 +66,8 @@ diagnoses bring main coverage to **343/512**: 171 inline and 172 query-only.
 There are now eight ambiguous main calls and 161 never dispatched. The original
 invalid repeat and OpenAI's calibration FAIL plus 544 undispatched study calls
 remain unchanged. All original records, settings, bodies and gates are preserved;
-the heartbeat is paused and no learner run is authorized.
+the heartbeat is paused. At that diagnostic checkpoint no learner run was
+authorized; the later explicit engineering scope is recorded above.
 
 The renderer split materially sharpens the earlier proposal. Of 87 diagnosed
 native-chat inline outputs, 58 strictly succeed and 29 fail: **13 contradiction,
@@ -74,10 +121,11 @@ Carry these distinctions into **proposed, separately authorized** learner work:
    explanations. Confirm on untouched controls. Do not repair the frozen
    evidence/rubric or treat repeatable single-family labels as human truth.
 
-No learner factor is proven by this base-only partial diagnostic. The current
-execution scope is closed. After two timeout batches, first choose whether to
-do a bounded transport diagnosis before authorizing the **161 never-dispatched
-requests** in another separately recorded run. The eight ambiguous calls and
+No learner factor is proven by this base-only partial diagnostic. Its
+execution scope is closed; the later decision above declines further judge
+collection and proceeds with a separate bounded learner test. Any future
+recovery of the **161 never-dispatched requests** would need a new decision and
+a separately recorded run. The eight ambiguous calls and
 invalid repeat remain excluded. No new model request, source-seal change,
 learner experiment, provider substitution or PR merge follows automatically.
 
