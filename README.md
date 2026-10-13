@@ -4,6 +4,24 @@ The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
 pre-import source guard for future runs and qualifies the historical
 untracked-file cleanliness claim. Old audit sources and receipts are unchanged.
 
+## V15 adapter-owned updates: graph sharing and exact resume
+
+The [new opt-in state owner](docs/v15/ADAPTER_STATE_OWNER.md) carries the native
+adapter boundary through complete-window updates and checkpoint/RNG resume.
+An independent-forward control exposed **equal scalar loss but different
+gradients in 20/21 tiny base tensors**: paired graph sharing is part of the
+arithmetic contract, not merely a forward implementation detail.
+
+The [source-bound CPU qualification](provenance/pilots/v15_adapter_owner_20261013/README.md)
+passes **71/71 tiny tests**, including **8/8 matched-update conditions and 8/8
+exact next-update resume conditions**. CUDA's first isolated launch stopped
+before any test/model ran because its runtime could not import pytest; that
+failure is retained and **CUDA remains unqualified**. No 7B update or new
+generation ran. The sealed historical runner is unchanged. The
+[next real-model gate](docs/v15/ADAPTER_7B_MIGRATION_GATE.md) requires separate
+CUDA, complete-window and checkpoint-capacity admission; old **FAIL / winner:
+none / non-regression NOT_ESTABLISHED** remain unchanged.
+
 ## V15 readout adapters: native equivalence, separate semantic and transport failures
 
 The [opt-in model-independent readout core](docs/v15/READOUT_ADAPTERS.md) now

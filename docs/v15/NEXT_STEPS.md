@@ -8,6 +8,24 @@ untracked source. The migration must also preserve/bind pair-level graph
 sharing, not only forward values and individual answer gradients. The old
 source/receipt cleanliness claim is qualified, not retrospectively reissued.
 
+2026-10-13 state-owner addendum: the [adapter-owned implementation](ADAPTER_STATE_OWNER.md)
+now preserves the historical paired graph and complete-window algorithm.
+[Tiny CPU evidence](../../provenance/pilots/v15_adapter_owner_20261013/README.md)
+passes 71/71 tests, 8/8 update conditions and 8/8 next-update resume conditions.
+Independent forwards had equal losses but different base gradients; graph
+sharing and runtime policy are now explicit checkpointed contracts. The first
+isolated CUDA launch failed before tests because pytest was unavailable to its
+isolated interpreter. Its failure is retained, and CUDA is **not qualified**.
+
+The [next migration gate](ADAPTER_7B_MIGRATION_GATE.md) makes the remaining work
+explicit: qualify tiny CUDA, freeze a real 16-pair-window reference/adapter
+comparison, then admit its GPU/host/disk budget. About 44 GB disk free is below
+the historical 50-GiB remaining-space floor even before new checkpoints.
+No existing weights are deleted and no 7B run is started. This is engineering
+progress only; the useful-interaction, explicit-precision and immutable-original
+preservation factors below remain separate. Original-base identity ownership
+does not yet add preservation supervision or establish non-regression.
+
 ## Readout decomposition now measured; model-native adapter added
 
 The [adapter contract](READOUT_ADAPTERS.md) separates the model-independent

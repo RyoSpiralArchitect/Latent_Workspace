@@ -1,0 +1,96 @@
+{
+  "claim_ceiling": "Per-runtime tiny engineering comparisons; not cross-device bit equality or 7B/model-quality qualification",
+  "judge_calls": 0,
+  "new_sequences": 0,
+  "non_regression": "NOT_ESTABLISHED",
+  "old_expression_gate": "FAIL",
+  "real_model_updates": 0,
+  "runs": {
+    "cpu": {
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 71
+      },
+      "device": "cpu",
+      "elapsed_seconds": 11.824668665998615,
+      "error": null,
+      "exact_resume_conditions_passed": 8,
+      "matched_update_conditions_passed": 8,
+      "negative_controls": [
+        {
+          "different_base_tensors": 0,
+          "different_bridge_tensors": 0,
+          "dtype": "torch.float32",
+          "eligible_tensors": 26,
+          "full_update": false,
+          "loss_exact": true,
+          "max_abs": 0.0
+        },
+        {
+          "different_base_tensors": 0,
+          "different_bridge_tensors": 0,
+          "dtype": "torch.bfloat16",
+          "eligible_tensors": 26,
+          "full_update": false,
+          "loss_exact": true,
+          "max_abs": 0.0
+        },
+        {
+          "different_base_tensors": 20,
+          "different_bridge_tensors": 0,
+          "dtype": "torch.float32",
+          "eligible_tensors": 47,
+          "full_update": true,
+          "loss_exact": true,
+          "max_abs": 5.029141902923584e-08
+        },
+        {
+          "different_base_tensors": 20,
+          "different_bridge_tensors": 0,
+          "dtype": "torch.bfloat16",
+          "eligible_tensors": 47,
+          "full_update": true,
+          "loss_exact": true,
+          "max_abs": 0.00146484375
+        }
+      ],
+      "peak_cuda_allocated_bytes": null,
+      "runtime": {
+        "cuda": null,
+        "platform": "macOS-26.2-arm64-arm-64bit-Mach-O",
+        "pytest": "9.1.1",
+        "python": "3.13.13",
+        "torch": "2.13.0",
+        "transformers": "5.15.0"
+      },
+      "status": "SYNTHETIC_ENGINEERING_PASS_NOT_7B_QUALIFICATION",
+      "test_failures": []
+    },
+    "cuda": {
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 0
+      },
+      "device": "cuda",
+      "elapsed_seconds": 0.0006569251418113708,
+      "error": "ModuleNotFoundError: No module named 'pytest'",
+      "exact_resume_conditions_passed": 0,
+      "matched_update_conditions_passed": 0,
+      "negative_controls": [],
+      "peak_cuda_allocated_bytes": null,
+      "runtime": null,
+      "status": "FAILED",
+      "test_failures": []
+    }
+  },
+  "schema": "v15-adapter-owner-offline-qualification-v1",
+  "source_commit": "64171c8e63642024070236ee0f7df22ecd966331",
+  "source_files": 299,
+  "status": "CPU_SYNTHETIC_QUALIFIED_CUDA_NOT_QUALIFIED",
+  "weight_deletions": 0,
+  "winner": "none"
+}
