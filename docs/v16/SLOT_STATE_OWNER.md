@@ -1,6 +1,9 @@
 # V16: explicit slot-contrast state ownership
 
 2026-10-14. Engineering integration only; no new 7B learner experiment.
+[Terminal qualification](../../provenance/pilots/v16_slot_state_owner_20261014/README.md):
+145/145 cases independently on source-isolated CPU and CUDA, plus 440/440 local
+regression and 14/14 offline-verifier cases. All 16 replay cells pass per runtime.
 
 `SlotContrastNativeLearner` admits the sealed `SlotContrastWorkspaceBridge`
 through a separate `SlotContrastStateBinding`. The historical v15/v2 whitelist
@@ -100,7 +103,7 @@ ceilings. These verifier fixtures are explicitly synthetic, not run evidence.
 
 ## Boundary after qualification
 
-The results are published in a separate provenance bundle after terminal replay.
+The results are published in the separate provenance bundle after terminal replay.
 Old bundles, their failure states and all sealed source files remain unchanged.
 The scientific gate stays **FAIL / winner:none / non_regression NOT_ESTABLISHED**.
 

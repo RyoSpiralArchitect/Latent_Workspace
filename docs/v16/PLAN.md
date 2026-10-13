@@ -1,12 +1,16 @@
 # V16: useful workspace interaction, without sacrificing the original base
 
-2026-10-14. **Reader prototype and prospective staged design, not a trained winner.**
+2026-10-14. **Reader prototype with tiny-qualified state ownership, not a trained winner.**
 V15 remains the native full-update/state-ownership milestone. V16 names the next
 learner improvement, not a relabelling of the historical unsuccessful models.
 
 Current [prototype evidence](../../provenance/pilots/v16_slot_contrast_prototype_20261014/README.md):
 16/16 ordinary local CPU tests pass, including tiny Mistral FP32/BF16 zero-path
 and live-backward checks. This is not a source-isolated CUDA/7B qualification.
+The subsequent [state-owner integration](SLOT_STATE_OWNER.md) separately passes
+[145/145 source-isolated CPU and CUDA cases per runtime](../../provenance/pilots/v16_slot_state_owner_20261014/README.md),
+including 16/16 exact serialized replay cells. This qualifies tiny state mechanics,
+not 7B new-reader memory use, factual binding, response quality or preservation.
 
 ## What the evidence actually motivates
 
@@ -90,6 +94,9 @@ training or guarantee useful behavior survives.
    whitelist**. Qualify its writer/common/interaction ownership, gradients,
    matched updates and snapshot/rejected/valid resume in a new format before FT.
    Do not bypass the guard by disguising the new class as the old reader.
+   **Now complete at tiny CPU/CUDA scale:** the dedicated state binding and
+   `v16-slot-contrast-native-resume-v1` format retain the old guard unchanged.
+   The source-sealed 145-case suite passes independently on both devices.
 4. **One semantic factor at a time.** The first prospective pilot compares
    legacy-common reference, raw matched-capacity control and slot-contrast
    candidate. Candidate versus raw control is the mechanism comparison;

@@ -4,8 +4,9 @@ Client date: 2026-10-10. **POST-RESULT DESIGN; bounded learner pilot complete**.
 
 2026-10-14 continuation: [V16 plan](../v16/PLAN.md) now names the next FT
 improvement. A common-plus-slot-contrast prototype and matched-capacity control
-pass 16 local CPU tests, but are not integrated into the checkpoint owner or
-trained on 7B. The preceding v2 checkpoint repair passes separate source-sealed
+pass 16 local CPU tests and now have a separate
+[tiny-qualified state owner](../v16/SLOT_STATE_OWNER.md), but are not trained on
+7B. The preceding v2 checkpoint repair passes separate source-sealed
 CPU/CUDA qualification. The initial [storage inspection](../../provenance/inventory/v16_storage_inspection_20261014/README.md)
 was read-only. Ryō subsequently authorized [V12-only cleanup](../../provenance/inventory/v12_weight_prune_20261014/README.md):
 90 weight files / 206.805 GiB removed after recording hashes and metadata,
@@ -68,9 +69,16 @@ continuation-01 failures preserved. No frozen or legacy reference was rerun.
 Carry forward the new lesson: setup itself is owned native execution state.
 Test production preparation → binding → full window → snapshot → restore as
 one composition, while keeping reader mechanisms separate from native arithmetic.
-The next V16 gate is explicit slot-contrast reader ownership and matched tiny
-update/resume qualification. Do not skip it because the unchanged common-reader
-migration passed; only then freeze a bounded three-arm semantic comparison.
+That next gate is now complete at tiny scale: the
+[slot-contrast state qualification](../../provenance/pilots/v16_slot_state_owner_20261014/README.md)
+passes 145/145 on source-isolated CPU and CUDA independently, including all 16
+serialized replay cells and eight independent update references per runtime.
+It adds explicit writer/common/interaction ownership and a new checkpoint format,
+without widening the old whitelist or altering any of the 519 historical source
+files. Local regression is 440/440; offline-verifier tests are 14/14.
+Next freeze the bounded common/raw-control/slot-contrast Mistral pilot and a
+fresh CPU/GPU/disk forecast. The tiny CUDA peak (64.465 MiB) is not that forecast;
+unchanged-reader 7B migration also does not prove new-reader capacity or semantics.
 This is engineering progress only;
 the useful-interaction, explicit-precision and immutable-original
 preservation factors below remain separate. Original-base identity ownership

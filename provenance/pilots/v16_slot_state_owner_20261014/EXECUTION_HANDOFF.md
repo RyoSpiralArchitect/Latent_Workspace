@@ -1,6 +1,7 @@
 # V16 slot-state qualification handoff
 
-2026-10-14. Source-preparation record; terminal results are appended separately.
+2026-10-14. **TERMINAL tiny CPU/CUDA engineering PASS.** Both jobs exited 0;
+no qualification process or pending retry remains.
 
 Ryō asked to integrate V16 slot-contrast into state management and save/resume.
 This attempt selects only the new 145-case tiny engineering suite, on CPU and
@@ -35,3 +36,27 @@ Only complete same-source terminal PASS and offline verification qualify a
 device. Candidate/raw × FP32/BF16 × full/frozen × checkpointing on/off are
 within-runtime comparisons, not CPU/CUDA equality or response-quality evidence.
 Old FAIL / winner:none / non_regression NOT_ESTABLISHED remain unchanged.
+
+## Terminal record
+
+The planned source/evidence paths above were used, with source
+`e6866c0a173d23bc8b4a0c59b8b74bca4abc7877` and 526 sealed files. CPU STARTED PID
+1651070 (local launch session 15109) and CUDA PID 1651133 (session 61898) both
+finished. Do not relaunch this completed qualification. Post-run Furnace reported
+no compute client; no other workload was modified.
+
+CPU: 145/145, 143.471 seconds in tests, 145.961211 seconds total.
+CUDA: 145/145, 247.295 seconds in tests, 249.918512 seconds total,
+67,596,288 bytes peak allocation (64.464844 MiB). Each runtime passed all 16
+same-runtime serialized replay cells and eight independent update references.
+CPU/CUDA ran concurrently in separate processes; timings are not a speed study.
+
+Source seal and both three-file terminal bundles were copied locally, replayed
+offline and retained. See [results](README.md) and [offline verification](OFFLINE_VERIFY.json).
+The 14-case verifier suite also passed on final rerun; its JUnit is retained.
+All 519 previous source hashes and all three earlier evidence bundles remain
+unchanged, including both historical terminal failures. No 7B update, API call,
+new generation, experiment-weight deletion, heartbeat or merge occurred.
+
+Next: freeze the three-arm Mistral pilot and its resource forecast. This terminal
+handoff does not dispatch that training or declare semantic success.

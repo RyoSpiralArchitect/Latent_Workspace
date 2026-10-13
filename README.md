@@ -35,8 +35,16 @@ and **7B full exact updates plus serialized replay**. Only the missing adapter
 processes. The strict hook guard and all math/resource thresholds remain intact.
 The repair took 19 min 24.57 s, with 27.751 GiB peak allocated CUDA memory.
 Preparation is now an explicitly owned, idempotent adapter setup boundary.
-Next is the new V16 reader's descriptor/checkpoint ownership, not a semantic
-success claim. Old **FAIL / winner:none / non-regression NOT_ESTABLISHED** stays.
+The new [V16 reader-state owner](docs/v16/SLOT_STATE_OWNER.md) now completes that
+next engineering gate: [145/145 source-isolated cases on each of CPU and CUDA](provenance/pilots/v16_slot_state_owner_20261014/README.md),
+including 16/16 serialized replay cells and eight independent update references
+per runtime. Writer/common/interaction partitions and same-shaped candidate/control
+policies are explicitly owned in a new format; v15/v2 still rejects the prototype.
+Local regression is 440/440, with another 14/14 offline-verifier cases. CUDA tests
+took 247.295 seconds with 64.465 MiB peak allocation, a **tiny-model** observation.
+Next is freezing the three-arm Mistral pilot and its new resource forecast, not
+declaring semantic success. No new 7B FT has run. Old **FAIL / winner:none /
+non-regression NOT_ESTABLISHED** stays.
 
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
 pre-import source guard for future runs and qualifies the historical
