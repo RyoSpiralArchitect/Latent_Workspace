@@ -24,9 +24,19 @@ mismatch. The authorized [full-only continuation](provenance/pilots/v16_adapter_
 passed admission and completed legacy full updates, then stopped **before any
 adapter update**: production preparation registers an HF input-gradient hook
 twice, leaving one unowned. A CPU construction-only diagnosis reproduced the
-gap missed by direct-HF tiny tests. Combined: **112/160 pairs; full comparison
-and replay remain incomplete**. No fix or further retry has run. Old **FAIL / winner:none
-/ non-regression NOT_ESTABLISHED** stays.
+gap missed by direct-HF tiny tests. At that point: **112/160 pairs**, full
+comparison and replay incomplete. Both historical failures remain sealed.
+
+The separately authorized [owned-preparation repair](provenance/pilots/v16_adapter_full_recovery_02_20261014/README.md)
+now passes 295/295 local regression tests, 22/22 source-isolated CUDA cases,
+and **7B full exact updates plus serialized replay**. Only the missing adapter
+48 pairs ran; neither frozen nor completed legacy work was repeated. Combined:
+**160/160 pairs, 8/8 unique windows, 2/2 replays** across three source-provenanced
+processes. The strict hook guard and all math/resource thresholds remain intact.
+The repair took 19 min 24.57 s, with 27.751 GiB peak allocated CUDA memory.
+Preparation is now an explicitly owned, idempotent adapter setup boundary.
+Next is the new V16 reader's descriptor/checkpoint ownership, not a semantic
+success claim. Old **FAIL / winner:none / non-regression NOT_ESTABLISHED** stays.
 
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
 pre-import source guard for future runs and qualifies the historical

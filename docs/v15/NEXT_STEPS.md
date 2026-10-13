@@ -56,9 +56,21 @@ completed both legacy full updates but failed adapter construction: the
 production helper registers the installed HF input-gradient hook twice and
 leaves the first handle unowned. A construction-only CPU diagnosis reproduced
 this; the direct-HF tiny tests had missed the composed preparation path.
-Combined 112/160 pairs are observed, but full comparison/replay remain absent.
-Next decision: qualify an additive owned/idempotent preparation path and test
-that actual entry before any new 7B dispatch. No fix or retry is yet authorized.
+That terminal observation was 112/160 pairs, with full comparison/replay absent.
+Ryō then authorized the proposed repair and separate missing-adapter attempt.
+The [owned-preparation recovery](../../provenance/pilots/v16_adapter_full_recovery_02_20261014/README.md)
+passes 295/295 local regressions, 22/22 CUDA cases and the remaining 48/48 real-7B
+adapter/replay pairs. Initial state, all ordered loss/gradient receipts, complete
+updates and serialized next-update payload match exactly. Combined migration is
+now 160/160 pairs, 8/8 unique windows and 2/2 replay windows, with original and
+continuation-01 failures preserved. No frozen or legacy reference was rerun.
+
+Carry forward the new lesson: setup itself is owned native execution state.
+Test production preparation → binding → full window → snapshot → restore as
+one composition, while keeping reader mechanisms separate from native arithmetic.
+The next V16 gate is explicit slot-contrast reader ownership and matched tiny
+update/resume qualification. Do not skip it because the unchanged common-reader
+migration passed; only then freeze a bounded three-arm semantic comparison.
 This is engineering progress only;
 the useful-interaction, explicit-precision and immutable-original
 preservation factors below remain separate. Original-base identity ownership

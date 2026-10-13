@@ -149,14 +149,26 @@ unchanged 31-GiB start floor; original status remains INCOMPLETE_NO_RETRY.
 Ryō authorized [only full in a fresh process](ADAPTER_FULL_CONTINUATION_01.md).
 This retains all existing math and thresholds; it is not new V16-reader FT.
 
-The [continuation result](../../provenance/pilots/v16_adapter_full_continuation_01_20261014/README.md)
-now localizes a preparation-composition gap: legacy full updates completed, but
-the helper's duplicate input-gradient registration was rejected before adapter
-training. Combined 112/160 pairs do not qualify full migration. First propose
-an additive, owned/idempotent preparation path and exact production-entry
-tests; retain old sources and reject arbitrary hooks. Another 7B attempt needs
-a new explicit recovery decision and frozen source/selection. The slot-contrast
-prototype remains unintegrated and untrained.
+Continuation 01 completed the legacy full reference but failed adapter hook
+admission before its first pair. The separate
+[owned-preparation recovery](../../provenance/pilots/v16_adapter_full_recovery_02_20261014/README.md)
+now completes the missing 48 pairs with exact full updates and serialized
+replay. Combined: 160/160 pairs, eight unique and two replay windows; both old
+terminal failures and their entire bundles remain unchanged. Peak Torch CUDA
+allocation/reservation in the recovery: 27.751/28.369 GiB; this is the unchanged
+common reader's envelope, not a forecast for a new reader or longer inputs.
+
+Staged gate 2 is therefore met for the pinned two-update/seed47 Mistral contract.
+Proceed to gate 3's reader ownership, not directly to semantic FT. The production
+setup must remain explicitly owned/idempotent, and composition tests must cover
+the actual preparation path through complete updates, snapshots and restore.
+No loss, tolerance or hook rejection was relaxed to obtain this engineering PASS.
+
+The [historical continuation result](../../provenance/pilots/v16_adapter_full_continuation_01_20261014/README.md)
+localized the preparation-composition gap at 112/160 pairs and motivated the
+separately authorized recovery above. It is retained as a failed terminal,
+not rewritten into a success. The slot-contrast prototype remains unintegrated
+and untrained even though the unchanged-reader migration is now qualified.
 
 Old **FAIL / winner:none / non-regression NOT_ESTABLISHED** remains unchanged.
 The closed diagnostic-judge status remains `INCOMPLETE_OR_CALIBRATION_BLOCKED`;

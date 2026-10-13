@@ -81,3 +81,14 @@ binding → complete-window update → snapshot → restore), not just its compo
 Keep model-specific context extraction and native arithmetic in bindings; keep
 losses, reader mechanism and optimizer policy separate. This repair removes a
 setup failure, not the already-observed lack of reliable donor-directed use.
+
+## Result
+
+The [completed evidence](../../provenance/pilots/v16_adapter_full_recovery_02_20261014/README.md)
+passes 295/295 ordinary CPU regressions and 22/22 source-isolated CUDA cases.
+The source-sealed 7B attempt then completed all 48 selected pairs with exact
+full updates and serialized replay, 1,164.569855 seconds total. Combined with
+the untouched original/continuation evidence, the engineering migration now
+has 160/160 pairs, 8/8 unique windows and 2/2 replays. Both historical terminal
+failures remain unchanged. The next gate is new-reader state ownership, not a
+claim of semantic improvement or a dispatch of V16 FT.
