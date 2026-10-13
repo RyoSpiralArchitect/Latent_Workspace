@@ -44,9 +44,14 @@ The [next migration gate](ADAPTER_7B_MIGRATION_GATE.md) makes the remaining work
 explicit: after the v2 repair, freeze a real 16-pair-window reference/adapter
 comparison, then admit its GPU/host/disk budget. The initial ~44 GB disk-space
 block is resolved by the separately authorized V12-only cleanup above; the
-50-GiB remaining-space floor still applies to forecast writes. No new 7B run
-has yet been admitted. This is engineering
-progress only; the useful-interaction, explicit-precision and immutable-original
+50-GiB remaining-space floor still applies to forecast writes. The
+[real-7B run](../../provenance/pilots/v16_adapter_migration_20261014/README.md)
+passed frozen updates and replay (80/160 total planned pairs). Full was not
+dispatched because the warmed process missed the unchanged 31-GiB start floor.
+Its original terminal **INCOMPLETE_NO_RETRY** is sealed; Ryō authorized
+[only full in a fresh process](../v16/ADAPTER_FULL_CONTINUATION_01.md), without
+rerunning frozen or relaxing criteria. This is engineering progress only;
+the useful-interaction, explicit-precision and immutable-original
 preservation factors below remain separate. Original-base identity ownership
 does not yet add preservation supervision or establish non-regression.
 

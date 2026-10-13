@@ -1,6 +1,11 @@
 # Next gate: adapter-owned real-Mistral update equivalence
 
-2026-10-13. **Prospective design, not an executed or admitted experiment.**
+2026-10-13 design; 2026-10-14 execution update: the
+[new sealed run](../../provenance/pilots/v16_adapter_migration_20261014/README.md)
+passes frozen exact updates and replay (80/160 total pairs). Full stopped at
+admission before any work. The original remains **INCOMPLETE_NO_RETRY**;
+[full-only continuation 01](../v16/ADAPTER_FULL_CONTINUATION_01.md) is separately
+authorized with unchanged criteria. The complete gate is not yet satisfied.
 
 The [new owner](ADAPTER_STATE_OWNER.md) is an algorithm-preserving integration,
 not the next semantic learner factor. Its [tiny qualification](../../provenance/pilots/v15_adapter_owner_20261013/README.md)

@@ -15,8 +15,13 @@ The v2 checkpoint fixes below are complete at tiny CPU/CUDA scale. After the
 [read-only storage inventory](provenance/inventory/v16_storage_inspection_20261014/README.md),
 Ryō authorized [all V12 experiment weights to be removed](provenance/inventory/v12_weight_prune_20261014/README.md):
 90 files / 206.805 GiB, with hashes and 315 metadata copies retained. Available
-space is now 249.571 GiB; V14/V15 and model caches were not changed. Real 7B
-migration still needs its exact execution/resource gate. Old **FAIL / winner:none
+space after cleanup was 249.571 GiB; V14/V15 and model caches were not changed.
+The [real-7B migration](provenance/pilots/v16_adapter_migration_20261014/README.md)
+now passes exact frozen updates and serialized replay: **80/160 planned pairs**.
+Full was never dispatched: the warmed process fell below the unchanged 31-GiB
+start floor. Original status is **INCOMPLETE_NO_RETRY**, not OOM or a numerical
+mismatch. Ryō authorized a [separate full-only process](docs/v16/ADAPTER_FULL_CONTINUATION_01.md),
+with frozen work sealed and all criteria unchanged. Old **FAIL / winner:none
 / non-regression NOT_ESTABLISHED** stays.
 
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
@@ -45,7 +50,7 @@ including 65 non-mutating rejection cases, eight matched-update cells, eight
 serialized replay cells, and two controls reproducing v1's defects per runtime.
 609 selected local regression cases also pass. **PR #12 stays Draft pending
 follow-up review; old receipts and the known-defective v1 API remain historical.**
-No 7B update or new generation ran. The sealed
+That checkpoint-repair qualification ran no 7B update or new generation. The sealed
 historical runner is unchanged. The
 [next real-model gate](docs/v15/ADAPTER_7B_MIGRATION_GATE.md) requires separate
 complete-window and capacity admission after the v2 repair; old **FAIL / winner:

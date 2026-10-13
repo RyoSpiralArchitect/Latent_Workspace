@@ -141,9 +141,13 @@ recorded all 90 hashes and copied/verified 315 metadata files before removing
 model caches remain unchanged. This overrides two-state retention for V12
 only. Hashes are not reconstructible weight backups.
 
-The storage obstacle is resolved for the preliminary ~104-GiB estimate, but
-the exact migration forecast, source/runtime and GPU/host admission still have
-to be frozen and checked. No 7B migration or V16 FT is claimed by this cleanup.
+The storage obstacle is resolved. The separately sealed
+[migration](../../provenance/pilots/v16_adapter_migration_20261014/README.md)
+passed frozen exact updates/replay: 80/160 planned pairs, 4/8 unique windows
+and 1/2 replays. Full never started because the warmed process missed the
+unchanged 31-GiB start floor; original status remains INCOMPLETE_NO_RETRY.
+Ryō authorized [only full in a fresh process](ADAPTER_FULL_CONTINUATION_01.md).
+This retains all existing math and thresholds; it is not new V16-reader FT.
 
 Old **FAIL / winner:none / non-regression NOT_ESTABLISHED** remains unchanged.
 The closed diagnostic-judge status remains `INCOMPLETE_OR_CALIBRATION_BLOCKED`;
