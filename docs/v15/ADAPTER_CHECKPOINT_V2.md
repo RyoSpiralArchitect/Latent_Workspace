@@ -44,6 +44,10 @@ Tiny Torch peak allocation is not the host/process/device envelope.
 
 ## Qualification contract (execution recorded separately)
 
+[Completed source-sealed CPU/CUDA runs](../../provenance/pilots/v15_adapter_owner_v2_20261014/README.md)
+each passed 164/164 cases; the separate selected local regression run passed
+609/609. These observations do not widen the contract below.
+
 The [fixed plan](../../configs/v15/ADAPTER_OWNER_V2_QUALIFICATION_PLAN.json) runs
 164 cases per runtime: the historical 71 unchanged plus 93 new cases. New cases
 include eight unchanged two-window update cells, eight serialized next-update

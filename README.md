@@ -19,12 +19,17 @@ each pass **71/71 tiny tests**, including **8/8 matched-update conditions and
 failure is retained unchanged. CUDA took **16.02 seconds**, with **64.56 MiB**
 peak Torch allocation; this does not establish a 7B memory envelope or
 cross-device equality. The [PR #12 review](docs/v15/ADAPTER_OWNER_REVIEW_20261014.md)
-also identified two still-open checkpoint API issues: payload snapshot aliasing
-and mutation on failed restore. **The PR stays Draft; passing these cases does
-not close those findings.** No 7B update or new generation ran. The sealed
+identified two checkpoint API issues: payload snapshot aliasing and mutation
+on failed restore. The additive [v2 repair](docs/v15/ADAPTER_CHECKPOINT_V2.md)
+now passes [164/164 cases on both CPU and CUDA](provenance/pilots/v15_adapter_owner_v2_20261014/README.md),
+including 65 non-mutating rejection cases, eight matched-update cells, eight
+serialized replay cells, and two controls reproducing v1's defects per runtime.
+609 selected local regression cases also pass. **PR #12 stays Draft pending
+follow-up review; old receipts and the known-defective v1 API remain historical.**
+No 7B update or new generation ran. The sealed
 historical runner is unchanged. The
 [next real-model gate](docs/v15/ADAPTER_7B_MIGRATION_GATE.md) requires separate
-checkpoint repairs, complete-window and capacity admission; old **FAIL / winner:
+complete-window and capacity admission after the v2 repair; old **FAIL / winner:
 none / non-regression NOT_ESTABLISHED** remain unchanged.
 
 ## V15 readout adapters: native equivalence, separate semantic and transport failures

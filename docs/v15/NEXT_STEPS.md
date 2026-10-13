@@ -24,14 +24,15 @@ cross-device equality.
 The [completed PR #12 review](ADAPTER_OWNER_REVIEW_20261014.md) exposes two
 additional ownership gaps that this suite does not test: retained payloads
 alias live state, and late restore rejection can mutate supplied targets.
-Both remain open. Repair snapshot independence and restore transactionality
-under a new source identity with targeted negative-path tests before treating
-the checkpoint API as fail-closed. Keep the PR Draft; do not reinterpret the
-existing successful immediate-serialization replay as evidence for these
-different properties.
+Both are repaired in the additive [v2 checkpoint API](ADAPTER_CHECKPOINT_V2.md),
+under a new source identity. Its [new CPU/CUDA evidence](../../provenance/pilots/v15_adapter_owner_v2_20261014/README.md)
+passes 164/164 cases per runtime, including 65 non-mutating rejections and eight
+matched-update/eight valid replay cells. Two negative controls reproduce v1's
+defects. Use v2 for new work; the sealed v1 is retained for history. Keep the PR
+Draft for follow-up review; the earlier 71-case pass is not relabelled.
 
 The [next migration gate](ADAPTER_7B_MIGRATION_GATE.md) makes the remaining work
-explicit: repair the reviewed checkpoint API, freeze a real 16-pair-window reference/adapter
+explicit: after the v2 repair, freeze a real 16-pair-window reference/adapter
 comparison, then admit its GPU/host/disk budget. About 44 GB disk free is below
 the historical 50-GiB remaining-space floor even before new checkpoints.
 No existing weights are deleted and no 7B run is started. This is engineering

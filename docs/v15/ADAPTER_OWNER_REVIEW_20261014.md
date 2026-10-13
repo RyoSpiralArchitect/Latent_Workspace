@@ -56,3 +56,15 @@ ordinary-update gradients or immediately saved next-update replay mismatched.
 Do not generalize either the 71-case pass or the historical wording "fail
 closed" into snapshot immutability or restore atomicity. Old **FAIL / winner:
 none / non-regression NOT_ESTABLISHED** and all judge missingness remain.
+
+## Subsequent repair, 2026-10-14
+
+The above records the reviewed v1 state, which remains sealed and reproducible.
+The additive [v2 API](ADAPTER_CHECKPOINT_V2.md), execution source
+`8359635cc443271407763601fc3c619cc79777f4`, repairs both defects without changing
+update math. [New CPU and CUDA runs](../../provenance/pilots/v15_adapter_owner_v2_20261014/README.md)
+each pass 164/164 cases, including eight update cells, eight replay cells,
+65 non-mutating rejection cases and two controls that reproduce v1's defects.
+609 selected local regression tests also pass. Review disposition is now
+**repair implemented and locally/CUDA verified; follow-up review pending**.
+PR #12 remains Draft. This is neither external approval nor 7B qualification.

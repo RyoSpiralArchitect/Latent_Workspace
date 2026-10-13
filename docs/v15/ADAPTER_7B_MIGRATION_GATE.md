@@ -12,11 +12,12 @@ historical runner's resource measurements do not bound this new path.
 
 1. The [independently receipted tiny CUDA recovery](../../provenance/pilots/v15_adapter_owner_cuda_02_20261013/README.md)
    passed the unchanged 71-case suite; the first failed import remains visible.
-   Before advancement, repair the [reviewed checkpoint API ownership gaps](ADAPTER_OWNER_REVIEW_20261014.md)
-   under a new source identity: independent payload snapshots and unchanged
-   targets/RNG after rejected restore. Existing valid serialized replay does
-   not qualify these properties. Add targeted failure-path tests, then renew
-   relevant update/resume qualification without rewriting the old receipts.
+   The [reviewed checkpoint gaps](ADAPTER_OWNER_REVIEW_20261014.md) are now repaired
+   in [v2](ADAPTER_CHECKPOINT_V2.md), with [164/164 CPU/CUDA cases](../../provenance/pilots/v15_adapter_owner_v2_20261014/README.md),
+   including independent snapshots, unchanged targets/RNG on rejection and
+   renewed update/resume checks. Old v1 sources/receipts remain unchanged.
+   Use the new format; this synthetic repair does not satisfy the real-model
+   comparison and resource admission below.
 2. Freeze the real-model runner, complete ordered windows, runtime, source
    manifest and resource forecast in a separate execution contract. Use the
    pinned original `Mistral-7B-Instruct-v0.3` revision

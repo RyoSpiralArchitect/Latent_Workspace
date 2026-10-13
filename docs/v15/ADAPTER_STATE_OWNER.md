@@ -5,10 +5,12 @@ the old Mistral learner, audit source and result seals remain unchanged.
 
 Post-execution qualification: [CPU and CUDA tiny update/replay checks passed](../../provenance/pilots/v15_adapter_owner_cuda_02_20261013/README.md),
 but [PR #12 review found two checkpoint API ownership gaps](ADAPTER_OWNER_REVIEW_20261014.md).
-Returned payload snapshot independence and failure-atomic restore are **not
-implemented or qualified**. The intended rejection contract below must not be
-read as a guarantee that a rejected restore leaves targets unchanged. The
-opt-in owner remains draft and does not replace the sealed 7B runner.
+The v1 API below does **not** provide snapshot independence or failure-atomic
+restore. The additive [v2 successor](ADAPTER_CHECKPOINT_V2.md) repairs both and
+passes [164/164 CPU and CUDA cases](../../provenance/pilots/v15_adapter_owner_v2_20261014/README.md).
+Do not interpret v1's intended rejection contract as the repaired guarantee.
+Use v2 for new checkpoint work. The PR remains draft for follow-up review and
+does not replace the sealed 7B runner.
 
 ## Why the migration is more than replacing one forward call
 
