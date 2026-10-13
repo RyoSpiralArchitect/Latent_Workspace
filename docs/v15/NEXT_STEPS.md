@@ -2,6 +2,12 @@
 
 Client date: 2026-10-10. **POST-RESULT DESIGN; bounded learner pilot complete**.
 
+2026-10-13 review addendum: [PR #11 review and migration requirements](READOUT_REVIEW_20261013.md).
+Future launches require isolated, pre-import cleanliness checks including
+untracked source. The migration must also preserve/bind pair-level graph
+sharing, not only forward values and individual answer gradients. The old
+source/receipt cleanliness claim is qualified, not retrospectively reissued.
+
 ## Readout decomposition now measured; model-native adapter added
 
 The [adapter contract](READOUT_ADAPTERS.md) separates the model-independent

@@ -1,5 +1,9 @@
 # Latent Workspace FT — CUDA comparison harness
 
+The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
+pre-import source guard for future runs and qualifies the historical
+untracked-file cleanliness claim. Old audit sources and receipts are unchanged.
+
 ## V15 readout adapters: native equivalence, separate semantic and transport failures
 
 The [opt-in model-independent readout core](docs/v15/READOUT_ADAPTERS.md) now
