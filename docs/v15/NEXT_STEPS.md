@@ -50,7 +50,16 @@ passed frozen updates and replay (80/160 total planned pairs). Full was not
 dispatched because the warmed process missed the unchanged 31-GiB start floor.
 Its original terminal **INCOMPLETE_NO_RETRY** is sealed; Ryō authorized
 [only full in a fresh process](../v16/ADAPTER_FULL_CONTINUATION_01.md), without
-rerunning frozen or relaxing criteria. This is engineering progress only;
+rerunning frozen or relaxing criteria. That
+[continuation](../../provenance/pilots/v16_adapter_full_continuation_01_20261014/README.md)
+completed both legacy full updates but failed adapter construction: the
+production helper registers the installed HF input-gradient hook twice and
+leaves the first handle unowned. A construction-only CPU diagnosis reproduced
+this; the direct-HF tiny tests had missed the composed preparation path.
+Combined 112/160 pairs are observed, but full comparison/replay remain absent.
+Next decision: qualify an additive owned/idempotent preparation path and test
+that actual entry before any new 7B dispatch. No fix or retry is yet authorized.
+This is engineering progress only;
 the useful-interaction, explicit-precision and immutable-original
 preservation factors below remain separate. Original-base identity ownership
 does not yet add preservation supervision or establish non-regression.

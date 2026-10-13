@@ -20,8 +20,12 @@ The [real-7B migration](provenance/pilots/v16_adapter_migration_20261014/README.
 now passes exact frozen updates and serialized replay: **80/160 planned pairs**.
 Full was never dispatched: the warmed process fell below the unchanged 31-GiB
 start floor. Original status is **INCOMPLETE_NO_RETRY**, not OOM or a numerical
-mismatch. Ryō authorized a [separate full-only process](docs/v16/ADAPTER_FULL_CONTINUATION_01.md),
-with frozen work sealed and all criteria unchanged. Old **FAIL / winner:none
+mismatch. The authorized [full-only continuation](provenance/pilots/v16_adapter_full_continuation_01_20261014/README.md)
+passed admission and completed legacy full updates, then stopped **before any
+adapter update**: production preparation registers an HF input-gradient hook
+twice, leaving one unowned. A CPU construction-only diagnosis reproduced the
+gap missed by direct-HF tiny tests. Combined: **112/160 pairs; full comparison
+and replay remain incomplete**. No fix or further retry has run. Old **FAIL / winner:none
 / non-regression NOT_ESTABLISHED** stays.
 
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a

@@ -149,6 +149,15 @@ unchanged 31-GiB start floor; original status remains INCOMPLETE_NO_RETRY.
 Ryō authorized [only full in a fresh process](ADAPTER_FULL_CONTINUATION_01.md).
 This retains all existing math and thresholds; it is not new V16-reader FT.
 
+The [continuation result](../../provenance/pilots/v16_adapter_full_continuation_01_20261014/README.md)
+now localizes a preparation-composition gap: legacy full updates completed, but
+the helper's duplicate input-gradient registration was rejected before adapter
+training. Combined 112/160 pairs do not qualify full migration. First propose
+an additive, owned/idempotent preparation path and exact production-entry
+tests; retain old sources and reject arbitrary hooks. Another 7B attempt needs
+a new explicit recovery decision and frozen source/selection. The slot-contrast
+prototype remains unintegrated and untrained.
+
 Old **FAIL / winner:none / non-regression NOT_ESTABLISHED** remains unchanged.
 The closed diagnostic-judge status remains `INCOMPLETE_OR_CALIBRATION_BLOCKED`;
 invalid, unknown and undispatched outcomes are not repaired by V16 planning.

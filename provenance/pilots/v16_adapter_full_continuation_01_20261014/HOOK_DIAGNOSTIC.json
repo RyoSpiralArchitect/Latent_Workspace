@@ -1,0 +1,70 @@
+{
+  "backward_pairs": 0,
+  "cases": [
+    {
+      "adapter_construction": "ACCEPTED",
+      "mode": "direct_hf_checkpointing",
+      "registered_forward_hooks": [
+        {
+          "accepted_by_native_input_grad_hook": true,
+          "module": "model.embed_tokens",
+          "qualname": "PreTrainedModel.enable_input_require_grads.<locals>.make_inputs_require_grads",
+          "tracked_handle": true
+        }
+      ],
+      "tracked_handles": 1
+    },
+    {
+      "adapter_construction": "ValueError: Training adapter rejects unqualified native hooks",
+      "mode": "historical_engine_helper",
+      "registered_forward_hooks": [
+        {
+          "accepted_by_native_input_grad_hook": false,
+          "module": "model.embed_tokens",
+          "qualname": "PreTrainedModel.enable_input_require_grads.<locals>.make_inputs_require_grads",
+          "tracked_handle": false
+        },
+        {
+          "accepted_by_native_input_grad_hook": true,
+          "module": "model.embed_tokens",
+          "qualname": "PreTrainedModel.enable_input_require_grads.<locals>.make_inputs_require_grads",
+          "tracked_handle": true
+        }
+      ],
+      "tracked_handles": 1
+    }
+  ],
+  "checkpoint_writes": 0,
+  "cuda_initialized": false,
+  "diagnostic_script_sha256": "f9c5e9cae55c796bcdb2ff80b7f97384a763c08cbfbf227773972f78b5121665",
+  "fix_applied": false,
+  "forward_calls": 0,
+  "judge_calls": 0,
+  "method_hashes": {
+    "engine_enable_gradient_checkpointing": "0192235c88f2695cd94b292b1e91f59b16ca2770101963eefb0ba4a9d718e607",
+    "hf_enable_input_require_grads": "40cef9819fccca325944cf432038e0afd302b63e87ea02369cbc19816cfa303f",
+    "hf_gradient_checkpointing_enable": "b9bcfa11735c8f26016b80f1ddf2227b9cc478056330358e57e7eaf2f603cb33",
+    "native_input_grad_hook": "12ebb5142d74c414e2356f302ed8010539d3ce33911b29504c71e66f5077aeab"
+  },
+  "model_downloads": 0,
+  "new_sequences": 0,
+  "optimizer_updates": 0,
+  "runtime": {
+    "device": "cpu",
+    "python": "3.12.14",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0"
+  },
+  "schema": "v16-full-hook-construction-diagnosis-v1",
+  "source_check": {
+    "entry": "scripts/continue_v16_adapter_full.py",
+    "fresh_bytecode_cache": true,
+    "isolated_python": true,
+    "schema": "pre-import-source-check-v1",
+    "source_commit": "6bf83985f02575a83aefe9817f1afcea7baa832e",
+    "source_files": 513,
+    "untracked_check": "all"
+  },
+  "status": "DUPLICATE_HF_INPUT_GRAD_HOOK_REPRODUCED_NOT_REPAIRED",
+  "tiny_model_constructions": 2
+}

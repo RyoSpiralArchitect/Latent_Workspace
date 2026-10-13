@@ -61,4 +61,9 @@ Old **FAIL / winner:none / non-regression NOT_ESTABLISHED** remains. No new
 generation, judge, checkpoint deletion, semantic long run or merge is included.
 
 [Continuation evidence](../../provenance/pilots/v16_adapter_full_continuation_01_20261014/README.md)
-records preparation separately from any later real-model outcome.
+now records terminal **INCOMPLETE_NO_RETRY**: legacy full 32/32 pairs completed,
+but adapter construction rejected an unowned duplicate HF input-gradient hook
+before its first pair. CPU construction-only diagnosis reproduced the same
+production-helper failure; no repair/retry occurred. Combined evidence is
+112/160 pairs, with frozen only qualified. All initial criteria above remain
+unchanged rather than being retrospectively relaxed.

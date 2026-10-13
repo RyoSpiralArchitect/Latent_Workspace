@@ -5,7 +5,12 @@
 passes frozen exact updates and replay (80/160 total pairs). Full stopped at
 admission before any work. The original remains **INCOMPLETE_NO_RETRY**;
 [full-only continuation 01](../v16/ADAPTER_FULL_CONTINUATION_01.md) is separately
-authorized with unchanged criteria. The complete gate is not yet satisfied.
+authorized with unchanged criteria. It passed cold-start admission and completed
+two legacy full updates, then rejected a duplicate/unowned HF input-gradient
+hook during adapter construction. [The terminal diagnosis](../../provenance/pilots/v16_adapter_full_continuation_01_20261014/README.md)
+records the production-helper/test-path mismatch. No adapter full update or
+replay has run; the complete gate is not satisfied. Do not weaken hook ownership
+or treat 112/160 observed pairs as matched full-mode evidence.
 
 The [new owner](ADAPTER_STATE_OWNER.md) is an algorithm-preserving integration,
 not the next semantic learner factor. Its [tiny qualification](../../provenance/pilots/v15_adapter_owner_20261013/README.md)
