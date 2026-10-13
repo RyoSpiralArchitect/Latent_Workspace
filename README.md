@@ -1,5 +1,24 @@
 # Latent Workspace FT — CUDA comparison harness
 
+## V16 begins: preserve common behavior, test a separate slot-contrast route
+
+The [V16 plan and prototype](docs/v16/PLAN.md) separates the existing common
+reader from an additional slot-contrast route, with an identically initialized,
+parameter-matched uncentered control. The new route is exactly zero for identical
+valid slots; its separate norm budget does not rescale the common output.
+[16 local CPU mechanism tests](provenance/pilots/v16_slot_contrast_prototype_20261014/README.md)
+pass, including tiny Mistral FP32/BF16 zero identity and live backward. This is
+not factual binding, V16 FT, CUDA qualification or original-base preservation.
+The new reader is deliberately not admitted by the old checkpoint owner.
+
+The v2 checkpoint fixes below are complete at tiny CPU/CUDA scale. After the
+[read-only storage inventory](provenance/inventory/v16_storage_inspection_20261014/README.md),
+Ryō authorized [all V12 experiment weights to be removed](provenance/inventory/v12_weight_prune_20261014/README.md):
+90 files / 206.805 GiB, with hashes and 315 metadata copies retained. Available
+space is now 249.571 GiB; V14/V15 and model caches were not changed. Real 7B
+migration still needs its exact execution/resource gate. Old **FAIL / winner:none
+/ non-regression NOT_ESTABLISHED** stays.
+
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
 pre-import source guard for future runs and qualifies the historical
 untracked-file cleanliness claim. Old audit sources and receipts are unchanged.

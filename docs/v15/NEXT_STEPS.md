@@ -2,6 +2,15 @@
 
 Client date: 2026-10-10. **POST-RESULT DESIGN; bounded learner pilot complete**.
 
+2026-10-14 continuation: [V16 plan](../v16/PLAN.md) now names the next FT
+improvement. A common-plus-slot-contrast prototype and matched-capacity control
+pass 16 local CPU tests, but are not integrated into the checkpoint owner or
+trained on 7B. The preceding v2 checkpoint repair passes separate source-sealed
+CPU/CUDA qualification. The initial [storage inspection](../../provenance/inventory/v16_storage_inspection_20261014/README.md)
+was read-only. Ryō subsequently authorized [V12-only cleanup](../../provenance/inventory/v12_weight_prune_20261014/README.md):
+90 weight files / 206.805 GiB removed after recording hashes and metadata,
+249.571 GiB now available. Other weights and all admission floors are unchanged.
+
 2026-10-13 review addendum: [PR #11 review and migration requirements](READOUT_REVIEW_20261013.md).
 Future launches require isolated, pre-import cleanliness checks including
 untracked source. The migration must also preserve/bind pair-level graph
@@ -33,9 +42,10 @@ Draft for follow-up review; the earlier 71-case pass is not relabelled.
 
 The [next migration gate](ADAPTER_7B_MIGRATION_GATE.md) makes the remaining work
 explicit: after the v2 repair, freeze a real 16-pair-window reference/adapter
-comparison, then admit its GPU/host/disk budget. About 44 GB disk free is below
-the historical 50-GiB remaining-space floor even before new checkpoints.
-No existing weights are deleted and no 7B run is started. This is engineering
+comparison, then admit its GPU/host/disk budget. The initial ~44 GB disk-space
+block is resolved by the separately authorized V12-only cleanup above; the
+50-GiB remaining-space floor still applies to forecast writes. No new 7B run
+has yet been admitted. This is engineering
 progress only; the useful-interaction, explicit-precision and immutable-original
 preservation factors below remain separate. Original-base identity ownership
 does not yet add preservation supervision or establish non-regression.
