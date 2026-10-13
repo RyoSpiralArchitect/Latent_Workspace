@@ -10,9 +10,13 @@ historical runner's resource measurements do not bound this new path.
 
 ## Required admission before replacing the old runner
 
-1. Complete the independently receipted tiny CUDA qualification. Preserve any
-   failed launch; do not re-label CPU equality as CUDA evidence. The first
-   isolated CUDA launch failed to import `pytest` before any test or model ran.
+1. The [independently receipted tiny CUDA recovery](../../provenance/pilots/v15_adapter_owner_cuda_02_20261013/README.md)
+   passed the unchanged 71-case suite; the first failed import remains visible.
+   Before advancement, repair the [reviewed checkpoint API ownership gaps](ADAPTER_OWNER_REVIEW_20261014.md)
+   under a new source identity: independent payload snapshots and unchanged
+   targets/RNG after rejected restore. Existing valid serialized replay does
+   not qualify these properties. Add targeted failure-path tests, then renew
+   relevant update/resume qualification without rewriting the old receipts.
 2. Freeze the real-model runner, complete ordered windows, runtime, source
    manifest and resource forecast in a separate execution contract. Use the
    pinned original `Mistral-7B-Instruct-v0.3` revision

@@ -3,6 +3,13 @@
 Client date: 2026-10-13. Additive successor to the reviewed readout component;
 the old Mistral learner, audit source and result seals remain unchanged.
 
+Post-execution qualification: [CPU and CUDA tiny update/replay checks passed](../../provenance/pilots/v15_adapter_owner_cuda_02_20261013/README.md),
+but [PR #12 review found two checkpoint API ownership gaps](ADAPTER_OWNER_REVIEW_20261014.md).
+Returned payload snapshot independence and failure-atomic restore are **not
+implemented or qualified**. The intended rejection contract below must not be
+read as a guarantee that a rejected restore leaves targets unchanged. The
+opt-in owner remains draft and does not replace the sealed 7B runner.
+
 ## Why the migration is more than replacing one forward call
 
 An initial local negative control found identical scalar losses but different
@@ -77,7 +84,8 @@ deletions**. CUDA admission requires no competing GPU workload and a 6 GiB Torch
 allocation ceiling. Each execution has its own source-bound terminal receipt;
 failures are preserved, never relabelled as a pass or automatically retried.
 
-After this passes, a **separately frozen real-Mistral complete-window budget and
+After the review's snapshot/restore gaps are repaired and requalified, a
+**separately frozen real-Mistral complete-window budget and
 memory/resource admission** is needed before replacing the sealed 7B runner.
 Keep numerical transport, useful semantic interaction and original-reference
 preservation as later independent factors. Old **FAIL / winner:none /
