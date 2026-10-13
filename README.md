@@ -1,5 +1,67 @@
 # Latent Workspace FT — CUDA comparison harness
 
+## V15 reader factor audit: localize binding failure before more learning
+
+The [new no-update factor audit](provenance/pilots/v15_reader_factors_20261010/README.md)
+separates common, question, memory and question × memory corrections in 64
+four-corner blocks. The retained output projection puts **87.966884%** of its
+squared-Frobenius energy into one singular direction. The modulated reader's
+mean-slot/actual interaction-norm ratio is **99.839031%**: large interaction
+magnitude does not establish differentiated fact selection (mean slots still
+contain world information). At both affected reciprocal pairs, donor-directed
+interaction remains much smaller than memory bias; cap anisotropy adds another
+local constraint but cannot alone explain the failure.
+
+All 64 actual-memory native vectors match previous results: **16/32 correct and
+0/4 donor flips per reader**. No weights changed; no autograd, training,
+generation or judge calls ran. 232 local/Furnace prelaunch tests and 14 offline
+post-result tests passed. The existing loss already targets reciprocal donor
+direction; simply adding a similarly named loss would duplicate supervision.
+Next, test whether fresh matched short reader training grows useful interaction
+under unchanged losses/cap/native scoring before full updates. Removing common
+directions or raising the cap is not an established repair. Old **FAIL / winner:
+none / non-regression unestablished** and closed judge missingness remain.
+
+## V15 reader refinement: question sensitivity improved; semantic result unchanged
+
+The [new opt-in reader](docs/v15/READER_MODULATION.md) adds one parameter-free,
+bounded question/value modulation before the existing output projection. In a
+[completed no-update 7B comparison](provenance/pilots/v15_reader_modulation_20261010/README.md),
+retained-state reader-input gradient norms increased **324.40×**, and intact
+reciprocal-question correction distances increased **418.13×**, including
+direction changes after norm matching. Cap, parameters and checkpoint bytes
+were held fixed; old source and zero-memory identity remain intact.
+
+This is not a semantic win: all 32/32 retained-state native truth-bearing score
+vectors still match the legacy reader, accuracy remains **16/32**, and correct
+donor flips remain **0/4**. Common-slot and unrelated controls also exhibit
+question dependence. All 512 evaluation rows and 320 reader-gradient leaves
+are retained from two already-exposed worlds, not fresh held-out evidence.
+199 selected tests passed locally and on Furnace; all weights stayed unchanged.
+The next priority is a matched fresh, short reader-learning comparison before
+full-backbone optimizer work. No training, generation or judge call was added;
+old **FAIL / winner: none / non-regression unestablished** remain unchanged.
+
+## V14.5 to full-update V15: real 7B backward qualified, no optimizer update
+
+The separate [live-native contracts](docs/v15/FULL_UPDATE_BACKWARD.md) preserve
+the old frozen path and recompute current-backbone features. The
+[completed no-step probe](provenance/pilots/v15_full_update_backward_20261010/README.md)
+ran two diagnostic states × three exposed pairs: all 291 base tensors received
+finite nonzero gradients, and the retained bridge carried gradients through
+both memory and reader inputs. Each state's 317 restored gradient tensors
+matched a same-order CPU reference exactly. Native/zero and historical choice
+controls remained exact; all weights were unchanged.
+
+The six backward passes took 106.13 seconds with 28.22 GiB peak Torch allocation;
+sampled free device memory reached 1.21 GiB, so optimizer headroom is not yet
+qualified. There were no optimizer steps, new generations or judge calls.
+The earlier proposed complete-window/one-update/resume audit is now deferred
+behind the reader-learning comparison above. Useful content learning and
+original-base preservation
+remain unestablished; old **FAIL** and **winner: none** are unchanged. The native
+frozen-base milestone is conceptually V14.5; historical `v15_5` paths are retained.
+
 ## V15.5 learner restart: native path exercised, no winning arm
 
 Diagnostic judge collection is closed at its valid observed coverage. The
