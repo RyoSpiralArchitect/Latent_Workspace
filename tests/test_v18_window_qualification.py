@@ -4,7 +4,7 @@ import copy
 import hashlib
 import json
 from pathlib import Path
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 from xml.etree import ElementTree
 
 import pytest
@@ -150,3 +150,77 @@ def test_receipts_are_exclusive_and_preimport_requires_isolation(tmp_path, monke
     monkeypatch.setattr(run.sys, "flags", SimpleNamespace(isolated=0))
     with pytest.raises(ValueError, match="isolated pre-import"):
         run.execute(SimpleNamespace())
+
+
+def test_third_party_virtual_namespaces_do_not_inherit_or_fabricate_file_paths(
+    tmp_path, monkeypatch,
+):
+    seal, modules = import_fixture(tmp_path, monkeypatch)
+
+    class VirtualOps(ModuleType):
+        # Exact shape observed for torch.ops and torch.classes: no instance
+        # __file__, a relative filename on the ModuleType subclass instead.
+        __file__ = "_ops.py"
+
+    class DynamicNamespace(ModuleType):
+        def __getattr__(self, name):
+            raise AssertionError(f"Dynamic metadata lookup is forbidden: {name}")
+
+    modules["torch.ops"] = VirtualOps("torch.ops")
+    modules["torch.classes"] = DynamicNamespace("torch.classes")
+    # A same-named local file must not turn virtual namespace metadata into
+    # evidence that this file was imported.
+    (run.ROOT / "_ops.py").write_text("# unrelated, not imported\n")
+    assert set(run.imported_sources(seal, modules).values()) == run.CRITICAL_IMPORTS
+
+
+@pytest.mark.parametrize("kind", ["relative", "missing", "inherited", "dynamic", "venv"])
+def test_project_namespace_source_is_strict_even_when_virtual_metadata_is_ignored(
+    tmp_path, monkeypatch, kind,
+):
+    seal, modules = import_fixture(tmp_path, monkeypatch)
+    name = "latent_workspace_ft_v10.project_shadow"
+    if kind == "inherited":
+        class VirtualProject(ModuleType):
+            __file__ = "_ops.py"
+
+        modules[name] = VirtualProject(name)
+    elif kind == "dynamic":
+        class DynamicProject(ModuleType):
+            def __getattr__(self, key):
+                raise AssertionError(f"Dynamic metadata must not be called: {key}")
+
+        modules[name] = DynamicProject(name)
+    else:
+        path = {
+            "relative": "src/latent_workspace_ft_v10/v18_window_learner.py",
+            "missing": str(run.ROOT / "src/latent_workspace_ft_v10/missing.py"),
+            "venv": str(run.ROOT / ".venv/lib/site-packages/project_shadow.py"),
+        }[kind]
+        if kind == "venv":
+            target = Path(path)
+            target.parent.mkdir(parents=True)
+            target.write_text("# shadow project module inside runtime\n")
+        modules[name] = SimpleNamespace(__file__=path)
+    with pytest.raises(ValueError):
+        run.imported_sources(seal, modules)
+
+
+@pytest.mark.parametrize("kind", ["relative", "local_ignored", "outside_shadow"])
+def test_explicit_source_metadata_cannot_hide_relative_ignored_or_shadow_code(
+    tmp_path, monkeypatch, kind,
+):
+    seal, modules = import_fixture(tmp_path, monkeypatch)
+    if kind == "relative":
+        modules["third_party_ambiguous"] = SimpleNamespace(__file__="_virtual.py")
+    elif kind == "local_ignored":
+        source = run.ROOT / "scripts/ignored_local_module.py"
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text("# would be ignored/untracked; still imported local source\n")
+        modules["unrelated_alias"] = SimpleNamespace(__file__=str(source))
+    else:
+        source = tmp_path / "outside_project_shadow.py"
+        source.write_text("# exists, but is outside the sealed checkout\n")
+        modules["scripts.project_shadow"] = SimpleNamespace(__file__=str(source))
+    with pytest.raises(ValueError):
+        run.imported_sources(seal, modules)

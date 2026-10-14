@@ -148,11 +148,21 @@ def imported_sources(seal, modules=None):
             or name.startswith("scripts.")
             or name in top_level
         )
-        filename = getattr(module, "__file__", None)
+        # Torch's virtual torch.ops/torch.classes namespaces inherit fictional
+        # class attributes such as __file__="_ops.py" and may implement dynamic
+        # attribute lookup. Only direct module metadata identifies a source;
+        # never turn an inherited/dynamic filename into a cwd-relative file.
+        try:
+            metadata = vars(module)
+        except TypeError:
+            metadata = {}
+        filename = metadata.get("__file__")
         if not filename:
             if belongs:
                 raise ValueError(f"Project module has no source: {name}")
             continue
+        if type(filename) is not str or not Path(filename).is_absolute():
+            raise ValueError(f"Module source must be an explicit absolute path: {name}")
         source = Path(filename).resolve()
         local = source.is_relative_to(ROOT.resolve())
         # A checkout-local virtualenv is the separately trusted runtime, not
@@ -167,6 +177,8 @@ def imported_sources(seal, modules=None):
             continue
         if not local or source.suffix != ".py":
             raise ValueError(f"Imported project module escaped source tree: {name}")
+        if not source.is_file():
+            raise ValueError(f"Imported project source does not exist: {name}")
         relative = source.relative_to(ROOT.resolve()).as_posix()
         digest = hashlib.sha256(source.read_bytes()).hexdigest()
         if seal["source_hashes"].get(relative) != digest:

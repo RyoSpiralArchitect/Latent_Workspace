@@ -39,3 +39,13 @@ Claim ceiling: **FAIL / winner:none / non_regression NOT_ESTABLISHED**.
 Only tiny engineering ownership/reduction/update/replay may pass here. Real
 tokenizer/capture validation, family-split audits, selection-only reader changes,
 preservation supervision and 7B admission remain separate work.
+
+## Terminal original attempt
+
+Source `8d719ef22506ddc4bf174b799135e0bee0f03b4f` and 557 files were used.
+CPU PID 1808289 and CUDA PID 1808350 both completed 310/310 tests, then failed
+post-test import verification on PyTorch's virtual `_ops.py`. Both exited 1.
+The six original receipt files and [failure replay](FAILURE_REPLAY.json) are
+preserved; see [results](README.md). Do not resume or overwrite these outputs.
+Ryō authorized a separately recorded corrected-source trial with the same
+limits. This original result remains FAILED regardless of any recovery result.
