@@ -81,14 +81,20 @@ The prospective [V18 preparation](docs/v18/PREPARATION.md) integrates these
 diagnostics with original-base preservation and a generalized complete-window
 reduction contract. Its additive [window/reference state layer](docs/v18/WINDOW_REFERENCE.md)
 now [passes 310/310 tiny tests on CPU and CUDA](provenance/pilots/v18_window_reference_recovery_01_20261015/README.md),
-including source/receipt replay; the original guard failure is retained. No new 7B training,
-preservation loss or reader-selection mechanism is implied.
+including source/receipt replay; the original guard failure is retained. This
+foundation alone implies no 7B training, preservation loss or selection mechanism.
 The subsequent [additive operand-selection prototype](docs/v18/OPERAND_SELECTION.md)
-now separates common and interaction queries. Its [first isolated attempt](provenance/pilots/v18_operand_selection_20261015/README.md)
-passes **200/200 CPU tests**; CUDA admission stopped before any test because
-another GPU client was present. **No controlled fitting study ran**: both
-engineering runtimes must pass first. The original CUDA failure is retained,
-with no automatic retry, no owner admission and no semantic/non-regression claim.
+now separates common and interaction queries. Its
+[authorized continuation](provenance/pilots/v18_operand_selection_continuation_01_20261015/README.md)
+completes **200/200 CPU and CUDA engineering tests**, then **12/12 controlled
+reader-only fits per runtime**, with exact same-runtime offline replay.
+Ordered selection passes every seed's toy learnability gate (held-out strict
+**1,150/1,152, 1,152/1,152, 1,152/1,152**), but **not** the +5 pp advantage gate.
+All three final-state comparisons retain their failed permutation-tolerance
+checks; only 9/12 control bundles pass per runtime. The
+[original CUDA admission failure](provenance/pilots/v18_operand_selection_20261015/README.md)
+is unchanged. The [next boundary is the actual writer](docs/v18/ACTUAL_WRITER_TRANSITION.md),
+not a 7B launch, owner admission, semantic winner or non-regression claim.
 The [behavior protocol](docs/v18/BEHAVIOR_EVALUATION.md) separates original base,
 updated backbone and workspace effects; a blank
 [Claude manual review sheet](docs/v18/CLAUDE_REVIEW_SHEET.md) supports a later

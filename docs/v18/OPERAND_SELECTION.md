@@ -1,14 +1,21 @@
 # V18 operand selection: additive prototype and bounded controlled assay
 
-2026-10-15. **IMPLEMENTED; CPU ENGINEERING PASS; CUDA ADMISSION BLOCKED.**
+2026-10-15. **CPU/CUDA ENGINEERING PASS; CONTROLLED LEARNABILITY PASS;
+SELECTION ADVANTAGE NOT ESTABLISHED.**
 This follows the [selection proposal](SELECTION_FACTOR_PROPOSAL.md) and the
 [qualified window/reference foundation](WINDOW_REFERENCE.md). It does not
 change or enter the existing checkpoint owner.
 
 The [first isolated attempt](../../provenance/pilots/v18_operand_selection_20261015/README.md)
 passed 200/200 CPU tests. CUDA stopped before dispatch because another GPU client
-had appeared; its failure remains. Neither runtime's planned controlled fitting
-study ran. The protocol below is frozen design, not a report of learning gains.
+had appeared; its failure remains. Neither fitting study ran in that attempt.
+The [authorized continuation](../../provenance/pilots/v18_operand_selection_continuation_01_20261015/README.md)
+then passed 200/200 CUDA tests and completed 12/12 fits on each runtime, with
+unchanged source and exact same-runtime offline replay. Ordered selection passes
+all seeds' toy learnability gates, but not the +5 pp advantage gate. The final
+factor fails the frozen permutation tolerance in all three seeds on both
+runtimes; only 9/12 control bundles pass per runtime. These failures remain.
+The protocol below is the unchanged pre-result design.
 
 ## Three independent boundaries
 
@@ -107,6 +114,10 @@ general-language capability, original-base preservation or a 7B memory envelope.
 If the selected factor misses its gate, retain the failure and diagnose it before
 moving to actual-writer learning. If it passes, actual writer and real contextual
 states are the next gate, followed by explicit owner/replay qualification.
+The completed selected factor passed; the next
+[actual-writer protocol sketch](ACTUAL_WRITER_TRANSITION.md) is not yet frozen or
+launched. The final factor's control failures still prohibit a clean comparative
+advantage claim and are not waived by ordered learnability.
 
 The old **FAIL / winner:none / non_regression NOT_ESTABLISHED** remains. No 7B
 training, real reference capture, free generation, paid judge, weight deletion,

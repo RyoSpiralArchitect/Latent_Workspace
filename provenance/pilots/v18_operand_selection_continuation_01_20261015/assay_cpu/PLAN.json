@@ -1,0 +1,100 @@
+{
+  "claim_ceiling": "Controlled reader-only learnability; no real writer, model, owner, language-quality or non-regression qualification",
+  "evaluation": {
+    "batch_size": 256,
+    "control_atol": 1e-06,
+    "primary_dtype": "float32",
+    "renaming": "changed_alias_strings_same_identity_codebook_not_independent_population",
+    "secondary_dtype": "bfloat16_native_input_and_full_vocab_head_only",
+    "slot_permutation": [
+      2,
+      0,
+      1
+    ],
+    "twin": "swap_ranks_0_and_1",
+    "unrelated": "different_frame_same_order_no_defined_answer_label"
+  },
+  "factors": [
+    "centered_final",
+    "centered_ordered",
+    "centered_symmetric",
+    "raw_ordered"
+  ],
+  "feature_recipe": "cpu-float64-qr-zero-mean-8d-orthonormal-identities-v1",
+  "forbidden": [
+    "real_model_download",
+    "real_writer_fit",
+    "base_updates",
+    "preservation_loss",
+    "paid_judge",
+    "checkpoint_resume",
+    "post_result_tuning"
+  ],
+  "gates": {
+    "affected_donor_flip_min": 0.9,
+    "all_seeds_required": true,
+    "ordered_minus_final_accuracy_min": 0.05,
+    "reciprocal_both_correct_min": 0.9,
+    "secondary_dtype_cannot_upgrade_primary_failure": true,
+    "strict_native_accuracy_min": 0.95,
+    "unaffected_prediction_agreement_min": 0.95,
+    "unaffected_strict_accuracy_min": 0.95
+  },
+  "heads": 2,
+  "hidden_dim": 32,
+  "interaction_fraction": 0.25,
+  "max_delta_norm": 1.0,
+  "model_seeds": [
+    17,
+    29,
+    43
+  ],
+  "native_answer_coordinate": 30,
+  "native_answer_head_scale": 8.0,
+  "native_constant_coordinate": 31,
+  "native_distractor_head_scale": -4.0,
+  "rank_coordinates": [
+    16,
+    17,
+    18
+  ],
+  "reference": "common_only_frozen_zero",
+  "resources": {
+    "cpu_memory_enforcement": "observed_peak_rss_fail_closed_gate_not_os_hard_rss_limit",
+    "cpu_threads": 2,
+    "cuda_allocator_fraction_limit": true,
+    "peak_bytes": 4294967296,
+    "wall_seconds": 900
+  },
+  "schema": "v18-controlled-operand-selection-plan-v1",
+  "slots": 3,
+  "splits": {
+    "dev": {
+      "frames": 8,
+      "seed": 2207
+    },
+    "held_out": {
+      "frames": 32,
+      "seed": 4307
+    },
+    "train": {
+      "frames": 32,
+      "seed": 1103
+    }
+  },
+  "training": {
+    "batch_size": 64,
+    "ce_weight": 1.0,
+    "gradient_clip": 1.0,
+    "learning_rate": 0.001,
+    "minibatch_recipe": "cpu-randint-with-replacement-seed-7000-plus-model-seed",
+    "optimizer": "AdamW",
+    "other_losses": "off",
+    "residual_squared_norm_weight": 0.001,
+    "selection": "fixed_last_step_no_tuning",
+    "updates": 256,
+    "weight_decay": 0.0
+  },
+  "vocab_size": 7,
+  "workspace_dim": 32
+}

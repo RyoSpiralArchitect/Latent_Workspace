@@ -32,3 +32,25 @@ new-reader state-owner admission and 7B resource qualification remain later
 gates. No 7B update, paid judge, learner free generation, old-weight deletion,
 HF upload, PR/merge or recurring monitor is selected. Preserve all negative
 results and the old **FAIL / winner:none / non_regression NOT_ESTABLISHED**.
+
+## Terminal handoff
+
+The new CUDA qualification completed 200/200. The combined verifier passed.
+The unchanged frozen controlled-slot study then completed once per device:
+CPU 12/12 fits and CUDA 12/12 fits, 256 updates each. Both selected-factor
+learnability gates pass, neither selection-advantage gate passes, and 3/12
+final-factor permutation controls fail on each runtime. No automatic retry or
+tolerance adjustment occurred.
+
+The supplemental auditor was frozen in `d2752de88b1f908ed5ee52496196853fe9d5cbca`
+before either study was started. Its first Mac exact raw-metric replays rejected
+tiny descriptive-mean differences. The original execution interpreter in the
+separate isolated checkout
+`/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-workspace-v18-operand-audit-20261015`
+then passed both exact raw and supplemental replays without altering any source
+or threshold. Audit forward/update counts are zero. See the results README and
+retained local replay notes for the distinction.
+
+All dispatched processes are terminal. No continuation, monitor or fitted cell
+is pending. The next actual-writer study is a protocol sketch only and needs its
+own frozen source, population, raw-control instrumentation and admission checks.
