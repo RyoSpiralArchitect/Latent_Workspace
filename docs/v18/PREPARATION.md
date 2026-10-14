@@ -146,6 +146,12 @@ unaffected drift, original-base regressions and native visibility together.
 The observer's shadow attention weights are not production activations or a
 causal patch. One-factor intervention is required before a mechanistic claim.
 
+The next [selection-factor proposal](SELECTION_FACTOR_PROPOSAL.md) makes this
+concrete: keep the common query unchanged and compare final-state, ordered
+operand-difference and symmetric-operand interaction queries. It is not yet an
+implemented reader or an admitted experiment; begin with reciprocal binding on
+controlled slots, then the actual writer, before selecting a 7B cell.
+
 ## Behavior and judge preparation
 
 Use the [paired behavior protocol](BEHAVIOR_EVALUATION.md) and

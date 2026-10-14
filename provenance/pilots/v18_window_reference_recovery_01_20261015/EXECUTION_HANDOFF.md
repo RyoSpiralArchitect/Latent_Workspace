@@ -27,3 +27,15 @@ failure and ask before another remote trial. Do not alter the first source seal.
 
 The old scientific gate remains **FAIL / winner:none / non_regression
 NOT_ESTABLISHED**, even if this tiny engineering qualification passes.
+
+## Terminal result — do not relaunch
+
+Execution source `cc9cc49e2ea1da5a73fd08bbecf2c3584125b085`, 557 sealed files.
+CPU PID 1809185 and CUDA PID 1809222 both exited 0 with 310/310 cases and complete
+source/import verification. CPU total 83.200039 seconds; CUDA 112.882262 seconds,
+peak allocated 67,661,824 bytes. All six terminal files were copied unchanged
+and the [offline verifier](OFFLINE_VERIFY.json) passes. See [results](README.md).
+No active qualification or pending retry remains; no recurring monitor exists.
+Original failures and the preceding 546-file source remain unchanged. Proceed
+only with the next separately qualified mechanism design, not an automatic 7B
+launch. The scientific gate remains unchanged.

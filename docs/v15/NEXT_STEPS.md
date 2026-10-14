@@ -66,6 +66,11 @@ qualified ownership, and one trace-supported reader factor. The additive
 [window/reference owner](../v18/WINDOW_REFERENCE.md) now implements the first
 and the supplied-bank ownership portion of the second; real reference capture,
 preservation loss, reader factor and 7B training remain pending.
+Its [corrected-source qualification](../../provenance/pilots/v18_window_reference_recovery_01_20261015/README.md)
+passes 310/310 independently on CPU/CUDA with offline replay. The original
+post-test source-guard failure stays recorded. The next
+[operand-selection proposal](../v18/SELECTION_FACTOR_PROPOSAL.md) is not yet
+implemented or launched; keep the common route separate from the intervention.
 Keep the proposed zero-loss correctness floor while
 freezing its still-pending benchmark/slice/statistical manifest; "no marked
 decline" in a descriptive subset is not noninferiority qualification.

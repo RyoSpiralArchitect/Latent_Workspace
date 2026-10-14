@@ -80,7 +80,8 @@ generation, judge call or weight deletion. One training seed remains one;
 The prospective [V18 preparation](docs/v18/PREPARATION.md) integrates these
 diagnostics with original-base preservation and a generalized complete-window
 reduction contract. Its additive [window/reference state layer](docs/v18/WINDOW_REFERENCE.md)
-is now implemented; qualification is recorded separately. No new 7B training,
+now [passes 310/310 tiny tests on CPU and CUDA](provenance/pilots/v18_window_reference_recovery_01_20261015/README.md),
+including source/receipt replay; the original guard failure is retained. No new 7B training,
 preservation loss or reader-selection mechanism is implied.
 The [behavior protocol](docs/v18/BEHAVIOR_EVALUATION.md) separates original base,
 updated backbone and workspace effects; a blank

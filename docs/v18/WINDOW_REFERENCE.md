@@ -1,9 +1,14 @@
 # V18 complete-window and original-reference ownership
 
-2026-10-15. **IMPLEMENTED; final source-isolated qualification pending.**
+2026-10-15. **IMPLEMENTED; 310/310 qualified independently on tiny CPU and CUDA.**
 This is an engineering prerequisite to the [V18 design](PREPARATION.md), not a
 new 7B learner result, preservation loss, or reader-selection mechanism.
 The original **FAIL / winner:none / non_regression NOT_ESTABLISHED** is unchanged.
+
+The [verified recovery results](../../provenance/pilots/v18_window_reference_recovery_01_20261015/README.md)
+include full source/import/receipt checks. The original attempt's post-test
+virtual-module guard failure is retained separately, not relabelled as PASS.
+Native integration here uses tiny Mistral fixtures, not an all-model guarantee.
 
 ## What changes, and what does not
 
@@ -77,8 +82,9 @@ sealed source. CUDA has a 4-GiB allocator ceiling; each suite has a 900-second
 deadline. Historical source is not changed to make new tests pass. Comparisons
 are within each runtime, not bitwise equality between CPU and CUDA.
 
-After terminal replay, the next factor remains the inference-text-conditioned
-selection of differentiated memory, with reciprocal-query controls. This
+Terminal replay is complete. The [next proposed factor](SELECTION_FACTOR_PROPOSAL.md)
+remains inference-text-conditioned selection of differentiated memory, with
+reciprocal-query controls. This
 engineering contract does not establish that factor, a language-quality gain,
 Mistral-7B capacity, non-regression or HF beta readiness. No 7B training, new
 learner generation, judge request, weight deletion or HF upload is part of it.
