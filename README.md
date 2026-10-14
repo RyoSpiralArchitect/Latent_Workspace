@@ -108,8 +108,14 @@ historical arrays and full controls; freezing all parameters reproduces all 24
 prior diagnostic outputs. Both policies remain eval/no-grad. The historical
 six permutation failures remain unchanged. The actual-writer helper has 42
 tests and the [selection state guard](docs/v18/SELECTION_STATE_GUARD.md) has 76;
-neither is a fitted writer or a full update/resume owner. The combined selected
-suite passes 533 local CPU tests. The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
+neither is a fitted writer or a full update/resume owner. That diagnostic's
+combined selected suite passes 533 local CPU tests. The separate additive
+[selection native owner](provenance/pilots/v18_selection_owner_local_20261015/README.md)
+now passes 150 tiny local mechanics tests and ten CPU process-restart cases,
+with exact next-update state and RNG agreement. Its window envelope,
+source-isolated Furnace CPU/CUDA qualification and 7B integration remain
+pending; these checks do not repair the historical permutation failures or
+establish semantic improvement. The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
 orders state ownership, native capacity, FT, benchmark and conditional release.
 The [behavior protocol](docs/v18/BEHAVIOR_EVALUATION.md) separates original base,
 updated backbone and workspace effects; a blank

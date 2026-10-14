@@ -36,13 +36,17 @@ not a hidden longer run or post-result tolerance change.
 
 Use the qualified `WindowReductionSpec` / complete-window reduction and update
 arithmetic. The current `V18WindowLearner` rejects `SelectionWorkspaceBridge`;
-the new split-query pipeline is not an owned resume contract. Add an explicit
-format and owner instead of widening historical whitelists or loading an old
-checkpoint by shape compatibility. A synthetic frozen-common fit and a real
-full-update owner have different trainable partitions.
+the new native selection owner now owns the split-query state, while its window
+envelope remains pending. Add that explicit format/owner without widening old
+whitelists or loading checkpoints by shape compatibility. A synthetic frozen-
+common fit and a real full-update owner have different trainable partitions.
 The [additive selection-owner plan](SELECTION_OWNER_PLAN.md) specifies the two
 new owner boundaries, fresh-process qualification and static storage forecast;
-these owners are not yet implemented or qualified.
+the native owner passes 150 local tiny same-process cases and ten separate
+CPU process-restart cases. The window owner, source-isolated Furnace CPU/CUDA
+qualification and real 7B integration remain pending. The
+[local engineering record](../../provenance/pilots/v18_selection_owner_local_20261015/README.md)
+separates these tests from real-model and scientific qualification.
 
 `run_v16_full_comparison.py` supplies resource, replay and artifact patterns,
 not a V18 executable: it fixes old owners, three arms and two updates.

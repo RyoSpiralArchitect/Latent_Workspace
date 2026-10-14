@@ -1,20 +1,28 @@
 # V18 selection owner: additive engineering plan
 
-2026-10-15. **PLANNED — native/window owners are not implemented or qualified.**
+2026-10-15. **Native owner implemented; 150/150 local tiny mechanics tests pass.**
+The window owner and source-isolated Furnace CPU/CUDA/7B qualification remain
+pending. The 150 native-owner tests use same-process reconstruction. A separate
+[10-case test](../../tests/test_v18_selection_fresh_process.py) now passes with
+20 independent CPU child interpreters: eight ordered-query FP32/BF16 ×
+frozen/full × raw/centered cases, plus BF16/full/centered final and symmetric
+controls. This is not the entire factorial matrix or CUDA qualification.
+The [local engineering record](../../provenance/pilots/v18_selection_owner_local_20261015/README.md)
+retains source hashes, process receipts and their offline consistency audit.
 The [selection state binding](../../src/latent_workspace_ft_v10/v18_selection_state.py)
-guards the existing reader and pipeline only. It does not own updates or resume.
-This plan changes neither historical precision nor reader/owner whitelists.
+remains a guard, not a learner by itself. Historical precision and whitelists
+are unchanged; no semantic or base-preservation result follows from these tests.
 
 ## Minimal implementation boundary
 
-1. Add `v18_selection_learner.py` with `SelectionNativeLearner`, a separately
+1. Implemented: [SelectionNativeLearner](../../src/latent_workspace_ft_v10/v18_selection_learner.py), a separately
    versioned successor of [AdapterNativeLearnerV2](../../src/latent_workspace_ft_v10/adapter_native_learner_v2.py).
    Specialize construction, ownership validation, payload format and restore
    preflight, following [SlotContrastNativeLearner](../../src/latent_workspace_ft_v10/slot_contrast_learner.py).
    Construct the exact [SelectionWorkspacePipeline](../../src/latent_workspace_ft_v10/v18_selection_pipeline.py)
    and bind it with `SelectionStateBinding`. Independently expected run policy
    must select interaction mode; a checkpoint may not choose its own policy.
-2. Add `v18_selection_window_learner.py` with `V18SelectionWindowLearner`, using
+2. Pending: add `v18_selection_window_learner.py` with `V18SelectionWindowLearner`, using
    a new envelope format and the selection owner. Retain the ordered schedule,
    cursor, complete-window denominators and supplied-reference-bank semantics
    of [V18WindowLearner](../../src/latent_workspace_ft_v10/v18_window_learner.py).
@@ -30,8 +38,8 @@ The old native owner constructs `AdaptedWorkspacePipeline` and validates its
 `_reader`; the selection pipeline has no such member. The old window guard
 rejects the new reader, and its dispatch does not select a selection owner.
 These are explicit integration blockers, not reasons to broaden old whitelists.
-Inherited `save()` methods can report their defining module's old `FORMAT`:
-new payload, save receipt and restore must agree on the new version.
+Native `save()` reports the new payload format correctly. The future window
+owner must not inherit an outer `save()` receipt hard-coded to an old `FORMAT`.
 
 Keep common/native final-state policy separate from interaction selection.
 The old nested objective admits `query_mode="final"`; bind the interaction's
@@ -46,6 +54,10 @@ Full update additionally owns all 291 pinned native tensors and their CPU master
 frozen mode owns no native masters. Reject the toy frozen-common 26 profile,
 shared storage, hooks, replaced methods, flags and policy changes. The native
 binding still separately owns model preparation, context extraction and readout.
+The new version admits only materialized contiguous offset-zero owned tensors,
+records exact strides, and checks live parameter/master/buffer storage identity.
+Restore requires an independent selection policy matching its reserved run key;
+saved tensor layouts are checked before clones can normalize them.
 
 The runner must bind `OperandSpan` from the actual inference text/tokenizer and
 seal fact-only context identities. Structural guards do not authenticate forged
@@ -55,20 +67,32 @@ The writer receives facts/masks, never question, answer or donor-role inputs.
 
 ## Qualification before native FT
 
-Add focused tests without rewriting [V16 owner tests](../../tests/test_slot_contrast_learner.py),
+The [150 native-owner cases](../../tests/test_v18_selection_learner.py) pass locally
+with Ruff clean, including malformed-restore nonmutation and accepted-payload
+independence. An earlier development run had 138 passes and one brittle source-
+inspection assertion failure after live file edits; a delegated-restore spy
+replaced that assertion before the final stable-source run. Continue qualification
+without rewriting [V16 owner tests](../../tests/test_slot_contrast_learner.py),
 [V2 restore tests](../../tests/test_adapter_native_learner_v2.py) or
 [window tests](../../tests/test_v18_window_learner.py):
 
 - Final/final matches V16 losses, ordered gradient spills, masters, optimizer,
   native/bridge updates and RNG exactly, extending [pipeline parity](../../tests/test_v18_selection_pipeline.py).
-- Raw/centered × final/ordered/symmetric: complete unequal-stratum windows,
+- Native tiny raw/centered × final/ordered/symmetric mechanics pass. The pending
+  window owner must also qualify complete unequal-stratum windows,
   FP32/BF16, frozen/full and checkpointing on/off; serialized next-update replay.
-- **Fresh-process resume**, not only a fresh object in one process as in current
-  tests: producer/resumer use the pinned runtime/thread/TF32 policy, and compare
-  the next window's complete receipts, state and RNG draws exactly.
-- Rehashed malformed policy, partitions, native preparation, schedule/bank,
+- **Fresh-process resume** now passes for the ten local CPU cases above:
+  producer/resumer match exact dependency origins/versions and thread policy,
+  next-window complete receipts, state and RNG draws. The saved bytes remain
+  unchanged. An initial unqualified system-interpreter development attempt
+  stopped at the preparation-version guard before updating; the qualified
+  repository interpreter was used for the passing run. The runtime guard was
+  not weakened. Source-isolated Furnace/CUDA and the future window envelope
+  still need their own fresh-process qualification.
+- Native-owner rehashed malformed policy, partitions, native preparation,
   optimizer IDs/moments, unknown fields and old formats reject before changing
-  target values, versions, pointers, guards or process RNG.
+  target values, versions, pointers, guards or process RNG. Schedule/bank and
+  outer-envelope rejection remain required for the pending window owner.
 - Writer/common/interaction gradients are present and finite. Zero upstream
   gradients at zero-initialized output projections are expected; test warmup
   separately instead of confusing zero gradients with missing ownership.
