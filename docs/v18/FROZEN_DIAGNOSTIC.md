@@ -82,8 +82,10 @@ the trainable state, optimizer and RNG are fingerprinted. Evaluation records
 are stored as deterministic gzip JSON.
 
 Limits per process: 4 h, 2 CPU threads, a 30.5-GiB allocator cap and V16's
-GPU/host/disk floors. A V16 frozen run measured about 0.3 s per backward pair;
-the estimate here is roughly 45 min of updates and 30 min of evaluation per arm.
+GPU/host/disk floors. A development smoke on the real frozen 7B (not evidence;
+no endpoint metric recorded) measured about 8.3 s per 16-pair window, 2.1 s
+per evaluated world, 15.4 GB peak CUDA allocation, 5.9 GB RSS and 80-MB
+checkpoints: roughly 71 min of updates and 21 min of evaluation per arm.
 
 This diagnostic can show whether the memory pathway can carry facts into
 answers with a frozen backbone, and whether the query factor matters there. It
