@@ -4,6 +4,13 @@
 No experiment, source/math change, checkpoint-owner admission or 7B run is
 authorized by this document itself.
 
+Follow-up: [the new saved-state diagnosis](../../provenance/pilots/v18_selection_permutation_20261015/README.md)
+completed, but historical forward reproduction is blocked in every cell.
+Centering is not yet selected for repair. The fact-only writer helper is now
+implemented with 42 local tests; this does not freeze or launch the comparative
+fit below. Its frozen input container validates shape/mask policy, not the
+factual identity or label independence of arbitrary caller-provided features.
+
 ## Why this boundary, not a larger model yet
 
 The supplied-slot study passes ordered-reader toy learnability in all three

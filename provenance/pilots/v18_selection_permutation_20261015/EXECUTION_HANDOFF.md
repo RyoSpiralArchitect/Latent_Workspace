@@ -32,3 +32,18 @@ The old **FAIL / winner:none / non_regression NOT_ESTABLISHED** remains.
 No new monitor, paid request, old-weight deletion, PR/merge or HF upload is
 selected by this diagnostic. Terminal results and next-factor interpretation
 will be appended after the literal outputs have been verified.
+
+## Terminal handoff
+
+Source froze at `57af47858088d67247cbb5c3f77c4724a16db624`, with 580 source files.
+Both processes completed once (CPU and CUDA, 12 retained states each). The
+literal directories were pulled and both offline verifiers passed on Furnace.
+All24 cell promotion statuses are `BLOCKED_CONTROL_REPRODUCTION_MISMATCH`:
+hook parity and repeated execution are exact, but historical original logits
+are not. See the results README for all denominators and unchanged failures.
+No process is pending and this diagnostic is not to be rerun.
+
+A separately specified flag-partition intervention is the next investigation,
+not an implicit retry or precision repair. It compares the historical six
+trainable interaction parameters with this diagnostic's all-frozen parameters,
+under the same no-grad evaluation. The cause is not yet established.

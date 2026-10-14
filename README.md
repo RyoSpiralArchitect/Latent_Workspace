@@ -95,6 +95,16 @@ checks; only 9/12 control bundles pass per runtime. The
 [original CUDA admission failure](provenance/pilots/v18_operand_selection_20261015/README.md)
 is unchanged. The [next boundary is the actual writer](docs/v18/ACTUAL_WRITER_TRANSITION.md),
 not a 7B launch, owner admission, semantic winner or non-regression claim.
+The [saved-state numerical diagnosis](provenance/pilots/v18_selection_permutation_20261015/README.md)
+now completes 12/12 states on CPU and CUDA. Repeats and instrumentation parity
+are exact, but **0/24 historical logit arrays reproduce bit-for-bit**, despite
+zero historical/new answer changes in 13,824 state-query observations per
+runtime. Centered-memory rounding is localized in the new execution, not yet
+established as the historical cause. All cells retain
+`BLOCKED_CONTROL_REPRODUCTION_MISMATCH`; a separately frozen parameter-flag
+comparison is the next narrow diagnostic. The actual-writer helper has 42 local
+engineering tests, not a fitted result. The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
+orders state ownership, native capacity, FT, benchmark and conditional release.
 The [behavior protocol](docs/v18/BEHAVIOR_EVALUATION.md) separates original base,
 updated backbone and workspace effects; a blank
 [Claude manual review sheet](docs/v18/CLAUDE_REVIEW_SHEET.md) supports a later
