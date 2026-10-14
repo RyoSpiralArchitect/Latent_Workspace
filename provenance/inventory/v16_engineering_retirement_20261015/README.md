@@ -6,6 +6,15 @@ The bounded interpretation is to retire the four checkpoint bodies below after
 fresh integrity checks and publication of this ledger. It is not an automatic
 retention policy or permission to remove other conditions.
 
+The first read-only inventory completed once, from frozen source
+`1faa4afa17faf0b9283ed17a419443893ae8b072`. All four live SHA-256 values and
+sizes exactly match the historical checkpoint receipts. [PLAN.json](PLAN.json)
+binds the literal paths, script and 40 historical evidence files;
+[INVENTORY.json](INVENTORY.json) records live identity, protected-state metadata,
+and the visible-handle/process screen. [FINISHED.json](FINISHED.json) is an
+inventory completion receipt, **not a deletion receipt**. The final utility
+passed [43 focused local tests](LOCAL_CHECKS.json) and Ruff.
+
 ## Exact scope and why these files are no longer needed
 
 All targets are under the Furnace prefix
