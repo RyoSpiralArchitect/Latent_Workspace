@@ -4,6 +4,11 @@
 checks, then proceeding to full FT. This additive engineering stage changes no
 historical arithmetic, reader whitelist, source seal or scientific threshold.
 
+**Result: PASS on Furnace CPU and CUDA** from sealed commit `55a514a`: 102/102
+tests and 10/10 independent-process restart pairs per device, then offline
+source/receipt verification. See the [qualification record](../../provenance/pilots/v18_selection_window_20261015/README.md).
+Tiny mechanics only; real 7B integration is the next, separately frozen stage.
+
 Implemented [V18SelectionWindowLearner](../../src/latent_workspace_ft_v10/v18_selection_window_learner.py)
 uses format `v18-selection-window-reference-resume-v1`. It binds the independently
 declared interaction-query policy, ordered window schedule, exact reduction

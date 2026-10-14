@@ -43,8 +43,9 @@ common fit and a real full-update owner have different trainable partitions.
 The [additive selection-owner plan](SELECTION_OWNER_PLAN.md) specifies the two
 new owner boundaries, fresh-process qualification and static storage forecast;
 the native owner passes 150 local tiny same-process cases and ten separate
-CPU process-restart cases. The window owner, source-isolated Furnace CPU/CUDA
-qualification and real 7B integration remain pending. The
+CPU process-restart cases. The [window owner](SELECTION_WINDOW_QUALIFICATION.md)
+then passed its sealed Furnace CPU and CUDA qualification (102 tests and ten
+fresh-process restart pairs per device). Real 7B integration remains pending. The
 [local engineering record](../../provenance/pilots/v18_selection_owner_local_20261015/README.md)
 separates these tests from real-model and scientific qualification.
 

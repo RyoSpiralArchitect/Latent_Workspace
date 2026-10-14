@@ -1,8 +1,9 @@
 # V18 selection owner: additive engineering plan
 
-2026-10-15. **Native owner implemented; 150/150 local tiny mechanics tests pass.**
-The window owner and source-isolated Furnace CPU/CUDA/7B qualification remain
-pending. The 150 native-owner tests use same-process reconstruction. A separate
+2026-10-15. **Native and window owners implemented and qualified on tiny models.**
+The native owner passes 150/150 local mechanics tests; the window owner passed
+its [sealed Furnace CPU/CUDA qualification](../../provenance/pilots/v18_selection_window_20261015/README.md).
+Real 7B qualification remains pending. The 150 native-owner tests use same-process reconstruction. A separate
 [10-case test](../../tests/test_v18_selection_fresh_process.py) now passes with
 20 independent CPU child interpreters: eight ordered-query FP32/BF16 ×
 frozen/full × raw/centered cases, plus BF16/full/centered final and symmetric
@@ -22,7 +23,7 @@ are unchanged; no semantic or base-preservation result follows from these tests.
    Construct the exact [SelectionWorkspacePipeline](../../src/latent_workspace_ft_v10/v18_selection_pipeline.py)
    and bind it with `SelectionStateBinding`. Independently expected run policy
    must select interaction mode; a checkpoint may not choose its own policy.
-2. Pending: add `v18_selection_window_learner.py` with `V18SelectionWindowLearner`, using
+2. Implemented and Furnace-qualified: `v18_selection_window_learner.py` with `V18SelectionWindowLearner`, using
    a new envelope format and the selection owner. Retain the ordered schedule,
    cursor, complete-window denominators and supplied-reference-bank semantics
    of [V18WindowLearner](../../src/latent_workspace_ft_v10/v18_window_learner.py).

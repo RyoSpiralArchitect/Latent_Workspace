@@ -112,10 +112,12 @@ neither is a fitted writer or a full update/resume owner. That diagnostic's
 combined selected suite passes 533 local CPU tests. The separate additive
 [selection native owner](provenance/pilots/v18_selection_owner_local_20261015/README.md)
 now passes 150 tiny local mechanics tests and ten CPU process-restart cases,
-with exact next-update state and RNG agreement. Its window envelope,
-source-isolated Furnace CPU/CUDA qualification and 7B integration remain
-pending; these checks do not repair the historical permutation failures or
-establish semantic improvement. The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
+with exact next-update state and RNG agreement. Its
+[window envelope](provenance/pilots/v18_selection_window_20261015/README.md)
+then passed sealed Furnace CPU and CUDA qualification: 102 tests and ten
+independent-process restart pairs per device, verified offline. 7B integration
+remains pending; these checks do not repair the historical permutation failures
+or establish semantic improvement. The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
 orders state ownership, native capacity, FT, benchmark and conditional release.
 The [behavior protocol](docs/v18/BEHAVIOR_EVALUATION.md) separates original base,
 updated backbone and workspace effects; a blank
