@@ -34,8 +34,21 @@ failures without retries. No new generation/judge/preservation loss is included;
 this still does not establish held-out quality or base non-regression.
 The [launch bundle](../../provenance/pilots/v16_full_comparison_20261014/README.md)
 now records those 12/12 passes on each runtime and 279/279 local regression cases.
-The existing 7B dispatcher is running common → raw → slot contrast; terminal
-comparison remains pending. Follow its handoff without a second launch or retry.
+That dispatcher has now [completed with offline replay](../../provenance/pilots/v16_full_comparison_20261014/RESULTS.md):
+6/6 unique windows, 3/3 exact replays, 144/144 backward pairs. No native affected
+donor-margin changes or donor-directed flips appeared (0/4 per final arm).
+Slot interaction-query gradients exist but do not yet establish usable content.
+The final small training-exposed accuracy differences do not choose a winner.
+
+2026-10-15: [population diagnostics](../v16/POPULATION_DIAGNOSTICS.md) evaluate the
+existing checkpoints on 128 fresh worlds, preserving all memory controls, and
+compare their direct updated bases with original on a fixed MMLU 570 subset.
+Decompose normalized slot variation → attention selection → output mapping/cap
+→ native visibility before choosing a new learner factor. Retain reciprocal
+questions, world-level uncertainty, baseline regressions and strict-tie counts.
+MMLU is a descriptive, no-workspace preservation screen, not a training target,
+workspace benchmark or formal non-inferiority gate. No new training is selected
+in this evaluation phase, and model-seed replication remains outstanding.
 
 2026-10-13 review addendum: [PR #11 review and migration requirements](READOUT_REVIEW_20261013.md).
 Future launches require isolated, pre-import cleanliness checks including

@@ -57,17 +57,21 @@ Hashes are not weight backups. This clears the storage screen only, not the
 new-reader GPU/host admission or semantic/non-regression gates. No V16 7B FT,
 new generation or judge request ran during cleanup.
 
-The [bounded V16 full-update comparison](docs/v16/FULL_COMPARISON.md) is now
-specified prospectively: common/raw-control/slot-contrast, two complete updates
-per arm, steps 0/1/2 native evaluation, and exact step-2 checkpoint replay.
-It plans 144 backward pairs across three fresh sequential processes. The new
-evaluation path preserves owned training state and separates affected donor
-direction, unaffected changes, original-base choice regressions and carrier
-controls. The [launch evidence](provenance/pilots/v16_full_comparison_20261014/README.md)
-now records 279/279 local regression cases and 12/12 integration cases on each
-of source-isolated CPU and CUDA. The 7B dispatcher is launched, beginning with
-the common-reader arm; the three-arm result is **pending**, not a completed FT
-or quality claim. No recurring monitor or extra judge/generation call was started.
+The [bounded V16 full-update comparison](docs/v16/FULL_COMPARISON.md) has
+[completed and replayed offline](provenance/pilots/v16_full_comparison_20261014/RESULTS.md):
+6/6 unique update windows, 3/3 exact next-update replays, 144/144 backward pairs.
+Final intact/twin correctness is common 10/16 and 8/16, raw control 8/16 and
+8/16, slot contrast 9/16 and 8/16. All three retain 0/4 native affected-margin
+changes and 0/4 donor-directed flips. These are two training-exposed worlds,
+not a held-out gain or base-floor pass. Slot-query gradients are live but the
+interaction output is small. **FAIL / winner:none / non_regression
+NOT_ESTABLISHED** remains unchanged.
+
+The next [population diagnostic](docs/v16/POPULATION_DIAGNOSTICS.md) freezes 128
+fresh worlds / 1,024 queries and a subject-balanced MMLU 570-question subset.
+It uses existing step-2 weights and separates slot variation, query selection,
+native transport and updated-base preservation. It adds no training, generation,
+judge call or weight deletion; one training seed remains one training seed.
 
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
 pre-import source guard for future runs and qualifies the historical

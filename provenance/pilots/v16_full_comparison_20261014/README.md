@@ -1,5 +1,10 @@
 # V16 full-update comparison: launch evidence
 
+**2026-10-15 terminal addendum:** the existing run completed. See
+[RESULTS.md](RESULTS.md), [raw terminal receipts](raw/FINISHED.json) and
+[offline replay](OFFLINE_VERIFY.json). The launch-era text below is retained
+as chronology, not the current run status.
+
 2026-10-14. **Launched on Furnace; no terminal comparison result in this
 publication.** This is not a completed-run, semantic-success or non-regression
 receipt. Follow the existing process; do not start another copy.
