@@ -115,9 +115,12 @@ now passes 150 tiny local mechanics tests and ten CPU process-restart cases,
 with exact next-update state and RNG agreement. Its
 [window envelope](provenance/pilots/v18_selection_window_20261015/README.md)
 then passed sealed Furnace CPU and CUDA qualification: 102 tests and ten
-independent-process restart pairs per device, verified offline. 7B integration
-remains pending; these checks do not repair the historical permutation failures
-or establish semantic improvement. The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
+independent-process restart pairs per device, verified offline. The first real
+[7B native pilot](provenance/pilots/v18_native_pilot_20261015/README.md) then
+matched the V16 receipt bit for bit, completed two centered-ordered full-parameter
+windows and replayed exactly in a fresh process; intact/twin memory still changed
+no native answer gap. None of this repairs the historical permutation failures
+or establishes semantic improvement. The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
 orders state ownership, native capacity, FT, benchmark and conditional release.
 The [behavior protocol](docs/v18/BEHAVIOR_EVALUATION.md) separates original base,
 updated backbone and workspace effects; a blank

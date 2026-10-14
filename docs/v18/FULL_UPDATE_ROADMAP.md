@@ -45,7 +45,10 @@ new owner boundaries, fresh-process qualification and static storage forecast;
 the native owner passes 150 local tiny same-process cases and ten separate
 CPU process-restart cases. The [window owner](SELECTION_WINDOW_QUALIFICATION.md)
 then passed its sealed Furnace CPU and CUDA qualification (102 tests and ten
-fresh-process restart pairs per device). Real 7B integration remains pending. The
+fresh-process restart pairs per device). The [native pilot](NATIVE_PILOT.md)
+then reproduced the V16 receipt exactly on real 7B, completed two centered-ordered
+full-update windows and replayed window 2 exactly in a fresh process; memory
+content still left every native answer gap unchanged. The
 [local engineering record](../../provenance/pilots/v18_selection_owner_local_20261015/README.md)
 separates these tests from real-model and scientific qualification.
 

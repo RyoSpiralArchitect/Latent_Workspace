@@ -1,6 +1,9 @@
 # V18 native selection pilot 01: first real 7B full update
 
-2026-10-15. **FROZEN BEFORE LAUNCH.** Ryō asked to finish the window owner and
+2026-10-15. **COMPLETE: exact V16 parity on 7B, two full-update windows, exact
+fresh-process replay; no memory-dependent answer change.** See the
+[results](../../provenance/pilots/v18_native_pilot_20261015/README.md). Frozen
+before launch as follows. Ryō asked to finish the window owner and
 the CUDA update/restart checks, then proceed to full FT. Both
 [qualifications passed](../../provenance/pilots/v18_selection_window_20261015/README.md).
 This is the roadmap's bounded native integration and full-update pilot: the

@@ -45,3 +45,13 @@ Preflight immediately before dispatch: no GPU compute client, 10 MiB of 32,607
 MiB GPU memory used, 119 GiB host memory available, 164,640,509,952 bytes
 (153.3 GiB) free disk on the task filesystem. The primary may retain two full
 checkpoints (about 27.1 GiB each); no existing weight is deleted.
+
+## Terminal handoff — do not relaunch
+
+All stages exited 0 (`2026-10-14T21:59:02Z`): tiny CPU/CUDA qualification,
+the exact V16 parity probe, the two-window centered-ordered primary and the
+fresh-process exact replay. Receipts are copied under `furnace/` and pass
+offline verification locally and on Furnace (with both checkpoint bodies
+rehashed). The two 29,083,263,908-byte checkpoints stay on Furnace under the
+task root's `checkpoints/primary/`; nothing was deleted. No process from this
+dispatch remains. See the [results](README.md).
