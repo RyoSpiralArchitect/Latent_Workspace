@@ -120,7 +120,7 @@ in [the FT-beta plan](../v14/FT_BETA_IMPROVEMENT_PLAN.md) before a base-floor cl
 After that, a same-seed literal answer bank and human-readable differences test
 the useful behavior. Paid judges remain closed unless separately authorized.
 
-## Current capacity boundary
+## Storage history and current capacity boundary
 
 The live 2026-10-14 Furnace check found an idle RTX 5090, about 119 GiB available
 host RAM and **46,326,988,800 bytes (43.145 GiB) available on the persistent
@@ -166,16 +166,40 @@ allocation/reservation in the recovery: 27.751/28.369 GiB; this is the unchanged
 common reader's envelope, not a forecast for a new reader or longer inputs.
 
 Staged gate 2 is therefore met for the pinned two-update/seed47 Mistral contract.
-Proceed to gate 3's reader ownership, not directly to semantic FT. The production
-setup must remain explicitly owned/idempotent, and composition tests must cover
-the actual preparation path through complete updates, snapshots and restore.
+Gate 3's reader ownership subsequently passed the separate tiny CPU/CUDA
+qualification linked above. Next freeze the three-arm semantic pilot and admit
+its own resource envelope. The production setup must remain explicitly
+owned/idempotent, with composition tests covering the actual preparation path
+through complete updates, snapshots and restore.
 No loss, tolerance or hook rejection was relaxed to obtain this engineering PASS.
 
 The [historical continuation result](../../provenance/pilots/v16_adapter_full_continuation_01_20261014/README.md)
 localized the preparation-composition gap at 112/160 pairs and motivated the
 separately authorized recovery above. It is retained as a failed terminal,
-not rewritten into a success. The slot-contrast prototype remains unintegrated
-and untrained even though the unchanged-reader migration is now qualified.
+not rewritten into a success. The slot-contrast reader is now state-integrated
+and tiny-qualified, but remains untrained on 7B; unchanged-reader migration
+does not qualify the new reader's real-model capacity or behavior.
+
+### Three-arm storage screen after V14 cleanup
+
+After retaining the migration checkpoints, the next live screen found only
+about 188 GiB available. Keeping two states per condition across three arms has
+a conservative planning envelope of **3 × 64 GiB outputs + 50 GiB remaining =
+242 GiB**. No new training was dispatched with that storage deficit.
+
+Ryō explicitly authorized [V14 experiment weight cleanup](../../provenance/inventory/v14_weight_prune_20261014/README.md).
+All 44 weight hashes and 502 literal metadata copies were committed and pushed
+before deletion. The terminal records **44/44 files / 82.837845 GiB removed**,
+**270.661411 GiB available**, preserved metadata hashes and unchanged stats for
+98 out-of-scope weights (including the four V16 migration checkpoints).
+The original model/cache and all V15/V16 checkpoint payloads are outside the
+deletion scope. Hashes cannot reconstruct the deleted V14 weights.
+
+The storage screen now passes with **28.661411 GiB beyond the forecast and
+floor**. The 50-GiB floor and each new condition's two-state retention stay intact.
+This is capacity recovery only: the precise three-arm execution contract, new
+reader GPU/host envelope, full-update/evaluation evidence and base preservation
+remain unestablished. No model calls ran during cleanup.
 
 Old **FAIL / winner:none / non-regression NOT_ESTABLISHED** remains unchanged.
 The closed diagnostic-judge status remains `INCOMPLETE_OR_CALIBRATION_BLOCKED`;

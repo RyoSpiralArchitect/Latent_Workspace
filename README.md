@@ -46,6 +46,17 @@ Next is freezing the three-arm Mistral pilot and its new resource forecast, not
 declaring semantic success. No new 7B FT has run. Old **FAIL / winner:none /
 non-regression NOT_ESTABLISHED** stays.
 
+For that prospective three-arm run, the subsequent
+[explicitly authorized V14 cleanup](provenance/inventory/v14_weight_prune_20261014/README.md)
+recorded all 44 weight hashes and 502 literal metadata files in Git **before**
+removing 82.838 GiB of V14 payloads. Terminal available space is **270.661 GiB**,
+above the 242-GiB conservative output-plus-floor screen by 28.661 GiB.
+V15/V16 checkpoints and the original model/cache were not deletion targets;
+98 protected weight stats and all 502 source metadata hashes are unchanged.
+Hashes are not weight backups. This clears the storage screen only, not the
+new-reader GPU/host admission or semantic/non-regression gates. No V16 7B FT,
+new generation or judge request ran during cleanup.
+
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
 pre-import source guard for future runs and qualifies the historical
 untracked-file cleanliness claim. Old audit sources and receipts are unchanged.

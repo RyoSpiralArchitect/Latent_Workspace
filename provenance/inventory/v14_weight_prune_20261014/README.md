@@ -1,6 +1,6 @@
 # Authorized Furnace V14 weight cleanup
 
-2026-10-14 JST. **PRE-DELETION RECORD; deletion has not yet been performed.**
+2026-10-14 JST / 2026-10-14 03:16 UTC. **COMPLETE; permanent weight deletion.**
 
 Ryō explicitly authorized recording the V14 experiment weights in Git and
 deleting their payloads to make room for the prospective three-arm V16 pilot.
@@ -44,12 +44,13 @@ An additional pre-publication screen found no credential-pattern matches in the
 tokenizer vocabulary IDs, not secret values. This is a bounded pattern/key screen,
 not a general security audit. Literal metadata bytes are not sanitized or rewritten.
 
-The inventory, pruner and every metadata copy must be committed and pushed before
-deletion. Execution verifies their bytes from that exact Git commit, rehashes all
-source metadata and weights, checks visible same-user open handles, then unlinks
+The inventory, pruner and every metadata copy were committed and pushed before
+deletion in `98e79a6b3acb3ac071ced497cc4b6dd9d73f4e23`. Execution verified their
+bytes from that exact Git commit, rehashed all source metadata and weights,
+checked visible same-user open handles, then unlinked
 only the exact allowlist with no-follow parent descriptors and per-file stat
-checks. It rechecks metadata hashes and 98 protected out-of-scope weight stats
-afterward. There is no recursive deletion or automatic retry after a terminal
+checks. All metadata hashes and 98 protected out-of-scope weight stats matched
+afterward. There was no recursive deletion or automatic retry after a terminal
 or partial attempt. Global crash atomicity and protection against a concurrent
 malicious writer are not claimed; exclusive use is required.
 
@@ -67,23 +68,54 @@ reconstruct the deleted weights.** Re-creation would require retraining and
 cannot promise byte equality. Original metadata remains on Furnace as well as
 in the new Git record; previous evidence bundles are not edited.
 
-## Prospective capacity and claim ceiling
+## Terminal result and measured capacity
+
+[DELETE_STARTED.json](DELETE_STARTED.json), [DELETIONS.jsonl](DELETIONS.jsonl),
+and [DELETE_FINISHED.json](DELETE_FINISHED.json) record all **44/44 deletions**.
+The [offline terminal verifier](../../../scripts/verify_v14_weight_prune.py)
+replays path/hash/byte accounting, metadata integrity and the unchanged historical
+source seal; its output is [TERMINAL_VERIFY.json](TERMINAL_VERIFY.json).
+
+| Quantity | Bytes | GiB |
+| --- | ---: | ---: |
+| Available immediately before deletion | 201,673,814,016 | 187.823376 |
+| Deleted logical weight payloads | 88,946,458,314 | 82.837845 |
+| Available in terminal receipt | 290,620,477,440 | 270.661411 |
+| Observed increase in available space | 88,946,663,424 | 82.838036 |
+| Prospective three-arm outputs plus remaining-space floor | 259,845,521,408 | 242.000000 |
+| Surplus beyond that forecast and floor | 30,774,956,032 | 28.661411 |
+
+Filesystem allocation/metadata effects explain why observed free-space change
+is not exactly logical payload size. The later read-only `df` check reported
+290,620,469,248 bytes available (8,192 bytes less than the terminal sample).
+The inventory/metadata copy and Git transfer also consumed some space between
+the earlier screen below and deletion admission; the samples are not conflated.
+
+All **502 original metadata files** retain their SHA-256 hashes, and all **98
+protected out-of-scope weight files** retain their stat signatures. Those 98
+include the four frozen/full V16 migration checkpoints. This is not a fresh
+content-hash audit of other weights. The original Mistral model/cache was never
+a deletion target. All 526 historical sealed source files remain byte-identical.
+
+## Earlier forecast and claim ceiling
 
 Before the new inventory, persistent available space was 201,816,498,176 bytes
 (about 187.956 GiB). Reclaiming the 44 logical payload sizes suggests about
 270.794 GiB available, but actual filesystem availability must be measured after
 deletion. Logical bytes are not an exact prediction of reclaimed blocks.
 
-The prior conservative planning envelope is **three arms × 64 GiB retained
+The conservative planning envelope is **three arms × 64 GiB retained
 outputs + 50 GiB remaining = 242 GiB**, with two retained checkpoints per arm.
-This is a storage screen, not a frozen V16 run contract or proof that the new
-reader fits the CUDA/host-memory envelope. Full training/evaluation still needs
-the final isolated source, precise schedule and runtime admission.
+The measured terminal capacity passes this **storage screen**: after the 192-GiB
+output forecast, 78.661 GiB would remain, exceeding the unchanged 50-GiB floor.
+This is not a frozen V16 run contract or proof that the new reader fits the
+CUDA/host-memory envelope. Full training/evaluation still needs the final
+isolated source, precise schedule and runtime admission.
 
 No new training, generation, judge request or scientific acceptance is part of
 this cleanup. Old **FAIL / winner:none / non-regression NOT_ESTABLISHED** remains.
 The historical judge status remains `INCOMPLETE_OR_CALIBRATION_BLOCKED`.
 
-Deletion results and measured post-cleanup capacity will be added only after
-the separate terminal receipt exists. This pre-deletion Git commit remains the
-historical evidence that the records were preserved first.
+The pre-deletion Git commit remains the historical evidence that the records
+were preserved first. This later publication adds the terminal result; it does
+not rewrite the original inventory's `deletion_performed:false` into a new claim.

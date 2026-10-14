@@ -10,7 +10,19 @@ pass 16 local CPU tests and now have a separate
 CPU/CUDA qualification. The initial [storage inspection](../../provenance/inventory/v16_storage_inspection_20261014/README.md)
 was read-only. Ryō subsequently authorized [V12-only cleanup](../../provenance/inventory/v12_weight_prune_20261014/README.md):
 90 weight files / 206.805 GiB removed after recording hashes and metadata,
-249.571 GiB now available. Other weights and all admission floors are unchanged.
+249.571 GiB available at that earlier observation. Other weights were unchanged
+by that V12-only action, and all admission floors remain unchanged.
+
+After the 7B migration and tiny slot-state qualification, the prospective
+three-arm V16 screen needed 242 GiB (3 × 64 GiB outputs + 50 GiB remaining),
+exceeding the approximately 188 GiB then available. Ryō separately authorized
+[V14-only cleanup](../../provenance/inventory/v14_weight_prune_20261014/README.md).
+All 44 weight hashes and 502 metadata copies were published before deletion;
+44/44 payloads (82.838 GiB) were then removed, with metadata and 98 protected
+weight stats intact. Terminal available space is **270.661 GiB**, so the
+conservative storage screen now passes by **28.661 GiB**. This is not a new
+training/evaluation result or a CUDA/host-memory qualification for slot contrast.
+V15/V16 checkpoints and the original model/cache are not deletion targets.
 
 2026-10-13 review addendum: [PR #11 review and migration requirements](READOUT_REVIEW_20261013.md).
 Future launches require isolated, pre-import cleanliness checks including
