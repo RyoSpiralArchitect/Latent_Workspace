@@ -67,11 +67,28 @@ not a held-out gain or base-floor pass. Slot-query gradients are live but the
 interaction output is small. **FAIL / winner:none / non_regression
 NOT_ESTABLISHED** remains unchanged.
 
-The next [population diagnostic](docs/v16/POPULATION_DIAGNOSTICS.md) freezes 128
-fresh worlds / 1,024 queries and a subject-balanced MMLU 570-question subset.
-It uses existing step-2 weights and separates slot variation, query selection,
-native transport and updated-base preservation. It adds no training, generation,
-judge call or weight deletion; one training seed remains one training seed.
+The [population diagnostic](docs/v16/POPULATION_DIAGNOSTICS.md) has now
+[completed with offline replay](provenance/pilots/v16_population_diagnostics_20261015/RESULTS.md):
+all four arms × 128 fresh worlds / 1,024 queries and MMLU 570 questions.
+Ordinary MMLU is original/common/raw/slot **356/356/355/354**, strict
+**355/352/352/348**. Slot retains **0/256 donor flips**; centered variation
+exists and the cap is not exhausted, but selection is near uniform and intended
+FP64 direction is mixed (127 positive / 129 negative). It adds no training,
+generation, judge call or weight deletion. One training seed remains one;
+**FAIL / winner:none / non_regression NOT_ESTABLISHED** stays.
+
+The prospective [V18 preparation](docs/v18/PREPARATION.md) integrates these
+diagnostics with original-base preservation and a generalized complete-window
+reduction contract. Its additive [window/reference state layer](docs/v18/WINDOW_REFERENCE.md)
+is now implemented; qualification is recorded separately. No new 7B training,
+preservation loss or reader-selection mechanism is implied.
+The [behavior protocol](docs/v18/BEHAVIOR_EVALUATION.md) separates original base,
+updated backbone and workspace effects; a blank
+[Claude manual review sheet](docs/v18/CLAUDE_REVIEW_SHEET.md) supports a later
+blinded transfer without a Claude API key. No new answer bank or judgments exist.
+The conditional [Hugging Face beta release checklist](docs/v18/HF_RELEASE.md)
+targets **mistral-7b-instruct-ver0.3-LTWspaced β**, pending agreed acceptance,
+V18 evidence, licensing and fresh-load export parity. Nothing was uploaded.
 
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
 pre-import source guard for future runs and qualifies the historical
