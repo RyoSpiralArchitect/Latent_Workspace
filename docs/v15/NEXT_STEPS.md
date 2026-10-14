@@ -5,8 +5,8 @@ Client date: 2026-10-10. **POST-RESULT DESIGN; bounded learner pilot complete**.
 2026-10-14 continuation: [V16 plan](../v16/PLAN.md) now names the next FT
 improvement. A common-plus-slot-contrast prototype and matched-capacity control
 pass 16 local CPU tests and now have a separate
-[tiny-qualified state owner](../v16/SLOT_STATE_OWNER.md), but are not trained on
-7B. The preceding v2 checkpoint repair passes separate source-sealed
+[tiny-qualified state owner](../v16/SLOT_STATE_OWNER.md), but had not been trained
+on 7B at that qualification. The preceding v2 checkpoint repair passes separate source-sealed
 CPU/CUDA qualification. The initial [storage inspection](../../provenance/inventory/v16_storage_inspection_20261014/README.md)
 was read-only. Ryō subsequently authorized [V12-only cleanup](../../provenance/inventory/v12_weight_prune_20261014/README.md):
 90 weight files / 206.805 GiB removed after recording hashes and metadata,
@@ -32,6 +32,10 @@ CPU and CUDA before the three fresh-process 7B arms. Preserve control failures,
 zero/negative donor direction, all regressions from original base, and resource
 failures without retries. No new generation/judge/preservation loss is included;
 this still does not establish held-out quality or base non-regression.
+The [launch bundle](../../provenance/pilots/v16_full_comparison_20261014/README.md)
+now records those 12/12 passes on each runtime and 279/279 local regression cases.
+The existing 7B dispatcher is running common → raw → slot contrast; terminal
+comparison remains pending. Follow its handoff without a second launch or retry.
 
 2026-10-13 review addendum: [PR #11 review and migration requirements](READOUT_REVIEW_20261013.md).
 Future launches require isolated, pre-import cleanliness checks including

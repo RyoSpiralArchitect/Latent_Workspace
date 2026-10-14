@@ -42,8 +42,8 @@ per runtime. Writer/common/interaction partitions and same-shaped candidate/cont
 policies are explicitly owned in a new format; v15/v2 still rejects the prototype.
 Local regression is 440/440, with another 14/14 offline-verifier cases. CUDA tests
 took 247.295 seconds with 64.465 MiB peak allocation, a **tiny-model** observation.
-Next is freezing the three-arm Mistral pilot and its new resource forecast, not
-declaring semantic success. No new 7B FT has run. Old **FAIL / winner:none /
+At that qualification, the next step was freezing the three-arm Mistral pilot
+and its new resource forecast; no new 7B FT had run. Old **FAIL / winner:none /
 non-regression NOT_ESTABLISHED** stays.
 
 For that prospective three-arm run, the subsequent
@@ -63,7 +63,11 @@ per arm, steps 0/1/2 native evaluation, and exact step-2 checkpoint replay.
 It plans 144 backward pairs across three fresh sequential processes. The new
 evaluation path preserves owned training state and separates affected donor
 direction, unaffected changes, original-base choice regressions and carrier
-controls. This source publication is not an execution/completion receipt.
+controls. The [launch evidence](provenance/pilots/v16_full_comparison_20261014/README.md)
+now records 279/279 local regression cases and 12/12 integration cases on each
+of source-isolated CPU and CUDA. The 7B dispatcher is launched, beginning with
+the common-reader arm; the three-arm result is **pending**, not a completed FT
+or quality claim. No recurring monitor or extra judge/generation call was started.
 
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
 pre-import source guard for future runs and qualifies the historical
