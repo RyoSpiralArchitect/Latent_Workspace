@@ -83,6 +83,12 @@ reduction contract. Its additive [window/reference state layer](docs/v18/WINDOW_
 now [passes 310/310 tiny tests on CPU and CUDA](provenance/pilots/v18_window_reference_recovery_01_20261015/README.md),
 including source/receipt replay; the original guard failure is retained. No new 7B training,
 preservation loss or reader-selection mechanism is implied.
+The subsequent [additive operand-selection prototype](docs/v18/OPERAND_SELECTION.md)
+now separates common and interaction queries. Its [first isolated attempt](provenance/pilots/v18_operand_selection_20261015/README.md)
+passes **200/200 CPU tests**; CUDA admission stopped before any test because
+another GPU client was present. **No controlled fitting study ran**: both
+engineering runtimes must pass first. The original CUDA failure is retained,
+with no automatic retry, no owner admission and no semantic/non-regression claim.
 The [behavior protocol](docs/v18/BEHAVIOR_EVALUATION.md) separates original base,
 updated backbone and workspace effects; a blank
 [Claude manual review sheet](docs/v18/CLAUDE_REVIEW_SHEET.md) supports a later

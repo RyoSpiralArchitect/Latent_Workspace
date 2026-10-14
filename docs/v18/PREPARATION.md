@@ -128,6 +128,13 @@ format, not ignored metadata or unowned reader buffers.
 
 ## Engineering unit 3: choose one interaction factor from the measured chain
 
+Current status: the [text-bound operand prototype](OPERAND_SELECTION.md) is
+implemented and has 200/200 source-isolated CPU engineering passes. CUDA was
+blocked by another GPU client before test dispatch, so the fixed controlled-slot
+learning comparison is still entirely undispatched. See the retained
+[attempt and next decision](../../provenance/pilots/v18_operand_selection_20261015/README.md).
+This does not admit the new reader into the qualified owner or establish a gain.
+
 The [read-only observer](../../src/latent_workspace_ft_v10/v16_population_probe.py)
 separates these hypotheses; none is established by interaction magnitude alone.
 

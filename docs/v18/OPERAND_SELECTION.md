@@ -1,9 +1,14 @@
 # V18 operand selection: additive prototype and bounded controlled assay
 
-2026-10-15. **IMPLEMENTED PROTOTYPE; execution results pending.**
+2026-10-15. **IMPLEMENTED; CPU ENGINEERING PASS; CUDA ADMISSION BLOCKED.**
 This follows the [selection proposal](SELECTION_FACTOR_PROPOSAL.md) and the
 [qualified window/reference foundation](WINDOW_REFERENCE.md). It does not
 change or enter the existing checkpoint owner.
+
+The [first isolated attempt](../../provenance/pilots/v18_operand_selection_20261015/README.md)
+passed 200/200 CPU tests. CUDA stopped before dispatch because another GPU client
+had appeared; its failure remains. Neither runtime's planned controlled fitting
+study ran. The protocol below is frozen design, not a report of learning gains.
 
 ## Three independent boundaries
 

@@ -31,3 +31,14 @@ gates offline, then publish bounded English conclusions. No model downloads,
 weight deletion, PR/merge or HF upload is selected. No recurring monitor is
 created. A failed/incomplete runtime remains separate and requires a new
 decision before any repeated trial.
+
+## Terminal handoff — do not relaunch this attempt
+
+Source `dd10b20a8fbb0e32e5ac89bcec939802e6940f8b` has 572 sealed files.
+CPU completed 200/200 tests and passed source/receipt replay. CUDA failed the
+other-GPU-client admission check before any test/model dispatch; its original
+FAILED receipt is retained. Both attempted processes terminated. No controlled
+fit was dispatched, because the prerequisite requires both runtimes to pass.
+See [results and remaining decision](README.md). No retry or recurring monitor
+is active; do not touch the other workload. Preserve this bundle and source when
+preparing a separately authorized attempt after resource availability changes.
