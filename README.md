@@ -57,6 +57,14 @@ Hashes are not weight backups. This clears the storage screen only, not the
 new-reader GPU/host admission or semantic/non-regression gates. No V16 7B FT,
 new generation or judge request ran during cleanup.
 
+The [bounded V16 full-update comparison](docs/v16/FULL_COMPARISON.md) is now
+specified prospectively: common/raw-control/slot-contrast, two complete updates
+per arm, steps 0/1/2 native evaluation, and exact step-2 checkpoint replay.
+It plans 144 backward pairs across three fresh sequential processes. The new
+evaluation path preserves owned training state and separates affected donor
+direction, unaffected changes, original-base choice regressions and carrier
+controls. This source publication is not an execution/completion receipt.
+
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
 pre-import source guard for future runs and qualifies the historical
 untracked-file cleanliness claim. Old audit sources and receipts are unchanged.

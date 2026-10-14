@@ -24,6 +24,15 @@ conservative storage screen now passes by **28.661 GiB**. This is not a new
 training/evaluation result or a CUDA/host-memory qualification for slot contrast.
 V15/V16 checkpoints and the original model/cache are not deletion targets.
 
+The next selection is now [prospectively fixed](../v16/FULL_COMPARISON.md):
+common/raw/centered-slot full-update arms, matched seed/data/objective, two
+updates each, native evaluation at 0/1/2, and exact next-update replay.
+Twelve new tiny integration cases must pass independently on source-isolated
+CPU and CUDA before the three fresh-process 7B arms. Preserve control failures,
+zero/negative donor direction, all regressions from original base, and resource
+failures without retries. No new generation/judge/preservation loss is included;
+this still does not establish held-out quality or base non-regression.
+
 2026-10-13 review addendum: [PR #11 review and migration requirements](READOUT_REVIEW_20261013.md).
 Future launches require isolated, pre-import cleanliness checks including
 untracked source. The migration must also preserve/bind pair-level graph
