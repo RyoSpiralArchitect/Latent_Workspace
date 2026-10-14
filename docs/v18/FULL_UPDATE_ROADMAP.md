@@ -40,6 +40,9 @@ the new split-query pipeline is not an owned resume contract. Add an explicit
 format and owner instead of widening historical whitelists or loading an old
 checkpoint by shape compatibility. A synthetic frozen-common fit and a real
 full-update owner have different trainable partitions.
+The [additive selection-owner plan](SELECTION_OWNER_PLAN.md) specifies the two
+new owner boundaries, fresh-process qualification and static storage forecast;
+these owners are not yet implemented or qualified.
 
 `run_v16_full_comparison.py` supplies resource, replay and artifact patterns,
 not a V18 executable: it fixes old owners, three arms and two updates.
@@ -70,11 +73,16 @@ direct backbone, not automatically the original base.
 ## Resources and unresolved publication choices
 
 The historical V16 full update observed 29,835,256,320 bytes peak CUDA allocated,
-30,454,841,344 reserved, and up to 95,808,610,304 host RSS. Its three-arm planning
-budget was 64 GiB retained per arm plus a 50 GiB free floor (242 GiB). These are
+30,454,841,344 reserved, and up to 95,808,610,304 host RSS. The unchanged-shape
+[selection forecast](SELECTION_OWNER_PLAN.md) keeps **64 GiB retained outputs
+plus 50 GiB free floor = 114 GiB for one arm**; three retained arms require
+**192 + 50 = 242 GiB**. A third checkpoint written before oldest-checkpoint
+rotation needs additional transient space (about 27.086 GiB; a conservative
+32-GiB allowance makes the one-arm budget 146 GiB including the floor).
+Reference-bank or export copies need their own allowance. These are
 [prior results](../../provenance/pilots/v16_full_comparison_20261014/RESULTS.md)
 and the [slot-arm resource receipt](../../provenance/pilots/v16_full_comparison_20261014/raw/slot_contrast/FINISHED.json),
-not a V18 forecast. Re-measure with the actual sequence lengths, split queries,
+not a V18 resource qualification. Re-measure with the actual sequence lengths, split queries,
 retained graphs and chosen reference representation before a long run. Retain
 the latest two checkpoints per condition; no deletion is authorized by this
 document itself.
