@@ -1,10 +1,28 @@
 # Retirement of four completed V16 engineering checkpoints
 
-2026-10-15. **Pre-deletion intent; no deletion is claimed by this revision.**
+2026-10-15. **TERMINAL: exactly four closed engineering checkpoints deleted.**
 Ryō requested: "途中保存のすでにいらない重みはgit管理にして台帳にデータを記載して消して進もう☯️".
 The bounded interpretation is to retire the four checkpoint bodies below after
 fresh integrity checks and publication of this ledger. It is not an automatic
 retention policy or permission to remove other conditions.
+
+The intent and inventory were published at
+`689c875fbf963be44ae56d80565e68edbc64bf04` **before deletion**. The one deletion
+transaction then repeated all four live hashes and checked the exact advertised
+GitHub branch commit. Its [terminal receipt](latent-v16-engineering-retirement-deletion-20261015/DELETE_FINISHED.json),
+[per-file journal](latent-v16-engineering-retirement-deletion-20261015/DELETIONS.jsonl)
+and [pre-delete checks](latent-v16-engineering-retirement-deletion-20261015/PREDELETE.json)
+are separate from the immutable inventory. An additional read-only
+[postflight](POSTFLIGHT.json) confirms all four paths absent and the six active
+comparison-file signatures plus pinned snapshot metadata unchanged. Protected
+weight contents were not rehashed; this is not a new content-integrity audit.
+
+Removed: **58,210,741,126 logical bytes / 54.212977296 GiB**, with
+58,210,754,560 allocated bytes. Filesystem available space rose from
+109,545,787,392 to **167,756,529,664 bytes / 156.235443 GiB** in the deletion
+receipt: an observed increase of 58,210,742,272 bytes, 12,288 bytes below the
+allocation total. Receipts and other filesystem activity can affect that delta.
+No failed or repeated deletion transaction exists. No other weight was selected.
 
 The first read-only inventory completed once, from frozen source
 `1faa4afa17faf0b9283ed17a419443893ae8b072`. All four live SHA-256 values and

@@ -119,6 +119,14 @@ The conditional [Hugging Face beta release checklist](docs/v18/HF_RELEASE.md)
 targets **mistral-7b-instruct-ver0.3-LTWspaced β**, pending agreed acceptance,
 V18 evidence, licensing and fresh-load export parity. Nothing was uploaded.
 
+The separately authorized [V16 engineering-weight retirement](provenance/inventory/v16_engineering_retirement_20261015/README.md)
+has now removed four completed update/resume-test checkpoints, **54.213 GiB**,
+after publishing their hashes and 40 evidence bindings. All six active V16
+comparison saves remain (latest/previous per condition), as do the original
+model/cache and V18 diagnostic states. Terminal free space is **156.235 GiB**;
+the [one-arm forecast](docs/v18/SELECTION_OWNER_PLAN.md) is distinct from the
+unmet 242-GiB three-arm envelope. Git records do not reconstruct deleted weights.
+
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
 pre-import source guard for future runs and qualifies the historical
 untracked-file cleanliness claim. Old audit sources and receipts are unchanged.
