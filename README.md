@@ -101,9 +101,15 @@ are exact, but **0/24 historical logit arrays reproduce bit-for-bit**, despite
 zero historical/new answer changes in 13,824 state-query observations per
 runtime. Centered-memory rounding is localized in the new execution, not yet
 established as the historical cause. All cells retain
-`BLOCKED_CONTROL_REPRODUCTION_MISMATCH`; a separately frozen parameter-flag
-comparison is the next narrow diagnostic. The actual-writer helper has 42 local
-engineering tests, not a fitted result. The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
+`BLOCKED_CONTROL_REPRODUCTION_MISMATCH`. The separate
+[flag intervention](provenance/pilots/v18_replay_flags_20261015/README.md) now
+explains that observed discrepancy: retaining historical flags reproduces all 24
+historical arrays and full controls; freezing all parameters reproduces all 24
+prior diagnostic outputs. Both policies remain eval/no-grad. The historical
+six permutation failures remain unchanged. The actual-writer helper has 42
+tests and the [selection state guard](docs/v18/SELECTION_STATE_GUARD.md) has 76;
+neither is a fitted writer or a full update/resume owner. The combined selected
+suite passes 533 local CPU tests. The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
 orders state ownership, native capacity, FT, benchmark and conditional release.
 The [behavior protocol](docs/v18/BEHAVIOR_EVALUATION.md) separates original base,
 updated backbone and workspace effects; a blank

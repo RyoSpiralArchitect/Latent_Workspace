@@ -27,3 +27,13 @@ New source checkout:
 Record terminal observations and offline verification before selecting any next
 factor. No training, new generation, judge call, weight deletion, PR/merge,
 monitor or HF upload belongs to this intervention.
+
+## Terminal handoff
+
+Frozen source `bcf1e1b90ada4e111ddcdcffd32a2795e459eca1` has 584 sealed files.
+Both CPU and CUDA completed once: 12 retained fits /24 flag-policy cells each.
+Both offline raw/provenance replays passed in the original Furnace environment.
+Historical flags exactly reproduce all historical native logits and complete
+controls; all-frozen flags exactly reproduce the preceding diagnostic in all
+cells. All within-policy repeats are exact. See README for limits and unchanged
+historical permutation failures. No diagnostic process or retry is pending.

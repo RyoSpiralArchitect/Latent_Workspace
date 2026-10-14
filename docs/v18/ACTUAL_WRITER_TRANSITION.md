@@ -10,6 +10,11 @@ Centering is not yet selected for repair. The fact-only writer helper is now
 implemented with 42 local tests; this does not freeze or launch the comparative
 fit below. Its frozen input container validates shape/mask policy, not the
 factual identity or label independence of arbitrary caller-provided features.
+The subsequent [ABBA flag intervention](../../provenance/pilots/v18_replay_flags_20261015/README.md)
+reproduces the historical arrays and all controls when the historical trainable
+partition is retained, and reproduces the preceding diagnostic when all parameters
+are frozen. Keep that partition in future diagnostics. This resolves the tested
+reconstruction gap, not the six historical permutation failures or writer fitting.
 
 ## Why this boundary, not a larger model yet
 
@@ -33,11 +38,14 @@ All **6/6 centered-final fits** (three seeds × two runtimes) fail the fixed
 baselines, even though their answer accuracy is high. Ordered/symmetric/raw
 controls pass; this does not establish causal superiority of ordered selection.
 
-Before a comparative writer fit, separately specify a bounded diagnostic on
-the retained tiny states: archive full original/permuted control logits,
-matching slot/mask permutations, query tensors and intermediate reductions.
-Check repeatability and identify the earliest changed reduction or attention
-operation. Distinguish writer-output slot permutation from permuting input facts.
+The bounded saved-state diagnostic has now archived full original/permuted
+control logits, matching slot/mask permutations, query tensors and intermediate
+reductions. It established repeatability and localized initial differences in
+its all-frozen execution; the subsequent ABBA test explained that execution's
+historical reconstruction gap. Neither experiment repairs the historical
+permutation failure. Before a comparative writer fit, any further arithmetic
+diagnostic must preserve the historical flags and distinguish writer-output
+slot permutation from permuting input facts.
 Optional higher-precision arithmetic is diagnostic only, not a replacement for
 the original primary computation. Keep the old failures and threshold unchanged.
 If a changed implementation is needed, freeze it as a separate version and
