@@ -1,0 +1,66 @@
+{
+  "schema": "v18-controlled-operand-selection-plan-v1",
+  "claim_ceiling": "Controlled reader-only learnability; no real writer, model, owner, language-quality or non-regression qualification",
+  "model_seeds": [17, 29, 43],
+  "splits": {
+    "train": {"seed": 1103, "frames": 32},
+    "dev": {"seed": 2207, "frames": 8},
+    "held_out": {"seed": 4307, "frames": 32}
+  },
+  "feature_recipe": "cpu-float64-qr-zero-mean-8d-orthonormal-identities-v1",
+  "hidden_dim": 32,
+  "workspace_dim": 32,
+  "heads": 2,
+  "slots": 3,
+  "vocab_size": 7,
+  "rank_coordinates": [16, 17, 18],
+  "native_answer_coordinate": 30,
+  "native_constant_coordinate": 31,
+  "native_answer_head_scale": 8.0,
+  "native_distractor_head_scale": -4.0,
+  "max_delta_norm": 1.0,
+  "interaction_fraction": 0.25,
+  "factors": ["centered_final", "centered_ordered", "centered_symmetric", "raw_ordered"],
+  "reference": "common_only_frozen_zero",
+  "training": {
+    "updates": 256,
+    "batch_size": 64,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0,
+    "gradient_clip": 1.0,
+    "ce_weight": 1.0,
+    "residual_squared_norm_weight": 0.001,
+    "other_losses": "off",
+    "minibatch_recipe": "cpu-randint-with-replacement-seed-7000-plus-model-seed",
+    "selection": "fixed_last_step_no_tuning"
+  },
+  "evaluation": {
+    "primary_dtype": "float32",
+    "secondary_dtype": "bfloat16_native_input_and_full_vocab_head_only",
+    "batch_size": 256,
+    "twin": "swap_ranks_0_and_1",
+    "slot_permutation": [2, 0, 1],
+    "control_atol": 0.000001,
+    "renaming": "changed_alias_strings_same_identity_codebook_not_independent_population",
+    "unrelated": "different_frame_same_order_no_defined_answer_label"
+  },
+  "gates": {
+    "strict_native_accuracy_min": 0.95,
+    "reciprocal_both_correct_min": 0.9,
+    "affected_donor_flip_min": 0.9,
+    "unaffected_strict_accuracy_min": 0.95,
+    "unaffected_prediction_agreement_min": 0.95,
+    "ordered_minus_final_accuracy_min": 0.05,
+    "all_seeds_required": true,
+    "secondary_dtype_cannot_upgrade_primary_failure": true
+  },
+  "resources": {
+    "wall_seconds": 900,
+    "peak_bytes": 4294967296,
+    "cpu_threads": 2,
+    "cuda_allocator_fraction_limit": true,
+    "cpu_memory_enforcement": "observed_peak_rss_fail_closed_gate_not_os_hard_rss_limit"
+  },
+  "forbidden": ["real_model_download", "real_writer_fit", "base_updates", "preservation_loss", "paid_judge", "checkpoint_resume", "post_result_tuning"]
+}

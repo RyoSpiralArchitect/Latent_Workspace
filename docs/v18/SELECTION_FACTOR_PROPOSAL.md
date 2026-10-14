@@ -1,8 +1,10 @@
 # Next V18 factor: text-bound ordered operand selection
 
-2026-10-15. **PROPOSAL ONLY — not implemented, qualified or launched.**
-This follows the [window/reference ownership](WINDOW_REFERENCE.md) prerequisite.
-It is not selected for the current CPU/CUDA recovery run.
+2026-10-15. The original proposal below now has an additive
+[implementation and bounded controlled-study protocol](OPERAND_SELECTION.md).
+It follows the [window/reference ownership](WINDOW_REFERENCE.md) prerequisite;
+it was not part of that historical CPU/CUDA recovery run. Implementation does
+not imply learner admission, semantic qualification or a 7B launch.
 
 ## Why this factor
 
