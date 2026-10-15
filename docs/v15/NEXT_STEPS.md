@@ -8,6 +8,38 @@ untracked source. The migration must also preserve/bind pair-level graph
 sharing, not only forward values and individual answer gradients. The old
 source/receipt cleanliness claim is qualified, not retrospectively reissued.
 
+2026-10-13 state-owner addendum: the [adapter-owned implementation](ADAPTER_STATE_OWNER.md)
+now preserves the historical paired graph and complete-window algorithm.
+[Tiny CPU evidence](../../provenance/pilots/v15_adapter_owner_20261013/README.md)
+passes 71/71 tests, 8/8 update conditions and 8/8 next-update resume conditions.
+Independent forwards had equal losses but different base gradients; graph
+sharing and runtime policy are now explicit checkpointed contracts. The first
+isolated CUDA launch failed before tests because pytest was unavailable to its
+isolated interpreter. Its failure is retained. The
+[human-authorized CUDA recovery](../../provenance/pilots/v15_adapter_owner_cuda_02_20261013/README.md)
+subsequently passed the same 71 cases and 8/8 update/replay cells, without
+changing the sealed source. This is tiny per-runtime parity, not 7B or
+cross-device equality.
+
+The [completed PR #12 review](ADAPTER_OWNER_REVIEW_20261014.md) exposes two
+additional ownership gaps that this suite does not test: retained payloads
+alias live state, and late restore rejection can mutate supplied targets.
+Both are repaired in the additive [v2 checkpoint API](ADAPTER_CHECKPOINT_V2.md),
+under a new source identity. Its [new CPU/CUDA evidence](../../provenance/pilots/v15_adapter_owner_v2_20261014/README.md)
+passes 164/164 cases per runtime, including 65 non-mutating rejections and eight
+matched-update/eight valid replay cells. Two negative controls reproduce v1's
+defects. Use v2 for new work; the sealed v1 is retained for history. Keep the PR
+Draft for follow-up review; the earlier 71-case pass is not relabelled.
+
+The [next migration gate](ADAPTER_7B_MIGRATION_GATE.md) makes the remaining work
+explicit: after the v2 repair, freeze a real 16-pair-window reference/adapter
+comparison, then admit its GPU/host/disk budget. About 44 GB disk free is below
+the historical 50-GiB remaining-space floor even before new checkpoints.
+No existing weights are deleted and no 7B run is started. This is engineering
+progress only; the useful-interaction, explicit-precision and immutable-original
+preservation factors below remain separate. Original-base identity ownership
+does not yet add preservation supervision or establish non-regression.
+
 ## Readout decomposition now measured; model-native adapter added
 
 The [adapter contract](READOUT_ADAPTERS.md) separates the model-independent

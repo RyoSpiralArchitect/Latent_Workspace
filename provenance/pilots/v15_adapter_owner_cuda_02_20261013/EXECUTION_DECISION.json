@@ -1,0 +1,47 @@
+{
+  "schema": "v15-adapter-owner-cuda-recovery-decision-v1",
+  "client_date_jst": "2026-10-13",
+  "authorization": {
+    "source": "direct human reply in this thread",
+    "question_scope": "Preserve the original failure, prepare dependencies, and run the tiny CUDA update/resume qualification as a separate attempt; no 7B training, judge calls or weight deletion.",
+    "reply": "依存を導入して良きだよ!"
+  },
+  "original_bundle": "provenance/pilots/v15_adapter_owner_20261013",
+  "original_failure": "ModuleNotFoundError: No module named 'pytest'",
+  "source_commit": "64171c8e63642024070236ee0f7df22ecd966331",
+  "source_files": 299,
+  "source_and_tests_changed": false,
+  "qualification_plan": "configs/v15/ADAPTER_OWNER_QUALIFICATION_PLAN.json",
+  "expected_test_cases": 71,
+  "max_cuda_allocated_gib": 6,
+  "wall_limit_seconds": 180,
+  "interpreter": "/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/aether-cuda-pretrain-20260822/.venv/bin/python",
+  "execution_checkout": "/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-workspace-v15-adapter-owner-20261013",
+  "output": "/home/ryospiralarchitect/spiralreality/SpiralReality/tmp/latent-adapter-owner-20261013/cuda_attempt02",
+  "runtime": {
+    "python": "3.12.14",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0",
+    "pytest": "9.1.1",
+    "numpy": "2.5.2"
+  },
+  "dependency_preparation": {
+    "new_empty_venv": "/home/ryospiralarchitect/spiralreality/SpiralReality/tmp/latent-adapter-owner-20261013/cuda-env01",
+    "offline_install_exit_code": 1,
+    "offline_install_error": "torch was not found in the cache",
+    "disposition": "No packages installed. Use the separately verified existing virtual environment without modifying it. The interpreter and dependencies remain separately trusted inputs, not covered by the project source seal."
+  },
+  "known_review_findings_before_dispatch": [
+    "https://github.com/RyoSpiralArchitect/Latent_Workspace/pull/12#discussion_r4260240884",
+    "https://github.com/RyoSpiralArchitect/Latent_Workspace/pull/12#discussion_r4260240903"
+  ],
+  "review_scope": "The 71 unchanged tests do not settle payload snapshot aliasing or restore failure atomicity; a pass cannot close those findings.",
+  "retries": "One human-authorized environment recovery; no automatic second retry of model/test execution",
+  "real_model_updates": 0,
+  "new_sequences": 0,
+  "judge_calls": 0,
+  "weight_deletions": 0,
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED"
+}
