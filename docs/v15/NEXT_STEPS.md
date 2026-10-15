@@ -2,6 +2,54 @@
 
 Client date: 2026-10-10. **POST-RESULT DESIGN; bounded learner pilot complete**.
 
+2026-10-14 continuation: [V16 plan](../v16/PLAN.md) now names the next FT
+improvement. A common-plus-slot-contrast prototype and matched-capacity control
+pass 16 local CPU tests and now have a separate
+[tiny-qualified state owner](../v16/SLOT_STATE_OWNER.md), but had not been trained
+on 7B at that qualification. The preceding v2 checkpoint repair passes separate source-sealed
+CPU/CUDA qualification. The initial [storage inspection](../../provenance/inventory/v16_storage_inspection_20261014/README.md)
+was read-only. Ryō subsequently authorized [V12-only cleanup](../../provenance/inventory/v12_weight_prune_20261014/README.md):
+90 weight files / 206.805 GiB removed after recording hashes and metadata,
+249.571 GiB available at that earlier observation. Other weights were unchanged
+by that V12-only action, and all admission floors remain unchanged.
+
+After the 7B migration and tiny slot-state qualification, the prospective
+three-arm V16 screen needed 242 GiB (3 × 64 GiB outputs + 50 GiB remaining),
+exceeding the approximately 188 GiB then available. Ryō separately authorized
+[V14-only cleanup](../../provenance/inventory/v14_weight_prune_20261014/README.md).
+All 44 weight hashes and 502 metadata copies were published before deletion;
+44/44 payloads (82.838 GiB) were then removed, with metadata and 98 protected
+weight stats intact. Terminal available space is **270.661 GiB**, so the
+conservative storage screen now passes by **28.661 GiB**. This is not a new
+training/evaluation result or a CUDA/host-memory qualification for slot contrast.
+V15/V16 checkpoints and the original model/cache are not deletion targets.
+
+The next selection is now [prospectively fixed](../v16/FULL_COMPARISON.md):
+common/raw/centered-slot full-update arms, matched seed/data/objective, two
+updates each, native evaluation at 0/1/2, and exact next-update replay.
+Twelve new tiny integration cases must pass independently on source-isolated
+CPU and CUDA before the three fresh-process 7B arms. Preserve control failures,
+zero/negative donor direction, all regressions from original base, and resource
+failures without retries. No new generation/judge/preservation loss is included;
+this still does not establish held-out quality or base non-regression.
+The [launch bundle](../../provenance/pilots/v16_full_comparison_20261014/README.md)
+now records those 12/12 passes on each runtime and 279/279 local regression cases.
+That dispatcher has now [completed with offline replay](../../provenance/pilots/v16_full_comparison_20261014/RESULTS.md):
+6/6 unique windows, 3/3 exact replays, 144/144 backward pairs. No native affected
+donor-margin changes or donor-directed flips appeared (0/4 per final arm).
+Slot interaction-query gradients exist but do not yet establish usable content.
+The final small training-exposed accuracy differences do not choose a winner.
+
+2026-10-15: [population diagnostics](../v16/POPULATION_DIAGNOSTICS.md) evaluate the
+existing checkpoints on 128 fresh worlds, preserving all memory controls, and
+compare their direct updated bases with original on a fixed MMLU 570 subset.
+Decompose normalized slot variation → attention selection → output mapping/cap
+→ native visibility before choosing a new learner factor. Retain reciprocal
+questions, world-level uncertainty, baseline regressions and strict-tie counts.
+MMLU is a descriptive, no-workspace preservation screen, not a training target,
+workspace benchmark or formal non-inferiority gate. No new training is selected
+in this evaluation phase, and model-seed replication remains outstanding.
+
 2026-10-13 review addendum: [PR #11 review and migration requirements](READOUT_REVIEW_20261013.md).
 Future launches require isolated, pre-import cleanliness checks including
 untracked source. The migration must also preserve/bind pair-level graph
@@ -33,10 +81,44 @@ Draft for follow-up review; the earlier 71-case pass is not relabelled.
 
 The [next migration gate](ADAPTER_7B_MIGRATION_GATE.md) makes the remaining work
 explicit: after the v2 repair, freeze a real 16-pair-window reference/adapter
-comparison, then admit its GPU/host/disk budget. About 44 GB disk free is below
-the historical 50-GiB remaining-space floor even before new checkpoints.
-No existing weights are deleted and no 7B run is started. This is engineering
-progress only; the useful-interaction, explicit-precision and immutable-original
+comparison, then admit its GPU/host/disk budget. The initial ~44 GB disk-space
+block is resolved by the separately authorized V12-only cleanup above; the
+50-GiB remaining-space floor still applies to forecast writes. The
+[real-7B run](../../provenance/pilots/v16_adapter_migration_20261014/README.md)
+passed frozen updates and replay (80/160 total planned pairs). Full was not
+dispatched because the warmed process missed the unchanged 31-GiB start floor.
+Its original terminal **INCOMPLETE_NO_RETRY** is sealed; Ryō authorized
+[only full in a fresh process](../v16/ADAPTER_FULL_CONTINUATION_01.md), without
+rerunning frozen or relaxing criteria. That
+[continuation](../../provenance/pilots/v16_adapter_full_continuation_01_20261014/README.md)
+completed both legacy full updates but failed adapter construction: the
+production helper registers the installed HF input-gradient hook twice and
+leaves the first handle unowned. A construction-only CPU diagnosis reproduced
+this; the direct-HF tiny tests had missed the composed preparation path.
+That terminal observation was 112/160 pairs, with full comparison/replay absent.
+Ryō then authorized the proposed repair and separate missing-adapter attempt.
+The [owned-preparation recovery](../../provenance/pilots/v16_adapter_full_recovery_02_20261014/README.md)
+passes 295/295 local regressions, 22/22 CUDA cases and the remaining 48/48 real-7B
+adapter/replay pairs. Initial state, all ordered loss/gradient receipts, complete
+updates and serialized next-update payload match exactly. Combined migration is
+now 160/160 pairs, 8/8 unique windows and 2/2 replay windows, with original and
+continuation-01 failures preserved. No frozen or legacy reference was rerun.
+
+Carry forward the new lesson: setup itself is owned native execution state.
+Test production preparation → binding → full window → snapshot → restore as
+one composition, while keeping reader mechanisms separate from native arithmetic.
+That next gate is now complete at tiny scale: the
+[slot-contrast state qualification](../../provenance/pilots/v16_slot_state_owner_20261014/README.md)
+passes 145/145 on source-isolated CPU and CUDA independently, including all 16
+serialized replay cells and eight independent update references per runtime.
+It adds explicit writer/common/interaction ownership and a new checkpoint format,
+without widening the old whitelist or altering any of the 519 historical source
+files. Local regression is 440/440; offline-verifier tests are 14/14.
+Next freeze the bounded common/raw-control/slot-contrast Mistral pilot and a
+fresh CPU/GPU/disk forecast. The tiny CUDA peak (64.465 MiB) is not that forecast;
+unchanged-reader 7B migration also does not prove new-reader capacity or semantics.
+This is engineering progress only;
+the useful-interaction, explicit-precision and immutable-original
 preservation factors below remain separate. Original-base identity ownership
 does not yet add preservation supervision or establish non-regression.
 

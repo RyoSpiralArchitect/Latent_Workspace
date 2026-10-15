@@ -1,6 +1,16 @@
 # Next gate: adapter-owned real-Mistral update equivalence
 
-2026-10-13. **Prospective design, not an executed or admitted experiment.**
+2026-10-13 design; 2026-10-14 execution update: the
+[new sealed run](../../provenance/pilots/v16_adapter_migration_20261014/README.md)
+passes frozen exact updates and replay (80/160 total pairs). Full stopped at
+admission before any work. The original remains **INCOMPLETE_NO_RETRY**;
+[full-only continuation 01](../v16/ADAPTER_FULL_CONTINUATION_01.md) is separately
+authorized with unchanged criteria. It passed cold-start admission and completed
+two legacy full updates, then rejected a duplicate/unowned HF input-gradient
+hook during adapter construction. [The terminal diagnosis](../../provenance/pilots/v16_adapter_full_continuation_01_20261014/README.md)
+records the production-helper/test-path mismatch. No adapter full update or
+replay has run; the complete gate is not satisfied. Do not weaken hook ownership
+or treat 112/160 observed pairs as matched full-mode evidence.
 
 The [new owner](ADAPTER_STATE_OWNER.md) is an algorithm-preserving integration,
 not the next semantic learner factor. Its [tiny qualification](../../provenance/pilots/v15_adapter_owner_20261013/README.md)
@@ -37,7 +47,7 @@ historical runner's resource measurements do not bound this new path.
 5. Recompute peak host/GPU and disk envelopes for the adapter's graph policy.
    Full-window admission and checkpoint writes must fail closed independently.
 
-## Disk is already an unmet admission gate
+## Disk admission history and current boundary
 
 The 2026-10-13 Furnace preflight reported about **44 GB disk free**. The
 [historical resource contract](../../configs/v15/NATIVE_LEARNER_PLAN.json)
@@ -47,11 +57,14 @@ considering the new adapter's overhead. Each retained full checkpoint is about
 **104 GiB free before writes**, plus any other forecast artifacts. The exact
 forecast must use recorded byte counts, not rounded prose.
 
-No existing checkpoint is deleted, compacted or overwritten by this proposal.
-An explicitly chosen storage location/capacity plan is needed; neither an idle
-GPU nor tiny-test success resolves the disk gate. Do not silently reduce the
-floor, drop the resume check, or reuse another workload's space. Until admission
-passes, the sealed 7B runner and its old result remain authoritative.
+This proposal itself authorized no deletion. On 2026-10-14 JST, Ryō separately
+authorized [all V12 experiment weights to be removed](../../provenance/inventory/v12_weight_prune_20261014/README.md)
+after hash/metadata recording. Available persistent space is now 249.571 GiB;
+V14/V15 and the original model cache remain unchanged. This clears the initial
+capacity obstacle, not the exact new-run admission check. Neither idle GPU nor
+tiny-test success bounds the new adapter's host/GPU peaks. Do not reduce the
+floor or drop replay. Until the new comparison passes, the sealed 7B runner
+and its old result remain authoritative.
 
 ## After migration, keep scientific factors separate
 

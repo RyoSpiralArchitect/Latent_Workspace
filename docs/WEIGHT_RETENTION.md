@@ -62,3 +62,22 @@ manifestのない保存や他のrun rootまで含む全ストレージ走査で�
 凍結済みV11/V12のconfigは過去の実行証拠なので変更していない。
 次の学習用config生成では2 checkpointを保持できる保存設定を明示し、
 既存の`keep_last_checkpoints=1`を新runへ無条件に引き継がない。
+
+## Explicit historical exceptions — 2026-10-14
+
+The latest-two-per-condition policy above is not permission to remove an entire
+generation. Two later, separate instructions explicitly selected older weights:
+
+- [V12-only cleanup](../provenance/inventory/v12_weight_prune_20261014/README.md):
+  90 files / 206.805452 GiB, with hashes and metadata recorded first.
+- [V14-only cleanup](../provenance/inventory/v14_weight_prune_20261014/README.md):
+  44 files / 82.837845 GiB. All weight hashes and 502 literal metadata files,
+  including existing answer-bank/evaluation records, were committed and pushed
+  before permanent deletion. The later deletion receipt is separate from the
+  immutable pre-deletion inventory. Available space reached 270.661411 GiB.
+
+These authorizations override retention for their exact recorded targets only.
+V15/V16 states, original base-model caches and other projects remain protected;
+the planned V16 comparison still retains two checkpoints per condition. No
+weight backups were created; hashes/metadata cannot reconstruct deleted weights.
+Cleanup is not a model-quality claim and does not erase old failures or missingness.

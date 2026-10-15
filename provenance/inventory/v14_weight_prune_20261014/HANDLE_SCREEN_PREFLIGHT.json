@@ -1,0 +1,20 @@
+{
+  "status": "READ_ONLY_PREFLIGHT_STOPPED_BEFORE_INVENTORY",
+  "recorded_utc": "2026-10-14T03:04:59Z",
+  "initial_pruner_sha256": "69e5b8e734e52472a027c5aa78de59b09c2b029417c0120dc2de81d84859f843",
+  "exception": "ValueError: open targets or unreadable same-user processes",
+  "remote_evidence_directory_existed_after_failure": false,
+  "deleted_count": 0,
+  "visible_in_scope_handles": [],
+  "unreadable_processes_in_diagnostic_screen": [
+    {"pid": 247421, "comm": "systemd", "target_handles": "UNKNOWN"},
+    {"pid": 247423, "comm": "(sd-pam)", "target_handles": "UNKNOWN"},
+    {"pid": 1471394, "comm": "smbd[192.168.11", "target_handles": "UNKNOWN"},
+    {"pid": 1659911, "comm": "smbd[192.168.11", "target_handles": "UNKNOWN"},
+    {"pid": 1697918, "comm": "sshd-session", "target_handles": "UNKNOWN"}
+  ],
+  "resolution": "Record known privileged service fd-visibility gaps as UNKNOWN; block visible target handles and unreadable non-service processes. Do not claim an all-process handle audit.",
+  "privilege_escalation": false,
+  "service_interruption": false,
+  "global_transaction_atomic": false
+}

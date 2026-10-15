@@ -1,5 +1,78 @@
 # Latent Workspace FT — CUDA comparison harness
 
+## V16 begins: preserve common behavior, test a separate slot-contrast route
+
+The [V16 plan and prototype](docs/v16/PLAN.md) separates the existing common
+reader from an additional slot-contrast route, with an identically initialized,
+parameter-matched uncentered control. The new route is exactly zero for identical
+valid slots; its separate norm budget does not rescale the common output.
+[16 local CPU mechanism tests](provenance/pilots/v16_slot_contrast_prototype_20261014/README.md)
+pass, including tiny Mistral FP32/BF16 zero identity and live backward. This is
+not factual binding, V16 FT, CUDA qualification or original-base preservation.
+The new reader is deliberately not admitted by the old checkpoint owner.
+
+The v2 checkpoint fixes below are complete at tiny CPU/CUDA scale. After the
+[read-only storage inventory](provenance/inventory/v16_storage_inspection_20261014/README.md),
+Ryō authorized [all V12 experiment weights to be removed](provenance/inventory/v12_weight_prune_20261014/README.md):
+90 files / 206.805 GiB, with hashes and 315 metadata copies retained. Available
+space after cleanup was 249.571 GiB; V14/V15 and model caches were not changed.
+The [real-7B migration](provenance/pilots/v16_adapter_migration_20261014/README.md)
+now passes exact frozen updates and serialized replay: **80/160 planned pairs**.
+Full was never dispatched: the warmed process fell below the unchanged 31-GiB
+start floor. Original status is **INCOMPLETE_NO_RETRY**, not OOM or a numerical
+mismatch. The authorized [full-only continuation](provenance/pilots/v16_adapter_full_continuation_01_20261014/README.md)
+passed admission and completed legacy full updates, then stopped **before any
+adapter update**: production preparation registers an HF input-gradient hook
+twice, leaving one unowned. A CPU construction-only diagnosis reproduced the
+gap missed by direct-HF tiny tests. At that point: **112/160 pairs**, full
+comparison and replay incomplete. Both historical failures remain sealed.
+
+The separately authorized [owned-preparation repair](provenance/pilots/v16_adapter_full_recovery_02_20261014/README.md)
+now passes 295/295 local regression tests, 22/22 source-isolated CUDA cases,
+and **7B full exact updates plus serialized replay**. Only the missing adapter
+48 pairs ran; neither frozen nor completed legacy work was repeated. Combined:
+**160/160 pairs, 8/8 unique windows, 2/2 replays** across three source-provenanced
+processes. The strict hook guard and all math/resource thresholds remain intact.
+The repair took 19 min 24.57 s, with 27.751 GiB peak allocated CUDA memory.
+Preparation is now an explicitly owned, idempotent adapter setup boundary.
+The new [V16 reader-state owner](docs/v16/SLOT_STATE_OWNER.md) now completes that
+next engineering gate: [145/145 source-isolated cases on each of CPU and CUDA](provenance/pilots/v16_slot_state_owner_20261014/README.md),
+including 16/16 serialized replay cells and eight independent update references
+per runtime. Writer/common/interaction partitions and same-shaped candidate/control
+policies are explicitly owned in a new format; v15/v2 still rejects the prototype.
+Local regression is 440/440, with another 14/14 offline-verifier cases. CUDA tests
+took 247.295 seconds with 64.465 MiB peak allocation, a **tiny-model** observation.
+At that qualification, the next step was freezing the three-arm Mistral pilot
+and its new resource forecast; no new 7B FT had run. Old **FAIL / winner:none /
+non-regression NOT_ESTABLISHED** stays.
+
+For that prospective three-arm run, the subsequent
+[explicitly authorized V14 cleanup](provenance/inventory/v14_weight_prune_20261014/README.md)
+recorded all 44 weight hashes and 502 literal metadata files in Git **before**
+removing 82.838 GiB of V14 payloads. Terminal available space is **270.661 GiB**,
+above the 242-GiB conservative output-plus-floor screen by 28.661 GiB.
+V15/V16 checkpoints and the original model/cache were not deletion targets;
+98 protected weight stats and all 502 source metadata hashes are unchanged.
+Hashes are not weight backups. This clears the storage screen only, not the
+new-reader GPU/host admission or semantic/non-regression gates. No V16 7B FT,
+new generation or judge request ran during cleanup.
+
+The [bounded V16 full-update comparison](docs/v16/FULL_COMPARISON.md) has
+[completed and replayed offline](provenance/pilots/v16_full_comparison_20261014/RESULTS.md):
+6/6 unique update windows, 3/3 exact next-update replays, 144/144 backward pairs.
+Final intact/twin correctness is common 10/16 and 8/16, raw control 8/16 and
+8/16, slot contrast 9/16 and 8/16. All three retain 0/4 native affected-margin
+changes and 0/4 donor-directed flips. These are two training-exposed worlds,
+not a held-out gain or base-floor pass. Slot-query gradients are live but the
+interaction output is small. **FAIL / winner:none / non_regression
+NOT_ESTABLISHED** remains unchanged.
+
+The next [population diagnostic](docs/v16/POPULATION_DIAGNOSTICS.md) freezes 128
+fresh worlds / 1,024 queries and a subject-balanced MMLU 570-question subset.
+It uses existing step-2 weights and separates slot variation, query selection,
+native transport and updated-base preservation. It adds no training, generation,
+judge call or weight deletion; one training seed remains one training seed.
+
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
 pre-import source guard for future runs and qualifies the historical
 untracked-file cleanliness claim. Old audit sources and receipts are unchanged.
@@ -26,7 +99,7 @@ including 65 non-mutating rejection cases, eight matched-update cells, eight
 serialized replay cells, and two controls reproducing v1's defects per runtime.
 609 selected local regression cases also pass. **PR #12 stays Draft pending
 follow-up review; old receipts and the known-defective v1 API remain historical.**
-No 7B update or new generation ran. The sealed
+That checkpoint-repair qualification ran no 7B update or new generation. The sealed
 historical runner is unchanged. The
 [next real-model gate](docs/v15/ADAPTER_7B_MIGRATION_GATE.md) requires separate
 complete-window and capacity admission after the v2 repair; old **FAIL / winner:
