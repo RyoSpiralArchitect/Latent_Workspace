@@ -21,10 +21,10 @@ NOT_ESTABLISHED**.
   the ordered and final interaction queries. The common read route saturates the
   shared residual budget (about 0.998 of a 1.0 cap) and starves the interaction
   route (about 0.0004).
-- **Next — V19 (in design):** give the common route and the workspace
-  (interaction) route separate norm budgets, so the common route can no longer
-  consume the workspace read path; requalify it, then repeat the frozen
-  diagnostic with the same endpoints before any further full update.
+- **Next — [V19](docs/v19/DUAL_BUDGET.md):** the common route and the workspace
+  route get separate norm budgets, so the common route can no longer consume
+  the workspace read path. The reader and owners are implemented; the same
+  frozen diagnostic, with the same endpoints, comes before any full update.
 - **Release goal:** a conditional Hugging Face beta,
   **mistral-7b-instruct-v0.3-LTWS β**, only after memory use, non-regression and
   export parity are established ([release checklist](docs/v18/HF_RELEASE.md)).
@@ -34,6 +34,7 @@ NOT_ESTABLISHED**.
 
 | Version | Focus | Start here |
 | --- | --- | --- |
+| V19 | Separate norm budgets for the common and workspace routes (dual-budget reader and owners) | [design](docs/v19/DUAL_BUDGET.md) |
 | V18 | Complete windows and reference ownership, operand selection, selection owners, first 7B pilot, frozen-backbone diagnostic | [roadmap](docs/v18/FULL_UPDATE_ROADMAP.md) |
 | V17 | — | There is no V17. The maintainer skipped the number by mistake; the gap means nothing. |
 | V16 | Separate slot-contrast route, 7B adapter migration, bounded three-arm full comparison, population diagnostics | [plan](docs/v16/PLAN.md) |
