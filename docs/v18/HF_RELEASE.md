@@ -2,8 +2,10 @@
 
 2026-10-15. **PREPARATION ONLY / NO V18 WEIGHTS / NO HUB REPOSITORY CREATED**.
 
-Requested display name: **mistral-7b-instruct-ver0.3-LTWspaced β**.
-Provisional ASCII repository slug: `mistral-7b-instruct-v0.3-LTWspaced-beta`.
+Requested display name: **mistral-7b-instruct-v0.3-LTWS β** (Ryō, 2026-10-15;
+earlier working name: mistral-7b-instruct-ver0.3-LTWspaced β).
+Provisional ASCII repository slug: `mistral-7b-instruct-v0.3-LTWS-beta`.
+The candidate is expected from the V19 line, after memory use is established.
 The owner/organization and final repository ID are **UNRESOLVED**; availability
 and write authority have not been checked. Do not publish to an inferred
 namespace. The [model-card draft](MODEL_CARD_DRAFT.md) is not release evidence.

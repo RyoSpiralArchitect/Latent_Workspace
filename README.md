@@ -1,6 +1,127 @@
-# Latent Workspace FT — CUDA comparison harness
+# Latent Workspace FT
 
-## V16 begins: preserve common behavior, test a separate slot-contrast route
+Research harness for giving Mistral-7B-Instruct-v0.3 a separately written
+**latent workspace**: memory slots written from context and read back into the
+native residual stream, trained with frozen or fully updated backbones. Runs are
+frozen before launch, execute from a sealed commit on a remote CUDA node
+("Furnace"), are replayed offline, and keep every negative or failed result. The
+historical claim ceiling is unchanged: **FAIL / winner:none / non_regression
+NOT_ESTABLISHED**.
+
+## Status (2026-10-15)
+
+- **V18 engineering is complete on the real model.** The selection window owner
+  passed sealed CPU/CUDA qualification, and the first
+  [7B full-parameter pilot](provenance/pilots/v18_native_pilot_20261015/README.md)
+  reproduced the V16 receipt bit for bit, completed two centered-ordered update
+  windows and resumed exactly in a fresh process.
+- **Memory content does not yet reach native answers.** The
+  [frozen-backbone diagnostic](provenance/pilots/v18_frozen_diagnostic_20261015/README.md)
+  trained only the workspace for 512 windows: 0/256 held-out donor flips for both
+  the ordered and final interaction queries. The common read route saturates the
+  shared residual budget (about 0.998 of a 1.0 cap) and starves the interaction
+  route (about 0.0004).
+- **Next — V19 (in design):** give the common route and the workspace
+  (interaction) route separate norm budgets, so the common route can no longer
+  consume the workspace read path; requalify it, then repeat the frozen
+  diagnostic with the same endpoints before any further full update.
+- **Release goal:** a conditional Hugging Face beta,
+  **mistral-7b-instruct-v0.3-LTWS β**, only after memory use, non-regression and
+  export parity are established ([release checklist](docs/v18/HF_RELEASE.md)).
+  Nothing has been uploaded.
+
+## Version map
+
+| Version | Focus | Start here |
+| --- | --- | --- |
+| V18 | Complete windows and reference ownership, operand selection, selection owners, first 7B pilot, frozen-backbone diagnostic | [roadmap](docs/v18/FULL_UPDATE_ROADMAP.md) |
+| V17 | — | There is no V17. The maintainer skipped the number by mistake; the gap means nothing. |
+| V16 | Separate slot-contrast route, 7B adapter migration, bounded three-arm full comparison, population diagnostics | [plan](docs/v16/PLAN.md) |
+| V15 / V15.5 | Native readout contracts, full-native backward, full-update learner, readout adapters, adapter state owner | [plan](docs/v15/PLAN.md) |
+| V14 | Portable operators, instrument gates, boundary and precision assays, precision bridge, answer bank and judging | [portable boundaries](docs/V14_PORTABLE_BOUNDARIES.md) |
+| V13 | Normalization-state design and visibility diagnostics | [design](docs/V13_NORMALIZATION_STATE_DESIGN.md) |
+| V9–V12 | Query-deferred harness, transport v2, V11 objective and LR studies, V12 calibrated route | [runtime status](#historical-runtime-status-not-v13v14-qualification) |
+
+V13–V18 were developed as stacked branches and merged into `main` on
+2026-10-15 (PRs #14, #12, #13, #15, #16 and the final V18 PR). Three V11/V12-era
+fixes that `main` had received are kept in history but not in the merged
+sources, because V14–V18 seals pin those files byte for byte; see PR #14.
+
+## V18: complete windows, operand selection, owners and the first 7B runs
+
+The prospective [V18 preparation](docs/v18/PREPARATION.md) integrates the V16
+diagnostics with original-base preservation and a generalized complete-window
+reduction contract. Its additive [window/reference state layer](docs/v18/WINDOW_REFERENCE.md)
+now [passes 310/310 tiny tests on CPU and CUDA](provenance/pilots/v18_window_reference_recovery_01_20261015/README.md),
+including source/receipt replay; the original guard failure is retained. This
+foundation alone implies no 7B training, preservation loss or selection mechanism.
+
+The subsequent [additive operand-selection prototype](docs/v18/OPERAND_SELECTION.md)
+now separates common and interaction queries. Its
+[authorized continuation](provenance/pilots/v18_operand_selection_continuation_01_20261015/README.md)
+completes **200/200 CPU and CUDA engineering tests**, then **12/12 controlled
+reader-only fits per runtime**, with exact same-runtime offline replay.
+Ordered selection passes every seed's toy learnability gate (held-out strict
+**1,150/1,152, 1,152/1,152, 1,152/1,152**), but **not** the +5 pp advantage gate.
+All three final-state comparisons retain their failed permutation-tolerance
+checks; only 9/12 control bundles pass per runtime. The
+[original CUDA admission failure](provenance/pilots/v18_operand_selection_20261015/README.md)
+is unchanged. The [next boundary is the actual writer](docs/v18/ACTUAL_WRITER_TRANSITION.md),
+not a 7B launch, owner admission, semantic winner or non-regression claim.
+
+The [saved-state numerical diagnosis](provenance/pilots/v18_selection_permutation_20261015/README.md)
+now completes 12/12 states on CPU and CUDA. Repeats and instrumentation parity
+are exact, but **0/24 historical logit arrays reproduce bit-for-bit**, despite
+zero historical/new answer changes in 13,824 state-query observations per
+runtime. Centered-memory rounding is localized in the new execution, not yet
+established as the historical cause. All cells retain
+`BLOCKED_CONTROL_REPRODUCTION_MISMATCH`. The separate
+[flag intervention](provenance/pilots/v18_replay_flags_20261015/README.md) now
+explains that observed discrepancy: retaining historical flags reproduces all 24
+historical arrays and full controls; freezing all parameters reproduces all 24
+prior diagnostic outputs. Both policies remain eval/no-grad. The historical
+six permutation failures remain unchanged. The actual-writer helper has 42
+tests and the [selection state guard](docs/v18/SELECTION_STATE_GUARD.md) has 76;
+neither is a fitted writer or a full update/resume owner. That diagnostic's
+combined selected suite passes 533 local CPU tests.
+
+The separate additive
+[selection native owner](provenance/pilots/v18_selection_owner_local_20261015/README.md)
+now passes 150 tiny local mechanics tests and ten CPU process-restart cases,
+with exact next-update state and RNG agreement. Its
+[window envelope](provenance/pilots/v18_selection_window_20261015/README.md)
+then passed sealed Furnace CPU and CUDA qualification: 102 tests and ten
+independent-process restart pairs per device, verified offline.
+
+The first real
+[7B native pilot](provenance/pilots/v18_native_pilot_20261015/README.md) then
+matched the V16 receipt bit for bit, completed two centered-ordered full-parameter
+windows and replayed exactly in a fresh process; intact/twin memory still changed
+no native answer gap. A [frozen-backbone diagnostic](provenance/pilots/v18_frozen_diagnostic_20261015/README.md)
+then trained only the workspace for 512 windows: 0/256 held-out donor flips in
+both query arms, with the common route saturating the shared residual budget.
+None of this repairs the historical permutation failures or establishes
+semantic improvement.
+
+The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
+orders state ownership, native capacity, FT, benchmark and conditional release.
+The [behavior protocol](docs/v18/BEHAVIOR_EVALUATION.md) separates original base,
+updated backbone and workspace effects; a blank
+[Claude manual review sheet](docs/v18/CLAUDE_REVIEW_SHEET.md) supports a later
+blinded transfer without a Claude API key. No new answer bank or judgments exist.
+The conditional [Hugging Face beta release checklist](docs/v18/HF_RELEASE.md)
+targets **mistral-7b-instruct-v0.3-LTWS β**, pending agreed acceptance,
+V18 evidence, licensing and fresh-load export parity. Nothing was uploaded.
+
+The separately authorized [V16 engineering-weight retirement](provenance/inventory/v16_engineering_retirement_20261015/README.md)
+has now removed four completed update/resume-test checkpoints, **54.213 GiB**,
+after publishing their hashes and 40 evidence bindings. All six active V16
+comparison saves remain (latest/previous per condition), as do the original
+model/cache and V18 diagnostic states. Terminal free space is **156.235 GiB**;
+the [one-arm forecast](docs/v18/SELECTION_OWNER_PLAN.md) is distinct from the
+unmet 242-GiB three-arm envelope. Git records do not reconstruct deleted weights.
+
+## V16: separate slot-contrast route, migration, comparison and population diagnostics
 
 The [V16 plan and prototype](docs/v16/PLAN.md) separates the existing common
 reader from an additional slot-contrast route, with an identically initialized,
@@ -76,70 +197,6 @@ exists and the cap is not exhausted, but selection is near uniform and intended
 FP64 direction is mixed (127 positive / 129 negative). It adds no training,
 generation, judge call or weight deletion. One training seed remains one;
 **FAIL / winner:none / non_regression NOT_ESTABLISHED** stays.
-
-The prospective [V18 preparation](docs/v18/PREPARATION.md) integrates these
-diagnostics with original-base preservation and a generalized complete-window
-reduction contract. Its additive [window/reference state layer](docs/v18/WINDOW_REFERENCE.md)
-now [passes 310/310 tiny tests on CPU and CUDA](provenance/pilots/v18_window_reference_recovery_01_20261015/README.md),
-including source/receipt replay; the original guard failure is retained. This
-foundation alone implies no 7B training, preservation loss or selection mechanism.
-The subsequent [additive operand-selection prototype](docs/v18/OPERAND_SELECTION.md)
-now separates common and interaction queries. Its
-[authorized continuation](provenance/pilots/v18_operand_selection_continuation_01_20261015/README.md)
-completes **200/200 CPU and CUDA engineering tests**, then **12/12 controlled
-reader-only fits per runtime**, with exact same-runtime offline replay.
-Ordered selection passes every seed's toy learnability gate (held-out strict
-**1,150/1,152, 1,152/1,152, 1,152/1,152**), but **not** the +5 pp advantage gate.
-All three final-state comparisons retain their failed permutation-tolerance
-checks; only 9/12 control bundles pass per runtime. The
-[original CUDA admission failure](provenance/pilots/v18_operand_selection_20261015/README.md)
-is unchanged. The [next boundary is the actual writer](docs/v18/ACTUAL_WRITER_TRANSITION.md),
-not a 7B launch, owner admission, semantic winner or non-regression claim.
-The [saved-state numerical diagnosis](provenance/pilots/v18_selection_permutation_20261015/README.md)
-now completes 12/12 states on CPU and CUDA. Repeats and instrumentation parity
-are exact, but **0/24 historical logit arrays reproduce bit-for-bit**, despite
-zero historical/new answer changes in 13,824 state-query observations per
-runtime. Centered-memory rounding is localized in the new execution, not yet
-established as the historical cause. All cells retain
-`BLOCKED_CONTROL_REPRODUCTION_MISMATCH`. The separate
-[flag intervention](provenance/pilots/v18_replay_flags_20261015/README.md) now
-explains that observed discrepancy: retaining historical flags reproduces all 24
-historical arrays and full controls; freezing all parameters reproduces all 24
-prior diagnostic outputs. Both policies remain eval/no-grad. The historical
-six permutation failures remain unchanged. The actual-writer helper has 42
-tests and the [selection state guard](docs/v18/SELECTION_STATE_GUARD.md) has 76;
-neither is a fitted writer or a full update/resume owner. That diagnostic's
-combined selected suite passes 533 local CPU tests. The separate additive
-[selection native owner](provenance/pilots/v18_selection_owner_local_20261015/README.md)
-now passes 150 tiny local mechanics tests and ten CPU process-restart cases,
-with exact next-update state and RNG agreement. Its
-[window envelope](provenance/pilots/v18_selection_window_20261015/README.md)
-then passed sealed Furnace CPU and CUDA qualification: 102 tests and ten
-independent-process restart pairs per device, verified offline. The first real
-[7B native pilot](provenance/pilots/v18_native_pilot_20261015/README.md) then
-matched the V16 receipt bit for bit, completed two centered-ordered full-parameter
-windows and replayed exactly in a fresh process; intact/twin memory still changed
-no native answer gap. A [frozen-backbone diagnostic](provenance/pilots/v18_frozen_diagnostic_20261015/README.md)
-then trained only the workspace for 512 windows: 0/256 held-out donor flips in
-both query arms, with the common route saturating the shared residual budget.
-None of this repairs the historical permutation failures or establishes
-semantic improvement. The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
-orders state ownership, native capacity, FT, benchmark and conditional release.
-The [behavior protocol](docs/v18/BEHAVIOR_EVALUATION.md) separates original base,
-updated backbone and workspace effects; a blank
-[Claude manual review sheet](docs/v18/CLAUDE_REVIEW_SHEET.md) supports a later
-blinded transfer without a Claude API key. No new answer bank or judgments exist.
-The conditional [Hugging Face beta release checklist](docs/v18/HF_RELEASE.md)
-targets **mistral-7b-instruct-ver0.3-LTWspaced β**, pending agreed acceptance,
-V18 evidence, licensing and fresh-load export parity. Nothing was uploaded.
-
-The separately authorized [V16 engineering-weight retirement](provenance/inventory/v16_engineering_retirement_20261015/README.md)
-has now removed four completed update/resume-test checkpoints, **54.213 GiB**,
-after publishing their hashes and 40 evidence bindings. All six active V16
-comparison saves remain (latest/previous per condition), as do the original
-model/cache and V18 diagnostic states. Terminal free space is **156.235 GiB**;
-the [one-arm forecast](docs/v18/SELECTION_OWNER_PLAN.md) is distinct from the
-unmet 242-GiB three-arm envelope. Git records do not reconstruct deleted weights.
 
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
 pre-import source guard for future runs and qualifies the historical
@@ -596,14 +653,20 @@ specific bottleneck and a numerical-parity test exists.
 
 ## Repository layout
 
-- `src/latent_workspace_ft_v10/` — portable engine and CUDA/Mistral split adapter.
-- `tests/` — offline tiny-model equivalence and optimizer coverage tests.
-- `configs/v10/` — pinned 19-condition contract and smoke/n3/n10 profiles.
-- `configs/v13/` — non-executable normalization-state design; unresolved run gates remain explicit.
-- `scripts/` — deterministic data remapping, contract preparation, and runners.
-- `data/` — byte-identical v9 inputs, Mistral-safe v10 inputs, and manifests.
-- `docs/` — model and backend decisions.
-- `provenance/` — immutable environment and legacy handoff receipts.
+- `src/latent_workspace_ft_v10/` — engine, model bindings, workspace writers and
+  readers, learners and state owners (the package keeps its V10 name).
+- `tests/` — offline tiny-model tests, including the suites that sealed
+  qualifications run on Furnace CPU and CUDA.
+- `configs/v10/` … `configs/v18/` — frozen per-version contracts and run plans
+  (`configs/v13/` is a non-executable design).
+- `scripts/` — data preparation, sealed runners behind the pre-import
+  `run_source_sealed.py` launcher, and offline verifiers.
+- `data/` — byte-identical v9 inputs, Mistral-safe v10 functional train/eval
+  data, and manifests.
+- `docs/` — per-version plans and decisions (`docs/v14/` … `docs/v18/`, with
+  earlier notes at the top level).
+- `provenance/` — environment receipts, sealed run bundles under
+  `provenance/pilots/`, inventories and weight-retention ledgers.
 
 The observed furnace environment is recorded in
 [`provenance/FURNACE_DEPENDENCY_RECEIPT.json`](provenance/FURNACE_DEPENDENCY_RECEIPT.json).
