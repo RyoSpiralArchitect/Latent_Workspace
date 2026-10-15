@@ -23,6 +23,9 @@ spec = importlib.util.spec_from_file_location(
 )
 RUN = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(RUN)
+# Written by the V19 window owner. The V18 owner's format string, copied here at
+# 097d8dd, matched no V19 checkpoint (found while verifying the stopped attempt 01).
+CHECKPOINT_FORMAT = "v19-dual-budget-window-reference-resume-v1"
 
 
 def require(ok, message):
@@ -37,6 +40,19 @@ def verify_manifest(folder, expected):
         pure = PurePosixPath(name)
         require(str(pure) == name and not pure.is_absolute() and ".." not in pure.parts, name)
     require(actual == expected, f"Artifact bytes/manifest mismatch: {folder}")
+
+
+def verify_checkpoint_receipt(receipt, step, folder=None):
+    require(
+        receipt["completed_steps"] == step and receipt["format"] == CHECKPOINT_FORMAT,
+        f"Checkpoint {step}",
+    )
+    if folder is not None:
+        path = folder / receipt["path"]
+        require(
+            path.stat().st_size == receipt["bytes"] and RUN.digest(path) == receipt["sha256"],
+            f"Checkpoint {step} bytes",
+        )
 
 
 def verify_sources(seal, repo):
@@ -136,19 +152,10 @@ def verify_arm(bundle, plan, records, summarize, schedule_ids, checkpoints):
                 endpoint = diagnosis
     require(same(RUN.read(bundle / "DIAGNOSIS.json"), endpoint), "Endpoint diagnosis file")
     receipts = []
+    folder = None if checkpoints is None else checkpoints / context["contract"]["condition"]
     for step in plan["checkpoint_steps"]:
         receipt = RUN.read(bundle / f"CHECKPOINT_step{step}.json")
-        require(
-            receipt["completed_steps"] == step
-            and receipt["format"] == "v18-selection-window-reference-resume-v1",
-            f"Checkpoint {step}",
-        )
-        if checkpoints is not None:
-            path = checkpoints / context["contract"]["condition"] / receipt["path"]
-            require(
-                path.stat().st_size == receipt["bytes"] and RUN.digest(path) == receipt["sha256"],
-                f"Checkpoint {step} bytes",
-            )
+        verify_checkpoint_receipt(receipt, step, folder)
         receipts.append(receipt)
     return endpoint, curve, receipts, lines
 
