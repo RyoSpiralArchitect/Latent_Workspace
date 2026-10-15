@@ -46,3 +46,12 @@ Preflight immediately before dispatch: no GPU compute client, 10 MiB GPU memory
 used, 120 GiB host memory available, 104,311,869,440 bytes (97.1 GiB) free disk.
 Expected duration about 3.3 h. The native pilot's two checkpoints remain; no
 weight is deleted.
+
+## Terminal handoff — do not relaunch
+
+All stages exited 0 (`2026-10-15T01:54:05Z`): tiny CPU/CUDA qualification, the
+centered-ordered and centered-final arms and the fresh-process exact replay.
+Receipts are copied under `furnace/`; local and Furnace offline verification
+pass (Furnace also rehashed all four checkpoint bodies). Both arms are
+`NOT_ESTABLISHED`; no selection advantage. Checkpoints stay on Furnace; nothing
+was deleted. No process from this dispatch remains. See the [results](README.md).

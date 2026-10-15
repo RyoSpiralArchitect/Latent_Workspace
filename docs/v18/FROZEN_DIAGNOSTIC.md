@@ -1,6 +1,9 @@
 # V18 frozen-backbone selection diagnostic
 
-2026-10-15. **FROZEN BEFORE LAUNCH.** After the [native pilot](NATIVE_PILOT.md)
+2026-10-15. **COMPLETE: both arms `NOT_ESTABLISHED`, no selection advantage;
+the common route saturated the shared residual budget.** See the
+[results](../../provenance/pilots/v18_frozen_diagnostic_20261015/README.md).
+Frozen before launch as follows. After the [native pilot](NATIVE_PILOT.md)
 showed exact 7B engineering integration but no memory-dependent answer change,
 Ryō chose option B: freeze the backbone, train only the workspace for longer,
 and test cheaply whether memory content can reach native answers at all before

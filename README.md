@@ -119,8 +119,11 @@ independent-process restart pairs per device, verified offline. The first real
 [7B native pilot](provenance/pilots/v18_native_pilot_20261015/README.md) then
 matched the V16 receipt bit for bit, completed two centered-ordered full-parameter
 windows and replayed exactly in a fresh process; intact/twin memory still changed
-no native answer gap. None of this repairs the historical permutation failures
-or establishes semantic improvement. The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
+no native answer gap. A [frozen-backbone diagnostic](provenance/pilots/v18_frozen_diagnostic_20261015/README.md)
+then trained only the workspace for 512 windows: 0/256 held-out donor flips in
+both query arms, with the common route saturating the shared residual budget.
+None of this repairs the historical permutation failures or establishes
+semantic improvement. The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
 orders state ownership, native capacity, FT, benchmark and conditional release.
 The [behavior protocol](docs/v18/BEHAVIOR_EVALUATION.md) separates original base,
 updated backbone and workspace effects; a blank
