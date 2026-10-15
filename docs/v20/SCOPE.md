@@ -81,13 +81,14 @@ goal of its own.
 
 | Corner | Question | Identifiable test | Record so far | Lane |
 | --- | --- | --- | --- | --- |
-| **Deliberation** (working name; v4) | Does the model think through a latent lattice formed from its own hidden states, and does that computation reach its outputs at inference? | Step dependence at matched capacity (K latent steps against one) and loss of the gain when the lattice is bypassed at inference; `LatentWorkspaceLoss` geometry as health diagnostics, not claims | GPT-2 (v4–v5): direct contribution small. Mistral-7B: loss on only in V10's 1–8-step smokes; lattice without it for at most 16 steps (V11–V14) | D |
+| **Deliberation** (潜在熟考; v4) | Does the model think through a latent lattice formed from its own hidden states, and does that computation reach its outputs at inference? | Step dependence at matched capacity (K latent steps against one) and loss of the gain when the lattice is bypassed at inference; `LatentWorkspaceLoss` geometry as health diagnostics, not claims | GPT-2 (v4–v5): direct contribution small. Mistral-7B: loss on only in V10's 1–8-step smokes; lattice without it for at most 16 steps (V11–V14) | D |
 | **Occupancy** | Is a workspace state active and holding information, and does it persist across turns? | State metrics; persistence and branching across turns against random-perturbation controls | V19 route active at its cap; V14 branching, not donor-directed | B |
 | **Availability** | Can the state be recruited when needed? Content-specifically: does a local memory edit flip only affected answers? | Donor-directed flips (endpoint unchanged), read through a ladder: slots → read output → FP64 gap → published answer | V16–V19: 0 flips, FP64 direction at chance; only the last two rungs measured | A |
 | **Consequence** | What does forming it leave in the base model and its outputs? | Paired generation versus base; backbone drift versus workspace contribution | v6.5's changed learning; V14 judge-preferred differences; V18 backbone divergence | C |
 
-Deliberation differs from Occupancy as computing differs from holding: a state
-can be active and retained without the model doing work through it.
+Ryō confirmed the name on 2026-10-16: **Deliberation (潜在熟考)**. It differs
+from Occupancy as computing differs from holding: a state can be active and
+retained without the model doing work through it.
 
 **How the corners meet the world-pair data.** Every affected question is hop 1:
 the edited fact is stated in the context (train 512/512, eval 128/128).
