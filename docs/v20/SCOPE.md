@@ -175,7 +175,8 @@ from the model's own hidden states under the V16+ owners and sealed execution.
 Endpoint: a gain from K latent steps over a matched-capacity single-step
 control on pre-registered cases, which disappears when the lattice is bypassed
 at inference, with geometry health reported alongside. It can share the
-world-pair data with lane A, so one run can read both corners.
+world-pair data with lane A, so one run can read both corners. First
+experiment: [D1](DELIBERATION_PILOT.md), frozen backbone with the facts inline.
 
 ## Path to the β
 

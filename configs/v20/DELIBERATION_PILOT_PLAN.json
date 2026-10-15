@@ -1,0 +1,217 @@
+{
+  "schema": "v20-deliberation-pilot-v1",
+  "question": "With pinned Mistral-7B frozen and the world facts inline, does the v4/v5 latent lattice formed from the model's own final hidden states improve held-out answers through its latent steps: more with four steps than with one at matched parameters?",
+  "corner": "Deliberation (潜在熟考), docs/v20/SCOPE.md",
+  "backbone": {
+    "repository": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "original_base_sha256": "9db998af86c8105f0a2d774c10f777e190f86e54473b6b756bb51b225064a189",
+    "frozen": true,
+    "dtype": "bfloat16"
+  },
+  "full_update": false,
+  "data": {
+    "train": {
+      "path": "data/v10/functional_train.jsonl",
+      "sha256": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3",
+      "world_pairs": 256
+    },
+    "dev": {
+      "path": "data/v10/functional_eval.jsonl",
+      "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+      "world_pairs": 64
+    },
+    "final": {
+      "path": "configs/v16/population_20261015/functional.json",
+      "sha256": "606038154264601fc0b0669433287f42caf0fb137bbdc7cda90ab9a8c13a8643",
+      "world_pairs": 128
+    }
+  },
+  "data_checks": "V19 symbolic-oracle labels, affected pattern, label balance and split audit",
+  "rendering": {
+    "function": "scripts/v15_cue_contract.py render_case",
+    "renderer": "native_chat",
+    "cue": "present",
+    "information": "inline",
+    "context": "v15_assay_summary.canonical_facts(record.contexts[side])",
+    "sides": [
+      "intact",
+      "twin"
+    ],
+    "row_order": "world, side, query"
+  },
+  "candidates": [
+    " no",
+    " yes"
+  ],
+  "candidate_ids": [
+    1476,
+    5849
+  ],
+  "eos_token_id": 2,
+  "features": {
+    "hidden": "base.model(...).last_hidden_state at every prompt position (bfloat16): the tensor entering the frozen LM head",
+    "base_logits": "native logits of the two candidates at the last prompt position",
+    "parity": "the frozen head on the captured hidden state reproduces the full native logits bitwise, per row",
+    "format": "FEATURES_<split>.safetensors and ROWS_<split>.json.gz"
+  },
+  "route": {
+    "lattice": "engine.CausalBroadcastLatentWorkspace (v5), shared weights over latent steps",
+    "hidden_dim": 4096,
+    "vocab_size": 32768,
+    "workspace_dim": 256,
+    "attention_heads": 8,
+    "ff_multiplier": 2.0,
+    "dropout": 0.05,
+    "anchor_refresh": "initial_only",
+    "causal_window": 0,
+    "adapter": "workspace_core.LowRankWorkspaceLogitAdapter (v4)",
+    "rank": 32,
+    "logit_residual_scale": 1.0,
+    "gate": "engine gate: LayerNorm and Linear on the base hidden state",
+    "gate_init_bias": -2.0,
+    "workspace_loss": "engine.LatentWorkspaceLoss with v9 values",
+    "initialization": "per-component derived seeds; arms of one seed share every common parameter"
+  },
+  "arms": [
+    {
+      "name": "k4",
+      "steps": 4,
+      "workspace_loss_weight": 0.0
+    },
+    {
+      "name": "k1",
+      "steps": 1,
+      "workspace_loss_weight": 0.0
+    },
+    {
+      "name": "k4_lw",
+      "steps": 4,
+      "workspace_loss_weight": 0.02
+    },
+    {
+      "name": "readout",
+      "steps": 0,
+      "workspace_loss_weight": 0.0
+    }
+  ],
+  "seeds": [
+    2026101601,
+    2026101602,
+    2026101603
+  ],
+  "training": {
+    "device": "cpu",
+    "dtype": "float32",
+    "threads": 8,
+    "deterministic_algorithms": true,
+    "objective": "choice-normalized cross-entropy over the two candidates at the last prompt position",
+    "updates": 512,
+    "epochs": 4,
+    "batch_size": 32,
+    "learning_rate": 0.0003,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "adam_eps": 1e-08,
+    "weight_decay": 0.01,
+    "weight_decay_policy": "engine._uses_weight_decay",
+    "max_grad_norm": 1.0,
+    "schedule": "constant",
+    "loss_tokens_per_row": 32,
+    "loss_tokens_per_batch": 256,
+    "spectral_every": 16,
+    "contrastive_groups": "world",
+    "randomness": "data order per epoch, dropout and loss sampling per update, all derived from (seed, step)"
+  },
+  "dev_evaluation_steps": [
+    0,
+    128,
+    256,
+    384,
+    512
+  ],
+  "final_evaluation_steps": [
+    0,
+    512
+  ],
+  "checkpoint_steps": [
+    256
+  ],
+  "truncation_steps": [
+    1,
+    2,
+    3
+  ],
+  "endpoints": {
+    "split": "final",
+    "step": 512,
+    "rows": 2048,
+    "worlds": 128,
+    "correct": "target candidate's adapted logit strictly above the other",
+    "route_gain": "k4 versus base inline (the step-0 logits)",
+    "step_gain": "k4 versus k1",
+    "minimum_accuracy_gain": 0.02,
+    "alpha": 0.01,
+    "test": "one-sided exact sign test over world pairs whose 16-row correct count differs",
+    "verdicts": [
+      "DELIBERATION_STEP_GAIN",
+      "LATTICE_GAIN_WITHOUT_STEP_DEPENDENCE",
+      "NO_LATTICE_GAIN"
+    ],
+    "verdict_rule": "DELIBERATION_STEP_GAIN: route and step gains in all three seeds; LATTICE_GAIN_WITHOUT_STEP_DEPENDENCE: route gain in all three seeds only; otherwise NO_LATTICE_GAIN",
+    "not_in_verdict": [
+      "readout",
+      "k4_lw",
+      "dev curve",
+      "truncated inference"
+    ]
+  },
+  "descriptive": [
+    "final accuracy of every arm and seed",
+    "truncated inference of four-step arms at one, two and three steps",
+    "accuracy by hop distance, affected or unaffected, and wording",
+    "repairs and regressions against base inline",
+    "content following on affected pairs (both sides right)",
+    "gate mean and residual size from the update log"
+  ],
+  "replay": {
+    "arm": "k4",
+    "seed": 2026101601,
+    "from_step": 256,
+    "execute_step": 257
+  },
+  "resources": {
+    "admission_free_gib": 31,
+    "allocator_cap_gib": 30.5,
+    "abort_free_gib": 0.75,
+    "host_admission_available_gib": 100,
+    "host_abort_available_gib": 24,
+    "disk_free_gib": 50,
+    "max_elapsed_seconds": 7200,
+    "cpu_threads": 2
+  },
+  "storage_forecast_bytes": 12884901888,
+  "qualification_test_files": [
+    "tests/test_v20_deliberation.py"
+  ],
+  "qualification_cases": 25,
+  "qualification_wall_seconds": 900,
+  "qualification_gpu_limit_gib": 4,
+  "process_policy": "each role a fresh process through scripts/run_source_sealed.py, in order, stopping at the first failure",
+  "no_retry": true,
+  "scope": "Frozen backbone: bypassing the route restores base inline exactly by construction, so necessity is not a finding here. A step gain would show useful computation over latent steps on this task family only; not memory use, general reasoning, non-regression or language quality.",
+  "new_sequences": 0,
+  "judge_calls": 0,
+  "weight_deletions": 0,
+  "native_weight_updates": 0,
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED",
+  "expected_runtime": {
+    "extraction": "about 7,168 single-row forwards of about 120 tokens plus the base hash; minutes of exclusive GPU",
+    "training": "about 2 minutes per arm on CPU at 8 threads (local estimate); 12 arms",
+    "features_bytes_estimate": "about 6.6 GiB bfloat16 (859,084 tokens, local tokenizer estimate)"
+  }
+}
