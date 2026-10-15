@@ -18,8 +18,9 @@ refinement schedule?
 - Pinned model:
   `mistralai/Mistral-7B-Instruct-v0.3@c170c708c41dac9275d15a8fff4eca08d52bab71`.
 - Both systems used full-model BF16 Adafactor updates, base LR `1e-7`,
-  workspace LR `3e-4`, cosine scheduling, global gradient clipping at `1.0`,
-  and eight-microbatch CPU accumulation.
+  workspace LR `3e-4`, cosine scheduling, per-family gradient clipping at
+  `1.0` for the base and workspace families (`clip_mode: per_family`), and
+  eight-microbatch CPU accumulation.
 - F1 used the inline raw-sequence route with injection scale `0`. O0 used the
   deferred four-slot route with injection scale `1` and gate bias `-1`.
   Counterfactual and stability loss weights were both zero.
@@ -190,8 +191,10 @@ semantic route.
 The leading failure mode is present before training: injection scale `1` with
 gate bias `-1` activates an uncalibrated deferred path and drops step-0
 accuracy by about 28 points relative to F1. Joint training then exposes the
-workspace family to a configured LR 3,000 times the base LR under one global
-clip. Large early raw gradient norms and seed-dependent class flipping follow.
+workspace family to a configured LR 3,000 times the base LR; per-family
+clipping bounded each family's gradient norm at `1.0` but not the
+thousandfold step-size asymmetry between them. Large early raw gradient norms
+and seed-dependent class flipping follow.
 These facts motivate the next design, but this system-level experiment cannot
 attribute causality to the gate, LR ratio, slot representation, or ownership
 policy individually.
@@ -220,9 +223,10 @@ training before scale-up. V12 should be cut into ordered falsifiable gates.
 - Freeze the base trunk first and train only the workspace path under a small,
   pre-registered LR response surface. Do not carry forward `3e-4` merely
   because it was used by the failed system.
-- Split base and workspace clipping and record raw gradient, clipped gradient,
-  optimizer-step, and persisted-delta norms by parameter family. The current
-  global clip obscures which family owns the effective update.
+- Clipping is already split per family (`base_max_grad_norm` and
+  `workspace_max_grad_norm`, both `1.0`); keep it split and record raw
+  gradient, clipped gradient, optimizer-step, and persisted-delta norms by
+  parameter family so update ownership is measured rather than inferred.
 - Ramp the injection or gate only after the workspace residual passes a bounded
   logit-delta and no-op-parity check. Require intact O0 to be non-inferior to
   its amputation, including both label recalls, before releasing the base.
