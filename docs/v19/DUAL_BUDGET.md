@@ -1,6 +1,13 @@
 # V19: separate norm budgets for the common and workspace routes
 
-2026-10-15. **FROZEN BEFORE LAUNCH.** Ryō proposed V19 after the
+2026-10-15. **ATTEMPT 01 STOPPED: `ordered_cap025` complete and
+`NOT_ESTABLISHED` (0/256 flips); `final_cap025` stopped by the GPU contention
+guard during its held-out evaluation; `ordered_cap100` and the replay not
+run.** The workspace route now carries its full budget, but as a
+memory-independent shift. See the
+[results](../../provenance/pilots/v19_frozen_dual_budget_20261015/README.md)
+and the [V20 scope](../v20/SCOPE.md). Frozen before launch as follows.
+Ryō proposed V19 after the
 [V18 frozen-backbone diagnostic](../../provenance/pilots/v18_frozen_diagnostic_20261015/README.md):
 keep two norms, one for the ordinary (common) read route and one for the
 workspace route, so the ordinary route can no longer eat the workspace read

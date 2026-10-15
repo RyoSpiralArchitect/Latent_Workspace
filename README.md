@@ -21,10 +21,17 @@ NOT_ESTABLISHED**.
   the ordered and final interaction queries. The common read route saturates the
   shared residual budget (about 0.998 of a 1.0 cap) and starves the interaction
   route (about 0.0004).
-- **Next — [V19](docs/v19/DUAL_BUDGET.md):** the common route and the workspace
-  route get separate norm budgets, so the common route can no longer consume
-  the workspace read path. The reader and owners are implemented; the same
-  frozen diagnostic, with the same endpoints, comes before any full update.
+- **[V19](docs/v19/DUAL_BUDGET.md) gives the two routes separate norm
+  budgets.** In its [frozen diagnostic](provenance/pilots/v19_frozen_dual_budget_20261015/README.md)
+  the workspace route now carries its full 0.25 (V18: 0.0004), but as a shift
+  that is the same for any real memory: 0/256 held-out donor flips in the
+  completed arm. The second arm was stopped by its GPU contention guard when
+  another project's job appeared; the third never ran. Whether to run an
+  attempt 02 is Ryō's call; nothing was relaunched.
+- **[V20 scope](docs/v20/SCOPE.md):** content use is one of three lanes.
+  Conversation branching and paired generation quality versus base, where V14
+  already saw branching and judge-preferred differences, get their own
+  endpoints.
 - **Release goal:** a conditional Hugging Face beta,
   **mistral-7b-instruct-v0.3-LTWS β**, only after memory use, non-regression and
   export parity are established ([release checklist](docs/v18/HF_RELEASE.md)).
@@ -34,7 +41,8 @@ NOT_ESTABLISHED**.
 
 | Version | Focus | Start here |
 | --- | --- | --- |
-| V19 | Separate norm budgets for the common and workspace routes (dual-budget reader and owners) | [design](docs/v19/DUAL_BUDGET.md) |
+| V20 | Scope (planning): content use, conversation branching and paired generation quality as separate lanes | [scope](docs/v20/SCOPE.md) |
+| V19 | Separate norm budgets for the common and workspace routes: dual-budget reader and owners, frozen diagnostic attempt 01 | [design](docs/v19/DUAL_BUDGET.md) |
 | V18 | Complete windows and reference ownership, operand selection, selection owners, first 7B pilot, frozen-backbone diagnostic | [roadmap](docs/v18/FULL_UPDATE_ROADMAP.md) |
 | V17 | — | There is no V17. The maintainer skipped the number by mistake; the gap means nothing. |
 | V16 | Separate slot-contrast route, 7B adapter migration, bounded three-arm full comparison, population diagnostics | [plan](docs/v16/PLAN.md) |
@@ -47,6 +55,26 @@ V13–V18 were developed as stacked branches and merged into `main` on
 2026-10-15 (PRs #14, #12, #13, #15, #16 and #17). Three V11/V12-era
 fixes that `main` had received are kept in history but not in the merged
 sources, because V14–V18 seals pin those files byte for byte; see PR #14.
+
+## V19: separate norm budgets for the common and workspace routes
+
+The [dual-budget reader](src/latent_workspace_ft_v10/v19_dual_budget_reader.py)
+bounds the workspace route by its own soft cap instead of the share the common
+route leaves over; writer, queries, parameter layout and initialization are
+V18's, and the pipeline, state guard and owners are additive V19 copies
+([design](docs/v19/DUAL_BUDGET.md), 30 owner tests). The
+[frozen diagnostic, attempt 01](provenance/pilots/v19_frozen_dual_budget_20261015/README.md)
+repeated the V18 design with three arms. `ordered_cap025` completed: the
+workspace route sits at its 0.25 cap for intact, twin, reversed and unrelated
+memory alike, the intact-versus-twin answer-gap change is about 0.003 in FP64
+and undirected, and 0/256 held-out answers flip. `final_cap025` stopped during
+its held-out evaluation when another project's process appeared on the GPU;
+`ordered_cap100` and the replay never ran. Offline verification of the stopped
+attempt passed locally and on Furnace, and exposed a stale V18 checkpoint-format
+check in the sealed V19 verifier, now fixed with
+[regression tests](tests/test_v19_frozen_verifier.py). A fresh-process
+[owner qualification](scripts/qualify_v19_dual_budget.py) is implemented and
+rehearsed locally, not yet run on Furnace.
 
 ## V18: complete windows, operand selection, owners and the first 7B runs
 
