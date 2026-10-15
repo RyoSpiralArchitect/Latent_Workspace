@@ -43,7 +43,7 @@ NOT_ESTABLISHED**.
 | V9–V12 | Query-deferred harness, transport v2, V11 objective and LR studies, V12 calibrated route | [runtime status](#historical-runtime-status-not-v13v14-qualification) |
 
 V13–V18 were developed as stacked branches and merged into `main` on
-2026-10-15 (PRs #14, #12, #13, #15, #16 and the final V18 PR). Three V11/V12-era
+2026-10-15 (PRs #14, #12, #13, #15, #16 and #17). Three V11/V12-era
 fixes that `main` had received are kept in history but not in the merged
 sources, because V14–V18 seals pin those files byte for byte; see PR #14.
 
