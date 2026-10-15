@@ -1,0 +1,3387 @@
+{
+  "binding": {
+    "arithmetic": {
+      "cpu_interop_threads": 1,
+      "cpu_threads": 2,
+      "cuda_capability": [
+        12,
+        0
+      ],
+      "cuda_runtime": "13.2",
+      "cuda_tf32": false,
+      "cudnn_tf32": false,
+      "deterministic_algorithms": false,
+      "device_name": "NVIDIA GeForce RTX 5090",
+      "float32_matmul_precision": "highest",
+      "machine": "x86_64",
+      "python": "3.12.14"
+    },
+    "buffer_schema": {
+      "model.rotary_emb.inv_freq": [
+        [
+          64
+        ],
+        "torch.float32",
+        "cuda:0"
+      ],
+      "model.rotary_emb.original_inv_freq": [
+        [
+          64
+        ],
+        "torch.float32",
+        "cuda:0"
+      ]
+    },
+    "checkpointing": [
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.0"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.1"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.2"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.3"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.4"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.5"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.6"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.7"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.8"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.9"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.10"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.11"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.12"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.13"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.14"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.15"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.16"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.17"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.18"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.19"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.20"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.21"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.22"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.23"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.24"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.25"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.26"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.27"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.28"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.29"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.30"
+      },
+      {
+        "enabled": false,
+        "function": null,
+        "keywords": null,
+        "module": "model.layers.31"
+      }
+    ],
+    "context": {
+      "attention_implementation": "sdpa",
+      "backend": "torch",
+      "binding_kind": "mistral",
+      "boundary_layer": 16,
+      "cache_policy": "disabled_no_cache",
+      "layer_count": 32,
+      "limitations": [
+        "No past-key-value cache or incremental cached decoding.",
+        "No caller-supplied position IDs or attention-output interface.",
+        "Layer calls preserve native checkpointing hooks; parity is run-specific."
+      ],
+      "model_class": "transformers.models.mistral.modeling_mistral.MistralForCausalLM",
+      "model_type": "mistral",
+      "phase": "pre_decoder_block",
+      "position_policy": "sequential_zero_based",
+      "schema_version": "latent_workspace.boundary.v1",
+      "support_status": "supported_layout",
+      "torch_version": "2.13.0+cu132",
+      "transformers_version": "5.15.0"
+    },
+    "modes": {
+      "": false,
+      "lm_head": false,
+      "model": false,
+      "model.embed_tokens": false,
+      "model.layers": false,
+      "model.layers.0": false,
+      "model.layers.0.input_layernorm": false,
+      "model.layers.0.mlp": false,
+      "model.layers.0.mlp.act_fn": false,
+      "model.layers.0.mlp.down_proj": false,
+      "model.layers.0.mlp.gate_proj": false,
+      "model.layers.0.mlp.up_proj": false,
+      "model.layers.0.post_attention_layernorm": false,
+      "model.layers.0.self_attn": false,
+      "model.layers.0.self_attn.k_proj": false,
+      "model.layers.0.self_attn.o_proj": false,
+      "model.layers.0.self_attn.q_proj": false,
+      "model.layers.0.self_attn.v_proj": false,
+      "model.layers.1": false,
+      "model.layers.1.input_layernorm": false,
+      "model.layers.1.mlp": false,
+      "model.layers.1.mlp.act_fn": false,
+      "model.layers.1.mlp.down_proj": false,
+      "model.layers.1.mlp.gate_proj": false,
+      "model.layers.1.mlp.up_proj": false,
+      "model.layers.1.post_attention_layernorm": false,
+      "model.layers.1.self_attn": false,
+      "model.layers.1.self_attn.k_proj": false,
+      "model.layers.1.self_attn.o_proj": false,
+      "model.layers.1.self_attn.q_proj": false,
+      "model.layers.1.self_attn.v_proj": false,
+      "model.layers.10": false,
+      "model.layers.10.input_layernorm": false,
+      "model.layers.10.mlp": false,
+      "model.layers.10.mlp.act_fn": false,
+      "model.layers.10.mlp.down_proj": false,
+      "model.layers.10.mlp.gate_proj": false,
+      "model.layers.10.mlp.up_proj": false,
+      "model.layers.10.post_attention_layernorm": false,
+      "model.layers.10.self_attn": false,
+      "model.layers.10.self_attn.k_proj": false,
+      "model.layers.10.self_attn.o_proj": false,
+      "model.layers.10.self_attn.q_proj": false,
+      "model.layers.10.self_attn.v_proj": false,
+      "model.layers.11": false,
+      "model.layers.11.input_layernorm": false,
+      "model.layers.11.mlp": false,
+      "model.layers.11.mlp.act_fn": false,
+      "model.layers.11.mlp.down_proj": false,
+      "model.layers.11.mlp.gate_proj": false,
+      "model.layers.11.mlp.up_proj": false,
+      "model.layers.11.post_attention_layernorm": false,
+      "model.layers.11.self_attn": false,
+      "model.layers.11.self_attn.k_proj": false,
+      "model.layers.11.self_attn.o_proj": false,
+      "model.layers.11.self_attn.q_proj": false,
+      "model.layers.11.self_attn.v_proj": false,
+      "model.layers.12": false,
+      "model.layers.12.input_layernorm": false,
+      "model.layers.12.mlp": false,
+      "model.layers.12.mlp.act_fn": false,
+      "model.layers.12.mlp.down_proj": false,
+      "model.layers.12.mlp.gate_proj": false,
+      "model.layers.12.mlp.up_proj": false,
+      "model.layers.12.post_attention_layernorm": false,
+      "model.layers.12.self_attn": false,
+      "model.layers.12.self_attn.k_proj": false,
+      "model.layers.12.self_attn.o_proj": false,
+      "model.layers.12.self_attn.q_proj": false,
+      "model.layers.12.self_attn.v_proj": false,
+      "model.layers.13": false,
+      "model.layers.13.input_layernorm": false,
+      "model.layers.13.mlp": false,
+      "model.layers.13.mlp.act_fn": false,
+      "model.layers.13.mlp.down_proj": false,
+      "model.layers.13.mlp.gate_proj": false,
+      "model.layers.13.mlp.up_proj": false,
+      "model.layers.13.post_attention_layernorm": false,
+      "model.layers.13.self_attn": false,
+      "model.layers.13.self_attn.k_proj": false,
+      "model.layers.13.self_attn.o_proj": false,
+      "model.layers.13.self_attn.q_proj": false,
+      "model.layers.13.self_attn.v_proj": false,
+      "model.layers.14": false,
+      "model.layers.14.input_layernorm": false,
+      "model.layers.14.mlp": false,
+      "model.layers.14.mlp.act_fn": false,
+      "model.layers.14.mlp.down_proj": false,
+      "model.layers.14.mlp.gate_proj": false,
+      "model.layers.14.mlp.up_proj": false,
+      "model.layers.14.post_attention_layernorm": false,
+      "model.layers.14.self_attn": false,
+      "model.layers.14.self_attn.k_proj": false,
+      "model.layers.14.self_attn.o_proj": false,
+      "model.layers.14.self_attn.q_proj": false,
+      "model.layers.14.self_attn.v_proj": false,
+      "model.layers.15": false,
+      "model.layers.15.input_layernorm": false,
+      "model.layers.15.mlp": false,
+      "model.layers.15.mlp.act_fn": false,
+      "model.layers.15.mlp.down_proj": false,
+      "model.layers.15.mlp.gate_proj": false,
+      "model.layers.15.mlp.up_proj": false,
+      "model.layers.15.post_attention_layernorm": false,
+      "model.layers.15.self_attn": false,
+      "model.layers.15.self_attn.k_proj": false,
+      "model.layers.15.self_attn.o_proj": false,
+      "model.layers.15.self_attn.q_proj": false,
+      "model.layers.15.self_attn.v_proj": false,
+      "model.layers.16": false,
+      "model.layers.16.input_layernorm": false,
+      "model.layers.16.mlp": false,
+      "model.layers.16.mlp.act_fn": false,
+      "model.layers.16.mlp.down_proj": false,
+      "model.layers.16.mlp.gate_proj": false,
+      "model.layers.16.mlp.up_proj": false,
+      "model.layers.16.post_attention_layernorm": false,
+      "model.layers.16.self_attn": false,
+      "model.layers.16.self_attn.k_proj": false,
+      "model.layers.16.self_attn.o_proj": false,
+      "model.layers.16.self_attn.q_proj": false,
+      "model.layers.16.self_attn.v_proj": false,
+      "model.layers.17": false,
+      "model.layers.17.input_layernorm": false,
+      "model.layers.17.mlp": false,
+      "model.layers.17.mlp.act_fn": false,
+      "model.layers.17.mlp.down_proj": false,
+      "model.layers.17.mlp.gate_proj": false,
+      "model.layers.17.mlp.up_proj": false,
+      "model.layers.17.post_attention_layernorm": false,
+      "model.layers.17.self_attn": false,
+      "model.layers.17.self_attn.k_proj": false,
+      "model.layers.17.self_attn.o_proj": false,
+      "model.layers.17.self_attn.q_proj": false,
+      "model.layers.17.self_attn.v_proj": false,
+      "model.layers.18": false,
+      "model.layers.18.input_layernorm": false,
+      "model.layers.18.mlp": false,
+      "model.layers.18.mlp.act_fn": false,
+      "model.layers.18.mlp.down_proj": false,
+      "model.layers.18.mlp.gate_proj": false,
+      "model.layers.18.mlp.up_proj": false,
+      "model.layers.18.post_attention_layernorm": false,
+      "model.layers.18.self_attn": false,
+      "model.layers.18.self_attn.k_proj": false,
+      "model.layers.18.self_attn.o_proj": false,
+      "model.layers.18.self_attn.q_proj": false,
+      "model.layers.18.self_attn.v_proj": false,
+      "model.layers.19": false,
+      "model.layers.19.input_layernorm": false,
+      "model.layers.19.mlp": false,
+      "model.layers.19.mlp.act_fn": false,
+      "model.layers.19.mlp.down_proj": false,
+      "model.layers.19.mlp.gate_proj": false,
+      "model.layers.19.mlp.up_proj": false,
+      "model.layers.19.post_attention_layernorm": false,
+      "model.layers.19.self_attn": false,
+      "model.layers.19.self_attn.k_proj": false,
+      "model.layers.19.self_attn.o_proj": false,
+      "model.layers.19.self_attn.q_proj": false,
+      "model.layers.19.self_attn.v_proj": false,
+      "model.layers.2": false,
+      "model.layers.2.input_layernorm": false,
+      "model.layers.2.mlp": false,
+      "model.layers.2.mlp.act_fn": false,
+      "model.layers.2.mlp.down_proj": false,
+      "model.layers.2.mlp.gate_proj": false,
+      "model.layers.2.mlp.up_proj": false,
+      "model.layers.2.post_attention_layernorm": false,
+      "model.layers.2.self_attn": false,
+      "model.layers.2.self_attn.k_proj": false,
+      "model.layers.2.self_attn.o_proj": false,
+      "model.layers.2.self_attn.q_proj": false,
+      "model.layers.2.self_attn.v_proj": false,
+      "model.layers.20": false,
+      "model.layers.20.input_layernorm": false,
+      "model.layers.20.mlp": false,
+      "model.layers.20.mlp.act_fn": false,
+      "model.layers.20.mlp.down_proj": false,
+      "model.layers.20.mlp.gate_proj": false,
+      "model.layers.20.mlp.up_proj": false,
+      "model.layers.20.post_attention_layernorm": false,
+      "model.layers.20.self_attn": false,
+      "model.layers.20.self_attn.k_proj": false,
+      "model.layers.20.self_attn.o_proj": false,
+      "model.layers.20.self_attn.q_proj": false,
+      "model.layers.20.self_attn.v_proj": false,
+      "model.layers.21": false,
+      "model.layers.21.input_layernorm": false,
+      "model.layers.21.mlp": false,
+      "model.layers.21.mlp.act_fn": false,
+      "model.layers.21.mlp.down_proj": false,
+      "model.layers.21.mlp.gate_proj": false,
+      "model.layers.21.mlp.up_proj": false,
+      "model.layers.21.post_attention_layernorm": false,
+      "model.layers.21.self_attn": false,
+      "model.layers.21.self_attn.k_proj": false,
+      "model.layers.21.self_attn.o_proj": false,
+      "model.layers.21.self_attn.q_proj": false,
+      "model.layers.21.self_attn.v_proj": false,
+      "model.layers.22": false,
+      "model.layers.22.input_layernorm": false,
+      "model.layers.22.mlp": false,
+      "model.layers.22.mlp.act_fn": false,
+      "model.layers.22.mlp.down_proj": false,
+      "model.layers.22.mlp.gate_proj": false,
+      "model.layers.22.mlp.up_proj": false,
+      "model.layers.22.post_attention_layernorm": false,
+      "model.layers.22.self_attn": false,
+      "model.layers.22.self_attn.k_proj": false,
+      "model.layers.22.self_attn.o_proj": false,
+      "model.layers.22.self_attn.q_proj": false,
+      "model.layers.22.self_attn.v_proj": false,
+      "model.layers.23": false,
+      "model.layers.23.input_layernorm": false,
+      "model.layers.23.mlp": false,
+      "model.layers.23.mlp.act_fn": false,
+      "model.layers.23.mlp.down_proj": false,
+      "model.layers.23.mlp.gate_proj": false,
+      "model.layers.23.mlp.up_proj": false,
+      "model.layers.23.post_attention_layernorm": false,
+      "model.layers.23.self_attn": false,
+      "model.layers.23.self_attn.k_proj": false,
+      "model.layers.23.self_attn.o_proj": false,
+      "model.layers.23.self_attn.q_proj": false,
+      "model.layers.23.self_attn.v_proj": false,
+      "model.layers.24": false,
+      "model.layers.24.input_layernorm": false,
+      "model.layers.24.mlp": false,
+      "model.layers.24.mlp.act_fn": false,
+      "model.layers.24.mlp.down_proj": false,
+      "model.layers.24.mlp.gate_proj": false,
+      "model.layers.24.mlp.up_proj": false,
+      "model.layers.24.post_attention_layernorm": false,
+      "model.layers.24.self_attn": false,
+      "model.layers.24.self_attn.k_proj": false,
+      "model.layers.24.self_attn.o_proj": false,
+      "model.layers.24.self_attn.q_proj": false,
+      "model.layers.24.self_attn.v_proj": false,
+      "model.layers.25": false,
+      "model.layers.25.input_layernorm": false,
+      "model.layers.25.mlp": false,
+      "model.layers.25.mlp.act_fn": false,
+      "model.layers.25.mlp.down_proj": false,
+      "model.layers.25.mlp.gate_proj": false,
+      "model.layers.25.mlp.up_proj": false,
+      "model.layers.25.post_attention_layernorm": false,
+      "model.layers.25.self_attn": false,
+      "model.layers.25.self_attn.k_proj": false,
+      "model.layers.25.self_attn.o_proj": false,
+      "model.layers.25.self_attn.q_proj": false,
+      "model.layers.25.self_attn.v_proj": false,
+      "model.layers.26": false,
+      "model.layers.26.input_layernorm": false,
+      "model.layers.26.mlp": false,
+      "model.layers.26.mlp.act_fn": false,
+      "model.layers.26.mlp.down_proj": false,
+      "model.layers.26.mlp.gate_proj": false,
+      "model.layers.26.mlp.up_proj": false,
+      "model.layers.26.post_attention_layernorm": false,
+      "model.layers.26.self_attn": false,
+      "model.layers.26.self_attn.k_proj": false,
+      "model.layers.26.self_attn.o_proj": false,
+      "model.layers.26.self_attn.q_proj": false,
+      "model.layers.26.self_attn.v_proj": false,
+      "model.layers.27": false,
+      "model.layers.27.input_layernorm": false,
+      "model.layers.27.mlp": false,
+      "model.layers.27.mlp.act_fn": false,
+      "model.layers.27.mlp.down_proj": false,
+      "model.layers.27.mlp.gate_proj": false,
+      "model.layers.27.mlp.up_proj": false,
+      "model.layers.27.post_attention_layernorm": false,
+      "model.layers.27.self_attn": false,
+      "model.layers.27.self_attn.k_proj": false,
+      "model.layers.27.self_attn.o_proj": false,
+      "model.layers.27.self_attn.q_proj": false,
+      "model.layers.27.self_attn.v_proj": false,
+      "model.layers.28": false,
+      "model.layers.28.input_layernorm": false,
+      "model.layers.28.mlp": false,
+      "model.layers.28.mlp.act_fn": false,
+      "model.layers.28.mlp.down_proj": false,
+      "model.layers.28.mlp.gate_proj": false,
+      "model.layers.28.mlp.up_proj": false,
+      "model.layers.28.post_attention_layernorm": false,
+      "model.layers.28.self_attn": false,
+      "model.layers.28.self_attn.k_proj": false,
+      "model.layers.28.self_attn.o_proj": false,
+      "model.layers.28.self_attn.q_proj": false,
+      "model.layers.28.self_attn.v_proj": false,
+      "model.layers.29": false,
+      "model.layers.29.input_layernorm": false,
+      "model.layers.29.mlp": false,
+      "model.layers.29.mlp.act_fn": false,
+      "model.layers.29.mlp.down_proj": false,
+      "model.layers.29.mlp.gate_proj": false,
+      "model.layers.29.mlp.up_proj": false,
+      "model.layers.29.post_attention_layernorm": false,
+      "model.layers.29.self_attn": false,
+      "model.layers.29.self_attn.k_proj": false,
+      "model.layers.29.self_attn.o_proj": false,
+      "model.layers.29.self_attn.q_proj": false,
+      "model.layers.29.self_attn.v_proj": false,
+      "model.layers.3": false,
+      "model.layers.3.input_layernorm": false,
+      "model.layers.3.mlp": false,
+      "model.layers.3.mlp.act_fn": false,
+      "model.layers.3.mlp.down_proj": false,
+      "model.layers.3.mlp.gate_proj": false,
+      "model.layers.3.mlp.up_proj": false,
+      "model.layers.3.post_attention_layernorm": false,
+      "model.layers.3.self_attn": false,
+      "model.layers.3.self_attn.k_proj": false,
+      "model.layers.3.self_attn.o_proj": false,
+      "model.layers.3.self_attn.q_proj": false,
+      "model.layers.3.self_attn.v_proj": false,
+      "model.layers.30": false,
+      "model.layers.30.input_layernorm": false,
+      "model.layers.30.mlp": false,
+      "model.layers.30.mlp.act_fn": false,
+      "model.layers.30.mlp.down_proj": false,
+      "model.layers.30.mlp.gate_proj": false,
+      "model.layers.30.mlp.up_proj": false,
+      "model.layers.30.post_attention_layernorm": false,
+      "model.layers.30.self_attn": false,
+      "model.layers.30.self_attn.k_proj": false,
+      "model.layers.30.self_attn.o_proj": false,
+      "model.layers.30.self_attn.q_proj": false,
+      "model.layers.30.self_attn.v_proj": false,
+      "model.layers.31": false,
+      "model.layers.31.input_layernorm": false,
+      "model.layers.31.mlp": false,
+      "model.layers.31.mlp.act_fn": false,
+      "model.layers.31.mlp.down_proj": false,
+      "model.layers.31.mlp.gate_proj": false,
+      "model.layers.31.mlp.up_proj": false,
+      "model.layers.31.post_attention_layernorm": false,
+      "model.layers.31.self_attn": false,
+      "model.layers.31.self_attn.k_proj": false,
+      "model.layers.31.self_attn.o_proj": false,
+      "model.layers.31.self_attn.q_proj": false,
+      "model.layers.31.self_attn.v_proj": false,
+      "model.layers.4": false,
+      "model.layers.4.input_layernorm": false,
+      "model.layers.4.mlp": false,
+      "model.layers.4.mlp.act_fn": false,
+      "model.layers.4.mlp.down_proj": false,
+      "model.layers.4.mlp.gate_proj": false,
+      "model.layers.4.mlp.up_proj": false,
+      "model.layers.4.post_attention_layernorm": false,
+      "model.layers.4.self_attn": false,
+      "model.layers.4.self_attn.k_proj": false,
+      "model.layers.4.self_attn.o_proj": false,
+      "model.layers.4.self_attn.q_proj": false,
+      "model.layers.4.self_attn.v_proj": false,
+      "model.layers.5": false,
+      "model.layers.5.input_layernorm": false,
+      "model.layers.5.mlp": false,
+      "model.layers.5.mlp.act_fn": false,
+      "model.layers.5.mlp.down_proj": false,
+      "model.layers.5.mlp.gate_proj": false,
+      "model.layers.5.mlp.up_proj": false,
+      "model.layers.5.post_attention_layernorm": false,
+      "model.layers.5.self_attn": false,
+      "model.layers.5.self_attn.k_proj": false,
+      "model.layers.5.self_attn.o_proj": false,
+      "model.layers.5.self_attn.q_proj": false,
+      "model.layers.5.self_attn.v_proj": false,
+      "model.layers.6": false,
+      "model.layers.6.input_layernorm": false,
+      "model.layers.6.mlp": false,
+      "model.layers.6.mlp.act_fn": false,
+      "model.layers.6.mlp.down_proj": false,
+      "model.layers.6.mlp.gate_proj": false,
+      "model.layers.6.mlp.up_proj": false,
+      "model.layers.6.post_attention_layernorm": false,
+      "model.layers.6.self_attn": false,
+      "model.layers.6.self_attn.k_proj": false,
+      "model.layers.6.self_attn.o_proj": false,
+      "model.layers.6.self_attn.q_proj": false,
+      "model.layers.6.self_attn.v_proj": false,
+      "model.layers.7": false,
+      "model.layers.7.input_layernorm": false,
+      "model.layers.7.mlp": false,
+      "model.layers.7.mlp.act_fn": false,
+      "model.layers.7.mlp.down_proj": false,
+      "model.layers.7.mlp.gate_proj": false,
+      "model.layers.7.mlp.up_proj": false,
+      "model.layers.7.post_attention_layernorm": false,
+      "model.layers.7.self_attn": false,
+      "model.layers.7.self_attn.k_proj": false,
+      "model.layers.7.self_attn.o_proj": false,
+      "model.layers.7.self_attn.q_proj": false,
+      "model.layers.7.self_attn.v_proj": false,
+      "model.layers.8": false,
+      "model.layers.8.input_layernorm": false,
+      "model.layers.8.mlp": false,
+      "model.layers.8.mlp.act_fn": false,
+      "model.layers.8.mlp.down_proj": false,
+      "model.layers.8.mlp.gate_proj": false,
+      "model.layers.8.mlp.up_proj": false,
+      "model.layers.8.post_attention_layernorm": false,
+      "model.layers.8.self_attn": false,
+      "model.layers.8.self_attn.k_proj": false,
+      "model.layers.8.self_attn.o_proj": false,
+      "model.layers.8.self_attn.q_proj": false,
+      "model.layers.8.self_attn.v_proj": false,
+      "model.layers.9": false,
+      "model.layers.9.input_layernorm": false,
+      "model.layers.9.mlp": false,
+      "model.layers.9.mlp.act_fn": false,
+      "model.layers.9.mlp.down_proj": false,
+      "model.layers.9.mlp.gate_proj": false,
+      "model.layers.9.mlp.up_proj": false,
+      "model.layers.9.post_attention_layernorm": false,
+      "model.layers.9.self_attn": false,
+      "model.layers.9.self_attn.k_proj": false,
+      "model.layers.9.self_attn.o_proj": false,
+      "model.layers.9.self_attn.q_proj": false,
+      "model.layers.9.self_attn.v_proj": false,
+      "model.norm": false,
+      "model.rotary_emb": false
+    },
+    "native_forward_sources": {
+      "torch.nn.modules.container.ModuleList": "c0bac63d1c2b53c61c9ca224f9d6dbd70aa9a7b0c24e4285419dbee14b576d13",
+      "torch.nn.modules.linear.Linear": "c0ab8f42cc3bf9489809b19c321cc85f0b1d4eafebacb96bd8e132cb9e95ef76",
+      "torch.nn.modules.sparse.Embedding": "1dd1797f482e42eba706513121ea2339b2cf3592c806a4eac2bca0093abac66a",
+      "transformers.activations.SiLUActivation": "f9eaaa437c9f969e5f5c6f347b85a09fefcbae8824433dff69e0e83faa098863",
+      "transformers.models.mistral.modeling_mistral.MistralAttention": "98e841a5cfbac69612269a9ee7b0c20f1d20107da7addbdfbce1560e40c77d65",
+      "transformers.models.mistral.modeling_mistral.MistralDecoderLayer": "75d1d62e173e8c574b8a61338d1fa5052774d13b848eecd282cde88cd6690b8e",
+      "transformers.models.mistral.modeling_mistral.MistralForCausalLM": "dfb6ce530331c666a0b5a9b89107e561b04dd6260ad4bd0dec166d332c34181b",
+      "transformers.models.mistral.modeling_mistral.MistralMLP": "03df2d7685cf8446594448cbd33ef676a2b088779d99d9803abe3bed2ec7ad9b",
+      "transformers.models.mistral.modeling_mistral.MistralModel": "3ee496d6cbc0c7927f21447331fffabb3832e530c52a1004bc0a6aa56a4a3b65",
+      "transformers.models.mistral.modeling_mistral.MistralRMSNorm": "790fa612e4fa57acfcbea31da45f92ba91f9016f7260ef539f61c5530ba06a5f",
+      "transformers.models.mistral.modeling_mistral.MistralRotaryEmbedding": "c3fb11813c451453fd37d3f9520e313174660ba3ac709ca5041397efd65eb83d"
+    },
+    "parameter_schema": {
+      "lm_head.weight": [
+        [
+          32768,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.embed_tokens.weight": [
+        [
+          32768,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.0.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.0.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.0.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.0.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.0.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.0.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.0.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.0.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.0.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.1.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.1.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.1.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.1.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.1.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.1.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.1.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.1.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.1.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.10.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.10.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.10.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.10.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.10.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.10.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.10.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.10.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.10.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.11.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.11.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.11.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.11.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.11.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.11.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.11.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.11.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.11.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.12.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.12.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.12.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.12.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.12.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.12.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.12.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.12.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.12.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.13.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.13.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.13.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.13.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.13.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.13.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.13.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.13.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.13.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.14.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.14.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.14.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.14.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.14.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.14.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.14.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.14.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.14.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.15.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.15.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.15.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.15.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.15.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.15.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.15.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.15.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.15.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.16.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.16.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.16.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.16.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.16.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.16.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.16.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.16.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.16.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.17.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.17.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.17.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.17.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.17.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.17.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.17.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.17.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.17.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.18.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.18.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.18.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.18.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.18.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.18.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.18.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.18.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.18.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.19.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.19.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.19.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.19.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.19.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.19.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.19.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.19.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.19.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.2.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.2.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.2.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.2.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.2.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.2.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.2.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.2.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.2.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.20.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.20.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.20.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.20.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.20.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.20.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.20.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.20.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.20.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.21.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.21.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.21.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.21.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.21.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.21.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.21.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.21.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.21.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.22.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.22.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.22.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.22.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.22.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.22.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.22.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.22.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.22.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.23.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.23.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.23.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.23.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.23.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.23.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.23.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.23.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.23.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.24.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.24.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.24.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.24.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.24.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.24.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.24.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.24.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.24.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.25.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.25.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.25.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.25.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.25.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.25.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.25.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.25.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.25.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.26.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.26.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.26.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.26.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.26.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.26.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.26.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.26.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.26.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.27.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.27.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.27.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.27.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.27.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.27.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.27.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.27.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.27.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.28.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.28.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.28.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.28.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.28.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.28.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.28.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.28.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.28.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.29.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.29.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.29.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.29.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.29.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.29.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.29.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.29.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.29.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.3.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.3.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.3.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.3.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.3.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.3.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.3.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.3.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.3.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.30.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.30.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.30.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.30.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.30.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.30.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.30.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.30.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.30.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.31.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.31.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.31.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.31.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.31.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.31.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.31.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.31.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.31.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.4.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.4.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.4.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.4.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.4.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.4.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.4.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.4.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.4.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.5.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.5.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.5.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.5.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.5.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.5.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.5.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.5.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.5.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.6.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.6.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.6.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.6.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.6.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.6.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.6.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.6.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.6.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.7.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.7.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.7.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.7.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.7.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.7.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.7.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.7.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.7.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.8.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.8.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.8.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.8.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.8.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.8.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.8.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.8.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.8.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.9.input_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.9.mlp.down_proj.weight": [
+        [
+          4096,
+          14336
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.9.mlp.gate_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.9.mlp.up_proj.weight": [
+        [
+          14336,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.9.post_attention_layernorm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.9.self_attn.k_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.9.self_attn.o_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.9.self_attn.q_proj.weight": [
+        [
+          4096,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.layers.9.self_attn.v_proj.weight": [
+        [
+          1024,
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ],
+      "model.norm.weight": [
+        [
+          4096
+        ],
+        "torch.bfloat16",
+        "cuda:0",
+        false
+      ]
+    },
+    "readout": {
+      "cache": "disabled_recompute_complete_prefix",
+      "composition": "FP32_add_then_native_cast_full_sequence_full_vocab",
+      "concurrency": "exclusive_uncompiled_model_instance",
+      "config_sha256": "08136c5963da91e72eba087c872b04c4193c8c629db7fcdab8975d1e9e3e4465",
+      "family": "mistral",
+      "graph_policy": "explicit_objective_scoped_prepared_prefixes",
+      "injection_phase": "native_head_input_after_final_normalization",
+      "model_class": "transformers.models.mistral.modeling_mistral.MistralForCausalLM",
+      "model_forward_source_sha256": "dfb6ce530331c666a0b5a9b89107e561b04dd6260ad4bd0dec166d332c34181b",
+      "normalizer_class": "transformers.models.mistral.modeling_mistral.MistralRMSNorm",
+      "normalizer_owner": "native_model_forward",
+      "outer_forward": "recomputed_and_checked_before_reusing_prepared_head_input",
+      "post_head_owner": "native_model_forward",
+      "prepared_input": "exact_native_normalized_full_prefix_with_live_autograd",
+      "prepared_lifetime": "one_pair_no_cross_objective_or_update_cache",
+      "schema": "latent_workspace.training_readout_adapter.v1",
+      "support": "explicit_layout_not_real_model_quality_qualification",
+      "torch": "2.13.0+cu132",
+      "transformers": "5.15.0"
+    },
+    "schema": "mistral-training-binding-v1"
+  },
+  "contract": {
+    "condition": "centered_final",
+    "data": {
+      "dev": {
+        "path": "data/v10/functional_eval.jsonl",
+        "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+        "world_pairs": 64
+      },
+      "final": {
+        "path": "configs/v16/population_20261015/functional.json",
+        "sha256": "606038154264601fc0b0669433287f42caf0fb137bbdc7cda90ab9a8c13a8643",
+        "world_pairs": 128
+      },
+      "train": {
+        "path": "data/v10/functional_train.jsonl",
+        "sha256": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3",
+        "world_pairs": 256
+      }
+    },
+    "full_update": false,
+    "objective": {
+      "eos_weight": 0.0,
+      "query_mode": "final",
+      "terms": {
+        "answer_ce_coefficient": 1.0,
+        "backbone_update": false,
+        "direction_weight": 0.25,
+        "donor_margin": 0.25,
+        "learning_rate": 0.0001,
+        "max_grad_norm": 1.0,
+        "pair_order": "world-major, all 16 pairs each update; sequential gradient accumulation",
+        "reductions": "answer and EOS mean over 32 side rows; donor over 4 affected pairs; stability over 12 unaffected; unrelated over 16; residual over 48 answer/control residuals",
+        "residual_penalty": 0.001,
+        "seed": 47,
+        "stability_weight": 0.25,
+        "steps": 8,
+        "target_authority": "independently verified context-graph oracle; exact lowercase one-token suffix",
+        "unrelated_weight": 0.25,
+        "weight_decay": 0.01
+      }
+    },
+    "original_base_sha256": "9db998af86c8105f0a2d774c10f777e190f86e54473b6b756bb51b225064a189",
+    "original_legacy_identity_sha256": "54d161755862ebf00d8acbca083d5f290a5de44d33af82ca885f3bd8f9c94312",
+    "plan_sha256": "d9cb6a6ed34fac8e9002fbbef55d1afa3dce87e39b2d4ff4f828f93b5bb62319",
+    "preparation": null,
+    "schedule_sha256": "a2825120659f661bbf3b919c152afcc7a770ba026ce0442f22327e088629502f",
+    "source_commit": "3789a4bc4329e614feb606391aad30324695322f",
+    "v18_selection_policy": {
+      "interaction_query": "final",
+      "schema": "v18-selection-query-policy-v1"
+    }
+  },
+  "data_audit": {
+    "dev_final": {
+      "entity_heldout": false,
+      "eval_world_pairs": 128,
+      "overlaps": {
+        "contexts": 0,
+        "orders": 0,
+        "pair_ids": 0,
+        "unordered_twins": 0
+      },
+      "train_world_pairs": 64
+    },
+    "train_dev": {
+      "entity_heldout": false,
+      "eval_world_pairs": 64,
+      "overlaps": {
+        "contexts": 0,
+        "orders": 0,
+        "pair_ids": 0,
+        "unordered_twins": 0
+      },
+      "train_world_pairs": 256
+    },
+    "train_final": {
+      "entity_heldout": false,
+      "eval_world_pairs": 128,
+      "overlaps": {
+        "contexts": 0,
+        "orders": 0,
+        "pair_ids": 0,
+        "unordered_twins": 0
+      },
+      "train_world_pairs": 256
+    }
+  },
+  "metadata": {
+    "condition": "centered_final",
+    "plan_sha256": "d9cb6a6ed34fac8e9002fbbef55d1afa3dce87e39b2d4ff4f828f93b5bb62319",
+    "seal_sha256": "2d9dcfa04d66b7c607f01c011d8580cb281d8fdf87c84f40ef30f391662c33b0",
+    "source_commit": "3789a4bc4329e614feb606391aad30324695322f"
+  },
+  "stores": {
+    "dev": {
+      "contexts": 320,
+      "features_sha256": "28aec642838bfda59e7116f5f66000011d9486d690b2d6f2cd4a4c90b88eff55",
+      "renderings": 512,
+      "spans_sha256": "02119c24c619a39fad7da40f0928d477064b35ae50620262a5dd5ff0a99212d4"
+    },
+    "final": {
+      "contexts": 640,
+      "features_sha256": "fe8779f8efad0779d76e4d91f84a1ff27375788d2c2ade9b55039110c52eb309",
+      "renderings": 1024,
+      "spans_sha256": "da36f502e5307ecc2b0b523655f0f0c7b0b19fdff5914e3e26cc039bc82d06dd"
+    },
+    "train": {
+      "contexts": 1280,
+      "features_sha256": "3af04cb411cc9860634d69256372c22fc018534faaddedbe69a8e55576337ed6",
+      "renderings": 2048,
+      "spans_sha256": "0da34dee7b7b202871772ebc70cbe878b1d683761b25d8633a412c6b7b9185c6"
+    }
+  },
+  "windows": 512
+}

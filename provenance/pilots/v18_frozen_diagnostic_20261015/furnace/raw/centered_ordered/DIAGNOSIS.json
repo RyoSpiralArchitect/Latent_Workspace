@@ -1,0 +1,91 @@
+{
+  "accuracy_by_wording": {
+    "direct_vs_intact:outrank": {
+      "correct": 261,
+      "n": 512,
+      "ties": 20
+    },
+    "direct_vs_intact:ranked_above": {
+      "correct": 274,
+      "n": 512,
+      "ties": 0
+    },
+    "direct_vs_twin:outrank": {
+      "correct": 261,
+      "n": 512,
+      "ties": 20
+    },
+    "direct_vs_twin:ranked_above": {
+      "correct": 264,
+      "n": 512,
+      "ties": 0
+    },
+    "intact:outrank": {
+      "correct": 266,
+      "n": 512,
+      "ties": 10
+    },
+    "intact:ranked_above": {
+      "correct": 272,
+      "n": 512,
+      "ties": 4
+    },
+    "twin:outrank": {
+      "correct": 265,
+      "n": 512,
+      "ties": 10
+    },
+    "twin:ranked_above": {
+      "correct": 266,
+      "n": 512,
+      "ties": 0
+    }
+  },
+  "actual_flip_queries": [],
+  "affected_queries": 256,
+  "endpoint_definition": {
+    "affected_queries": 256,
+    "chance_control": "random_pair",
+    "evaluation_validity": "zero_memory_rows_equal_frozen_direct_base_exactly",
+    "fixed_last_step": true,
+    "flip": "intact_prediction_equals_intact_label_and_twin_prediction_equals_twin_label",
+    "memory": "actual_intact_vs_twin",
+    "minimum_actual_flips": 26,
+    "minimum_flip_margin_over_random": 20,
+    "no_dev_selection": true,
+    "selection_comparison": {
+      "mcnemar_alpha": 0.01,
+      "minimum_flip_difference": 13,
+      "otherwise": "NO_SELECTION_ADVANTAGE_ESTABLISHED",
+      "pairing": "same_256_affected_final_queries",
+      "positive_label": "ORDERED_SELECTION_ADVANTAGE_DIAGNOSTIC"
+    },
+    "sign_test": "world_level_sum_of_donor_directed_gap_change_exact_one_sided_binomial_over_nonzero_worlds",
+    "sign_test_alpha": 0.001,
+    "split": "final",
+    "step": 512,
+    "verdicts": {
+      "CONTENT_REACHES_ANSWERS": "sign_test_passes_and_minimum_flips_and_margin",
+      "DIRECTIONAL_ONLY": "sign_test_passes_without_flip_criteria",
+      "NOT_ESTABLISHED": "otherwise"
+    }
+  },
+  "flip_margin_over_chance": 0,
+  "flips": {
+    "actual": 0,
+    "common_slots": 0,
+    "random_pair": 0,
+    "reversed": 0,
+    "same_memory": 0
+  },
+  "sign_test_p": 0.639949934091419,
+  "sign_test_passes": false,
+  "unaffected_prediction_changes": 4,
+  "verdict": "NOT_ESTABLISHED",
+  "world_sign": {
+    "negative": 16,
+    "positive": 15,
+    "zero": 97
+  },
+  "worlds": 128
+}
