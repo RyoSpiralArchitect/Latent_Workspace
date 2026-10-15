@@ -22,6 +22,40 @@ flips held-out answers in the donor's direction. Every arm so far is
 That lane stays, with its endpoint unchanged, but its negatives do not refute
 the other two properties, and the other two cannot relabel it.
 
+## Where the flip test came from
+
+From Ryō's pre-repository packages (v4–v8, local archives, not in this
+repository) and the [v9 matrix](../../configs/v9_reference/MATRIX.json):
+
+- **v4:** a K-step latent workspace computed from the base model's own causal
+  hidden states adds a low-rank vocabulary residual, trained with task CE plus
+  `LatentWorkspaceLoss`, which keeps the latent trajectory's information
+  recoverable without letting its geometry collapse (variance, covariance,
+  retention, identity, relational, temporal and rank terms).
+- **v5** asked whether the workspace state moves, is retained and contributes
+  directly to the task. On GPT-2 Small the direct contribution was small, but
+  workspace-forming training changed the base model's learning trajectory.
+- **v6.5** therefore split the question in three: *Occupancy* (is a
+  workspace-like state active), *Availability* (can it be recruited when
+  needed) and *Consequence* (what forming it leaves in later learning and
+  outputs), and measured mainly the last two.
+- **v7** kept the triad and added one goal among several: is a deferred
+  workspace memory causally and content-specifically necessary?
+- **v8** targeted semantic load-bearing memory and identifiability, and the
+  **v9** matrix made the flip its primary claim: "whether one query-independent
+  memory can implement a reusable relation function across multiple future
+  queries and whether a local counterfactual memory edit flips only affected
+  answers."
+- From **V15** on, the flip also became the training objective (the donor
+  hinge) and the reader's design target, not only the test.
+
+So the flip is not a drift from the design: it is the sharpest test of one
+corner of it, content-specific Availability through a deferred memory.
+Consequence and Occupancy kept turning up without a lane of their own:
+v6.5's changed learning trajectory, V14's judge-preferred differences and
+branching, and V18's step-2 divergence "through the backbone, not through
+memory".
+
 ## What the record already shows
 
 **Generation differences judged against base** (V14,

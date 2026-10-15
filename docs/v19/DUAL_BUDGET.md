@@ -5,7 +5,8 @@
 guard during its held-out evaluation; `ordered_cap100` and the replay not
 run.** The workspace route now carries its full budget, but as a
 memory-independent shift. See the
-[results](../../provenance/pilots/v19_frozen_dual_budget_20261015/README.md)
+[results](../../provenance/pilots/v19_frozen_dual_budget_20261015/README.md).
+**Closed by Ryō's decision** (no attempt 02); see the [closeout](CLOSEOUT.md)
 and the [V20 scope](../v20/SCOPE.md). Frozen before launch as follows.
 Ryō proposed V19 after the
 [V18 frozen-backbone diagnostic](../../provenance/pilots/v18_frozen_diagnostic_20261015/README.md):

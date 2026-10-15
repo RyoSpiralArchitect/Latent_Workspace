@@ -90,8 +90,9 @@ descriptive only; there was no dev selection, early stopping or threshold change
 ## The freed route learned a content-independent shift (post-hoc, descriptive)
 
 [`posthoc_routes.py`](posthoc_routes.py) reads only the saved records and
-writes [POSTHOC.json](POSTHOC.json). Run on the V18 bundle, it reproduces
-V18's published route norms and transport counts exactly. Mean residual norms
+writes [POSTHOC.json](POSTHOC.json). Run on the V18 bundle
+([reference output](POSTHOC_V18_REFERENCE.json)), it reproduces V18's
+published route norms and transport counts exactly. Mean residual norms
 (common cap 1.0, workspace cap 0.25):
 
 | Run | Memory | Total | Common | Workspace |
@@ -158,10 +159,8 @@ budget-dose comparisons remain unanswered. The unexecuted `ordered_cap100` arm
 is the only remaining test here of whether a four-times larger content budget
 lifts the contrast above bf16 resolution.
 
-Continuing needs Ryō's decision; nothing is relaunched automatically. The clean
-option is an **attempt 02**: the unchanged plan as a full dispatch in a fresh
-task root, from a new commit whose only sealed-scope changes are the verifier
-fix and additive files (about 4.8 h; it reruns `ordered_cap025`, which also
-checks cross-attempt determinism). It needs a GPU free of other projects' jobs
-for the whole window, or the guard will stop it again. Attempt 01's bytes stay
-as they are either way.
+**Closed by decision.** On 2026-10-15 Ryō decided not to run an attempt 02 (a
+full re-dispatch of the unchanged plan) and to direct the resources to V20.
+Attempt 01's bytes stay as they are, and the missing and unrun parts stay
+missing. What V19 settled and what V20 inherits are collected in the
+[closeout](../../../docs/v19/CLOSEOUT.md).

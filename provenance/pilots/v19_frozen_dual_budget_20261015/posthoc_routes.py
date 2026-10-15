@@ -6,10 +6,12 @@ gzip evaluation records and window journals (no model, no network):
 
 - mean residual norms per memory condition (total, applied, common, workspace);
 - for the ``actual`` (intact versus twin) contrast on affected questions: the
-  FP64 intended gap change (median magnitude, donor-directed count) and how
-  many published native bf16 gaps changed at all;
+  FP64 intended gap change (median magnitude, donor-directed count), how many
+  published native bf16 gaps changed at all, and the intact-minus-twin
+  difference of the injected delta before and after the bf16 input cast;
 - the training journal's donor hinge: how many affected pairs per epoch still
-  sit at the hinge maximum, and the mean answer CE.
+  sit at the hinge maximum, the mean answer CE, and each objective term's
+  weighted per-window mean (weights from the run contract).
 
 Usage: posthoc_routes.py ARM_DIR [ARM_DIR ...] > POSTHOC.json
 """
@@ -44,6 +46,7 @@ def routes(report):
 def transport(report):
     rows = [c for c in report["contrasts"] if c["factor"] == "actual" and c["affected"]]
     intended, directed, published = [], 0, 0
+    transport_rows = [c["transport"] for c in rows]
     for contrast in rows:
         change = contrast["transport"]["intended_linear_gap_change_fp64"][0]
         # The gap is candidate 1 minus candidate 0; moving toward the twin's label
@@ -58,21 +61,46 @@ def transport(report):
         "intended_donor_directed": directed,
         "intended_not_donor_directed": len(rows) - directed,
         "published_gap_changed": published,
+        **{
+            f"median_{key}": round(statistics.median(abs(t[key][0]) for t in transport_rows), 6)
+            for key in (
+                "intended_delta_difference_l2",
+                "applied_delta_difference_l2",
+                "after_input_cast_linear_gap_change_fp64",
+                "input_cast_gap_residual",
+            )
+        },
     }
 
 
-def training(windows):
+def weights(folder):
+    terms = json.loads((folder / "CONTEXT.json").read_text())["contract"]["objective"]["terms"]
+    return {
+        "answer_ce": terms["answer_ce_coefficient"],
+        "donor_hinge": terms["direction_weight"],
+        "unaffected_gap_square": terms["stability_weight"],
+        "unrelated_gap_square": terms["unrelated_weight"],
+        "residual_norm_square": terms["residual_penalty"],
+    }
+
+
+def training(windows, weight):
     epochs = []
     for start in range(0, len(windows), EPOCH):
-        pairs = [p["components"] for w in windows[start : start + EPOCH] for p in w["pairs"]]
+        block = windows[start : start + EPOCH]
+        pairs = [p["components"] for w in block for p in w["pairs"]]
         hinged = [p["donor_hinge"] for p in pairs if p["donor_hinge"] > 0]
         epochs.append(
             {
-                "windows": f"{start + 1}-{start + len(windows[start : start + EPOCH])}",
+                "windows": f"{start + 1}-{start + len(block)}",
                 "pairs": len(pairs),
                 "donor_hinge_positive": len(hinged),
                 "donor_hinge_at_max": sum(h >= HINGE_MAX for h in hinged),
                 "mean_answer_ce": mean([p["answer_ce"] for p in pairs]),
+                "weighted_per_window": {
+                    key: round(factor * sum(p[key] for p in pairs) / len(block), 6)
+                    for key, factor in weight.items()
+                },
             }
         )
     return epochs
@@ -91,7 +119,7 @@ def arm(folder):
             "actual_affected_transport": transport(report),
         }
     lines = (folder / "windows.jsonl").read_text().splitlines()
-    result["training"] = training([json.loads(line) for line in lines])
+    result["training"] = training([json.loads(line) for line in lines], weights(folder))
     return result
 
 

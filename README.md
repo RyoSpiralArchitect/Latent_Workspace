@@ -26,8 +26,9 @@ NOT_ESTABLISHED**.
   the workspace route now carries its full 0.25 (V18: 0.0004), but as a shift
   that is the same for any real memory: 0/256 held-out donor flips in the
   completed arm. The second arm was stopped by its GPU contention guard when
-  another project's job appeared; the third never ran. Whether to run an
-  attempt 02 is Ryō's call; nothing was relaunched.
+  another project's job appeared; the third never ran. Ryō closed V19 there,
+  without an attempt 02; the lessons are collected in the
+  [closeout](docs/v19/CLOSEOUT.md).
 - **[V20 scope](docs/v20/SCOPE.md):** content use is one of three lanes.
   Conversation branching and paired generation quality versus base, where V14
   already saw branching and judge-preferred differences, get their own
@@ -74,7 +75,9 @@ attempt passed locally and on Furnace, and exposed a stale V18 checkpoint-format
 check in the sealed V19 verifier, now fixed with
 [regression tests](tests/test_v19_frozen_verifier.py). A fresh-process
 [owner qualification](scripts/qualify_v19_dual_budget.py) is implemented and
-rehearsed locally, not yet run on Furnace.
+rehearsed locally, not yet run on Furnace. V19 is closed by Ryō's decision; the
+[closeout](docs/v19/CLOSEOUT.md) records what it settled, what V20 inherits and
+the questions it leaves.
 
 ## V18: complete windows, operand selection, owners and the first 7B runs
 
