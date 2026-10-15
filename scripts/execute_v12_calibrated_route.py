@@ -146,10 +146,8 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
         authorization_path=authorization_path,
     )
     output_path = _resolve(root, args.output, label="execution receipt")
-    if output_path.exists() and not args.overwrite:
-        raise ExecuteError(
-            "Execution receipt already exists; pass --overwrite to replace it."
-        )
+    if output_path.exists() and not args.dry_run:
+        raise ExecuteError("Execution receipt already exists.")
 
     runs: list[dict[str, Any]] = []
     for artifact in artifacts:
@@ -231,7 +229,6 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--authorization", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--overwrite", action="store_true")
     return parser
 
 
@@ -239,12 +236,6 @@ def main() -> int:
     args = build_parser().parse_args()
     root = args.repo_root.expanduser().resolve()
     output = _resolve(root, args.output, label="execution receipt")
-    if output.exists() and not args.overwrite:
-        # Refuse before the failure-writing path so an accidental rerun can
-        # never replace a completed execution audit with a failure record.
-        raise SystemExit(
-            "Execution receipt already exists; pass --overwrite to replace it."
-        )
     try:
         receipt = execute(args)
     except Exception as exc:

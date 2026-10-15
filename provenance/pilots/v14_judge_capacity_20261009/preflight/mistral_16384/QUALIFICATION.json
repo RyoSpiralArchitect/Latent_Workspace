@@ -1,0 +1,84 @@
+{
+  "claim_boundary": "API/schema/quote/capacity calibration only; not study quality or guaranteed future completion.",
+  "config": {
+    "accepted_response_models": [
+      "mistral-large-4"
+    ],
+    "endpoint": "https://api.mistral.ai/v1/chat/completions",
+    "env_key": "MISTRAL_API_KEY",
+    "http_timeout_seconds": 1200,
+    "input_usd_per_million_tokens": 1.36,
+    "max_cost_usd": null,
+    "max_input_tokens": 32768,
+    "max_output_tokens": 16384,
+    "model": "mistral-large-4",
+    "output_usd_per_million_tokens": 4.18,
+    "random_seed_base": 1001,
+    "service_tier": "standard_only",
+    "temperature": 0.2
+  },
+  "format": "latent-workspace-v14-capacity-qualification-v1",
+  "max_reported_output_tokens": 7858,
+  "planned_calls": 6,
+  "prepared_sha256": "89826de4e7fc482fe702be2a5cc0b8d95dc5768e0b1c08632b56327b9903c97b",
+  "provider": "mistral",
+  "qualified": true,
+  "reserved_calls": 6,
+  "rows": [
+    {
+      "output_tokens": 4436,
+      "request_id": "capacity-summary-identical-AB",
+      "returned_model": "mistral-large-4",
+      "status": "completed",
+      "strict_and_control_pass": true
+    },
+    {
+      "output_tokens": 4921,
+      "request_id": "capacity-summary-identical-BA",
+      "returned_model": "mistral-large-4",
+      "status": "completed",
+      "strict_and_control_pass": true
+    },
+    {
+      "output_tokens": 7549,
+      "request_id": "capacity-causal-different-AB",
+      "returned_model": "mistral-large-4",
+      "status": "completed",
+      "strict_and_control_pass": true
+    },
+    {
+      "output_tokens": 7858,
+      "request_id": "capacity-causal-different-BA",
+      "returned_model": "mistral-large-4",
+      "status": "completed",
+      "strict_and_control_pass": true
+    },
+    {
+      "output_tokens": 5000,
+      "request_id": "capacity-relation-different-AB",
+      "returned_model": "mistral-large-4",
+      "status": "completed",
+      "strict_and_control_pass": true
+    },
+    {
+      "output_tokens": 2677,
+      "request_id": "capacity-relation-different-BA",
+      "returned_model": "mistral-large-4",
+      "status": "completed",
+      "strict_and_control_pass": true
+    }
+  ],
+  "study_judgments": false,
+  "usage": {
+    "actual_billed_cost_usd": null,
+    "calls_with_reported_usage": 6,
+    "calls_without_reported_usage": 0,
+    "reported_input_tokens": 10856,
+    "reported_output_tokens": 32441,
+    "reported_total_tokens": 43297,
+    "reported_usage_undiscounted_cost_usd": "0.15036754",
+    "reserved_calls": 6,
+    "reserved_cost_upper_bound_usd": "0.47060384",
+    "usage_bound_exceeded_calls": 0
+  }
+}

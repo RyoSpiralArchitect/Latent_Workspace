@@ -1,0 +1,53 @@
+{
+  "format": "latent-workspace-v14-grouped-evaluation-recovery-plan-v1",
+  "frozen_before_semantic_evaluation": true,
+  "purpose": "Reuse the completed task grouped report byte-for-byte, execute only the missing semantic cell, and create the predeclared matched comparison after the outer validator rejected the correct native format name.",
+  "failed_grouped_execution": {
+    "path": "provenance/raw/v14_grouped_evaluation_20260907/execution.json",
+    "sha256": "07b9e0a2d15e3f12d6931fda003b94bf5bca33b4a0f328f7f30baec6f4c51a7f",
+    "failure_class": "verifier-only format-name mismatch after task computation completed"
+  },
+  "completed_task_report": {
+    "path": "provenance/raw/v14_grouped_evaluation_20260907/task_necessity.json",
+    "sha256": "ff77051322b7da69fb0ff408b4348f143a98207b1172751bc1d3c0b79a35a0de",
+    "format": "latent-workspace-v9-functional-necessity-v1",
+    "primary_gate_passed": false
+  },
+  "task_reexecution": false,
+  "semantic_execution_count": 1,
+  "semantic": {
+    "checkpoint": "runs/v14/boundary_training/semantic_seed47_step8/final",
+    "manifest_sha256": "067c48cb1d312e1e0fa504f889343d5bd825140a49e0a3e2deec2004bf3113f2",
+    "workspace_sha256": "3e2c9ace61b7aa08c1efb93e0b8e6d9466ba52073395cf20c0c599ea06a518b2",
+    "output": "provenance/raw/v14_grouped_evaluation_recovery_20260907/semantic_necessity.json"
+  },
+  "comparison_output": "provenance/raw/v14_grouped_evaluation_recovery_20260907/comparison.json",
+  "modes": [
+    "intact",
+    "hard_bypass",
+    "zero",
+    "fixed_carrier",
+    "norm_matched_random",
+    "counterfactual_twin",
+    "cross_world_shuffle"
+  ],
+  "expected_queries_per_mode": 1024,
+  "winner_rule": "No winner unless semantic passes F4 and exceeds task on affected donor direction without reducing unaffected original stability.",
+  "source_identity": {
+    "scripts/complete_v14_grouped_evaluation.py": "a84c31b0f7be2adec4a598832ce13bcc157b2a89dc18a8e56e3ddbd2f0428bba",
+    "scripts/run_v14_boundary_training.py": "9f9d597df2277ee684e21cd215ee479d86b8c4d62c0a5809b6643a38fb655dac",
+    "src/latent_workspace_ft_v10/engine.py": "3e7659b7c927cab23b4d994ce2e320d99431e4ba657d560c1094bc36de596178"
+  },
+  "authorized_actions": {
+    "reuse_completed_task_report": true,
+    "task_reexecution": false,
+    "semantic_native_grouped_execution": true,
+    "comparison_write": true,
+    "training_or_optimizer": false,
+    "weight_write_or_delete": false,
+    "generation": false,
+    "retry_or_metric_selection": false
+  },
+  "stop_rule": "Execute the semantic grouped cell once. Preserve any further failure and never rerun the completed task cell.",
+  "claim_boundary": "Recovery corrects only the outer report-format expectation and completes the missing matched cell. It neither changes the trained weights nor the native evaluator, and it cannot upgrade a failed evidence-ladder rung."
+}

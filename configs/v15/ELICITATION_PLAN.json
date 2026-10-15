@@ -1,0 +1,32 @@
+{
+  "format": "v15-base-elicitation-v1",
+  "predecessor_bundle": "provenance/pilots/v15_readout_transport_20261010",
+  "model_parent": "configs/v14/PRECISION_BRIDGE_PLAN.json",
+  "corpus_seed": 15001,
+  "exposed_cases": 4,
+  "confirmation_families": 8,
+  "confirmation_cases": 32,
+  "renderers": ["raw", "native_chat"],
+  "information": ["query_only", "inline"],
+  "regimes": [{"id": "greedy", "seed": 0, "temperature": 0.0}, {"id": "sample211", "seed": 211, "temperature": 0.7}],
+  "maximum_prompt_tokens": 512,
+  "max_new_tokens": 64,
+  "expected_unique_prefixes": 144,
+  "expected_generation_sequences": 288,
+  "stop_rule": "model EOS only; otherwise length at 64 new tokens",
+  "parser": "whole stripped answer yes/no, casefolded; lowercase compliance separate; length-truncated is incorrect",
+  "choice_suffixes": [" no", " yes"],
+  "history": "full-prefix recomputation; no KV cache",
+  "optimizer_steps": 0,
+  "workspace_loaded": false,
+  "primary_renderer": "native_chat",
+  "gate": {
+    "scope": "finite-panel expression qualification, not causal fact-use or model-quality qualification",
+    "split": "confirmation", "information": "inline", "regime": "greedy",
+    "valid_eos_required": 32,
+    "correct_per_view_required": 12, "per_view_denominator": 16,
+    "correct_per_view_wording_required": 6, "per_view_wording_denominator": 8
+  },
+  "resources": {"admission_free_gib": 20, "allocator_cap_gib": 18, "abort_free_gib": 4, "poll_steps": 16, "cpu_threads": 2},
+  "claims": {"training_performed": false, "semantic_promotion": false, "non_regression": "NOT_ESTABLISHED", "quality_judging": "NOT_RUN"}
+}

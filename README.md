@@ -1,24 +1,279 @@
 # Latent Workspace FT — CUDA comparison harness
 
-V11.0 is the current bounded research lane. It first qualifies the exact F0/F1
-step-0 instrument, then tests a single objective repair: constrained-choice CE
-instead of full-vocabulary answer-token CE. See
-[`docs/V11_OBJECTIVE_REPAIR.md`](docs/V11_OBJECTIVE_REPAIR.md) and the frozen
-[`configs/v11/CONTRACT.json`](configs/v11/CONTRACT.json). The import package
-name remains `latent_workspace_ft_v10` so V10 checkpoints and tooling retain a
-stable compatibility surface.
+The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
+pre-import source guard for future runs and qualifies the historical
+untracked-file cleanliness claim. Old audit sources and receipts are unchanged.
+
+## V15 readout adapters: native equivalence, separate semantic and transport failures
+
+The [opt-in model-independent readout core](docs/v15/READOUT_ADAPTERS.md) now
+delegates normalization, head execution and post-head transformations to an
+explicit native-model adapter. Tiny GPT-2/Mistral/OLMo2/Gemma2 tests cover
+FP32/BF16 outputs and live gradients; this is not universal model qualification.
+The sealed optimizer/resume runner remains unchanged.
+
+A [read-only retained-Mistral audit](provenance/pilots/v15_readout_adapters_20261010/README.md)
+reproduces **192/192 old/new full-logit outputs** and **64/64 written-zero
+identities**. All **16/16 affected pairs retain native hidden differences**,
+yet their two answer logits remain identical at the native head. All **64/64
+pairs change other vocabulary logits**, without changing the greedy next token.
+The intended projected donor direction is only **2/4 per state**; one direction
+reverses during hidden casting in the full-updated state. One native answer-gap
+change occurs on an **unaffected** pair. Neither more visible logits nor higher
+precision alone establishes content binding.
+
+No new training, learner sequences or judges ran. The next factors separate
+semantic selection, explicitly controlled adapter precision and immutable
+original-base preservation. **Old FAIL / winner: none remain unchanged.**
+
+## V15 native learner: full updates and exact resume; content binding still open
+
+The [new end-to-end state owner](docs/v15/NATIVE_LEARNER.md) now connects live
+question/context features, writer/reader, native readout, complete-window CPU
+accumulation, all-base FP32-master updates, and optimizer/RNG checkpoint resume.
+The [completed pinned-Mistral pilot](provenance/pilots/v15_native_learner_20261010/README.md)
+retains **1,152 evaluation rows and 160 greedy sequences**. Both the frozen and
+full arms reproduce the next update exactly after checkpoint reload; all 291
+physical base tensors change in their FP32 masters, including all 65 RMSNorm
+tensors. Native BF16 changes are counted separately. Full-process peak Torch
+allocation is **27.751 GiB**, with **2.203 GiB** minimum sampled device free.
+
+This is engineering qualification, not a semantic win. Fresh legacy/modulated
+reader training remains **16/32 correct and 0/4 donor flips**. The full arm reaches
+**18/32**, but with **3 repairs and 1 new error** relative to original base;
+its updated base without workspace is **15/32**. All four final comparisons
+still have **0/4 donor flips, 0/4 strict workspace generation and identical
+intact/twin tokens on 4/4 queries**. Current-base zero identity does not establish
+original-base preservation. [Literal outputs](provenance/pilots/v15_native_learner_20261010/GENERATION_BANK.md),
+eight retained-checkpoint receipts and exact replay evidence are published.
+
+V15 now denotes the full native learner; the prior frozen-native milestone is
+conceptually V14.5 without changing historical paths. [Next design factors](docs/v15/NEXT_STEPS.md)
+separate common response from useful question/content interaction and make
+pinned-original reference ownership explicit. No redundant donor loss, automatic
+longer run or winning model is inferred. Old **FAIL / winner: none / non-regression
+unestablished** and closed judge missingness remain. The sections below retain
+the preceding results and their then-current proposals.
+
+## V15 reader factor audit: localize binding failure before more learning
+
+The [new no-update factor audit](provenance/pilots/v15_reader_factors_20261010/README.md)
+separates common, question, memory and question × memory corrections in 64
+four-corner blocks. The retained output projection puts **87.966884%** of its
+squared-Frobenius energy into one singular direction. The modulated reader's
+mean-slot/actual interaction-norm ratio is **99.839031%**: large interaction
+magnitude does not establish differentiated fact selection (mean slots still
+contain world information). At both affected reciprocal pairs, donor-directed
+interaction remains much smaller than memory bias; cap anisotropy adds another
+local constraint but cannot alone explain the failure.
+
+All 64 actual-memory native vectors match previous results: **16/32 correct and
+0/4 donor flips per reader**. No weights changed; no autograd, training,
+generation or judge calls ran. 232 local/Furnace prelaunch tests and 14 offline
+post-result tests passed. The existing loss already targets reciprocal donor
+direction; simply adding a similarly named loss would duplicate supervision.
+Next, test whether fresh matched short reader training grows useful interaction
+under unchanged losses/cap/native scoring before full updates. Removing common
+directions or raising the cap is not an established repair. Old **FAIL / winner:
+none / non-regression unestablished** and closed judge missingness remain.
+
+## V15 reader refinement: question sensitivity improved; semantic result unchanged
+
+The [new opt-in reader](docs/v15/READER_MODULATION.md) adds one parameter-free,
+bounded question/value modulation before the existing output projection. In a
+[completed no-update 7B comparison](provenance/pilots/v15_reader_modulation_20261010/README.md),
+retained-state reader-input gradient norms increased **324.40×**, and intact
+reciprocal-question correction distances increased **418.13×**, including
+direction changes after norm matching. Cap, parameters and checkpoint bytes
+were held fixed; old source and zero-memory identity remain intact.
+
+This is not a semantic win: all 32/32 retained-state native truth-bearing score
+vectors still match the legacy reader, accuracy remains **16/32**, and correct
+donor flips remain **0/4**. Common-slot and unrelated controls also exhibit
+question dependence. All 512 evaluation rows and 320 reader-gradient leaves
+are retained from two already-exposed worlds, not fresh held-out evidence.
+199 selected tests passed locally and on Furnace; all weights stayed unchanged.
+The next priority is a matched fresh, short reader-learning comparison before
+full-backbone optimizer work. No training, generation or judge call was added;
+old **FAIL / winner: none / non-regression unestablished** remain unchanged.
+
+## V14.5 to full-update V15: real 7B backward qualified, no optimizer update
+
+The separate [live-native contracts](docs/v15/FULL_UPDATE_BACKWARD.md) preserve
+the old frozen path and recompute current-backbone features. The
+[completed no-step probe](provenance/pilots/v15_full_update_backward_20261010/README.md)
+ran two diagnostic states × three exposed pairs: all 291 base tensors received
+finite nonzero gradients, and the retained bridge carried gradients through
+both memory and reader inputs. Each state's 317 restored gradient tensors
+matched a same-order CPU reference exactly. Native/zero and historical choice
+controls remained exact; all weights were unchanged.
+
+The six backward passes took 106.13 seconds with 28.22 GiB peak Torch allocation;
+sampled free device memory reached 1.21 GiB, so optimizer headroom is not yet
+qualified. There were no optimizer steps, new generations or judge calls.
+The earlier proposed complete-window/one-update/resume audit is now deferred
+behind the reader-learning comparison above. Useful content learning and
+original-base preservation
+remain unestablished; old **FAIL** and **winner: none** are unchanged. The native
+frozen-base milestone is conceptually V14.5; historical `v15_5` paths are retained.
+
+## V15.5 learner restart: native path exercised, no winning arm
+
+Diagnostic judge collection is closed at its valid observed coverage. The
+[new learner plan](docs/v15_5/NATIVE_ANSWER_LEARNER.md) resumes the FT line with
+two matched eight-update workspace-only arms: native full-vocabulary answer CE,
+and the same CE plus correct-answer-conditioned EOS. The
+[completed CUDA pilot](provenance/pilots/v15_5_native_answer_20261010/README.md)
+retains **576 evaluation rows and 80 greedy sequences**. Native logits changed;
+answer-only training changed text for 2/4 exposed queries, but intact/twin tokens
+remained identical for 4/4 in both arms. Choice accuracy stayed 8/16 per factual
+condition, affected donor changes stayed zero, and workspace generation remained
+0/4 strict-correct with 4/4 length stops per arm/checkpoint. EOS CE fell only in
+the EOS-trained arm, without improved observed termination. **No winner.**
+
+The run took 70.01 seconds with a 14.13 GiB Torch allocation peak on Furnace.
+232 selected tests passed locally and on the execution host; offline receipts
+replay. [All outputs](provenance/pilots/v15_5_native_answer_20261010/GENERATION_BANK.md)
+and per-condition checkpoints are retained. No additional judge call or weight
+deletion occurred. No judge text became a training target. The prior expression
+FAIL and independent base-floor requirements remain unchanged; this is neither
+full-backbone training nor a qualified FT-beta candidate. The
+[next proposal](docs/v15/NEXT_STEPS.md) prioritizes content-selective learning
+and per-loss gradient diagnostics over automatically extending this pilot.
+
+## V15.5 diagnostic evaluation: continuation closed as partial
+
+The [authorized 320-call continuation](provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010/README.md)
+ended on 2026-10-10 at 08:00 JST with **155 valid diagnoses, four new ambiguous
+timeouts and 161 never-dispatched requests**. Combined with the immutable
+[original partial run](provenance/pilots/v15_5_diagnostic_judge_20261010/README.md),
+main coverage is **343/512**; study plus fixed repeats has 374 valid, one invalid,
+eight unknown and 161 undispatched coordinates. No call was retried. The
+heartbeat is paused at Ryō's request; further recovery needs a new decision.
+
+The [frozen unary-judge protocol](docs/v15_5/DIAGNOSTIC_JUDGE_PROTOCOL.md) reuses
+512 existing pinned-base outputs on 16 correlated world clusters, not new
+learner generations. [Calibration](provenance/pilots/v15_5_diagnostic_judge_20261010/CALIBRATION_REVIEW.md)
+admitted Mistral (16/16 expected matches, 8/8 equal repeat signatures) and blocked
+OpenAI (15/16 matches, 6/8 equal against a 7/8 requirement); all 544 OpenAI study
+calls remain undispatched. The Mistral fixed-repeat panel remains 25 equal,
+six differing and one invalid pair out of 32. There is no two-judge consensus.
+
+Renderer stratification matters: among **87 diagnosed native-chat inline
+outputs**, 29 strict failures comprise 13 internal contradictions, 13 wrong
+commitments, two format-only candidates and one grounding case. All 82 diagnosed
+inline length failures belong to raw rendering; two native length stops in the
+full bank have no diagnosis. A stopping-only explanation is insufficient for
+the observed native failures. Missingness is not assumed random.
+
+The [combined literal panel](provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010/analysis/DIAGNOSTIC_PANEL.md)
+and [bounded next-step proposal](docs/v15/NEXT_STEPS.md) preserve the old **FAIL**,
+strict scores, unknowns and all source records. No learner was trained in that
+diagnostic collection; no
+quality, non-regression, semantic-mechanism or winner claim is established.
+
+## Earlier V15 no-training engineering checkpoints
+
+The fresh [cue-by-envelope confirmation](provenance/pilots/v15_cue_confirmation_20261010/README.md)
+completed **512 generations** on 16 new world families. Removing `Answer:`
+did not repair the interface: native-chat inline strict correctness was
+**44/64 with the cue versus 40/64 without it**, including 0/16 correct atomic
+negative answers in the no-cue primary. All four generation gates failed.
+With the cue retained, atomic candidate ranking was **21/32 at the first token
+versus 30/32 for answer-plus-EOS paths**; this is a completed-path diagnostic,
+not successful natural generation or a selected method. All outputs and the
+failed gate are retained; the new verifier passes on both Mac and Furnace CPU
+with identical receipts. **No new V15 learning was started in that assay.**
+
+The preceding [pinned-base elicitation assay](provenance/pilots/v15_base_elicitation_20261010/README.md)
+retains **288 complete generated outputs**: native chat improves termination,
+but its frozen expression gate still fails (16/32 strictly correct in the
+primary inline/greedy family panel). A separate, already-exposed-panel
+[answer-plus-EOS diagnostic](provenance/pilots/v15_completion_mass_20261010/README.md)
+finds native-chat atomic candidate ranking changes from 9/16 at the first token
+to 14/16 for complete answer paths; full-chain changes 7/16 to 8/16. This is not repaired
+generation or a qualified method. The latter's frozen verifier passes on the
+execution runtime; local Mac exact summary replay retains four one-ULP scalar
+mismatches. **New V15 learning was deferred at that checkpoint.**
+
+The [V15 readout/serialization/generation assay](provenance/pilots/v15_readout_transport_20261010/README.md)
+completed on 2026-10-10 with retained weights and no optimizer updates. Loss
+diagnostics, evaluation and generation now share a tested native full-vocabulary
+readout. All 384 crossover rows and 64 short generations are retained, including
+the negative result: every generation violates the strict one-word contract,
+even inline base. Historical intact/twin differences also confound content with
+fact order; aligned-order controls weaken those effects.
+See [the full answer bank](provenance/pilots/v15_readout_transport_20261010/ANSWER_BANK.md)
+and [next isolated experiments](docs/v15/NEXT_STEPS.md).
+This is not new trained-model quality or correctness-floor qualification.
+
+## Historical V14 and V13 foundations
+
+V14 begins with a **portable-operator foundation**, not a new training result.
+Model boundary binding, functional workspace operators, normalization choices,
+final-logit arithmetic, and bounded named-norm observation now have separate
+contracts. The default path preserves the sealed V13 algorithm; changing a
+workspace norm is a new algorithm condition, not an equivalent optimization.
+Start with [`docs/V14_PORTABLE_BOUNDARIES.md`](docs/V14_PORTABLE_BOUNDARIES.md)
+and the fixed offline [OLMo2 portability plan](configs/v14/PORTABILITY_RUN_PLAN.json).
+The selected cached OLMo-2 1B is a structural control, not an Instruct capability
+comparison or evidence that the proposed read/transition bridge works.
+The [two real-model CUDA canaries are complete](provenance/pilots/v14_portability_20260904/OBSERVATIONS.md):
+within both BF16/SDPA and BF16/eager, three split boundaries preserve logits and
+the middle boundary preserves all 179 parameter gradients with numerical
+difference zero. Short native/split generations also match. This does not claim
+SDPA/eager equality: their native CE values differ. The default-CPU DNNL backward
+failures and the separately passing MKLDNN-disabled test run are both retained.
+
+V13 now has a **completed bounded S0/S1 diagnostic pilot**, not a training run.
+The broader design distinguishes workspace state that is readable now from state
+that affects later recurrent transitions, with normalization explicit. Start with
+[`docs/V13_S0_S1_PILOT.md`](docs/V13_S0_S1_PILOT.md). The original design remains
+historical and non-executable:
+[`docs/V13_NORMALIZATION_STATE_DESIGN.md`](docs/V13_NORMALIZATION_STATE_DESIGN.md)
+and [`configs/v13/DESIGN_CONTRACT.json`](configs/v13/DESIGN_CONTRACT.json).
+The separate pilot plan permits only synthetic falsification checks and retained
+V12 numerical visibility measurements. No V13 training configuration is enabled.
+V14's proposed bridge between the two state views remains a
+hypothesis, not a demonstrated mechanism.
+
+The current V14 Furnace line has now completed the bounded return sequence:
+the atomic Mistral renderer/instrument and native checkpoint-direction gates
+passed, while the full seven-fact task and five-cell semantic-accumulation claim
+did not qualify. Matched eight-update task and semantic layer-16 cells were then
+trained and evaluated; both failed grouped F1–F5, so no cell was selected. The
+[post-comparison free-form diagnostic](provenance/pilots/v14_boundary_chat_20260907/README.md)
+retains all 192 base/task/semantic continuations. It found zero intact-to-twin
+first-answer changes, but a descriptive late semantic continuation trace. Since
+that trace occurred under full-prefix recomputation with no K/V cache, it is a
+control against treating delayed text divergence alone as cache accumulation.
+
+The [first observations](provenance/pilots/v13_s0_s1_20260904/OBSERVATIONS.md)
+localize a BF16 final-addition visibility loss at two retained checkpoints; they
+do not establish semantic causal success. [Weight retention](docs/WEIGHT_RETENTION.md)
+is latest two checkpoints **per condition**, not two version generations.
+The scoped retention audit found no eligible older steps; no weights were deleted.
+
+The completed parent is the bounded
+[V12 calibrated-route study](provenance/pilots/v12_calibrated_route/OBSERVATIONS.md),
+which demonstrated initialization/update ownership but no winning workspace
+branch. The V13 design records interpretation corrections without modifying
+historical evidence. The import package remains `latent_workspace_ft_v10` for
+checkpoint/tooling compatibility.
 
 This repository is the clean staging surface for a CUDA-native, full-parameter
 Latent Workspace comparison. It starts with a portable v10 engine, provenance,
 data, and explicit decision boundaries.
 
-## Status
+## Historical runtime status (not V13/V14 qualification)
 
 - Canonical source is the
   [`RyoSpiralArchitect/Latent_Workspace`](https://github.com/RyoSpiralArchitect/Latent_Workspace)
-  repository. V11 objective repair is isolated on branch
-  `SpiralReality/v11-objective-repair`, stacked on the verified transport-v2
-  parent until that branch is merged.
+  repository. The current V14 continuation is isolated on
+  `SpiralReality/v14-semantic-chat`; its portability ancestor was based on the
+  sealed V13 observation/retention commit `ed5ce398`.
+  The historical observations below
+  describe their named V10/V11 runs, not the current V13 implementation status.
 - The runtime contract is PyTorch CUDA, BF16, SDPA, gradient checkpointing,
   and full-parameter Adafactor. Custom Triton kernels remain deferred until a
   measured bottleneck and forward/backward parity test justify them.
@@ -175,6 +430,7 @@ specific bottleneck and a numerical-parity test exists.
 - `src/latent_workspace_ft_v10/` — portable engine and CUDA/Mistral split adapter.
 - `tests/` — offline tiny-model equivalence and optimizer coverage tests.
 - `configs/v10/` — pinned 19-condition contract and smoke/n3/n10 profiles.
+- `configs/v13/` — non-executable normalization-state design; unresolved run gates remain explicit.
 - `scripts/` — deterministic data remapping, contract preparation, and runners.
 - `data/` — byte-identical v9 inputs, Mistral-safe v10 inputs, and manifests.
 - `docs/` — model and backend decisions.

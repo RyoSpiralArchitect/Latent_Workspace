@@ -1,0 +1,212 @@
+{
+  "format": "latent-workspace-v14-mech-repair-postseal-validation-v1",
+  "recorded_at_utc": "2026-10-08 17:22:17 UTC",
+  "artifact_index_sha256": "0141f2fa5b33119face5e7ca44c3067b79aa67081e497dbf9379c16124713e75",
+  "evidence_commit": "d260019def96cb40b7816176f3eed62b1aba7792",
+  "local_python": "3.13.13",
+  "status": "EXPERIMENT_VERIFIED_WITH_REMOTE_TEST_PORTABILITY_FAILURE",
+  "sealed_experiment_files_changed": false,
+  "local_evidence_verification": {
+    "artifact_hashes_checked": 62,
+    "checkpoint_payload_validation": "receipt_metadata_only",
+    "disjoint_from_train_and_prior_eval_worlds": 320,
+    "format": "latent-workspace-v14-mech-repair-bundle-verification-v1",
+    "fresh_generation_recomputed": true,
+    "fresh_worlds": 64,
+    "legacy_checkpoint_count": 4,
+    "mechanistic": {
+      "manual_delta_max_error": 1.862645149230957e-8,
+      "reverse_pairs": 640,
+      "slot_permutation_exact": true,
+      "trace_rows": 1280,
+      "training_worlds_only": 16
+    },
+    "mechanistic_source_commit": "cfd9218a47c3bf4821b52bf1f550634652ca59ad",
+    "repair": {
+      "fixed_history_intact_twin_prefixes_equal": true,
+      "initial_zero_exact": true,
+      "matched_uniforms_recomputed": true,
+      "new_checkpoint_bytes": 67243476,
+      "new_checkpoint_count": 4,
+      "reader_panel_reverse_pairs": 512,
+      "reader_panel_rows": 1024,
+      "single_rows": 24576,
+      "trajectories": 1792,
+      "turns": 7168,
+      "zero_controls_exact_base": true
+    },
+    "repair_source_commit": "520818b0540579c130050bf7c82c30b82b25feb8",
+    "semantic_promotion": false,
+    "status": "PASS",
+    "summaries_recomputed": true,
+    "winner": "none"
+  },
+  "furnace_evidence_verification": {
+    "artifact_hashes_checked": 62,
+    "checkpoint_payload_validation": "sha256_and_size",
+    "disjoint_from_train_and_prior_eval_worlds": 320,
+    "format": "latent-workspace-v14-mech-repair-bundle-verification-v1",
+    "fresh_generation_recomputed": true,
+    "fresh_worlds": 64,
+    "legacy_checkpoint_count": 4,
+    "mechanistic": {
+      "manual_delta_max_error": 1.862645149230957e-8,
+      "reverse_pairs": 640,
+      "slot_permutation_exact": true,
+      "trace_rows": 1280,
+      "training_worlds_only": 16
+    },
+    "mechanistic_source_commit": "cfd9218a47c3bf4821b52bf1f550634652ca59ad",
+    "repair": {
+      "fixed_history_intact_twin_prefixes_equal": true,
+      "initial_zero_exact": true,
+      "matched_uniforms_recomputed": true,
+      "new_checkpoint_bytes": 67243476,
+      "new_checkpoint_count": 4,
+      "reader_panel_reverse_pairs": 512,
+      "reader_panel_rows": 1024,
+      "single_rows": 24576,
+      "trajectories": 1792,
+      "turns": 7168,
+      "zero_controls_exact_base": true
+    },
+    "repair_source_commit": "520818b0540579c130050bf7c82c30b82b25feb8",
+    "semantic_promotion": false,
+    "status": "PASS",
+    "summaries_recomputed": true,
+    "winner": "none"
+  },
+  "selected_tests": {
+    "files": [
+      "tests/test_v14_mech_repair_bundle.py",
+      "tests/test_run_v14_precision_bridge.py",
+      "tests/test_v14_precision_bridge_eval.py",
+      "tests/test_run_v14_readout_precision.py",
+      "tests/test_run_v14_centered_bridge.py",
+      "tests/test_bridge_mechanistic.py",
+      "tests/test_contrastive_read_bridge.py",
+      "tests/test_bridge_reader_panel.py",
+      "tests/test_prepare_v14_mech_corpus.py",
+      "tests/test_precision_bridge.py"
+    ],
+    "local": {
+      "python": "3.13.13",
+      "torch": "2.11.0",
+      "passed": 75,
+      "failed": 0,
+      "seconds": 3.13
+    },
+    "furnace": {
+      "python": "3.14.4",
+      "torch": "2.13.0+cu132",
+      "device": "cpu",
+      "omp_num_threads": 2,
+      "passed": 74,
+      "failed": 1,
+      "seconds": 2.53,
+      "exit_code": 1,
+      "output": "...................................F.................................... [ 96%]\n...                                                                      [100%]\n=================================== FAILURES ===================================\n____ test_collapsed_memory_removes_query_dependence_and_centered_value_path ____\n\n    def test_collapsed_memory_removes_query_dependence_and_centered_value_path():\n        bridge, query, memory, mask = _fixture()\n        memory = memory[:, :1].expand(-1, 4, -1).clone()\n        trace = trace_reader(bridge, query, memory, mask)\n        donor = trace_reader(bridge, -query, memory, mask)\n        for mode in (\"query_zero\", \"query_swap\", \"uniform_attention\", \"alternate_query_attention\"):\n            torch.testing.assert_close(\n                intervention_delta(bridge, trace, mode, donor), trace[\"delta\"], atol=1e-7, rtol=1e-5\n            )\n        centered = intervention_delta(bridge, trace, \"centered_values\")\n>       assert torch.count_nonzero(centered) == 0\nE       assert tensor(12) == 0\nE        +  where tensor(12) = <built-in method count_nonzero of type object at 0x7fb327fabe00>(tensor([[[ 0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00,\\n           0.0000e+00,  0.0000e+00,  0.0000...e-09,\\n           3.6483e-09, -7.8131e-09,  1.1308e-09,  2.0487e-10, -3.3290e-09,\\n           3.4279e-09, -1.8890e-09]]]))\nE        +    where <built-in method count_nonzero of type object at 0x7fb327fabe00> = torch.count_nonzero\n\ntests/test_bridge_mechanistic.py:61: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_bridge_mechanistic.py::test_collapsed_memory_removes_query_dependence_and_centered_value_path\n1 failed, 74 passed in 2.53s\n"
+    }
+  },
+  "summary_rebuild_check": "PASS",
+  "new_source_lint": "PASS",
+  "postseal_artifacts": [
+    {
+      "path": "scripts/diagnose_v14_mech_roundoff.py",
+      "sha256": "b6a49dfe357d418365565ca75a0e21281c773241f6eda1c9d845127bd52cad8f",
+      "bytes": 5943
+    },
+    {
+      "path": "provenance/pilots/v14_mech_repair_20261009/NUMERICAL_ADDENDUM.md",
+      "sha256": "11271f3129ae1504d429e1034ffc3cb3e88142dff6fbc0b49579617bbebbc678",
+      "bytes": 2772
+    },
+    {
+      "path": "provenance/pilots/v14_mech_repair_20261009/roundoff_furnace.json",
+      "sha256": "1714dc595fe5d8aa8e92ff6b395a6085ddf5110dd173c48883c188d7e899ef91",
+      "bytes": 1491
+    },
+    {
+      "path": "provenance/pilots/v14_mech_repair_20261009/roundoff_local.json",
+      "sha256": "282756631698dc6ebaaa25d9373bcc7812ce05f1d708bd15cb7aeee16483cda7",
+      "bytes": 1386
+    }
+  ],
+  "roundoff_diagnostic": {
+    "local": {
+      "format": "v14-collapsed-slot-projection-roundoff-diagnostic-v1",
+      "torch_version": "2.11.0",
+      "device": "cpu",
+      "float32_matmul_precision": "highest",
+      "cpu_threads": 2,
+      "fixture_sha256": "a12c6062768218b10da6cf73dae277783555e79a34eb525ddd7daecd89ba76e5",
+      "checks": {
+        "input_slots_exact": true,
+        "normalized_slots_exact": true,
+        "fp64_projection_slots_exact": true,
+        "projection_error_within_analytic_bound": true,
+        "centered_values_within_analytic_bound": true,
+        "bounded_delta_within_propagated_bound": true,
+        "finite": true
+      },
+      "status": "PASS",
+      "input_slot_max_difference": 0,
+      "normalized_slot_max_difference": 0,
+      "projected_fp32_slot_max_difference": 0,
+      "projected_fp64_slot_max_difference": 0,
+      "projection_error_max": 8.047155197754563e-8,
+      "projection_analytic_bound_max": 0.000001015207513076023,
+      "unit_roundoff_fp32": 5.960464477539063e-8,
+      "projection_dot_dimension": 8,
+      "projection_gamma_dim": 4.768373855769089e-7,
+      "fp32_mean_vs_same_values_fp64_mean_max": 0,
+      "centered_fp32_max_abs": 0,
+      "same_values_centered_fp64_max_abs": 0,
+      "centered_delta_max_abs": 0,
+      "propagated_delta_analytic_bound_max": 0.000003900163117335073,
+      "exact_zero_assertion_holds_on_this_runtime": true,
+      "formal_tolerances_changed": false,
+      "claim_boundary": "Toy CPU arithmetic diagnosis only; sealed test result remains unchanged."
+    },
+    "furnace": {
+      "format": "v14-collapsed-slot-projection-roundoff-diagnostic-v1",
+      "torch_version": "2.13.0+cu132",
+      "device": "cpu",
+      "float32_matmul_precision": "highest",
+      "cpu_threads": 2,
+      "fixture_sha256": "a12c6062768218b10da6cf73dae277783555e79a34eb525ddd7daecd89ba76e5",
+      "checks": {
+        "input_slots_exact": true,
+        "normalized_slots_exact": true,
+        "fp64_projection_slots_exact": true,
+        "projection_error_within_analytic_bound": true,
+        "centered_values_within_analytic_bound": true,
+        "bounded_delta_within_propagated_bound": true,
+        "finite": true
+      },
+      "status": "PASS",
+      "input_slot_max_difference": 0,
+      "normalized_slot_max_difference": 0,
+      "projected_fp32_slot_max_difference": 5.960464477539063e-8,
+      "projected_fp64_slot_max_difference": 0,
+      "projection_error_max": 7.455305772730014e-8,
+      "projection_analytic_bound_max": 0.0000010152076602873929,
+      "unit_roundoff_fp32": 5.960464477539063e-8,
+      "projection_dot_dimension": 8,
+      "projection_gamma_dim": 4.768373855769089e-7,
+      "fp32_mean_vs_same_values_fp64_mean_max": 2.9802322387695312e-8,
+      "centered_fp32_max_abs": 5.960464477539063e-8,
+      "same_values_centered_fp64_max_abs": 2.9802322387695312e-8,
+      "centered_delta_max_abs": 9.776966791719133e-9,
+      "propagated_delta_analytic_bound_max": 0.000003900162984746306,
+      "exact_zero_assertion_holds_on_this_runtime": false,
+      "formal_tolerances_changed": false,
+      "claim_boundary": "Toy CPU arithmetic diagnosis only; sealed test result remains unchanged."
+    }
+  },
+  "pending": "Portable revision of two exact-zero assertions in the sealed CPU diagnostic fixture; no skip or xfail applied.",
+  "winner": "none",
+  "semantic_promotion": false,
+  "ci_verified": false,
+  "merged": false
+}

@@ -1,0 +1,51 @@
+{
+  "format": "v15.5-native-answer-engineering-pilot-v1",
+  "parent_plan": "configs/v14/PRECISION_BRIDGE_PLAN.json",
+  "judge_summary": {
+    "path": "provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010/analysis/SUMMARY.json",
+    "sha256": "5277c719a270f1fb79ca8688cfb924966161123e53405fac9d88d389f5b4b57d",
+    "use": "failure-mode motivation only; no judge text or labels become training targets"
+  },
+  "arms": [{"id": "native_answer", "eos_weight": 0.0}, {"id": "native_answer_eos", "eos_weight": 1.0}],
+  "reader": "final",
+  "renderer": "native_chat",
+  "cue": "present",
+  "information": "query_only_with_authoritative_workspace",
+  "world_indices": [0, 1],
+  "query_indices": [0, 1, 2, 3, 4, 5, 6, 7],
+  "world_status": "previously exposed training worlds; no heldout qualification",
+  "context_order": "fixed canonical literal-fact order; reverse is evaluation only",
+  "training": {
+    "steps": 8,
+    "seed": 47,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.01,
+    "max_grad_norm": 1.0,
+    "donor_margin": 0.25,
+    "direction_weight": 0.25,
+    "stability_weight": 0.25,
+    "unrelated_weight": 0.25,
+    "residual_penalty": 0.001,
+    "pair_order": "world-major, all 16 pairs each update; sequential gradient accumulation",
+    "reductions": "answer and EOS mean over 32 side rows; donor over 4 affected pairs; stability over 12 unaffected; unrelated over 16; residual over 48 answer/control residuals",
+    "answer_ce_coefficient": 1.0,
+    "target_authority": "independently verified context-graph oracle; exact lowercase one-token suffix",
+    "backbone_update": false
+  },
+  "evaluation_steps": [0, 1, 8],
+  "checkpoint_steps": [4, 8],
+  "controls": ["intact", "twin", "reverse_intact", "reverse_twin", "zero", "unrelated"],
+  "generation": {
+    "steps": [0, 8],
+    "world_indices": [0, 1],
+    "query_indices": [0, 1],
+    "conditions": ["base", "base_inline", "workspace", "twin", "zero"],
+    "regime": {"id": "greedy", "seed": 15503, "temperature": 0.0},
+    "max_new_tokens": 16,
+    "eos_token_id": 2,
+    "scorer": "entire stripped case-folded no/yes and observed EOS; no first-word rescue"
+  },
+  "resources": {"admission_free_gib": 20, "allocator_cap_gib": 18, "abort_free_gib": 4, "cpu_threads": 2},
+  "old_expression_gate": "FAIL",
+  "claim_boundary": "Engineering finite-update pilot only; no qualified instrument, reader winner, semantic promotion, independent correctness floor or FT-beta release claim. No automatic extension beyond 8 updates."
+}

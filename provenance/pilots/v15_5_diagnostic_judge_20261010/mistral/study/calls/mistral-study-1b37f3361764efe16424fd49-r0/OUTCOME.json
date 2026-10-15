@@ -1,0 +1,118 @@
+{
+  "elapsed_seconds": 51.90148895799939,
+  "ended_at": "2026-10-09T20:41:16.074458+00:00",
+  "observation": {
+    "api_finish": "stop",
+    "judgment": {
+      "added_facts": "unsupported",
+      "assessment_en": "The response commits to 'no', correctly answering the question given the visible fact that Eris is ranked above Ione. However, the text then introduces an unsupported ranking involving Jupiter, Ganymede, and Europa based on moon counts, which are not in the visible facts. This constitutes faulty reasoning relying on unsupported premises rather than the available facts. The added factual assertions about these celestial bodies are unsupported. No internal contradictions are present in the visible text.",
+      "commitment": "no",
+      "contradiction": "absent",
+      "evidence": {
+        "added_facts": [
+          "Jupiter is ranked above Ganymede",
+          "Ganymede is ranked above Europa",
+          "The following ranking is based on the number of moons"
+        ],
+        "commitment": [
+          "Answer: no"
+        ],
+        "contradiction": [],
+        "reasoning": [
+          "The following ranking is based on the number of moons",
+          "Jupiter is ranked above Ganymede",
+          "Ganymede is ranked above Europa"
+        ]
+      },
+      "reasoning": "faulty"
+    },
+    "response_id": "6b5b432e83b44091a7b291339f567699",
+    "response_model": "mistral-large-4",
+    "status": "valid_diagnosis",
+    "verified_evidence": {
+      "added_facts": [
+        {
+          "codepoint_spans": [
+            [
+              107,
+              139
+            ]
+          ],
+          "quote": "Jupiter is ranked above Ganymede"
+        },
+        {
+          "codepoint_spans": [
+            [
+              143,
+              174
+            ]
+          ],
+          "quote": "Ganymede is ranked above Europa"
+        },
+        {
+          "codepoint_spans": [
+            [
+              22,
+              75
+            ]
+          ],
+          "quote": "The following ranking is based on the number of moons"
+        }
+      ],
+      "commitment": [
+        {
+          "codepoint_spans": [
+            [
+              2,
+              12
+            ]
+          ],
+          "quote": "Answer: no"
+        }
+      ],
+      "contradiction": [],
+      "reasoning": [
+        {
+          "codepoint_spans": [
+            [
+              22,
+              75
+            ]
+          ],
+          "quote": "The following ranking is based on the number of moons"
+        },
+        {
+          "codepoint_spans": [
+            [
+              107,
+              139
+            ]
+          ],
+          "quote": "Jupiter is ranked above Ganymede"
+        },
+        {
+          "codepoint_spans": [
+            [
+              143,
+              174
+            ]
+          ],
+          "quote": "Ganymede is ranked above Europa"
+        }
+      ]
+    }
+  },
+  "request_id": "mistral-study-1b37f3361764efe16424fd49-r0",
+  "response_sha256": "35a3b931bcaea2a82e397fc398bbad40ed6ba48d0be47423db5484bd63ad69ad",
+  "started_at": "2026-10-09T20:40:24.172488+00:00",
+  "status": "response_recorded",
+  "usage_receipt": {
+    "actual_billed_cost_usd": null,
+    "bound_exceeded": false,
+    "input_tokens": 1105,
+    "output_tokens": 3977,
+    "status": "REPORTED_BY_API",
+    "total_tokens": 5082,
+    "usage_based_undiscounted_cost_usd": "0.01812666"
+  }
+}

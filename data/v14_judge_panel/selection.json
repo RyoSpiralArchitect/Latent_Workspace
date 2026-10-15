@@ -1,0 +1,834 @@
+{
+  "cases": [
+    {
+      "id": "general-01-summary",
+      "lane": "general",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "example_answer": "A warehouse shipped 40 parcels on Monday, and six arrived one day late. Tracking was unavailable for two hours, but the cause of the delay is unknown.",
+        "original": {
+          "required": [
+            "40 parcels shipped Monday",
+            "six one-day-late deliveries",
+            "two-hour tracking outage",
+            "unknown cause"
+          ]
+        },
+        "twin": {
+          "gold_unchanged": true,
+          "memory_only_change": "tracking outage changes from two to four hours"
+        },
+        "visible_facts": [
+          "40 parcels",
+          "Monday",
+          "Six arrived one day late",
+          "two hours",
+          "cause of the delay is unknown"
+        ]
+      },
+      "rubric": [
+        "Exactly two sentences, at most 55 words.",
+        "Preserve the quantities, timing, and uncertainty in the visible facts.",
+        "Do not imply the tracking outage caused the late deliveries.",
+        "Visible facts take priority over conflicting twin memory; longer wording is not inherently better."
+      ],
+      "user_prompt": "Summarize this fictional incident in exactly two sentences, at most 55 words total. Facts: A warehouse shipped 40 parcels on Monday. Six arrived one day late. Tracking was unavailable for two hours. The cause of the delay is unknown. Do not invent a cause."
+    },
+    {
+      "id": "general-02-json",
+      "lane": "general",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "example_answer": "{\"name\":\"朝凪\",\"people\":3,\"room\":\"会議室B\"}",
+        "original": {
+          "object": {
+            "name": "朝凪",
+            "people": 3,
+            "room": "会議室B"
+          }
+        },
+        "twin": {
+          "gold_unchanged": true,
+          "memory_only_change": "people changes from 3 to 5"
+        },
+        "visible_facts": [
+          "予約名は「朝凪」",
+          "人数は3人",
+          "場所は「会議室B」"
+        ]
+      },
+      "rubric": [
+        "有効なJSONオブジェクト1個だけを返す。キー順や空白は問わない。",
+        "指定の3キーのみを含め、人数は数値3とする。",
+        "説明やMarkdownを加えず、見えている予約情報を正確に抽出する。"
+      ],
+      "user_prompt": "次の架空の予約情報をJSONオブジェクト1個だけで返してください。予約名は「朝凪」、人数は3人、場所は「会議室B」です。キーはname、people、roomの3個だけ、peopleは整数にし、説明やコードフェンスは付けないでください。"
+    },
+    {
+      "id": "general-03-arithmetic",
+      "lane": "general",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "example_answer": "Total cost: 7 × 5 + 3 × 2 = 41 credits. Credits left: 48 − 41 = 7.",
+        "original": {
+          "calculation": "7*5 + 3*2 = 41; 48 - 41 = 7",
+          "credits_left": 7,
+          "total_cost": 41
+        },
+        "twin": {
+          "gold_unchanged": true,
+          "memory_only_change": "notebook price changes from 5 to 4"
+        },
+        "visible_facts": [
+          "48 credits",
+          "notebook costs 5 credits",
+          "pen costs 2 credits",
+          "7 notebooks and 3 pens",
+          "no tax or discounts"
+        ]
+      },
+      "rubric": [
+        "Both 41 credits spent and 7 credits left must be correct.",
+        "The calculation must use the visible prices and quantities.",
+        "Use at most 35 words; extra verbosity is not a benefit."
+      ],
+      "user_prompt": "In a fictional shop, I have 48 credits. A notebook costs 5 credits and a pen costs 2 credits, with no tax or discounts. I buy 7 notebooks and 3 pens. State the total cost and credits left, with one short calculation. Use at most 35 words."
+    },
+    {
+      "id": "general-04-code",
+      "lane": "general",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "example_answer": "```python\ndef first_positive(xs): return next((x for x in xs if x > 0), None)\nassert first_positive([-2, 0, 3]) == 3\nassert first_positive([-1, 0]) is None\n```",
+        "original": {
+          "predicate": "x > 0",
+          "test_results": [
+            3,
+            null
+          ]
+        },
+        "twin": {
+          "gold_unchanged": true,
+          "memory_only_change": "strictly positive changes to nonnegative"
+        },
+        "visible_facts": [
+          "strictly greater than zero",
+          "None if none exists",
+          "[-2, 0, 3]",
+          "[-1, 0]"
+        ]
+      },
+      "rubric": [
+        "Return the first positive element, not zero or the maximum element.",
+        "Handle the no-positive case by returning None.",
+        "Both requested test inputs and correct assertions must appear.",
+        "One code block, at most four code lines; do not reward explanatory text forbidden by the prompt."
+      ],
+      "user_prompt": "Python task: first_positive(xs) must return the first element strictly greater than zero, or None if none exists. The buggy body is `return next((x for x in xs if x >= 0), None)`. Return a corrected one-line function and two assert tests for [-2, 0, 3] and [-1, 0]. One code block only, at most 4 lines of code."
+    },
+    {
+      "id": "general-05-causal",
+      "lane": "general",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "example_answer": "No. The decline is consistent with improvement, but changed logging and no control group prevent a causal conclusion. Run a small randomized comparison of checklist versus no checklist using the same error definitions and logging procedure.",
+        "original": {
+          "acceptable_test": "Compare checklist and no-checklist groups under the same logging procedure, preferably randomized.",
+          "causal_proof": false,
+          "needed_caution": "The changed measurement process and absent control prevent attributing the decline to the checklist."
+        },
+        "twin": {
+          "gold_unchanged": true,
+          "memory_only_change": "recorded errors rose to 12 rather than fell to 6"
+        },
+        "visible_facts": [
+          "errors fell from 9 to 6 per week",
+          "error-logging procedure also changed",
+          "no control group"
+        ]
+      },
+      "rubric": [
+        "Say the observations do not prove the checklist caused improvement.",
+        "Identify the logging change as a measurement confound; do not assert it definitely explains the decline.",
+        "Propose one concrete comparison with consistent logging, not simply collecting more of the same uncontrolled data.",
+        "Stay within 60 words and avoid unprovided statistical significance claims."
+      ],
+      "user_prompt": "Fictional observations: a team introduced a new checklist, and recorded errors fell from 9 to 6 per week. In the same week, the error-logging procedure also changed. There was no control group. Does this prove the checklist helped? Give a cautious conclusion and one small follow-up test, in at most 60 words."
+    },
+    {
+      "id": "general-06-planning",
+      "lane": "general",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "example_answer": "バックアップ0〜15分、更新15〜35分、動作確認35〜45分。終了は45分、残り15分です。",
+        "original": {
+          "intervals_minutes": [
+            [
+              "バックアップ",
+              0,
+              15
+            ],
+            [
+              "更新",
+              15,
+              35
+            ],
+            [
+              "動作確認",
+              35,
+              45
+            ]
+          ],
+          "spare_minutes": 15
+        },
+        "twin": {
+          "gold_unchanged": true,
+          "memory_only_change": "verification duration changes from 10 to 20 minutes"
+        },
+        "visible_facts": [
+          "作業枠は60分",
+          "バックアップ15分",
+          "更新20分",
+          "動作確認10分",
+          "並行作業はできません"
+        ]
+      },
+      "rubric": [
+        "指定された順序を守り、作業を重ねない。",
+        "3区間の開始・終了時刻と残り15分を正しく示す。",
+        "100文字以内。根拠のない追加作業や余分な所要時間を作らない。"
+      ],
+      "user_prompt": "架空の保守作業です。作業枠は60分。バックアップ15分→更新20分→動作確認10分の順で行い、並行作業はできません。開始を0分として各作業の時間帯と残り時間を、日本語100文字以内で示してください。"
+    },
+    {
+      "id": "general-07-creative",
+      "lane": "general",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "example_answer": "A moth found the village beacon dimmed by a leaf and nudged it clear. As the light returned, a lost child saw the path home.",
+        "original": {
+          "canonical_story": null,
+          "ending": "hopeful",
+          "max_words": 40,
+          "required_words": [
+            "beacon",
+            "moth"
+          ],
+          "sentences": 2
+        },
+        "twin": {
+          "gold_unchanged": true,
+          "memory_only_change": "ending changes from hopeful to hopeless"
+        },
+        "visible_facts": [
+          "exactly two sentences",
+          "at most 40 words",
+          "'beacon' and 'moth'",
+          "without violence",
+          "hopeful note"
+        ]
+      },
+      "rubric": [
+        "Respect the exact sentence count, word bound, required words, nonviolence, and hopeful ending.",
+        "The moth must perform a coherent action that solves a small problem; mere mention is insufficient.",
+        "Judge clarity and an internally coherent image; do not prefer ornate style or longer text by default.",
+        "Fictional invention is expected, so do not score it as factual hallucination or compare it to a single canonical story."
+      ],
+      "user_prompt": "Write a fictional micro-story in exactly two sentences, at most 40 words total. Include the words 'beacon' and 'moth'. The moth must solve a small problem without violence. End on a hopeful note. Return only the story."
+    },
+    {
+      "id": "general-08-clarification",
+      "lane": "general",
+      "reference": {
+        "authority": "visible_user_prompt",
+        "example_answer": "資料の目的と想定読者は誰ですか？ 明日の何時までに完成させればよいですか？",
+        "original": {
+          "question_count": 2,
+          "unknowns": [
+            "purpose",
+            "audience",
+            "deadline time"
+          ]
+        },
+        "twin": {
+          "gold_unchanged": true,
+          "memory_only_change": "deadline is invented as tomorrow at 17:00"
+        },
+        "visible_facts": [
+          "明日までに資料を仕上げて",
+          "資料の目的・読者・締切時刻は不明",
+          "確認質問を2つ"
+        ]
+      },
+      "rubric": [
+        "目的・読者と具体的な締切時刻を、2つの質問で確認する。",
+        "特定の読者や17時などの締切を確定事項として作らない。",
+        "80文字以内。依頼を拒否したり、不明な条件を埋めた計画を先に出したりしない。"
+      ],
+      "user_prompt": "同僚から「明日までに資料を仕上げて」とだけ依頼されました。資料の目的・読者・締切時刻は不明です。着手前の確認質問を2つ、日本語80文字以内で書いてください。条件を勝手に決めないでください。"
+    },
+    {
+      "id": "relation-01-forward",
+      "lane": "relation",
+      "reference": {
+        "authority": "selected_memory_world",
+        "original": {
+          "answer": "yes",
+          "order": [
+            "Alvenor",
+            "Belmira",
+            "Cendrel",
+            "Dovarin",
+            "Eshmere"
+          ]
+        },
+        "query": [
+          "Belmira",
+          "Cendrel"
+        ],
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world.",
+        "twin": {
+          "answer": "no",
+          "order": [
+            "Alvenor",
+            "Cendrel",
+            "Belmira",
+            "Dovarin",
+            "Eshmere"
+          ]
+        },
+        "world_id": "handcrafted-rank-01"
+      },
+      "rubric": [
+        "Use the selected world's ordering, not name familiarity.",
+        "The original answer is yes and the twin answer is no; the reason must agree with that answer.",
+        "Do not treat query-only base and fact-bearing models as equal-information accuracy controls.",
+        "A concise, fact-grounded answer is preferred to fluent invented detail."
+      ],
+      "user_prompt": "Is Belmira ranked above Cendrel? Answer yes or no, then give one short reason. Use at most 30 words."
+    },
+    {
+      "id": "relation-01-reverse",
+      "lane": "relation",
+      "reference": {
+        "authority": "selected_memory_world",
+        "original": {
+          "answer": "no",
+          "order": [
+            "Alvenor",
+            "Belmira",
+            "Cendrel",
+            "Dovarin",
+            "Eshmere"
+          ]
+        },
+        "query": [
+          "Cendrel",
+          "Belmira"
+        ],
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world.",
+        "twin": {
+          "answer": "yes",
+          "order": [
+            "Alvenor",
+            "Cendrel",
+            "Belmira",
+            "Dovarin",
+            "Eshmere"
+          ]
+        },
+        "world_id": "handcrafted-rank-01"
+      },
+      "rubric": [
+        "Use the selected world's ordering, not name familiarity.",
+        "The original answer is no and the twin answer is yes; the reason must agree with that answer.",
+        "Check consistency with the forward question without counting the pair as two independent worlds.",
+        "Do not treat query-only base and fact-bearing models as equal-information accuracy controls."
+      ],
+      "user_prompt": "Is Cendrel ranked above Belmira? Answer yes or no, then give one short reason. Use at most 30 words."
+    },
+    {
+      "id": "relation-02-forward",
+      "lane": "relation",
+      "reference": {
+        "authority": "selected_memory_world",
+        "original": {
+          "answer": "yes",
+          "order": [
+            "Falnora",
+            "Gethril",
+            "Hespern",
+            "Ildara",
+            "Jomriel"
+          ]
+        },
+        "query": [
+          "Hespern",
+          "Ildara"
+        ],
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world.",
+        "twin": {
+          "answer": "no",
+          "order": [
+            "Falnora",
+            "Gethril",
+            "Ildara",
+            "Hespern",
+            "Jomriel"
+          ]
+        },
+        "world_id": "handcrafted-rank-02"
+      },
+      "rubric": [
+        "Use the selected world's ordering, not name familiarity.",
+        "The original answer is yes and the twin answer is no; the reason must agree with that answer.",
+        "Do not treat query-only base and fact-bearing models as equal-information accuracy controls.",
+        "A concise, fact-grounded answer is preferred to fluent invented detail."
+      ],
+      "user_prompt": "Is Hespern ranked above Ildara? Answer yes or no, then give one short reason. Use at most 30 words."
+    },
+    {
+      "id": "relation-02-reverse",
+      "lane": "relation",
+      "reference": {
+        "authority": "selected_memory_world",
+        "original": {
+          "answer": "no",
+          "order": [
+            "Falnora",
+            "Gethril",
+            "Hespern",
+            "Ildara",
+            "Jomriel"
+          ]
+        },
+        "query": [
+          "Ildara",
+          "Hespern"
+        ],
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world.",
+        "twin": {
+          "answer": "yes",
+          "order": [
+            "Falnora",
+            "Gethril",
+            "Ildara",
+            "Hespern",
+            "Jomriel"
+          ]
+        },
+        "world_id": "handcrafted-rank-02"
+      },
+      "rubric": [
+        "Use the selected world's ordering, not name familiarity.",
+        "The original answer is no and the twin answer is yes; the reason must agree with that answer.",
+        "Check consistency with the forward question without counting the pair as two independent worlds.",
+        "Do not treat query-only base and fact-bearing models as equal-information accuracy controls."
+      ],
+      "user_prompt": "Is Ildara ranked above Hespern? Answer yes or no, then give one short reason. Use at most 30 words."
+    },
+    {
+      "id": "relation-03-forward",
+      "lane": "relation",
+      "reference": {
+        "authority": "selected_memory_world",
+        "original": {
+          "answer": "yes",
+          "order": [
+            "Kelmorin",
+            "Lysvara",
+            "Morveth",
+            "Nesril",
+            "Othena"
+          ]
+        },
+        "query": [
+          "Kelmorin",
+          "Lysvara"
+        ],
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world.",
+        "twin": {
+          "answer": "no",
+          "order": [
+            "Lysvara",
+            "Kelmorin",
+            "Morveth",
+            "Nesril",
+            "Othena"
+          ]
+        },
+        "world_id": "handcrafted-rank-03"
+      },
+      "rubric": [
+        "Use the selected world's ordering, not name familiarity.",
+        "The original answer is yes and the twin answer is no; the reason must agree with that answer.",
+        "Do not treat query-only base and fact-bearing models as equal-information accuracy controls.",
+        "A concise, fact-grounded answer is preferred to fluent invented detail."
+      ],
+      "user_prompt": "Is Kelmorin ranked above Lysvara? Answer yes or no, then give one short reason. Use at most 30 words."
+    },
+    {
+      "id": "relation-03-reverse",
+      "lane": "relation",
+      "reference": {
+        "authority": "selected_memory_world",
+        "original": {
+          "answer": "no",
+          "order": [
+            "Kelmorin",
+            "Lysvara",
+            "Morveth",
+            "Nesril",
+            "Othena"
+          ]
+        },
+        "query": [
+          "Lysvara",
+          "Kelmorin"
+        ],
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world.",
+        "twin": {
+          "answer": "yes",
+          "order": [
+            "Lysvara",
+            "Kelmorin",
+            "Morveth",
+            "Nesril",
+            "Othena"
+          ]
+        },
+        "world_id": "handcrafted-rank-03"
+      },
+      "rubric": [
+        "Use the selected world's ordering, not name familiarity.",
+        "The original answer is no and the twin answer is yes; the reason must agree with that answer.",
+        "Check consistency with the forward question without counting the pair as two independent worlds.",
+        "Do not treat query-only base and fact-bearing models as equal-information accuracy controls."
+      ],
+      "user_prompt": "Is Lysvara ranked above Kelmorin? Answer yes or no, then give one short reason. Use at most 30 words."
+    },
+    {
+      "id": "relation-04-forward",
+      "lane": "relation",
+      "reference": {
+        "authority": "selected_memory_world",
+        "original": {
+          "answer": "yes",
+          "order": [
+            "Peldrin",
+            "Quenora",
+            "Ralthis",
+            "Selvara",
+            "Torvyn"
+          ]
+        },
+        "query": [
+          "Selvara",
+          "Torvyn"
+        ],
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world.",
+        "twin": {
+          "answer": "no",
+          "order": [
+            "Peldrin",
+            "Quenora",
+            "Ralthis",
+            "Torvyn",
+            "Selvara"
+          ]
+        },
+        "world_id": "handcrafted-rank-04"
+      },
+      "rubric": [
+        "Use the selected world's ordering, not name familiarity.",
+        "The original answer is yes and the twin answer is no; the reason must agree with that answer.",
+        "Do not treat query-only base and fact-bearing models as equal-information accuracy controls.",
+        "A concise, fact-grounded answer is preferred to fluent invented detail."
+      ],
+      "user_prompt": "Is Selvara ranked above Torvyn? Answer yes or no, then give one short reason. Use at most 30 words."
+    },
+    {
+      "id": "relation-04-reverse",
+      "lane": "relation",
+      "reference": {
+        "authority": "selected_memory_world",
+        "original": {
+          "answer": "no",
+          "order": [
+            "Peldrin",
+            "Quenora",
+            "Ralthis",
+            "Selvara",
+            "Torvyn"
+          ]
+        },
+        "query": [
+          "Torvyn",
+          "Selvara"
+        ],
+        "query_only_base": "No world facts are supplied. Explicit uncertainty is appropriate; a confident correct guess is not evidence of access to the world.",
+        "twin": {
+          "answer": "yes",
+          "order": [
+            "Peldrin",
+            "Quenora",
+            "Ralthis",
+            "Torvyn",
+            "Selvara"
+          ]
+        },
+        "world_id": "handcrafted-rank-04"
+      },
+      "rubric": [
+        "Use the selected world's ordering, not name familiarity.",
+        "The original answer is no and the twin answer is yes; the reason must agree with that answer.",
+        "Check consistency with the forward question without counting the pair as two independent worlds.",
+        "Do not treat query-only base and fact-bearing models as equal-information accuracy controls."
+      ],
+      "user_prompt": "Is Torvyn ranked above Selvara? Answer yes or no, then give one short reason. Use at most 30 words."
+    }
+  ],
+  "claim_boundary": [
+    "Selection is conditioned on observed text change, not a representative quality sample.",
+    "Ten changed pairs are seven case prompts and six world/task clusters, not ten independent problems.",
+    "Four identical controls calibrate judges and are not examples of workspace quality improvement.",
+    "Repeated orders and judge models assess judgment variability; majority agreement is not gold.",
+    "This reuses existing development responses; it is neither new model generation nor a fresh holdout.",
+    "No prior model verdict, score, human label, API credential or new inference is used in selection."
+  ],
+  "counts": {
+    "calibration_pairs": 4,
+    "calibration_unique_cases": 4,
+    "changed_pairs": 10,
+    "changed_pairs_by_comparison": {
+      "centered_semantic": 0,
+      "legacy_semantic": 10
+    },
+    "changed_pairs_by_lane": {
+      "general": 5,
+      "relation": 5
+    },
+    "changed_unique_cases": 7,
+    "changed_world_task_clusters": 6,
+    "selected_pairs": 14,
+    "selected_unique_cases": 11,
+    "selected_world_task_clusters": 9,
+    "source_answers": 336,
+    "source_cases": 16,
+    "source_primary_pairs": 96
+  },
+  "format": "latent-workspace-v14-judge-panel-selection-v1",
+  "pairs": [
+    {
+      "base_answer": "On Monday, a warehouse shipped 40 parcels, six arrived one day late during a two-hour tracking blackout; the cause of the delay remains unknown.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "general-01-summary",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "lane": "general",
+      "pair_id": "8fccf16891940b824bd3",
+      "regime": "greedy",
+      "workspace_answer": "On Monday, a warehouse shipped 40 parcels, six arrived one day late during a two-hour tracking blackout; the cause of the delay remains undetermined.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "```\n\n{\n  \"name\": \"朝凪\",\n  \"people\": 3,\n  \"room\": \"会議室B\"\n}\n\n```",
+      "base_finish_reason": "eos",
+      "calibration_only": true,
+      "case_id": "general-02-json",
+      "comparison": "centered_semantic",
+      "exact_identical": true,
+      "lane": "general",
+      "pair_id": "ac68e2cfdb9d77c996e3",
+      "regime": "greedy",
+      "workspace_answer": "```\n\n{\n  \"name\": \"朝凪\",\n  \"people\": 3,\n  \"room\": \"会議室B\"\n}\n\n```",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "Here's the corrected one-line function using a list comprehension and the `next()` function:\n\n```python\nreturn next((x for x in xs if x > 0), None)\n```\n\nAnd the two assert tests for the given examples:\n\n```python\nassert first_positive([-2, 0, 3]) == 3\nassert first_positive([-1, 0]) is None\n```\n\nThis corrected function uses the `>` operator instead of `>=` to find the first element strictly greater than zero.",
+      "base_finish_reason": "length",
+      "calibration_only": true,
+      "case_id": "general-04-code",
+      "comparison": "centered_semantic",
+      "exact_identical": true,
+      "lane": "general",
+      "pair_id": "b81a187970ef43b61a71",
+      "regime": "greedy",
+      "workspace_answer": "Here's the corrected one-line function using a list comprehension and the `next()` function:\n\n```python\nreturn next((x for x in xs if x > 0), None)\n```\n\nAnd the two assert tests for the given examples:\n\n```python\nassert first_positive([-2, 0, 3]) == 3\nassert first_positive([-1, 0]) is None\n```\n\nThis corrected function uses the `>` operator instead of `>=` to find the first element strictly greater than zero.",
+      "workspace_finish_reason": "length"
+    },
+    {
+      "base_answer": "While the checklist's introduction seems to correlate with a decrease in errors, it's crucial to note that the error-logging procedure also changed simultaneously. A more cautious conclusion would be: \"The implementation of the new checklist may have contributed to the observed reduction in errors, but the concurrent change in error-logging procedure could also be a factor. A follow-up test could involve maintaining the same error-logging procedure while temporarily suspending the use of the checklist to further assess its effectiveness.\"",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "general-05-causal",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "lane": "general",
+      "pair_id": "5e78466d882107046c19",
+      "regime": "greedy",
+      "workspace_answer": "While the checklist's introduction seems to correlate with a decrease in errors, it's crucial to note that the error-logging procedure also changed simultaneously. A more cautious conclusion would be: \"The implementation of the new checklist may have contributed to the observed reduction in errors, but the concurrent change in error-logging procedure could also be a factor. A follow-up test could involve maintaining the same error-logging procedure while introducing the checklist in a separate, controlled group to further assess its effectiveness.\"",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "The reduction in errors could be attributable to the checklist, but it's also possible that the error-logging procedure change had an impact. A cautious conclusion would be: \"The implementation of the new checklist may have contributed to the decrease in errors, however, the simultaneous change in error-logging procedure may have also played a role. To further confirm the effect of the checklist, a follow-up test could compare error rates before and after the checklist introduction in a consistent error-logging environment.\"",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "general-05-causal",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "lane": "general",
+      "pair_id": "da8cdd651c14ade06f1f",
+      "regime": "sample211",
+      "workspace_answer": "Cautious conclusion: The reduction in errors might be linked to the introduction of the checklist, but the concurrent change in error-logging procedure makes it difficult to definitively attribute the improvement to the checklist alone.\n\nFollow-up test: Implement the checklist in a separate, identical team without changing the error-logging procedure, to assess its effectiveness independently.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "1. 資料の目的は何ですか？\n\n2. 資料の読者は誰ですか？\n\n3. 締切時刻は何時ですか？\n\n4. 資料の形式は何ですか？ (例：PowerPoint、Word、PDF)\n\n5. 資料に含めるべき情報は何ですか？\n\n6. 資料に含めるべきイメージや図表は何ですか？\n\n",
+      "base_finish_reason": "length",
+      "calibration_only": false,
+      "case_id": "general-08-clarification",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "lane": "general",
+      "pair_id": "20eab673d93c4a3dea88",
+      "regime": "greedy",
+      "workspace_answer": "1. 資料の目的は何ですか？\n\n2. 資料の読者は誰ですか？\n\n3. 締切時刻は何時ですか？\n\n4. 資料の形式は何ですか？ (例：PowerPoint、Word、PDF)\n\n5. 資料に含めるべき情報は何ですか？\n\n6. 資料には何のようなデザインや表示方法が望まれますか",
+      "workspace_finish_reason": "length"
+    },
+    {
+      "base_answer": "1. 資料の目的は、依頼者の意図に沿って明確に記述してください。\n\n2. 読者について、目的に適した範囲を考慮した文章を作成してください。\n\n3. 締切時刻は、依頼者からの追加情報あるいは、依頼内容に記載があればそれに",
+      "base_finish_reason": "length",
+      "calibration_only": false,
+      "case_id": "general-08-clarification",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "lane": "general",
+      "pair_id": "3bad153670799cedc584",
+      "regime": "sample212",
+      "workspace_answer": "1. 資料の目的は、依頼者の意図に沿ってアナライズしてください。\n\n2. 読者については、依頼者が指す先の方法や、公開範囲などを確認してください。\n\n3. 締切時刻は、依頼者からの連絡によって決定してください。\n\n4. 資",
+      "workspace_finish_reason": "length"
+    },
+    {
+      "base_answer": "No, rankings between individuals or entities can't be definitively stated without specific context, such as a particular category or competition.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-01-forward",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "lane": "relation",
+      "pair_id": "f9382dafdd0fd65642b0",
+      "regime": "sample211",
+      "workspace_answer": "No, rankings between individuals or entities can't be definitively stated without specific context, such as in a particular field or competition.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Belmira and Cendrel are not ranked due to the lack of information provided on their positions or fields of comparison. Rankings are applicable when comparing entities within a specific context or category.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-01-forward",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "lane": "relation",
+      "pair_id": "7f7a35312c1785cce85a",
+      "regime": "sample212",
+      "workspace_answer": "No, Belmira and Cendrel are not ranked relative to each other as they are not typically compared in a competitive context, such as a sports league or academic ranking system.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Ildara is not ranked above Hespern. Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world.",
+      "base_finish_reason": "eos",
+      "calibration_only": true,
+      "case_id": "relation-02-reverse",
+      "comparison": "centered_semantic",
+      "exact_identical": true,
+      "lane": "relation",
+      "pair_id": "e4f6fb060b5ae7f11e1c",
+      "regime": "greedy",
+      "workspace_answer": "No, Ildara is not ranked above Hespern. Hespern is a higher-ranking planet in the Warhammer 40k universe, while Ildara is a lesser-known world.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Kelmorin is not ranked above Lysvara. Their rankings depend on various factors such as economic, military, or cultural influence, and there's no public data indicating Kelmorin is higher.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-03-forward",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "lane": "relation",
+      "pair_id": "1915711d71c2e39d8256",
+      "regime": "sample211",
+      "workspace_answer": "No, Kelmorin is not ranked above Lysvara. Their rankings depend on various factors such as economic, military, or cultural influence, and there's no public data indicating Kelmorin surpasses Lysvara in these areas.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Lysvara is not ranked above Kelmorin. Their rankings depend on context, such as in a specific game or fantasy universe, and are not universally established.",
+      "base_finish_reason": "eos",
+      "calibration_only": true,
+      "case_id": "relation-03-reverse",
+      "comparison": "centered_semantic",
+      "exact_identical": true,
+      "lane": "relation",
+      "pair_id": "bc438bdb7fde65973f07",
+      "regime": "greedy",
+      "workspace_answer": "No, Lysvara is not ranked above Kelmorin. Their rankings depend on context, such as in a specific game or fantasy universe, and are not universally established.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Selvara is not ranked above Torvyn. Torvyn, as a Vex architect, holds a higher position within Vex hierarchy than Selvara, a Vex Mythoclast. Rankings are based on role and complexity of constructs.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-04-forward",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "lane": "relation",
+      "pair_id": "56a164064848bb2399bb",
+      "regime": "sample211",
+      "workspace_answer": "No, Selvara is not ranked above Torvyn. Torvyn, as a Vex architect, holds a higher position within Vex hierarchy than Selvara, a Vex Mythoclast. Rankings within the Vex are primarily based on their architectural role and contributions to the Vex network.",
+      "workspace_finish_reason": "eos"
+    },
+    {
+      "base_answer": "No, Torvyn is not ranked above Selvara. Selvara holds a higher rank due to her position as a Venerable within the Circle of Magi.",
+      "base_finish_reason": "eos",
+      "calibration_only": false,
+      "case_id": "relation-04-reverse",
+      "comparison": "legacy_semantic",
+      "exact_identical": false,
+      "lane": "relation",
+      "pair_id": "7122f8900bbfa457ebdf",
+      "regime": "sample211",
+      "workspace_answer": "No, Torvyn is not ranked above Selvara. Selvara holds a higher rank due to her position as a Vex Mythoclast.",
+      "workspace_finish_reason": "eos"
+    }
+  ],
+  "selection_rule": {
+    "all_original_generation_regimes_preserved": true,
+    "calibration": "Select the four prespecified case IDs, greedy, base versus centered_semantic; require actual text/token/finish identity.",
+    "calibration_case_ids": [
+      "general-02-json",
+      "general-04-code",
+      "relation-02-reverse",
+      "relation-03-reverse"
+    ],
+    "case_metadata": "All 16 original cases embedded for complete source binding.",
+    "changed": "Select ALL primary pairs whose decoded base/workspace answers differ exactly.",
+    "primary_comparisons": [
+      "legacy_semantic",
+      "centered_semantic"
+    ],
+    "prior_judge_verdicts_read_or_used": false
+  },
+  "source_bank": {
+    "path": "provenance/pilots/v14_answer_bank_20261009/raw/bank.json",
+    "sha256": "916b344c1e94725cccd0b9b7657e982fc809a57b54b057b31eae04185c6936ad"
+  },
+  "source_cases": {
+    "path": "data/v14_answer_bank/cases.json",
+    "sha256": "177c9242583aa54d20a5f502c52ca63264d44482c8fe886072e89d4d657965a9"
+  },
+  "source_pairs": {
+    "path": "provenance/pilots/v14_answer_bank_20261009/judge/PAIRS.json",
+    "sha256": "96089d67d5e517e7c17eb8df854c43c8b346cf43b84bef9db0abee6639b24727"
+  }
+}

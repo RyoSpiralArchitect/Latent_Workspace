@@ -1,0 +1,232 @@
+{
+  "format": "latent-workspace-v14-readout-precision-plan-v1",
+  "frozen_before_target_model_scoring": true,
+  "purpose": "Feed the exact same native upper-decoder and final-RMSNorm state to the existing BF16 full-vocabulary head and to a diagnostic FP32 two-choice head, separating final-head lattice effects from upstream position composition without selecting a lane after scoring.",
+  "predecessors": {
+    "position_report": {
+      "path": "provenance/pilots/v14_position_composition_20260913/raw/report.json",
+      "sha256": "c4823a2e3185be9a6fe496d5b871a0e35deb8cff05619146b06ad9c27c312dbc"
+    },
+    "position_summary": {
+      "path": "provenance/pilots/v14_position_composition_20260913/SUMMARY.json",
+      "sha256": "15d665e3e168b345c2a092fa04d7ab21fba08c04d91e7312eebbe1b2a70db609"
+    }
+  },
+  "eval": {
+    "path": "data/v10/functional_eval.jsonl",
+    "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e"
+  },
+  "model_order": [
+    "task",
+    "semantic"
+  ],
+  "models": [
+    {
+      "id": "task",
+      "checkpoint": "runs/v14/boundary_training/task_seed47_step8/final",
+      "manifest_sha256": "00561bf8fd6f1b4eec52061fe88684198dbaa8ea2feee1d948bd202eb43523ad",
+      "workspace_sha256": "2861d3421fde4d9532142517f86ae1a4984806b3f872ead6d426f1fee6ec0e00"
+    },
+    {
+      "id": "semantic",
+      "checkpoint": "runs/v14/boundary_training/semantic_seed47_step8/final",
+      "manifest_sha256": "067c48cb1d312e1e0fa504f889343d5bd825140a49e0a3e2deec2004bf3113f2",
+      "workspace_sha256": "3e2c9ace61b7aa08c1efb93e0b8e6d9466ba52073395cf20c0c599ea06a518b2"
+    }
+  ],
+  "model_contract": {
+    "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "dtype": "bfloat16",
+    "attn_implementation": "sdpa",
+    "route_mode": "deferred",
+    "boundary_layer": 16,
+    "reader_steps": 1,
+    "workspace_norm_kind": "layer_norm",
+    "workspace_norm_eps": 0.00001,
+    "use_chat_template": false,
+    "functional_elicitation": "symmetric_instruction",
+    "mixed_precision": "bf16"
+  },
+  "cases": [
+    {
+      "id": "w0_s0_q0",
+      "world_index": 0,
+      "side": 0,
+      "query_index": 0,
+      "affected": true
+    },
+    {
+      "id": "w0_s1_q0",
+      "world_index": 0,
+      "side": 1,
+      "query_index": 0,
+      "affected": true
+    },
+    {
+      "id": "w0_s0_q2",
+      "world_index": 0,
+      "side": 0,
+      "query_index": 2,
+      "affected": false
+    },
+    {
+      "id": "w0_s1_q2",
+      "world_index": 0,
+      "side": 1,
+      "query_index": 2,
+      "affected": false
+    },
+    {
+      "id": "w1_s0_q0",
+      "world_index": 1,
+      "side": 0,
+      "query_index": 0,
+      "affected": true
+    },
+    {
+      "id": "w1_s1_q0",
+      "world_index": 1,
+      "side": 1,
+      "query_index": 0,
+      "affected": true
+    },
+    {
+      "id": "w1_s0_q2",
+      "world_index": 1,
+      "side": 0,
+      "query_index": 2,
+      "affected": false
+    },
+    {
+      "id": "w1_s1_q2",
+      "world_index": 1,
+      "side": 1,
+      "query_index": 2,
+      "affected": false
+    }
+  ],
+  "expected_cases_per_model": 8,
+  "horizons": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "expected_rows": 320,
+  "boundary_layer": 16,
+  "controls": [
+    "learned_pair",
+    "gram_matched_random",
+    "unrelated_family",
+    "sham"
+  ],
+  "lanes": [
+    "full_route",
+    "answer_boundary_only",
+    "non_boundary_only",
+    "current_query_only",
+    "prior_history_only",
+    "oracle_global_answer_axis",
+    "oracle_answer_orthogonal"
+  ],
+  "readouts": [
+    "native_bf16_head",
+    "fp32_choice_head"
+  ],
+  "same_normalized_hidden_for_both_heads": true,
+  "readout_contract": {
+    "shared_path": "The native Mistral layers 16-31 and native final RMSNorm execute exactly once for each boundary state.",
+    "native_bf16_head": "The complete existing lm_head runs under the frozen BF16 autocast path and retains its full-vocabulary logits.",
+    "fp32_choice_head": "Only the identical final-normalized last-token hidden and the two frozen no/yes lm_head rows are converted to FP32 for a diagnostic linear readout.",
+    "not_full_fp32_decoder": true,
+    "native_replication": "Every native base and lane readout must exactly reproduce the sealed 320-row position-composition predecessor."
+  },
+  "predeclared_focus": {
+    "model": "semantic",
+    "population": "affected",
+    "horizon": 4,
+    "lanes": [
+      "full_route",
+      "answer_boundary_only",
+      "non_boundary_only"
+    ],
+    "question": "Does the boundary plus non-boundary reversal persist when only the final two-choice projection is evaluated in FP32?",
+    "independent_confirmation": false
+  },
+  "multi_turn_followup": {
+    "required_regardless_of_precision_result": true,
+    "freeze_before_generation": true,
+    "history_modes": [
+      "teacher_forced_fixed_history",
+      "free_history"
+    ],
+    "minimum_route_lanes": [
+      "base_query_only",
+      "base_inline",
+      "full_route",
+      "answer_boundary_only",
+      "non_boundary_only"
+    ],
+    "readouts": [
+      "native_bf16_head",
+      "fp32_choice_head"
+    ],
+    "generated_answer_vocabulary": [
+      "no",
+      "yes"
+    ],
+    "interpretation": "Generation is a trajectory diagnostic and cannot promote a failed grouped F1-F5 branch."
+  },
+  "free_generation": false,
+  "lane_selection_after_scoring": false,
+  "semantic_promotion": false,
+  "seed": 47,
+  "random_seed": 271828,
+  "control_tolerance": 0.000002,
+  "cpu_threads": 2,
+  "cuda_allocator_fraction": 0.9,
+  "expected_runtime": {
+    "python": "3.14.4",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0",
+    "cuda": "13.2"
+  },
+  "required_environment": {
+    "PYTHONPATH": "src",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "HF_DATASETS_OFFLINE": "1",
+    "TOKENIZERS_PARALLELISM": "false",
+    "HF_HUB_DISABLE_PROGRESS_BARS": "1",
+    "OMP_NUM_THREADS": "2",
+    "PYTORCH_ALLOC_CONF": "backend:native,expandable_segments:True"
+  },
+  "source_identity": {
+    "scripts/run_v14_readout_precision.py": "fd37302ebf76b5b6cdd0406c9b47d4017c6211b3b1b048399ba6cda489ab1b4f",
+    "src/latent_workspace_ft_v10/choice_readout.py": "80e7ec9060daffd98e818f20a6537c16a604e3367eedc64aaee812c16506a5cb",
+    "scripts/run_v14_position_composition.py": "27cd47b2649da9e87bbcc913349f3f535b36e0214f9472a48f953f057cffd002",
+    "scripts/run_v14_answer_boundary_recurrence.py": "c598001072203c354261c8b8f95058fef8827621701d3af20792ebe9d082c958",
+    "scripts/run_v14_boundary_training.py": "9f9d597df2277ee684e21cd215ee479d86b8c4d62c0a5809b6643a38fb655dac",
+    "scripts/v13_visibility_trace.py": "39e9321598123bf27800450b04ab4807c3ce15b4dcf0a3158e06d753593de55d",
+    "src/latent_workspace_ft_v10/engine.py": "3e7659b7c927cab23b4d994ce2e320d99431e4ba657d560c1094bc36de596178",
+    "src/latent_workspace_ft_v10/model_binding.py": "58360a21e6ef717ae00a8f8715f2b5ff2a277fb6bdce583dba2a6e6bd1869e18",
+    "src/latent_workspace_ft_v10/workspace_core.py": "600bb0f308cff66d5d793eb5853cef3b51710f75a77cbe3cd1d0a930a6754dd0"
+  },
+  "output": "provenance/raw/v14_readout_precision_20260913/report.json",
+  "authorized_actions": {
+    "checkpoint_load": true,
+    "native_upper_decoder": true,
+    "native_full_vocab_head": true,
+    "fp32_two_choice_head": true,
+    "optimizer_or_training": false,
+    "free_generation": false,
+    "model_download": false,
+    "weight_write_or_delete": false,
+    "layer_case_horizon_threshold_or_lane_selection": false,
+    "semantic_promotion": false
+  },
+  "stop_rule": "Execute every frozen precision cell once. Preserve failures. Do not select a layer, case, horizon, control, threshold, position mask, precision, or oracle lane after target-model scoring; proceed to the separately frozen multi-turn diagnostic regardless of this result.",
+  "claim_boundary": "This fixed-token Mistral assay can compare two final answer-token projection precisions from one identical native upper-decoder and final-normalized hidden state for eight frozen cases, five horizons, four controls, seven lanes, and two existing checkpoints. The FP32 lane is only a two-choice diagnostic head, not a full-FP32 decoder or a deployable route. The assay does not train, validate free generation, establish semantic memory, generalization, capability, K/V accumulation, portability, or speed. It cannot rescue the failed grouped F1-F5 gates; the scientific winner remains none."
+}

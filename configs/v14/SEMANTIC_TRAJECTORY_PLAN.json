@@ -1,0 +1,128 @@
+{
+  "format": "latent-workspace-v14-semantic-trajectory-plan-v1",
+  "frozen_before_target_model_scoring": true,
+  "purpose": "Measure whether one natural-amplitude retained-checkpoint intact/twin distinction persists through five fixed-token cache-writing turns, against sham, full-Gram-matched random, unrelated-family and unaffected controls.",
+  "input_lane": "retained_inline_checkpoint_compatibility",
+  "predecessor_direction_report": {
+    "path": "provenance/raw/v14_checkpoint_direction_gate_20260907_r1/report.json",
+    "sha256": "db07f1a0b0c5b32570a7b2ccc421ac1dd0caea08becbd32db8f4426c3402a117"
+  },
+  "checkpoint": {
+    "id": "semantic_seed43_step16",
+    "path": "/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-workspace-ft-v12-calibrated-route/runs/v12/calibrated_route/refinement16/semantic_lr_1e_5_seed43_step16/final",
+    "manifest_sha256": "93a5e1b1041b5a3ed76ee44e6c60840afee5869c8675efcd940e8957a1693834",
+    "workspace_sha256": "0fc7a8900c42199f818b2c6ebb1e3f33b9995cab12208b49a1ecf435dd20e913"
+  },
+  "eval": {
+    "path": "data/v10/functional_eval.jsonl",
+    "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+    "role": "retained checkpoint-compatible trajectory diagnostic only; not the unqualified V14 seven-fact task"
+  },
+  "max_worlds": 2,
+  "selected_query_indices": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "selection_rule": "For both worlds and both sides, use affected adjacent-swap queries 0/1 and fixed unaffected long-path queries 2/3. Freeze before trajectory scoring.",
+  "expected_cases": 16,
+  "expected_affected_cases": 8,
+  "turn_count": 5,
+  "expected_trajectory_rows": 320,
+  "cells": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+  ],
+  "cell_meanings": {
+    "A": "no-pulse base cache",
+    "B": "intact-direction cache carried",
+    "C": "twin-direction cache carried",
+    "D": "B immediate readout at horizon zero, then complete matched A cache reset before every later turn",
+    "E": "C immediate readout at horizon zero, then complete matched A cache reset before every later turn"
+  },
+  "controls": [
+    "semantic",
+    "sham",
+    "gram_matched_random",
+    "unrelated_family"
+  ],
+  "fixed_turn": {
+    "force_original_answer_token": true,
+    "repeat_same_query": true,
+    "separator": "\n",
+    "one_cached_call_per_turn_chunk": true,
+    "identical_tokens_across_cells": true,
+    "free_generation": false
+  },
+  "seed": 271828,
+  "model_contract": {
+    "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+    "model_type": "mistral",
+    "hidden_size": 4096,
+    "dtype": "torch.bfloat16",
+    "cache": "native DynamicCache full attention"
+  },
+  "pulse": {
+    "layer": 16,
+    "boundary": "decoder_layer_input_pre_rmsnorm",
+    "composition_dtype": "fp32_add_then_cast_to_hidden",
+    "semantic_amplitude": "natural_vector_rms_no_gain",
+    "random_control": "preserve_intact_twin_gram_matrix",
+    "random_seed": 1415,
+    "gram_relative_tolerance": 0.000001,
+    "unrelated_control": "other_world_same_side_query_scaled_to_target_rms"
+  },
+  "metrics": {
+    "primary": "affected (C-B)-(E-D) donor-margin trajectory",
+    "secondary": [
+      "affected endpoint and trapezoid AUC sign",
+      "semantic versus sham, Gram-matched random and unrelated-family controls",
+      "unaffected B/C prediction agreement with A",
+      "all-layer K/V and full-logit displacement"
+    ],
+    "semantic_assessment": "DESCRIPTIVE_PILOT_NO_PROMOTION_THRESHOLD",
+    "ties": "unknown prediction; never silently broken"
+  },
+  "source_identity": {
+    "scripts/run_v14_semantic_trajectory.py": "a9362d50a39f952fcdbd7ce44dfc1f995bd05af16eaf284e15a8f2a4ad10a5fa",
+    "scripts/run_v14_checkpoint_direction_gate.py": "da1d183b73f86fe29f42e814ca9bd06f0cd7b25ff69cf0df0f6195d35b614407",
+    "scripts/v13_visibility_trace.py": "39e9321598123bf27800450b04ab4807c3ce15b4dcf0a3158e06d753593de55d",
+    "scripts/run_v11_gate0.py": "6bdbb22c35e62c0681eac1c32463789c6ed9d59a8a274a7bb5ea7e6456f89058",
+    "src/latent_workspace_ft_v10/cache_binding.py": "f3c5dc1c10654a8be5aa28acc3fba6bd00698c9b57f721378722ea19febb71ff",
+    "src/latent_workspace_ft_v10/engine.py": "3e7659b7c927cab23b4d994ce2e320d99431e4ba657d560c1094bc36de596178"
+  },
+  "expected_runtime": {
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0",
+    "python": "3.14.4",
+    "cuda": "13.2"
+  },
+  "required_environment": {
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "HF_DATASETS_OFFLINE": "1",
+    "TOKENIZERS_PARALLELISM": "false",
+    "HF_HUB_DISABLE_PROGRESS_BARS": "1",
+    "OMP_NUM_THREADS": "2",
+    "PYTORCH_ALLOC_CONF": "backend:native,expandable_segments:True"
+  },
+  "cpu_threads": 2,
+  "cuda_allocator_fraction": 0.9,
+  "authorized_actions": {
+    "checkpoint_load": true,
+    "checkpoint_direction_capture": true,
+    "fixed_teacher_forced_cache_trajectory": true,
+    "optimizer_or_training": false,
+    "free_generation": false,
+    "model_download": false,
+    "weight_write_or_delete": false,
+    "gain_layer_query_or_horizon_selection": false,
+    "semantic_promotion": false
+  },
+  "stop_rule": "Execute the frozen 16-case, four-control, five-turn trajectory once. Preserve pass, block, partial or failure. Do not select a gain, layer, query subset, horizon or threshold after observing results.",
+  "claim_boundary": "A small retained V12 inline-sidecar checkpoint compatibility trajectory. Execution qualification proves only that the planned native cache comparisons and controls ran intact. Donor-direction metrics are descriptive, with two world families and no promotion threshold. They cannot qualify the unqualified seven-fact V14 task, training benefit, semantic accumulation, generalization, natural autoregressive chat or capability."
+}

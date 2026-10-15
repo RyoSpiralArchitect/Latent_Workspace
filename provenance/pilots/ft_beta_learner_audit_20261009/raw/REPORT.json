@@ -1,0 +1,634 @@
+{
+  "base_parameter_bytes": 14496047104,
+  "base_parameter_count": 7248023552,
+  "base_state_sha256_after": "54d161755862ebf00d8acbca083d5f290a5de44d33af82ca885f3bd8f9c94312",
+  "base_state_sha256_before": "54d161755862ebf00d8acbca083d5f290a5de44d33af82ca885f3bd8f9c94312",
+  "cuda_allocated_bytes": 0,
+  "cuda_initialized": false,
+  "decoder_layer_parameter_bytes": [
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000,
+    436224000
+  ],
+  "elapsed_seconds": 139.05986498575658,
+  "free_text_legacy_controls": "NOT_RUN",
+  "historical_cuda_peak_allocated_bytes": 14808936448,
+  "new_offload_parity": "NOT_TESTED",
+  "peak_process_rss_bytes_linux": 16016183296,
+  "receipt": {
+    "cuda_visible_devices": "",
+    "dataset_split": "train_only_exposed",
+    "device": "cpu",
+    "optimizer_steps": 0,
+    "python": "3.14.4",
+    "source_commit": "434af9818092966ffe58b89a841bad15e99cab6f",
+    "source_hashes": {
+      "scripts/run_ft_beta_learner_audit.py": "08d3db7bff49d212f07bb0a7d92a185f653dae426d2d4ca15a6ea538b2a012b4",
+      "src/latent_workspace_ft_v10/learner_gradient_audit.py": "18bb840b6faceabd59793ea44031de57c8f845876a9432f46ee62795e1621729"
+    },
+    "split_audit": {
+      "entity_heldout": false,
+      "eval_world_pairs": 64,
+      "overlaps": {
+        "contexts": 0,
+        "orders": 0,
+        "pair_ids": 0,
+        "unordered_twins": 0
+      },
+      "train_world_pairs": 256
+    },
+    "torch": "2.13.0+cu132",
+    "torch_threads": 2,
+    "transformers": "5.15.0",
+    "world_indices": [
+      0,
+      1
+    ]
+  },
+  "states": {
+    "centered_semantic256": {
+      "checkpoint": {
+        "bytes": 16810933,
+        "path": "runs/v14/centered_bridge_20261009/semantic_step256.pt",
+        "sha256": "5721a3c71d28b7947458b52a0d32f56a3f42337c1267540ab76e9484edb6decb"
+      },
+      "parameters": 4200192,
+      "reader_summary": {
+        "pair_count": 16,
+        "pair_metrics": {
+          "attention_output_relative_l2": {
+            "max": 0.002343470234994743,
+            "mean": 0.0008706901945746492,
+            "mean_abs": 0.0008706901945746492
+          },
+          "delta_relative_l2": {
+            "max": 6.623125686593749e-05,
+            "mean": 2.6151170246114397e-05,
+            "mean_abs": 2.6151170246114397e-05
+          },
+          "head_axis_gap_difference": {
+            "max": 2.7013247745344415e-06,
+            "mean": 3.3648501474026205e-07,
+            "mean_abs": 7.334377781775814e-07
+          },
+          "keys_relative_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "projected_query_relative_l2": {
+            "max": 0.06682893405286797,
+            "mean": 0.04141265102153801,
+            "mean_abs": 0.04141265102153801
+          },
+          "query_relative_l2": {
+            "max": 0.14796612051464034,
+            "mean": 0.11521120609613807,
+            "mean_abs": 0.11521120609613807
+          },
+          "raw_delta_relative_l2": {
+            "max": 0.0015672428198599115,
+            "mean": 0.0004404231671592823,
+            "mean_abs": 0.0004404231671592823
+          },
+          "values_relative_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          }
+        },
+        "row_count": 32,
+        "row_metrics": {
+          "attention_output_l2": {
+            "max": 16.624576568603516,
+            "mean": 16.021653592586517,
+            "mean_abs": 16.021653592586517
+          },
+          "delta_l2": {
+            "max": 0.9977239966392517,
+            "mean": 0.9975379575043917,
+            "mean_abs": 0.9975379575043917
+          },
+          "head_axis_gap": {
+            "max": -0.3225873112678528,
+            "mean": -0.3226721007376909,
+            "mean_abs": 0.3226721007376909
+          },
+          "keys_l2": {
+            "max": 31.999624252319336,
+            "mean": 31.99956226348877,
+            "mean_abs": 31.99956226348877
+          },
+          "permutation_delta_max_abs_error": {
+            "max": 1.1175870895385742e-08,
+            "mean": 8.265487849712372e-09,
+            "mean_abs": 8.265487849712372e-09
+          },
+          "permutation_raw_max_abs_error": {
+            "max": 1.1920928955078125e-07,
+            "mean": 1.0058283805847168e-07,
+            "mean_abs": 1.0058283805847168e-07
+          },
+          "projected_query_l2": {
+            "max": 16.012292861938477,
+            "mean": 16.0121431350708,
+            "mean_abs": 16.0121431350708
+          },
+          "query_l2": {
+            "max": 348.6887512207031,
+            "mean": 340.8460330963135,
+            "mean_abs": 340.8460330963135
+          },
+          "raw_delta_l2": {
+            "max": 14.796311378479004,
+            "mean": 14.25099128484726,
+            "mean_abs": 14.25099128484726
+          },
+          "uniform_delta_l2": {
+            "max": 2.3511617541771557e-07,
+            "mean": 1.1305387470628148e-07,
+            "mean_abs": 1.1305387470628148e-07
+          },
+          "uniform_head_axis_gap": {
+            "max": 5.095916932873479e-08,
+            "mean": -2.330225679081366e-09,
+            "mean_abs": 3.5576707024809195e-08
+          },
+          "uniform_raw_l2": {
+            "max": 2.3511617541771557e-07,
+            "mean": 1.1305387470628148e-07,
+            "mean_abs": 1.1305387470628148e-07
+          },
+          "uniform_vs_actual_relative_l2": {
+            "max": 2.00000004217449,
+            "mean": 1.9999997397643927,
+            "mean_abs": 1.9999997397643927
+          },
+          "value_centered_fraction": {
+            "max": 0.9999999999999609,
+            "mean": 0.9999999999999595,
+            "mean_abs": 0.9999999999999595
+          },
+          "value_mean_fraction": {
+            "max": 3.5573726599730915e-08,
+            "mean": 3.203962704839508e-08,
+            "mean_abs": 3.203962704839508e-08
+          },
+          "values_l2": {
+            "max": 25.558748245239258,
+            "mean": 24.647066116333008,
+            "mean_abs": 24.647066116333008
+          }
+        }
+      },
+      "state_sha256": "41233709a70cbe09a5bc5fbe3fd8154067f1c09de84ce0d676bf34e3b0db029d",
+      "unchanged": true,
+      "zero_checks": 16
+    },
+    "initial": {
+      "checkpoint": null,
+      "parameters": 4200192,
+      "reader_summary": {
+        "pair_count": 16,
+        "pair_metrics": {
+          "attention_output_relative_l2": {
+            "max": 0.00030040757604814553,
+            "mean": 0.00018351318652787342,
+            "mean_abs": 0.00018351318652787342
+          },
+          "delta_relative_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "head_axis_gap_difference": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "keys_relative_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "projected_query_relative_l2": {
+            "max": 0.14948660550172335,
+            "mean": 0.11476973864604646,
+            "mean_abs": 0.11476973864604646
+          },
+          "query_relative_l2": {
+            "max": 0.14796612051464034,
+            "mean": 0.11521120609613807,
+            "mean_abs": 0.11521120609613807
+          },
+          "raw_delta_relative_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "values_relative_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          }
+        },
+        "row_count": 32,
+        "row_metrics": {
+          "attention_output_l2": {
+            "max": 6.29026460647583,
+            "mean": 6.26006880402565,
+            "mean_abs": 6.26006880402565
+          },
+          "delta_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "head_axis_gap": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "keys_l2": {
+            "max": 31.999399185180664,
+            "mean": 31.999393939971924,
+            "mean_abs": 31.999393939971924
+          },
+          "permutation_delta_max_abs_error": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "permutation_raw_max_abs_error": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "projected_query_l2": {
+            "max": 15.999992370605469,
+            "mean": 15.999991297721863,
+            "mean_abs": 15.999991297721863
+          },
+          "query_l2": {
+            "max": 348.6887512207031,
+            "mean": 340.8460330963135,
+            "mean_abs": 340.8460330963135
+          },
+          "raw_delta_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "uniform_delta_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "uniform_head_axis_gap": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "uniform_raw_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "uniform_vs_actual_relative_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "value_centered_fraction": {
+            "max": 0.07199953078342432,
+            "mean": 0.07039002654320729,
+            "mean_abs": 0.07039002654320729
+          },
+          "value_mean_fraction": {
+            "max": 0.9977790889722515,
+            "mean": 0.9975171363965735,
+            "mean_abs": 0.9975171363965735
+          },
+          "values_l2": {
+            "max": 31.999399185180664,
+            "mean": 31.999393939971924,
+            "mean_abs": 31.999393939971924
+          }
+        }
+      },
+      "state_sha256": "97cb24a0bec75d9b00fa0c8b8e6056d27a21ee739fd0564752b6734e9b148fe4",
+      "unchanged": true,
+      "zero_checks": 16
+    },
+    "legacy_semantic256": {
+      "checkpoint": {
+        "bytes": 16810869,
+        "path": "runs/v14/precision_bridge_20261009/semantic_step256.pt",
+        "sha256": "bbaa3da60c44ea1c32d1e668b067d5fa955c7cda8d462636a6e962bd53c34121"
+      },
+      "parameters": 4200192,
+      "reader_summary": {
+        "pair_count": 16,
+        "pair_metrics": {
+          "attention_output_relative_l2": {
+            "max": 3.74762319607285e-05,
+            "mean": 2.44367753021584e-05,
+            "mean_abs": 2.44367753021584e-05
+          },
+          "delta_relative_l2": {
+            "max": 8.355642229914413e-06,
+            "mean": 2.4355637813338236e-06,
+            "mean_abs": 2.4355637813338236e-06
+          },
+          "head_axis_gap_difference": {
+            "max": 2.1771941760562186e-07,
+            "mean": 7.46960604480762e-10,
+            "mean_abs": 6.194298773909424e-08
+          },
+          "keys_relative_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "projected_query_relative_l2": {
+            "max": 0.024989651848464953,
+            "mean": 0.01833781346041069,
+            "mean_abs": 0.01833781346041069
+          },
+          "query_relative_l2": {
+            "max": 0.14796612051464034,
+            "mean": 0.11521120609613807,
+            "mean_abs": 0.11521120609613807
+          },
+          "raw_delta_relative_l2": {
+            "max": 1.1581120603212053e-05,
+            "mean": 3.996199062325212e-06,
+            "mean_abs": 3.996199062325212e-06
+          },
+          "values_relative_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          }
+        },
+        "row_count": 32,
+        "row_metrics": {
+          "attention_output_l2": {
+            "max": 14.250288963317871,
+            "mean": 14.217476516962051,
+            "mean_abs": 14.217476516962051
+          },
+          "delta_l2": {
+            "max": 0.9964404106140137,
+            "mean": 0.9963822234421968,
+            "mean_abs": 0.9963822234421968
+          },
+          "head_axis_gap": {
+            "max": -0.32111629843711853,
+            "mean": -0.32145020365715027,
+            "mean_abs": 0.32145020365715027
+          },
+          "keys_l2": {
+            "max": 31.99988555908203,
+            "mean": 31.99988031387329,
+            "mean_abs": 31.99988031387329
+          },
+          "permutation_delta_max_abs_error": {
+            "max": 1.1175870895385742e-08,
+            "mean": 7.334165275096893e-09,
+            "mean_abs": 7.334165275096893e-09
+          },
+          "permutation_raw_max_abs_error": {
+            "max": 1.1920928955078125e-07,
+            "mean": 6.612390279769897e-08,
+            "mean_abs": 6.612390279769897e-08
+          },
+          "projected_query_l2": {
+            "max": 16.082448959350586,
+            "mean": 16.082298755645752,
+            "mean_abs": 16.082298755645752
+          },
+          "query_l2": {
+            "max": 348.6887512207031,
+            "mean": 340.8460330963135,
+            "mean_abs": 340.8460330963135
+          },
+          "raw_delta_l2": {
+            "max": 11.820013999938965,
+            "mean": 11.724864780902863,
+            "mean_abs": 11.724864780902863
+          },
+          "uniform_delta_l2": {
+            "max": 0.9964336156845093,
+            "mean": 0.9963856041431427,
+            "mean_abs": 0.9963856041431427
+          },
+          "uniform_head_axis_gap": {
+            "max": -0.32130521535873413,
+            "mean": -0.3216499611735344,
+            "mean_abs": 0.3216499611735344
+          },
+          "uniform_raw_l2": {
+            "max": 11.80884075164795,
+            "mean": 11.7303786277771,
+            "mean_abs": 11.7303786277771
+          },
+          "uniform_vs_actual_relative_l2": {
+            "max": 0.012461183495927482,
+            "mean": 0.010420506607684843,
+            "mean_abs": 0.010420506607684843
+          },
+          "value_centered_fraction": {
+            "max": 0.1251741877986277,
+            "mean": 0.11463439650208795,
+            "mean_abs": 0.11463439650208795
+          },
+          "value_mean_fraction": {
+            "max": 0.995204312339915,
+            "mean": 0.993348796949008,
+            "mean_abs": 0.993348796949008
+          },
+          "values_l2": {
+            "max": 31.99988555908203,
+            "mean": 31.99988031387329,
+            "mean_abs": 31.99988031387329
+          }
+        }
+      },
+      "state_sha256": "a111fe359b792d0acc2e431085d7553b5a0de7b061f6cf3e49ad1d0bde851942",
+      "unchanged": true,
+      "zero_checks": 16
+    },
+    "legacy_task256": {
+      "checkpoint": {
+        "bytes": 16810741,
+        "path": "runs/v14/precision_bridge_20261009/task_step256.pt",
+        "sha256": "5cafdd042c7cb0e80f915d0e06b9053ffc934d2de33b6296713d65e89de6d45f"
+      },
+      "parameters": 4200192,
+      "reader_summary": {
+        "pair_count": 16,
+        "pair_metrics": {
+          "attention_output_relative_l2": {
+            "max": 4.4095701588431015e-06,
+            "mean": 2.7605292449946787e-06,
+            "mean_abs": 2.7605292449946787e-06
+          },
+          "delta_relative_l2": {
+            "max": 2.2942751318284253e-07,
+            "mean": 1.4183033649643587e-07,
+            "mean_abs": 1.4183033649643587e-07
+          },
+          "head_axis_gap_difference": {
+            "max": 4.0100719189695155e-08,
+            "mean": -1.5827324173489643e-09,
+            "mean_abs": 1.7050339279345295e-08
+          },
+          "keys_relative_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          },
+          "projected_query_relative_l2": {
+            "max": 0.057096932360855494,
+            "mean": 0.0434082961256224,
+            "mean_abs": 0.0434082961256224
+          },
+          "query_relative_l2": {
+            "max": 0.14796612051464034,
+            "mean": 0.11521120609613807,
+            "mean_abs": 0.11521120609613807
+          },
+          "raw_delta_relative_l2": {
+            "max": 6.956129018094561e-07,
+            "mean": 2.881087166690469e-07,
+            "mean_abs": 2.881087166690469e-07
+          },
+          "values_relative_l2": {
+            "max": 0.0,
+            "mean": 0.0,
+            "mean_abs": 0.0
+          }
+        },
+        "row_count": 32,
+        "row_metrics": {
+          "attention_output_l2": {
+            "max": 21.08220672607422,
+            "mean": 21.071552753448486,
+            "mean_abs": 21.071552753448486
+          },
+          "delta_l2": {
+            "max": 0.997595489025116,
+            "mean": 0.9975929148495197,
+            "mean_abs": 0.9975929148495197
+          },
+          "head_axis_gap": {
+            "max": -0.32283011078834534,
+            "mean": -0.32283075992017984,
+            "mean_abs": 0.32283075992017984
+          },
+          "keys_l2": {
+            "max": 31.999778747558594,
+            "mean": 31.999775886535645,
+            "mean_abs": 31.999775886535645
+          },
+          "permutation_delta_max_abs_error": {
+            "max": 1.4901161193847656e-08,
+            "mean": 8.556526154279709e-09,
+            "mean_abs": 8.556526154279709e-09
+          },
+          "permutation_raw_max_abs_error": {
+            "max": 1.1920928955078125e-07,
+            "mean": 9.778887033462524e-08,
+            "mean_abs": 9.778887033462524e-08
+          },
+          "projected_query_l2": {
+            "max": 16.01336097717285,
+            "mean": 16.01330256462097,
+            "mean_abs": 16.01330256462097
+          },
+          "query_l2": {
+            "max": 348.6887512207031,
+            "mean": 340.8460330963135,
+            "mean_abs": 340.8460330963135
+          },
+          "raw_delta_l2": {
+            "max": 14.394052505493164,
+            "mean": 14.386450946331024,
+            "mean_abs": 14.386450946331024
+          },
+          "uniform_delta_l2": {
+            "max": 0.9975950717926025,
+            "mean": 0.9975924789905548,
+            "mean_abs": 0.9975924789905548
+          },
+          "uniform_head_axis_gap": {
+            "max": -0.3228300213813782,
+            "mean": -0.3228306472301483,
+            "mean_abs": 0.3228306472301483
+          },
+          "uniform_raw_l2": {
+            "max": 14.39277458190918,
+            "mean": 14.385226964950562,
+            "mean_abs": 14.385226964950562
+          },
+          "uniform_vs_actual_relative_l2": {
+            "max": 4.008851468448143e-06,
+            "mean": 3.6520483242778174e-06,
+            "mean_abs": 3.6520483242778174e-06
+          },
+          "value_centered_fraction": {
+            "max": 0.026813554108105344,
+            "mean": 0.02651905492802651,
+            "mean_abs": 0.02651905492802651
+          },
+          "value_mean_fraction": {
+            "max": 0.9996619796618853,
+            "mean": 0.999648270528144,
+            "mean_abs": 0.999648270528144
+          },
+          "values_l2": {
+            "max": 31.999778747558594,
+            "mean": 31.999775886535645,
+            "mean_abs": 31.999775886535645
+          }
+        }
+      },
+      "state_sha256": "d438d92214e0c2c1e5091c61db0df7ef76b067074e58a16d6e02b3162538f646",
+      "unchanged": true,
+      "zero_checks": 16
+    }
+  },
+  "statistical_or_quality_qualification": false,
+  "status": "COMPLETED_CPU_TRAIN_ONLY_DIAGNOSTIC",
+  "winner": "none"
+}

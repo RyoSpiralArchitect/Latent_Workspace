@@ -1,0 +1,44 @@
+{
+  "format": "latent-workspace-v14-mistral-atomic-instrument-gate-plan-v1",
+  "frozen_before_target_model_scoring": true,
+  "purpose": "Separate renderer and answer-scoring health from seven-fact distractor reasoning by retaining only the explicit queried edge in designated easy controls. Primary rows remain unchanged and descriptive.",
+  "parent_prompt_plan_sha256": "a37299c35c2c4ff26fe76c88655970f8b35f1cf2791934fad4c36b047b2ec015",
+  "blocked_v2_report_sha256": "fe57c32d56e9fe8da79a904afbb3107968a1efe45308cf4eb09382c5f163492e",
+  "source_identity": {
+    "scripts/run_v14_mistral_atomic_instrument_gate.py": "e39f771a343ed63c4fb0126b2446c8eb1eff078aab3eeb8df946fa84b569881f",
+    "scripts/run_v14_mistral_prompt_gate_v2.py": "8cd1f8112f016c17f796e83c62887ef5c8a4891d43265c631c9d00c6f3fc55fb",
+    "scripts/run_v14_mistral_prompt_gate.py": "59a41f252aa177187280b13d2af26d67734da4e68ae123369ccf0d0e2d0d93d7",
+    "scripts/v14_prompt_binding_v2.py": "cd776c4e7269730802ead2efad343ce7b39360a31de631c3c7cefe21f1367e29",
+    "scripts/v14_prompt_binding.py": "8429f535ab6d54acd49ab5028506221a9c94571eae2adc5fdcb1d9a49b4b8386"
+  },
+  "candidate": {
+    "id": "mistral_native_chat_direct_caps_atomic_evidence",
+    "renderer": "native_chat_direct_caps"
+  },
+  "answer_suffixes": [" No", " Yes"],
+  "instrument_view": {
+    "easy": "Keep the context header and exactly one direct fact edge joining the two query entities.",
+    "primary": "Leave the original seven-fact context byte-identical; metrics are descriptive and do not gate.",
+    "oracle_guard": "The retained edge direction must reproduce both stored bidirectional easy answers."
+  },
+  "gates": {
+    "minimum_inline_easy_accuracy": 0.7,
+    "minimum_inline_easy_label_recall": 0.6,
+    "minimum_inline_minus_query_easy_accuracy": 0.1
+  },
+  "maximum_prompt_tokens": 320,
+  "batch_size": 8,
+  "holdout_rule": "Open the atomic holdout view only if calibration passes. No retry or renderer fallback is authorized.",
+  "authorized_actions": {
+    "deterministic_atomic_evidence_projection": true,
+    "calibration_scoring": true,
+    "conditional_single_holdout_scoring": true,
+    "full_context_task_qualification": false,
+    "optimizer_or_training": false,
+    "semantic_direction": false,
+    "cache_intervention": false,
+    "download": false,
+    "weight_write_or_delete": false
+  },
+  "claim_boundary": "A pass qualifies only the Mistral-native renderer, Yes/No first-token scorer, and model response to one isolated explicit fact. It does not qualify the full seven-fact V14 task, primary multi-hop reasoning, workspace semantics, training benefit, cache amplification, or broad generation behavior."
+}

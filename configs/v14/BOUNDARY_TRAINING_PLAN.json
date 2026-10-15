@@ -1,0 +1,125 @@
+{
+  "format": "latent-workspace-v14-boundary-training-plan-v1",
+  "frozen_before_target_training": true,
+  "purpose": "Compare matched task-only and counterfactual-plus-stability training when the learned reader is returned at decoder layer 16, then retain the two scheduled checkpoints per condition for evaluation and generation.",
+  "trajectory_report": {
+    "path": "provenance/raw/v14_semantic_trajectory_20260907/report.json",
+    "sha256": "2fb9a403ec7d495b3f860c82db314fa89fdeccacff3ab280695409a017888883",
+    "role": "mechanically qualified fixed-token predecessor with no semantic-effect promotion"
+  },
+  "preparation": {
+    "path": "configs/v14/boundary_training/PREPARATION.json",
+    "sha256": "fc05e86bd40416f311cb718cc3e6d58c17e9176433c452a294eb7f90c2423e00"
+  },
+  "cell_order": [
+    "task",
+    "semantic"
+  ],
+  "cells": [
+    {
+      "id": "task",
+      "config": "configs/v14/boundary_training/config_task_boundary16_seed47_step8.json",
+      "config_sha256": "5f240f662aa14d15f1eb2300da5d835cab98e39050b3a0ae84d86539090df695",
+      "output_dir": "runs/v14/boundary_training/task_seed47_step8",
+      "objective": {
+        "counterfactual_weight": 0.0,
+        "stability_weight": 0.0
+      }
+    },
+    {
+      "id": "semantic",
+      "config": "configs/v14/boundary_training/config_semantic_boundary16_seed47_step8.json",
+      "config_sha256": "bbf475b9b47e1ec13d333ab15e70cd989f53d204624c2ad7f6e30dcbf63fc578",
+      "output_dir": "runs/v14/boundary_training/semantic_seed47_step8",
+      "objective": {
+        "counterfactual_weight": 1.0,
+        "stability_weight": 0.25
+      }
+    }
+  ],
+  "matched_design": {
+    "seed": 47,
+    "order": "task_then_semantic",
+    "max_steps": 8,
+    "base_frozen_updates": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "base_released_updates": [
+      5,
+      6,
+      7,
+      8
+    ],
+    "base_learning_rate": 1e-07,
+    "workspace_learning_rate": 1e-05,
+    "gradient_accumulation_steps": 8,
+    "comparison_difference": "counterfactual_weight and stability_weight only"
+  },
+  "retention": {
+    "per_condition": "latest and immediately prior scheduled checkpoint",
+    "scheduled_checkpoints": [
+      4,
+      8
+    ],
+    "final_bundle": "separate evaluated role, retained",
+    "old_weight_deletion": false
+  },
+  "model_contract": {
+    "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "architecture": "MistralForCausalLM",
+    "dtype": "bfloat16",
+    "attention": "sdpa",
+    "functional_route": "deferred layer-16 reader return",
+    "training": "full parameters after four frozen-base calibration updates"
+  },
+  "preflight": {
+    "each_cell": [
+      "load model offline",
+      "full train/eval data scan",
+      "one forward/backward smoke step without update"
+    ],
+    "fresh_only": true,
+    "resume_or_retry": false,
+    "parallel_gpu_cells": false
+  },
+  "minimum_start_free_gib": 120,
+  "source_identity": {
+    "scripts/run_v14_boundary_training.py": "9f9d597df2277ee684e21cd215ee479d86b8c4d62c0a5809b6643a38fb655dac",
+    "scripts/prepare_v14_boundary_training.py": "33eb0b70c8ee7f0033e16b073ae25f2379111e3cf0cd9d273fa69877f3100e64",
+    "src/latent_workspace_ft_v10/engine.py": "3e7659b7c927cab23b4d994ce2e320d99431e4ba657d560c1094bc36de596178",
+    "src/latent_workspace_ft_v10/workspace_core.py": "600bb0f308cff66d5d793eb5853cef3b51710f75a77cbe3cd1d0a930a6754dd0"
+  },
+  "expected_runtime": {
+    "python": "3.14.4",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0",
+    "cuda": "13.2"
+  },
+  "required_environment": {
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "HF_DATASETS_OFFLINE": "1",
+    "TOKENIZERS_PARALLELISM": "false",
+    "HF_HUB_DISABLE_PROGRESS_BARS": "1",
+    "OMP_NUM_THREADS": "2",
+    "PYTORCH_ALLOC_CONF": "backend:native,expandable_segments:True"
+  },
+  "authorized_actions": {
+    "offline_model_load": true,
+    "full_data_scan": true,
+    "smoke_forward_backward_without_update": true,
+    "fresh_training": true,
+    "optimizer_updates": 8,
+    "cells": 2,
+    "weight_write": true,
+    "old_weight_delete": false,
+    "generation": false,
+    "retry_or_sweep": false
+  },
+  "stop_rule": "Run task then semantic once. Preserve any doctor, training, retention, disk, or integrity failure without retrying or modifying the frozen comparison.",
+  "claim_boundary": "A completed run qualifies execution of one retained two-cell pilot only. It cannot by itself establish semantic specificity, benefit over task-only training, natural chat behavior, generalization, or qualification of the seven-fact V14 renderer task."
+}

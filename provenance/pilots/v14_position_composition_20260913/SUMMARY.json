@@ -1,0 +1,192 @@
+{
+  "format": "latent-workspace-v14-position-composition-summary-v1",
+  "status": "QUALIFIED_EXECUTION",
+  "winner": "none",
+  "semantic_effect_qualified": false,
+  "execution": {
+    "source_commit": "317c3bbf9ae9f4c2c117e331774b985257abfc8b",
+    "host": "SpiralReality-furnace",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "models": [
+      "task",
+      "semantic"
+    ],
+    "cases_per_model": 8,
+    "affected_cases_per_model": 4,
+    "unaffected_cases_per_model": 4,
+    "controls": [
+      "learned_pair",
+      "gram_matched_random",
+      "unrelated_family",
+      "sham"
+    ],
+    "horizons": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "lanes": [
+      "full_route",
+      "answer_boundary_only",
+      "non_boundary_only",
+      "current_query_only",
+      "prior_history_only",
+      "oracle_global_answer_axis",
+      "oracle_answer_orthogonal"
+    ],
+    "rows": 320,
+    "elapsed_seconds": 102.71294803731143,
+    "cuda_peak_allocated_bytes": 15478553600,
+    "training_performed": false,
+    "free_generation_performed": false,
+    "weights_written_or_deleted": false
+  },
+  "integrity": {
+    "raw_report_sha256": "c4823a2e3185be9a6fe496d5b871a0e35deb8cff05619146b06ad9c27c312dbc",
+    "plan_sha256": "214f3805ce697a275d50b27bf3145c2266e0bfc7d70e0f9775ae8ac34a65b00e",
+    "mechanical_execution_qualified": true,
+    "all_model_mechanical_checks_true": true,
+    "learned_predecessor_effects_reproduced_exactly": true,
+    "full_native_update_equals_boundary_plus_non_boundary_exactly": true,
+    "full_native_update_equals_current_query_plus_prior_history_exactly": true,
+    "sham_exact_noop_in_every_lane": true
+  },
+  "measurement_1_predeclared_semantic_affected_horizon_4": {
+    "focus_is_predecessor_informed_not_independent_confirmation": true,
+    "learned_pair": {
+      "full_route": {
+        "mean_signed_pair_effect": -0.046875,
+        "positive_zero_negative": [
+          1,
+          0,
+          3
+        ]
+      },
+      "answer_boundary_only": {
+        "mean_signed_pair_effect": 0.078125,
+        "positive_zero_negative": [
+          3,
+          1,
+          0
+        ]
+      },
+      "non_boundary_only": {
+        "mean_signed_pair_effect": 0.046875,
+        "positive_zero_negative": [
+          2,
+          2,
+          0
+        ]
+      },
+      "current_query_only": {
+        "mean_signed_pair_effect": 0.0,
+        "positive_zero_negative": [
+          1,
+          2,
+          1
+        ]
+      },
+      "prior_history_only": {
+        "mean_signed_pair_effect": 0.015625,
+        "positive_zero_negative": [
+          1,
+          2,
+          1
+        ]
+      },
+      "intact_twin_prediction_changes_in_every_lane": 0
+    },
+    "interpretation": "The full-route sign reversal is not explained by an oppositely directed non-boundary update. Boundary-only and non-boundary-only effects are both donor-directed on average, but their joint native decode reverses. No lane flips the discrete answer prediction."
+  },
+  "measurement_2_composition_interaction": {
+    "semantic_affected_horizon_4": {
+      "boundary_non_boundary_observed_interaction_mean": -0.171875,
+      "boundary_non_boundary_observed_interaction_positive_zero_negative": [
+        0,
+        1,
+        3
+      ],
+      "boundary_non_boundary_observed_interaction_minimum": -0.375,
+      "boundary_non_boundary_observed_interaction_maximum": 0.0,
+      "positive_boundary_to_negative_full_reversal_cases": 2,
+      "boundary_non_boundary_local_linear_reconstruction_error_mean": 0.0,
+      "current_history_observed_interaction_mean": -0.0625,
+      "current_history_observed_interaction_positive_zero_negative": [
+        0,
+        1,
+        3
+      ],
+      "current_history_local_linear_reconstruction_error_mean": 0.0
+    },
+    "task_affected_horizon_4": {
+      "boundary_non_boundary_observed_interaction_mean": 0.015625,
+      "boundary_non_boundary_observed_interaction_mean_absolute": 0.171875,
+      "positive_boundary_to_negative_full_reversal_cases": 0
+    },
+    "interpretation": "The native layer-16 input decompositions and the local linear predictions are exactly additive, while the observed BF16 answer margins are strongly non-additive. The newly located wall is downstream composition/readout interaction, not loss of either disjoint position component at injection."
+  },
+  "measurement_3_local_answer_axis_oracle": {
+    "oracle_is_label_aware_and_architecture_selection_ineligible": true,
+    "semantic_affected_horizon_4": {
+      "full_route_local_linear_pair_prediction_mean": 0.002796991412125749,
+      "answer_boundary_local_linear_pair_prediction_mean": 0.000486472956254147,
+      "non_boundary_local_linear_pair_prediction_mean": 0.002310518455871602,
+      "oracle_axis_local_linear_pair_prediction_mean": 0.0033287206217756174,
+      "oracle_axis_observed_mean_signed_pair_effect": 0.0,
+      "oracle_axis_observed_positive_zero_negative": [
+        0,
+        4,
+        0
+      ]
+    },
+    "semantic_affected_horizon_0": {
+      "full_route_local_linear_pair_prediction_mean": 0.00430006526906368,
+      "answer_boundary_local_linear_pair_prediction_mean": 0.0031843443866819143,
+      "non_boundary_local_linear_pair_prediction_mean": 0.0011157208823817655,
+      "full_route_observed_mean_signed_pair_effect": 0.0
+    },
+    "interpretation": "A label-aware projection onto the local answer gradient still produces no endpoint margin movement in all four affected cases at native gain. Local-gradient alignment alone does not bridge the coarse native answer readout."
+  },
+  "measurement_4_specificity_and_stability": {
+    "semantic_affected_horizon_4_answer_boundary_only": {
+      "learned_pair_mean": 0.078125,
+      "gram_matched_random_mean": -0.03125,
+      "unrelated_family_mean": 0.03125,
+      "sham_mean": 0.0
+    },
+    "semantic_affected_horizon_0_to_4_answer_boundary_auc": {
+      "learned_pair_mean": 0.0390625,
+      "gram_matched_random_mean": -0.03125,
+      "unrelated_family_mean": 0.015625,
+      "sham_mean": 0.0
+    },
+    "semantic_unaffected_horizon_4": {
+      "full_route_mean": 0.0,
+      "full_route_mean_absolute": 0.0625,
+      "answer_boundary_only_mean": 0.0,
+      "answer_boundary_only_mean_absolute": 0.0,
+      "non_boundary_only_mean": 0.0,
+      "non_boundary_only_mean_absolute": 0.03125,
+      "current_query_only_mean": 0.0,
+      "current_query_only_mean_absolute": 0.09375
+    },
+    "interpretation": "The learned semantic boundary lane separates directionally from the random control at the predeclared endpoint, but the sample is predecessor-selected, unrelated controls also move, unaffected position lanes are not uniformly stable, and no prediction flips. Specificity and semantic promotion therefore remain unsupported."
+  },
+  "overall_conclusion": {
+    "supported": [
+      "The complete learned reader update can be replayed and decomposed into two exact native BF16 position partitions.",
+      "At the predecessor-informed semantic h4 cell, answer-boundary and non-boundary updates are separately donor-directed on average while their full composition is donor-opposed.",
+      "The sign reversal is downstream of the additive layer-16 input and is invisible to a first-order local decomposition.",
+      "A native-gain label-aware answer-axis oracle remains below the observed endpoint margin lattice."
+    ],
+    "not_supported": [
+      "A negative non-boundary component as the simple cause of full-route reversal.",
+      "Any intact-to-twin discrete answer flip in the position lanes.",
+      "A deployable answer-axis route, because the oracle uses labels and has zero endpoint effect.",
+      "Specificity, semantic memory, generalization, natural chat behavior, or promotion of either checkpoint."
+    ],
+    "smallest_next_gate": "Hold the exact same boundary states and position lanes fixed, expose the final normalized hidden state, and compare native BF16 candidate logits with an FP32 two-choice head readout. If the negative composition interaction disappears before BF16 logit casting, the next bridge is precision-localized readout; if it remains, localize the nonlinear interaction through the upper decoder layers before training a position gate."
+  }
+}

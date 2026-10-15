@@ -1,0 +1,321 @@
+{
+  "format": "v14-instrument-return-plan-v1",
+  "frozen_before_model_scoring": true,
+  "purpose": "One OLMo mechanical+calibration screen then the same Mistral base re-entry; stop. Accuracy never gates return.",
+  "source_identity": {
+    "package": {
+      "scope": "package_top_level_python_modules_v1",
+      "files": {
+        "__init__.py": "124b526664691d27e124a9e973400e1b4d35fc48b1ead89261f6a80dbf55e7e7",
+        "__main__.py": "71e2b8c807406881aa3d12a21323dc92682fe2b602fbe08b25460805793e0518",
+        "engine.py": "3e7659b7c927cab23b4d994ce2e320d99431e4ba657d560c1094bc36de596178",
+        "implementation_identity.py": "5e4ac6e92a899bc49669f71d5e1c249432585cca6f88be031bdb668404c220c5",
+        "model_binding.py": "58360a21e6ef717ae00a8f8715f2b5ff2a277fb6bdce583dba2a6e6bd1869e18",
+        "normalization.py": "642bc6fe017df2d9cfcee6cf9ac5a578909e62a20b37fe7f7647812dba989b7a",
+        "numerics.py": "b3a3da6cbf27605379b4f1ef16dc6d37922ad0782bbf88bd13bb6b415d5b0e85",
+        "observability.py": "ac7bcd4bd33fe6f61f4c34abc882108f5e95746de96d1e3de9f1b7eade180c06",
+        "workspace_core.py": "600bb0f308cff66d5d793eb5853cef3b51710f75a77cbe3cd1d0a930a6754dd0"
+      },
+      "sha256": "dfb0279a86de0758ed3a23a046f9daba3f6f2f835766bc3159a14a710e5118d1"
+    },
+    "scripts": {
+      "scripts/analyze_v13_boundaries.py": "414be25e77d994bb9f39ab427327cb26a1ed233fb041aeb762e5c6ccc6915ce9",
+      "scripts/calibrate_v11_elicitation.py": "8b3f691e251bff3447ff52b96571947d2a968b946eb97d5d91efffa09f736978",
+      "scripts/capture_v10_generation_behavior.py": "8a775e10694d3b08dc4b8ca291beaae33c629259a7e3ca09be72ca5e183c3e6e",
+      "scripts/compare_v10_full_model_oracle.py": "1759da5d79b1faf5d06581847da9f73a4c239aac7dd4af0022039e32716744d0",
+      "scripts/curate_v14_portability.py": "4414956ca87e2a2bf4cb42ac3ec1931f667da39a256b2d938b4b685ce6967385",
+      "scripts/execute_v12_calibrated_route.py": "8518beb2e7bdecde64c0bd894dd0270282a90f380e98dffbd067709fb6c2a17f",
+      "scripts/execute_v13_visibility.py": "161b0535974e3730f9d5bee7f8ebeecbbfba5d5f44530b0d27664e1625480c3a",
+      "scripts/finalize_v11_f1_o0_refinement.py": "6635989a73a1a228c8684e890d840f6a1d6e6880b22864416a880a2369e0bef2",
+      "scripts/finalize_v11_f1_pilot.py": "e0c7373d103a0d5f43f393d5f7c5a14e07e6ea94345a7c98f76ac5b6e94f7e74",
+      "scripts/finalize_v11_seed_robustness.py": "1f1d978b75cdbc6d6257f8ae4a8d90b0e8a93bad42ce43a241a46a021962277e",
+      "scripts/finalize_v11_step4_promotion.py": "60d8ee1f08ab5f42168de1f1a3a0ac23027de9227b85e7b20904e0302293221f",
+      "scripts/finalize_v11_update_response_surface.py": "66843e05dbb0b05a0d3e5e7fdd0364d8bed15310bf3f733345566c6e408eb96e",
+      "scripts/finalize_v12_calibrated_route.py": "6e972ed96db1d93bf1fb9e0c29c1465f94d6eccca8098d42589e675a288b5990",
+      "scripts/freeze_v11_symmetric_continuation.py": "8fc099d22e2f9aa1f41b3824b8cd6842145edf33e7bc215d928e9e11f07e054c",
+      "scripts/inventory_latent_weights.py": "e4ee2b349c5ea188e0d680035af5b349156681b95adc5eb8d2f8c5643b48ec1d",
+      "scripts/prefetch_v10_model.py": "9d4b4f2b5374657d632bffa671eadc9b960a0d93070d05cbb5933bccd7001f3a",
+      "scripts/prepare_transport_v2_pilot.py": "533acfd6bcc4fe5381d427672590c63649d4e0e6c50908896243ad0b467e8b12",
+      "scripts/prepare_v10_matrix.py": "ced6d0a396e996375c8abbadac406581150891e18aff5ba4c487efd5f026b8a1",
+      "scripts/prepare_v11_f1_o0_refinement.py": "69ee4c6bcfe00e6ecc07171585cfeebb506cb9f4c62b69ddc6f784dc301f0000",
+      "scripts/prepare_v11_objective_repair.py": "67951ae52a639899ad7486e9c0aa8da3a915dc5491a513d11bdd2e9477beee12",
+      "scripts/prepare_v11_seed_robustness.py": "665bd9382f3242ac318d2a254a70aa184321d0ff25deeb69e7a8b996d41ecd85",
+      "scripts/prepare_v11_update_response_surface.py": "2144aa8af01f554d005a6bdacecaedec256443a36bfc80df2fccd3c4fc93e3b2",
+      "scripts/prepare_v12_calibrated_route.py": "42be40ff65a565063d0c5b1eaf14fd63d82c21b6c108d5fd4938127f5beee4ae",
+      "scripts/prune_transport_v2_weights.py": "3836ef9ce9f5bb47036c5086704fe0c95d6fe8f79bc417e83d15a48f0dd7d77d",
+      "scripts/prune_v10_verified_run.py": "76d26ae6fef9870a85de08790fc4124877d87293124ba14df1481acdf9065c34",
+      "scripts/remap_functional_choices.py": "3b8c64e7775edd14f754b15e21f67cb5d956b9a34952ac56f8286a889f71a4b3",
+      "scripts/run_v10_matrix.py": "07fdd920f76463f5996a5568447b940d41b8bce4675dd83594d3f68e54ecd68d",
+      "scripts/run_v10_resume_equivalence.py": "ea60e46f48efd3be0a5069f2642891556c9473e764a8f12fae8563264a7e93da",
+      "scripts/run_v11_gate0.py": "6bdbb22c35e62c0681eac1c32463789c6ed9d59a8a274a7bb5ea7e6456f89058",
+      "scripts/run_v12_noop_gate.py": "aa0a1a8b0fd58b1b5b66f04089c705c24892fefe51a619c3c7bb84bc0e6610a9",
+      "scripts/run_v14_instrument_screen.py": "1e44efad26dd333f87e04b8f960aced01ddafffc4b7d19c4e8fc3e85f3a08816",
+      "scripts/run_v14_portability_canary.py": "5b225593f3fef729133d14f95d83320ae8cb32100b0801c1410a8d3e007d26c4",
+      "scripts/summarize_v13_visibility.py": "72bf25bc1f3c19d7cfdc872d7802e6f512b9bad2d0ca949e570da3fff306306d",
+      "scripts/test_v10_scaffolding.py": "fda1dd3b9d6d644db0e28c01c20910949e79e26880564fce80418c7dd60b296c",
+      "scripts/v13_paired_metrics.py": "73785a8605cd495f30d18614c905eae79ea73f1a3b078300b6f5d8bd3d7bde24",
+      "scripts/v13_task_fixture.py": "26480c2d5673d979be3c3142452324c6dc083e2810e7541e4a5b8c009163f4d3",
+      "scripts/v13_visibility_trace.py": "39e9321598123bf27800450b04ab4807c3ce15b4dcf0a3158e06d753593de55d",
+      "scripts/v14_instrument_corpus.py": "0a0103a8f752ed5c7e76ae2dd22be1c93382480a8918c6d2fd389bf15ec5bbdc",
+      "scripts/v14_screen_metrics.py": "4fed360e3429980a509707d85ae4d316abbddfbc27b6db0073b5164a21ab0f49",
+      "scripts/v14_workspace_instrument.py": "aca23a124ecfdc9cf817dc1cc7d881da1d6a8ac6ec93d39045e2213cfdd4cc25",
+      "scripts/validate_v13_design_contract.py": "3342e94ff05d19f38f63a74ff28db6ac934d8c1b57f4e954d181fdf8f6c5eb03",
+      "scripts/verify_v10_assays.py": "345e0416b1784ef347bef27a3e22943aa88e6778b11e82038363bcca8de7be11"
+    }
+  },
+  "calibration_sha256": "ed104934dc8e7e7033412cfcb42120e086d454063302e5cdb3beb56ee15bf2c5",
+  "holdout_sha256": "326ee638549b32c2a9ff35480f19c1f6da4ce8ecdbfeed24d075c81dfea76117",
+  "holdout_model_scored": false,
+  "model_content_anchor_scope": "Prelaunch cache-content inventory 2026-09-04, not certification of historical run byte identity.",
+  "models": {
+    "olmo": {
+      "model_id": "allenai/OLMo-2-0425-1B",
+      "revision": "a1847dff35000b4271fa70afc5db10fd29fedbdf",
+      "model_type": "olmo2",
+      "max_snapshot_bytes": 8589934592,
+      "snapshot": "/home/ryospiralarchitect/.cache/huggingface/hub/models--allenai--OLMo-2-0425-1B/snapshots/a1847dff35000b4271fa70afc5db10fd29fedbdf",
+      "snapshot_content_anchor": [
+        {
+          "path": ".gitattributes",
+          "bytes": 1519,
+          "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+        },
+        {
+          "path": "README.md",
+          "bytes": 12892,
+          "sha256": "8e09b3ce741d945b340e51530dd95f49c646a210d0342b1a831a19e36928758b"
+        },
+        {
+          "path": "config.json",
+          "bytes": 623,
+          "sha256": "3dc581384d61b3366fc34a95d12c20e595014ea62352469c17c3e3a77f32882a"
+        },
+        {
+          "path": "generation_config.json",
+          "bytes": 121,
+          "sha256": "6b4e5d0f5199345ef9e1f55139f13451f65eb5bd308a40718df1874ee2998ecf"
+        },
+        {
+          "path": "merges.txt",
+          "bytes": 916646,
+          "sha256": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502"
+        },
+        {
+          "path": "model-00001-of-00002.safetensors",
+          "bytes": 4983360992,
+          "sha256": "c52e4ac8bf4867e698d908f9e8c2b84aa891b91dff066d46bf2a7cf453ad77fb"
+        },
+        {
+          "path": "model-00002-of-00002.safetensors",
+          "bytes": 956326560,
+          "sha256": "5f80762572fe28aca49b01b98895d96ca529b9792fc10925a977a161ad768d30"
+        },
+        {
+          "path": "model.safetensors.index.json",
+          "bytes": 14873,
+          "sha256": "704e57695805a67b0c43220e60e31cf43948c387f39799b82b260bb4df8180e6"
+        },
+        {
+          "path": "special_tokens_map.json",
+          "bytes": 125,
+          "sha256": "3c6bf7c09d5473c303cee8575a22bb51e5153c17d177a721b43cd4785c6d09ae"
+        },
+        {
+          "path": "tokenizer.json",
+          "bytes": 7137177,
+          "sha256": "73fd5254624f39a88e3faac6a8e11300fc3c735ed37880d4f4f08db898eaecca"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "bytes": 4345,
+          "sha256": "91c69c665697785ace4ec7dbd159e1839bc9bb5033ab05a56bb0547521dc9ab0"
+        },
+        {
+          "path": "vocab.json",
+          "bytes": 1611056,
+          "sha256": "9e14712c91b37c7aab74b1306baa46ac342d620637a4b44523cdc3aec7d24195"
+        }
+      ],
+      "config_sha256": "3dc581384d61b3366fc34a95d12c20e595014ea62352469c17c3e3a77f32882a"
+    },
+    "mistral": {
+      "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+      "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+      "model_type": "mistral",
+      "max_snapshot_bytes": 34359738368,
+      "snapshot": "/home/ryospiralarchitect/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.3/snapshots/c170c708c41dac9275d15a8fff4eca08d52bab71",
+      "snapshot_content_anchor": [
+        {
+          "path": ".gitattributes",
+          "bytes": 1519,
+          "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+        },
+        {
+          "path": "README.md",
+          "bytes": 7893,
+          "sha256": "3166974023134d972368b585d730fa5f70100873684f90a10a773b20e80b30ba"
+        },
+        {
+          "path": "config.json",
+          "bytes": 601,
+          "sha256": "affafc6478ec0fd07a32f0ca57aa2fc57743f4d17d6730f86a96ac24d1507f99"
+        },
+        {
+          "path": "consolidated.safetensors",
+          "bytes": 14496078512,
+          "sha256": "76d5729be995fb6510c7f103c5b8825d3d82f8126ac949db6be367a638694d1f"
+        },
+        {
+          "path": "generation_config.json",
+          "bytes": 116,
+          "sha256": "b4669f1b8f4185324bd9b12a69e85a1ad2289bc48111ef739cfaaea3bba6b0a9"
+        },
+        {
+          "path": "model-00001-of-00003.safetensors",
+          "bytes": 4949453792,
+          "sha256": "ce6fb6f6f4d0183f4813cbf4ece24109da629a08d4210da46f77e1d8b0bd5c19"
+        },
+        {
+          "path": "model-00002-of-00003.safetensors",
+          "bytes": 4999819336,
+          "sha256": "8c0e72f148366b6a3709e002a98706a33d31aec8515090c856c95b2044f92ae0"
+        },
+        {
+          "path": "model-00003-of-00003.safetensors",
+          "bytes": 4546807800,
+          "sha256": "905dd405363e43d95779c1c1155a2dbfd36155914ae95dbd934e12e490cfb4ca"
+        },
+        {
+          "path": "model.safetensors.index.json",
+          "bytes": 23950,
+          "sha256": "e489ba553b87cde188d921b1a8283c2e0b9d33d635b88147d96ff0fcd6250016"
+        },
+        {
+          "path": "params.json",
+          "bytes": 202,
+          "sha256": "8a64b8657de37af1f828eef1517dc186247938d66e7fea2c78c31d5b9071efe6"
+        },
+        {
+          "path": "special_tokens_map.json",
+          "bytes": 414,
+          "sha256": "6fa06efa2785e450051989a6f8fb4416b10149ded485ddd3f127a40734f5cfd0"
+        },
+        {
+          "path": "tokenizer.json",
+          "bytes": 1961548,
+          "sha256": "e553af6fff7d7ad76e830608b218c5c0b0822998d5a1a96099a74cd3c1cb1a49"
+        },
+        {
+          "path": "tokenizer.model",
+          "bytes": 587404,
+          "sha256": "37f00374dea48658ee8f5d0f21895b9bc55cb0103939607c8185bfd1c6ca1f89"
+        },
+        {
+          "path": "tokenizer.model.v3",
+          "bytes": 587404,
+          "sha256": "37f00374dea48658ee8f5d0f21895b9bc55cb0103939607c8185bfd1c6ca1f89"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "bytes": 140874,
+          "sha256": "0533dec9cfe319163801b6618d0f3ec9cfa126b6288e3df5deca6e32acb09cd2"
+        }
+      ],
+      "config_sha256": "affafc6478ec0fd07a32f0ca57aa2fc57743f4d17d6730f86a96ac24d1507f99"
+    }
+  },
+  "expected_runtime": {
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0",
+    "python": "3.14.4",
+    "cuda": "13.2"
+  },
+  "cuda_allocator_fraction": 0.9,
+  "max_elapsed_seconds": 1200,
+  "numeric_condition": {
+    "base": "bfloat16",
+    "workspace": "float32",
+    "autocast": "cuda_bfloat16",
+    "sidecar_logit_composition": "fp32_accumulate",
+    "attention_implementation": "sdpa",
+    "allow_tf32": false,
+    "workspace_norm_kind": "layer_norm",
+    "workspace_norm_eps": 0.00001,
+    "cpu_mkldnn": "process default; no monkeypatch",
+    "fallback": false
+  },
+  "scope": {
+    "models": 2,
+    "conditions_per_model": 1,
+    "records_per_model": 120,
+    "answer_cases_per_model_per_route": 480,
+    "independent_families": 12,
+    "primary_cases_per_route": 384,
+    "easy_cases_per_route": 96,
+    "optimizer_steps": 0,
+    "checkpoint_writes": 0,
+    "downloads": 0,
+    "weight_deletions": 0
+  },
+  "input_contract": {
+    "elicitation": "symmetric_instruction",
+    "chat_template": false,
+    "choices": [
+      " no",
+      " yes"
+    ],
+    "add_bos": false,
+    "add_eos": false,
+    "prompt_separator": "\n\n",
+    "context_tokens": 192,
+    "query_tokens": 96,
+    "inline_tokens": 256,
+    "pad_to_multiple_of": 8,
+    "batch_records": 1,
+    "world_sides": 2,
+    "queries_per_record": 2,
+    "full_prefix_unchanged_all_cases": true,
+    "future_answer_blindness_scope": "first fixed record only, each route",
+    "holdout_not_opened_by_model_runner": true
+  },
+  "workspace_instrument": {
+    "seed": 1401,
+    "probe_seed": 1403,
+    "temporary_up_std": 0.01,
+    "slots": 2,
+    "workspace_dim": 64,
+    "writer_steps": 1,
+    "reader_steps": 1,
+    "heads": 4,
+    "logit_rank": 8,
+    "boundary": "middle model layer",
+    "required": "bypass/noop/opened_route/ownership/passive_norm/restoration",
+    "learned": false
+  },
+  "calibration_gate": {
+    "easy_accuracy_min": 0.75,
+    "easy_each_label_recall_min": 0.6,
+    "primary_accuracy_min": 0.6,
+    "primary_each_label_recall_min": 0.55,
+    "accuracy_family_ci_lower_strictly_above": 0.5,
+    "paired_f1_minus_f0_accuracy_family_ci_lower_strictly_above": 0,
+    "bootstrap_samples": 4096,
+    "bootstrap_seed": 1404,
+    "confidence": 0.95,
+    "unknowns_qualify": false,
+    "scope": "CALIBRATION_ONLY"
+  },
+  "return_gate": {
+    "instrument_ok": true,
+    "coverage_ok": true,
+    "integrity_ok": true,
+    "screen_complete": true,
+    "accuracy_requirement": false,
+    "automatic_retries": 0
+  },
+  "scientific_success": false,
+  "training_authorized": false,
+  "deferred_sufficiency_qualified": false,
+  "rd_bridge_qualified": false,
+  "after_mistral": "Stop after same pinned-base screen, including partial/failure receipts. No automatic checkpoint/training/norm sweep."
+}

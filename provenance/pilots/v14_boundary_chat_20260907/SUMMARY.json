@@ -1,0 +1,189 @@
+{
+  "format": "latent-workspace-v14-boundary-chat-curated-summary-v1",
+  "run_status": "COMPLETE",
+  "scientific_disposition": "NO_WINNER_NO_PROMOTION",
+  "identifiers": {
+    "source_commit": "7505e29af1b7046b5919967e5da7dd0df34fdab4",
+    "plan_sha256": "e281a69988fdeaec25e6b77c5db7aee41aee71fd5f6bc0926716e93b0c728b2a",
+    "raw_report_sha256": "fa104ca3ffc9a16e477a26f42551b5b74ff5955ffe1c01fe8989d454cb35a1f0",
+    "grouped_comparison_sha256": "14fabebc9da0eb32ddfba8b1581bef52865be9522048f3d1b9e33a30db747b4b",
+    "model_revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "task_manifest_sha256": "00561bf8fd6f1b4eec52061fe88684198dbaa8ea2feee1d948bd202eb43523ad",
+    "semantic_manifest_sha256": "067c48cb1d312e1e0fa504f889343d5bd825140a49e0a3e2deec2004bf3113f2"
+  },
+  "protocol": {
+    "models": [
+      "base",
+      "task",
+      "semantic"
+    ],
+    "case_count": 8,
+    "affected_cases": 4,
+    "unaffected_cases": 4,
+    "regimes": [
+      "greedy",
+      "sample_101",
+      "sample_102",
+      "sample_103"
+    ],
+    "generations": 192,
+    "max_new_tokens": 16,
+    "prompt_protocol": "raw_symmetric_instruction",
+    "chat_template": false,
+    "kv_cache": false,
+    "full_prefix_recompute_per_token": true,
+    "functional_memory_read": "recomputed_on_every_generation_step"
+  },
+  "first_token": {
+    "all_192_were_valid_no_or_yes_choices": true,
+    "base_inline": {
+      "overall_correct": 23,
+      "overall_total": 32,
+      "overall_accuracy": 0.71875,
+      "affected_correct": 11,
+      "affected_total": 16,
+      "affected_accuracy": 0.6875,
+      "unaffected_correct": 12,
+      "unaffected_total": 16,
+      "unaffected_accuracy": 0.75,
+      "greedy_correct": 7,
+      "greedy_total": 8,
+      "greedy_accuracy": 0.875
+    },
+    "base_query_only": {
+      "overall_correct": 20,
+      "overall_total": 32,
+      "overall_accuracy": 0.625,
+      "affected_correct": 8,
+      "affected_total": 16,
+      "affected_accuracy": 0.5,
+      "unaffected_correct": 12,
+      "unaffected_total": 16,
+      "unaffected_accuracy": 0.75,
+      "greedy_correct": 6,
+      "greedy_total": 8,
+      "greedy_accuracy": 0.75
+    },
+    "base_inline_minus_query_only": {
+      "overall_accuracy": 0.09375,
+      "affected_accuracy": 0.1875,
+      "unaffected_accuracy": 0.0,
+      "affected_first_choice_changed_pairs": 7,
+      "affected_pairs": 16,
+      "unaffected_first_choice_changed_pairs": 0,
+      "unaffected_pairs": 16
+    },
+    "task": {
+      "deferred_intact_accuracy": 0.5,
+      "deferred_twin_donor_accuracy": 0.5,
+      "intact_twin_first_choice_changes": 0,
+      "intact_twin_pairs": 32
+    },
+    "semantic": {
+      "deferred_intact_accuracy": 0.5,
+      "deferred_twin_donor_accuracy": 0.5,
+      "intact_twin_first_choice_changes": 0,
+      "intact_twin_pairs": 32
+    },
+    "task_semantic_first_choices_identical": 64,
+    "task_semantic_matched_rows": 64
+  },
+  "first_step_probability_displacement": {
+    "metric": "absolute intact-minus-twin change in log probability of the shared chosen first token",
+    "effective_unique_cases_per_partition": 4,
+    "regime_rows_per_partition": 16,
+    "task_affected_mean": 0.0024275481700897217,
+    "task_affected_max": 0.0024721622467041016,
+    "task_unaffected_mean": 0.0007897615432739258,
+    "task_unaffected_max": 0.000948488712310791,
+    "semantic_affected_mean": 0.00017020106315612793,
+    "semantic_affected_max": 0.0002340078353881836,
+    "semantic_unaffected_mean": 0.031859323382377625,
+    "semantic_unaffected_max": 0.06432074308395386,
+    "claim_limit": "This chosen-token displacement is not a donor-direction margin. The repeated regimes share an identical first-step distribution and are not independent replications."
+  },
+  "autoregressive_continuation": {
+    "task_intact_twin": {
+      "full_sequence_changes": 4,
+      "pairs": 32,
+      "affected_changes": 0,
+      "affected_pairs": 16,
+      "unaffected_changes": 4,
+      "unaffected_pairs": 16,
+      "first_divergence_token_positions_one_based": {
+        "5": 2,
+        "7": 2
+      }
+    },
+    "semantic_intact_twin": {
+      "full_sequence_changes": 12,
+      "pairs": 32,
+      "affected_changes": 8,
+      "affected_pairs": 16,
+      "unaffected_changes": 4,
+      "unaffected_pairs": 16,
+      "first_divergence_token_positions_one_based": {
+        "4": 4,
+        "5": 2,
+        "6": 2,
+        "12": 2,
+        "13": 2
+      },
+      "affected_changes_by_regime": {
+        "greedy": 0,
+        "sample_101": 4,
+        "sample_102": 2,
+        "sample_103": 2
+      },
+      "unaffected_changes_by_regime": {
+        "greedy": 2,
+        "sample_101": 0,
+        "sample_102": 2,
+        "sample_103": 0
+      }
+    },
+    "task_semantic_full_sequence_changes": 20,
+    "task_semantic_matched_rows": 64,
+    "base_inline_query_only_full_sequence_changes": 32,
+    "base_inline_query_only_pairs": 32,
+    "terminated_at_eos_after_choice": 15,
+    "hit_16_token_limit": 177
+  },
+  "route_receipts": {
+    "task_first_step_gate_mean": 0.11767578125,
+    "semantic_first_step_gate_mean": 0.11767578125,
+    "task_first_step_read_norm_range": [
+      1.013704538345337,
+      1.0272541046142578
+    ],
+    "semantic_first_step_read_norm_range": [
+      1.047428846359253,
+      1.062379240989685
+    ],
+    "interpretation": "Both learned routes were active and context-side dependent. A live carrier did not produce a donor-directed first answer."
+  },
+  "interpretation": {
+    "instrument": "On this small qualitative slice, inline context improved affected first-token accuracy from 0.50 to 0.6875 without changing unaffected accuracy, so the base model remained context-responsive under the frozen raw renderer.",
+    "learned_cells": "Task and semantic emitted the same first choice on every matched row. Neither intact-to-twin intervention changed a first answer, consistent with the failed grouped F1-F5 gates.",
+    "trajectory_seed": "Semantic training increased late intact-to-twin continuation bifurcation from 4/32 to 12/32 pairs, including 8/16 affected sampled pairs. This is a descriptive side-sensitive trace, not a semantic success: donor direction stayed at zero first-token flips, unaffected continuations also changed, and the largest first-step chosen-token probability displacement was on unaffected queries.",
+    "kv_control": "All late bifurcations occurred with no K/V cache and full-prefix recomputation. They therefore show that repeated workspace reads plus autoregressive prefix evolution can create delayed trajectory divergence without cache accumulation. Any future cached-generation claim must retain this no-cache lane as a matched control.",
+    "renderer": "Only 15/192 continuations stopped after the requested one-word choice; 177 reached the 16-token cap. The first token remains a clean categorical readout, but these raw completions are not a qualified conversational-quality assay."
+  },
+  "resources": {
+    "elapsed_seconds": 46.589892,
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0"
+  },
+  "actions_not_performed": [
+    "training or optimizer construction during generation",
+    "checkpoint selection or promotion",
+    "prompt, layer, gain, horizon, or metric search",
+    "K/V cache use",
+    "weight write or deletion",
+    "model download",
+    "automatic retry"
+  ],
+  "claim_ceiling": "This run establishes matched raw-prompt behavior for 192 bounded continuations and a no-cache late-divergence control. It does not establish semantic workspace use, donor-directed trajectory accumulation, K/V-mediated recurrence, general chat quality, serving speed, or a winning cell.",
+  "next_gate": "Measure first-answer donor margin and route residual projection at the answer boundary, then separate one-shot read, repeated no-cache read, teacher-forced K/V carry, and free cached generation under identical token histories before changing model scale or training length."
+}

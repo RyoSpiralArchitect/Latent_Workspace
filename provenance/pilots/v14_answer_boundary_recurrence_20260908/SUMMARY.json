@@ -1,0 +1,175 @@
+{
+  "format": "latent-workspace-v14-answer-boundary-recurrence-summary-v1",
+  "status": "COMPLETED_WITH_QUALIFIED_MECHANICAL_RECOVERY",
+  "winner": "none",
+  "semantic_effect_qualified": false,
+  "execution": {
+    "models": [
+      "task",
+      "semantic"
+    ],
+    "cases_per_model": 8,
+    "affected_cases_per_model": 4,
+    "unaffected_cases_per_model": 4,
+    "controls": [
+      "learned_pair",
+      "gram_matched_random",
+      "unrelated_family",
+      "sham"
+    ],
+    "horizons": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "rows": 320,
+    "elapsed_seconds": 154.73185041965917,
+    "cuda_peak_allocated_bytes": 15632054784,
+    "target_model_reruns": 0,
+    "training_performed": false,
+    "free_generation_performed": false,
+    "weights_written_or_deleted": false
+  },
+  "mechanical_recovery": {
+    "raw_status": "BLOCKED_EXECUTION",
+    "recovered_status": "QUALIFIED_VERIFIER_RECOVERY",
+    "failed_raw_check": "sham_cache_exact_noop",
+    "diagnosis": "The failed check compared a full-turn native BF16 SDPA call with a lane that split the final token into a separate call. This cross-chunking bitwise equality is invalid. Within every matched chunking lane, sham intact and twin were exactly equal and all signed pair and history contrasts were zero.",
+    "raw_report_rewritten": false,
+    "target_model_reexecuted": false,
+    "scientific_values_recomputed_or_selected": false
+  },
+  "measurement_1_signed_answer_boundary": {
+    "affected_horizon_zero": {
+      "task": {
+        "full_reader_route_mean_pair_effect": 0.0,
+        "last_token_only_mean_pair_effect": 0.0,
+        "native_cache_mean_pair_effect": 0.0,
+        "intact_twin_prediction_changes": 0,
+        "cases": 4
+      },
+      "semantic": {
+        "full_reader_route_mean_pair_effect": 0.0,
+        "last_token_only_mean_pair_effect": 0.0,
+        "native_cache_mean_pair_effect": 0.0,
+        "intact_twin_prediction_changes": 0,
+        "cases": 4
+      }
+    },
+    "specificity_warning": {
+      "task_unaffected_horizon_zero_mean_absolute_pair_effect": {
+        "full_reader_route": 0.0,
+        "last_token_only": 0.0,
+        "native_cache": 0.0625
+      },
+      "semantic_unaffected_horizon_zero_mean_absolute_pair_effect": {
+        "full_reader_route": 0.0625,
+        "last_token_only": 0.0625,
+        "native_cache": 0.0625
+      }
+    }
+  },
+  "measurement_2_answer_projection_at_horizon_zero": {
+    "affected_learned_pair": {
+      "task": {
+        "observed_mean_margin_shift": 0.0,
+        "local_gradient_pair_projection_mean": 0.0031393433455377817,
+        "local_gradient_positive_cases": 4,
+        "raw_unembedding_pair_projection_mean": 0.000026778189777587613
+      },
+      "semantic": {
+        "observed_mean_margin_shift": 0.0,
+        "local_gradient_pair_projection_mean": 0.0031843443866819143,
+        "local_gradient_positive_cases": 4,
+        "raw_unembedding_pair_projection_mean": 0.000022715104137205344
+      }
+    },
+    "control_warning": {
+      "task_unrelated_family_local_gradient_pair_projection_mean": 0.0020857373528997414,
+      "semantic_unrelated_family_local_gradient_pair_projection_mean": 0.001162226286396617,
+      "interpretation": "Positive local projection exists below the observed answer-logit lattice, but magnitude alone is not semantic-specific."
+    }
+  },
+  "measurement_3_bf16_and_rmsnorm_visibility": {
+    "task": {
+      "requested_update_rms_mean": 0.0018723201050306671,
+      "actual_native_update_rms_mean": 0.0018764992695651018,
+      "lost_requested_component_fraction_mean": 0.0653411865234375,
+      "directional_ulp_ratio_q50_mean": 4.4107421875,
+      "requested_components_at_least_half_ulp_fraction_mean": 0.9351348876953125,
+      "requested_components_at_least_one_ulp_fraction_mean": 0.8602935791015625,
+      "post_rmsnorm_delta_rms_mean": 0.06190296760760248
+    },
+    "semantic": {
+      "requested_update_rms_mean": 0.0019360584861715323,
+      "actual_native_update_rms_mean": 0.0019405219863983802,
+      "lost_requested_component_fraction_mean": 0.069964599609375,
+      "directional_ulp_ratio_q50_mean": 4.3041015625,
+      "requested_components_at_least_half_ulp_fraction_mean": 0.9303314208984375,
+      "requested_components_at_least_one_ulp_fraction_mean": 0.8556243896484375,
+      "post_rmsnorm_delta_rms_mean": 0.06406580242328345
+    },
+    "interpretation": "RMSNorm does not erase the learned update. Most components survive native BF16 addition and the post-RMSNorm activation difference is readily measurable; the remaining bottleneck is alignment and propagation to the answer margin."
+  },
+  "measurement_4_recurrence_factorization": {
+    "affected_learned_pair": {
+      "task": {
+        "no_cache_last_token_endpoint_mean": -0.046875,
+        "no_cache_last_token_positive_zero_negative": [
+          0,
+          2,
+          2
+        ],
+        "no_cache_last_token_auc_mean": -0.0859375,
+        "full_reader_route_endpoint_mean": -0.03125,
+        "cache_repeated_history_endpoint_mean": -0.015625,
+        "cache_repeated_history_auc_mean": -0.0859375
+      },
+      "semantic": {
+        "no_cache_last_token_endpoint_mean": 0.078125,
+        "no_cache_last_token_positive_zero_negative": [
+          3,
+          1,
+          0
+        ],
+        "no_cache_last_token_auc_mean": 0.0390625,
+        "full_reader_route_endpoint_mean": -0.046875,
+        "full_reader_route_positive_zero_negative": [
+          1,
+          0,
+          3
+        ],
+        "cache_repeated_history_endpoint_mean": 0.0,
+        "cache_repeated_history_positive_zero_negative": [
+          0,
+          4,
+          0
+        ],
+        "cache_repeated_history_auc_mean": -0.015625
+      }
+    },
+    "semantic_control_endpoints_for_no_cache_last_token": {
+      "gram_matched_random_mean": 0.03125,
+      "unrelated_family_mean": 0.03125,
+      "sham_mean": 0.0
+    },
+    "interpretation": "The semantic checkpoint contains a donor-aligned component in the isolated last-token update at later fixed boundaries, but the complete reader route reverses the endpoint sign and native K/V history does not amplify it. Matched random and unrelated controls also move at the same coarse logit scale."
+  },
+  "overall_conclusion": {
+    "supported": [
+      "A small donor-aligned local answer projection exists at horizon zero in both trained checkpoints even when observed BF16 answer margins do not move.",
+      "The learned boundary update largely survives native BF16 addition and RMSNorm.",
+      "The semantic cell differs from the task cell in the isolated repeated last-token trajectory."
+    ],
+    "not_supported": [
+      "A donor-directed first-turn answer change.",
+      "A full-reader semantic recurrence effect.",
+      "A K/V-mediated donor-direction amplification effect.",
+      "Specificity over Gram-matched random, unrelated-family, and unaffected controls.",
+      "Promotion of task or semantic cell; the grouped winner remains none."
+    ],
+    "smallest_next_gate": "Before more free generation or larger models, isolate why all-position reader application cancels or reverses the locally answer-aligned last-token component. Test position-selective or answer-axis-aware route composition under the same controls; do not optimize K/V carry yet."
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "format": "latent-workspace-v14-boundary-evaluation-plan-v1",
+  "frozen_before_target_evaluation": true,
+  "purpose": "Compare the two retained layer-16 finals under identical constrained-choice and workspace-necessity interventions before any natural generation is inspected.",
+  "training_execution": {
+    "path": "provenance/raw/v14_boundary_training_20260907/execution.json",
+    "sha256": "5a75333f7403962d7bbc856eb0cd27e6be39aec531104b58390dc2ae94d77229"
+  },
+  "cell_order": [
+    "task",
+    "semantic"
+  ],
+  "cells": [
+    {
+      "id": "task",
+      "checkpoint": "runs/v14/boundary_training/task_seed47_step8/final",
+      "manifest_sha256": "00561bf8fd6f1b4eec52061fe88684198dbaa8ea2feee1d948bd202eb43523ad",
+      "workspace_sha256": "2861d3421fde4d9532142517f86ae1a4984806b3f872ead6d426f1fee6ec0e00",
+      "choice_output": "provenance/raw/v14_boundary_evaluation_20260907/task_choice.json",
+      "necessity_output": "provenance/raw/v14_boundary_evaluation_20260907/task_necessity.json"
+    },
+    {
+      "id": "semantic",
+      "checkpoint": "runs/v14/boundary_training/semantic_seed47_step8/final",
+      "manifest_sha256": "067c48cb1d312e1e0fa504f889343d5bd825140a49e0a3e2deec2004bf3113f2",
+      "workspace_sha256": "3e2c9ace61b7aa08c1efb93e0b8e6d9466ba52073395cf20c0c599ea06a518b2",
+      "choice_output": "provenance/raw/v14_boundary_evaluation_20260907/semantic_choice.json",
+      "necessity_output": "provenance/raw/v14_boundary_evaluation_20260907/semantic_necessity.json"
+    }
+  ],
+  "choice_modes": [
+    "intact",
+    "hard_bypass",
+    "counterfactual_twin",
+    "norm_matched_random",
+    "fixed_carrier",
+    "cross_world_shuffle"
+  ],
+  "run_necessity": true,
+  "estimands": {
+    "primary": "counterfactual-twin prediction flips toward the matched donor answer relative to intact",
+    "secondary": [
+      "intact exact choice accuracy and margin",
+      "full-route versus hard-bypass and fixed/random carriers",
+      "within-world twin versus cross-world shuffle specificity",
+      "affected directionality and unaffected prediction stability reconstructed without post-hoc subsets"
+    ],
+    "ties": "unknown; never silently forced",
+    "cell_comparison": "semantic minus task for each predeclared metric"
+  },
+  "source_identity": {
+    "scripts/run_v14_boundary_evaluation.py": "9805a6bc115fd9834f744e1f91ae95908426cde4f04a2542813de6aad5f5552d",
+    "scripts/run_v14_boundary_training.py": "9f9d597df2277ee684e21cd215ee479d86b8c4d62c0a5809b6643a38fb655dac",
+    "src/latent_workspace_ft_v10/engine.py": "3e7659b7c927cab23b4d994ce2e320d99431e4ba657d560c1094bc36de596178"
+  },
+  "authorized_actions": {
+    "checkpoint_load": true,
+    "choice_evaluation": true,
+    "necessity_evaluation": true,
+    "optimizer_or_weight_write": false,
+    "training": false,
+    "generation": false,
+    "retry_or_metric_selection": false
+  },
+  "stop_rule": "Run task then semantic once with the exact mode order. Preserve any failure and do not rerun, tune an intervention, or select a query subset after observing results.",
+  "claim_boundary": "These retained-fixture evaluations can separate carrier dependence, content replacement, and donor directionality only within the constrained-choice task. They do not establish natural chat quality, broad generalization, or semantic causality when exact donor-directed effects are absent."
+}

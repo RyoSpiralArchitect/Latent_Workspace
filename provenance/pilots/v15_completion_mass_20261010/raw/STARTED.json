@@ -1,0 +1,184 @@
+{
+  "admission": {
+    "free_bytes": 33659289600,
+    "monotonic_seconds": 4928879.393733733,
+    "name": "NVIDIA GeForce RTX 5090",
+    "own_pid": 1043650,
+    "phase": "admission",
+    "processes": [],
+    "total_bytes": 34190917632,
+    "used_bytes": 10485760,
+    "utilization_percent": 0,
+    "uuid": "GPU-10cfd6d3-1deb-fd99-d351-3e05c4329fd8"
+  },
+  "plan": {
+    "alias_binding": "entire prefix unchanged; exactly one appended token; deduplicate by token ID within class; reject cross-class collisions",
+    "alias_classes": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "alias_string_bindings": 576,
+    "alias_suffixes": [
+      " no",
+      " No",
+      " yes",
+      " Yes"
+    ],
+    "all_cases_exposed": true,
+    "base_state_sha256": "54d161755862ebf00d8acbca083d5f290a5de44d33af82ca885f3bd8f9c94312",
+    "cases": 36,
+    "claims": {
+      "historical_generation_gate_changed": false,
+      "instrument_qualified": false,
+      "non_regression": "NOT_ESTABLISHED",
+      "posthoc_scoring_diagnostic": true,
+      "quality_judging": "NOT_RUN",
+      "semantic_promotion": false,
+      "training_performed": false
+    },
+    "comparison": "paired diagnostic classification versus historical lowercase-only initial choice scores; never rescore or repair the 288 historical generations",
+    "complete_class_log_mass": "logsumexp of all unique same-class alias-token log probabilities plus conditional EOS log probabilities at prefix-plus-alias",
+    "conditional_probability": "normalize the two class masses only for an explicitly conditional diagnostic; also retain each unnormalized class mass and their total covered mass",
+    "coverage": "finite four-string path set, not exhaustive whitespace/case/tokenization variants accepted by the whole-answer parser",
+    "eos_token_ids": [
+      2
+    ],
+    "format": "v15-base-completion-mass-v1",
+    "history": "teacher-forced complete-prefix recomputation; no KV cache",
+    "initial_parity": "exact historical lower-choice native logits and native shared-versus-ordinary full-logit parity on all 144 prefixes",
+    "model_parent": "configs/v14/PRECISION_BRIDGE_PLAN.json",
+    "model_revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "new_generation_sequences": 0,
+    "nice": 10,
+    "optimizer_steps": 0,
+    "path_definition": "one fixed alias token followed immediately by the pinned model EOS token",
+    "predecessor_artifact_index_sha256": "45563fddd8edcc3cf1ce150cdc777b0d1012848632b8bab830aaa597ed6b1d7b",
+    "predecessor_bundle": "provenance/pilots/v15_base_elicitation_20261010",
+    "predecessor_primary_expression_gate": "FAIL",
+    "predecessor_source_commit": "9983e42d082a9452feedc60bb0b72d0b810795b8",
+    "prediction": "class with strictly greater log mass; exact ties are unknown and not correct",
+    "prefix_policy": "reuse all exact predecessor prompt IDs; no rerendering or new cases",
+    "prefixes": 144,
+    "probability_arithmetic": "FP64 log_softmax over the entire native vocabulary; no temperature scaling",
+    "resources": {
+      "abort_free_gib": 4,
+      "admission_free_gib": 20,
+      "allocator_cap_gib": 18,
+      "cpu_threads": 2,
+      "poll_steps": 16
+    },
+    "start_class_log_mass": "logsumexp of all unique same-class alias-token log probabilities at the original prefix",
+    "unique_alias_path_count": "sum of distinct within-class alias token IDs across the 144 prefixes; at most 576",
+    "workspace_loaded": false
+  },
+  "plan_sha256": "492dbfbaf9f1d6082132d9c322a622a53d3eee118f344b4604c54b827f680abf",
+  "predecessor_artifact_index_sha256": "45563fddd8edcc3cf1ce150cdc777b0d1012848632b8bab830aaa597ed6b1d7b",
+  "runtime": {
+    "cuda": "13.2",
+    "python": "3.14.4",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0"
+  },
+  "source_commit": "012c5172788b333fdc14ca81fbcbe53c10c2e96c",
+  "source_manifest_before": {
+    "configs/v14/FT_BETA_QUERY_POOL_PLAN.json": "ced390786d09fd184382fb741722ec5f2a86d604e449e084db243ba75f318c0f",
+    "configs/v14/MISTRAL_PROMPT_GATE_PLAN.json": "a37299c35c2c4ff26fe76c88655970f8b35f1cf2791934fad4c36b047b2ec015",
+    "configs/v14/PRECISION_BRIDGE_PLAN.json": "f4951afb8772dc3806e00ed308b896a4c9d345afccceb9828fa3f5d330eea3f1",
+    "configs/v14/boundary_training/config_semantic_boundary16_seed47_step8.json": "bbf475b9b47e1ec13d333ab15e70cd989f53d204624c2ad7f6e30dcbf63fc578",
+    "configs/v15/COMPLETION_MASS_PLAN.json": "492dbfbaf9f1d6082132d9c322a622a53d3eee118f344b4604c54b827f680abf",
+    "configs/v15/ELICITATION_PLAN.json": "8fd8134090c921a1d949d0d92004744d6ab502393aa54b5bc588d3d242df32be",
+    "configs/v15/READOUT_TRANSPORT_PLAN.json": "9c3e0afb843c560a0c054660cdc580121187605b8dbbed573123ebc103de44df",
+    "docs/v15/COMPLETION_MASS_PLAN.md": "732400c98234ad9d617cdf55b97fa342d08e3b19f9fd35433853ddaf9c05a63b",
+    "docs/v15/ELICITATION_PLAN.md": "dadff05ee42e731fd6af30531a242c39ddbb8f593c70b54dc2e35ff29f483f94",
+    "docs/v15/PLAN.md": "32139e4671e8f465fd217068b961599f32e654f20309ca1272e553a398424adc",
+    "provenance/pilots/v15_base_elicitation_20261010/ARTIFACT_INDEX.json": "45563fddd8edcc3cf1ce150cdc777b0d1012848632b8bab830aaa597ed6b1d7b",
+    "scripts/ft_beta_query_pool_eval.py": "8e7f241444c79e61570cabe70bb276f9c3a777583a165c0a9a266a3ca03201b4",
+    "scripts/run_ft_beta_learner_audit.py": "08d3db7bff49d212f07bb0a7d92a185f653dae426d2d4ca15a6ea538b2a012b4",
+    "scripts/run_ft_beta_query_pool.py": "c3f05a532c57f33f8de75976335594311a6573d29b4f533c87fe791a41e16dbf",
+    "scripts/run_v11_gate0.py": "6bdbb22c35e62c0681eac1c32463789c6ed9d59a8a274a7bb5ea7e6456f89058",
+    "scripts/run_v14_answer_boundary_recurrence.py": "c598001072203c354261c8b8f95058fef8827621701d3af20792ebe9d082c958",
+    "scripts/run_v14_boundary_training.py": "9f9d597df2277ee684e21cd215ee479d86b8c4d62c0a5809b6643a38fb655dac",
+    "scripts/run_v14_experimental_chat.py": "18396229fca3812f8258557dc80bb91f4d4215a24361f6f65097256ac8a146b7",
+    "scripts/run_v14_multiturn_choice.py": "86dc1f258a8627a337fc815409b8729c573b52675a38b558627c276d620df7b1",
+    "scripts/run_v14_precision_bridge.py": "aa278bb18228ae67bdf67b15a09e9c48ac352e0f413dba2fdb08e53bbe14d373",
+    "scripts/run_v15_completion_mass.py": "ff6123b747377d469108e2709a00f5ce51921ddcfc3754a3e7139e8b71f9241a",
+    "scripts/run_v15_elicitation.py": "229cdd856ec4b740622acc9d5aed5e35a20704049431d3dd377a95eeff300e65",
+    "scripts/run_v15_readout_transport.py": "e5b7690d5b0af7b3409c0eb24a8c9ae522780f2d92e3bf0a72b3167b5919c3ac",
+    "scripts/v13_task_fixture.py": "26480c2d5673d979be3c3142452324c6dc083e2810e7541e4a5b8c009163f4d3",
+    "scripts/v13_visibility_trace.py": "39e9321598123bf27800450b04ab4807c3ce15b4dcf0a3158e06d753593de55d",
+    "scripts/v14_precision_bridge_eval.py": "e262b85581a7f0ad61263702c57551ae1d86ad50d29ddb193d06526926959ec2",
+    "scripts/v15_assay_summary.py": "15050c442844f378bbeb33f3a89c3954216bc4e8cb7f49ef60b8db0e790fc23c",
+    "scripts/v15_completion_mass.py": "2237b69d231e70bcdbc46ec16dee531806611b3e66ce62436a9b46ac7d13031f",
+    "scripts/v15_elicitation_inputs.py": "b646adcb22fdc465eea9b73a2b3976bab6e3d896202e08961c5eb3026bd78f6a",
+    "scripts/verify_ft_beta_learner_audit.py": "dcb859156d560fecbff8ef8aec29f3a44990f670a9e47a891e0957e5a50404c4",
+    "scripts/verify_ft_beta_query_pool.py": "f1f094a5dcec6d3842c50a9aa4dc22549ca040d6fc96486a6be0e21f9391a052",
+    "scripts/verify_v15_completion_mass.py": "cc39bdcf208fb4eeb9f48e825d16dac9fb7fee74d6b385e96dd672bdec8ab68d",
+    "scripts/verify_v15_elicitation.py": "bc216db1b44f6ff066e76aa171e0e866b13ee1299672e1c29d3c3358c2e786da",
+    "scripts/verify_v15_readout_transport.py": "e0911a1295299f216ee92f762103273886cbe8bb73545f7985b7a8c14a1fc9f1",
+    "src/latent_workspace_ft_v10/__init__.py": "124b526664691d27e124a9e973400e1b4d35fc48b1ead89261f6a80dbf55e7e7",
+    "src/latent_workspace_ft_v10/__main__.py": "71e2b8c807406881aa3d12a21323dc92682fe2b602fbe08b25460805793e0518",
+    "src/latent_workspace_ft_v10/answer_bank_generation.py": "ecd24f2649c0e69bf9f040556c850c85c9410c45666e889b97ad2488724ffc1d",
+    "src/latent_workspace_ft_v10/bridge_reader_panel.py": "a7457993a604cc4619c8da80b16798588f6f30bf39a1017665016a99d6e57505",
+    "src/latent_workspace_ft_v10/cache_binding.py": "f3c5dc1c10654a8be5aa28acc3fba6bd00698c9b57f721378722ea19febb71ff",
+    "src/latent_workspace_ft_v10/choice_readout.py": "80e7ec9060daffd98e818f20a6537c16a604e3367eedc64aaee812c16506a5cb",
+    "src/latent_workspace_ft_v10/engine.py": "3e7659b7c927cab23b4d994ce2e320d99431e4ba657d560c1094bc36de596178",
+    "src/latent_workspace_ft_v10/implementation_identity.py": "5e4ac6e92a899bc49669f71d5e1c249432585cca6f88be031bdb668404c220c5",
+    "src/latent_workspace_ft_v10/learner_gradient_audit.py": "18bb840b6faceabd59793ea44031de57c8f845876a9432f46ee62795e1621729",
+    "src/latent_workspace_ft_v10/model_binding.py": "58360a21e6ef717ae00a8f8715f2b5ff2a277fb6bdce583dba2a6e6bd1869e18",
+    "src/latent_workspace_ft_v10/normalization.py": "642bc6fe017df2d9cfcee6cf9ac5a578909e62a20b37fe7f7647812dba989b7a",
+    "src/latent_workspace_ft_v10/numerics.py": "b3a3da6cbf27605379b4f1ef16dc6d37922ad0782bbf88bd13bb6b415d5b0e85",
+    "src/latent_workspace_ft_v10/observability.py": "ac7bcd4bd33fe6f61f4c34abc882108f5e95746de96d1e3de9f1b7eade180c06",
+    "src/latent_workspace_ft_v10/precision_bridge.py": "054631dbf970595922713e64d7c7642813eb6edeb98d191df670c584f5b75eaa",
+    "src/latent_workspace_ft_v10/reader_query.py": "0d3b75d9db8ca362d61ea04f2380c088c2f34c48c4643cad7752365d7b10fe17",
+    "src/latent_workspace_ft_v10/v15_generation.py": "e2fda482cfa7138ed4ed8de559aad74b4029c590ecc3f56f9c5bb03083b8ebfa",
+    "src/latent_workspace_ft_v10/v15_pipeline.py": "588716b2547b96bd5efdca0211658abb5107c538d679f5990448ccf771f82bcf",
+    "src/latent_workspace_ft_v10/v15_readout.py": "b52102e2cb5f7e10b601b2b689d1dcb39c58a15e91a18f0337ac69dfc27ed471",
+    "src/latent_workspace_ft_v10/workspace_core.py": "600bb0f308cff66d5d793eb5853cef3b51710f75a77cbe3cd1d0a930a6754dd0",
+    "tests/test_run_v15_completion_mass.py": "325b4c6fc8432141d110df7354b819b21eaad17b9e4b4c637a28fe858b6e509c",
+    "tests/test_v15_completion_mass.py": "8fc8edbe575c41353c3dfbe9b590d5b4fa0727f66feb71af19ab681f3068b470",
+    "tests/test_verify_v15_completion_mass.py": "95f0f35563d98998fa75785903074b07b455107b07a9e0610832877d3d1b0e33"
+  },
+  "tokenizer_identity_before": {
+    "chat_template_sha256": "e16746b40344d6c5b5265988e0328a0bf7277be86f1c335156eae07e29c82826",
+    "files": [
+      {
+        "bytes": 601,
+        "path": "config.json",
+        "sha256": "affafc6478ec0fd07a32f0ca57aa2fc57743f4d17d6730f86a96ac24d1507f99"
+      },
+      {
+        "bytes": 116,
+        "path": "generation_config.json",
+        "sha256": "b4669f1b8f4185324bd9b12a69e85a1ad2289bc48111ef739cfaaea3bba6b0a9"
+      },
+      {
+        "bytes": 414,
+        "path": "special_tokens_map.json",
+        "sha256": "6fa06efa2785e450051989a6f8fb4416b10149ded485ddd3f127a40734f5cfd0"
+      },
+      {
+        "bytes": 1961548,
+        "path": "tokenizer.json",
+        "sha256": "e553af6fff7d7ad76e830608b218c5c0b0822998d5a1a96099a74cd3c1cb1a49"
+      },
+      {
+        "bytes": 587404,
+        "path": "tokenizer.model",
+        "sha256": "37f00374dea48658ee8f5d0f21895b9bc55cb0103939607c8185bfd1c6ca1f89"
+      },
+      {
+        "bytes": 587404,
+        "path": "tokenizer.model.v3",
+        "sha256": "37f00374dea48658ee8f5d0f21895b9bc55cb0103939607c8185bfd1c6ca1f89"
+      },
+      {
+        "bytes": 140874,
+        "path": "tokenizer_config.json",
+        "sha256": "0533dec9cfe319163801b6618d0f3ec9cfa126b6288e3df5deca6e32acb09cd2"
+      }
+    ],
+    "snapshot": "/home/ryospiralarchitect/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.3/snapshots/c170c708c41dac9275d15a8fff4eca08d52bab71"
+  }
+}

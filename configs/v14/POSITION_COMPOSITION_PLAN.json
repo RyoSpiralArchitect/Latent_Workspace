@@ -1,0 +1,223 @@
+{
+  "format": "latent-workspace-v14-position-composition-plan-v1",
+  "frozen_before_target_model_scoring": true,
+  "purpose": "At every frozen answer boundary, factor the native reader update into answer-boundary versus non-boundary and current-query versus prior-history positions, then use a separately marked label-aware local-gradient oracle to distinguish position cancellation from answer-axis misalignment.",
+  "predecessors": {
+    "grouped_comparison": {
+      "path": "provenance/pilots/v14_boundary_chat_20260907/raw/grouped_comparison.json",
+      "sha256": "14fabebc9da0eb32ddfba8b1581bef52865be9522048f3d1b9e33a30db747b4b"
+    },
+    "answer_boundary_recurrence": {
+      "path": "provenance/pilots/v14_answer_boundary_recurrence_20260908/raw/report.json",
+      "sha256": "74314641b42ebe67493a2a987c7660abea709999e88a6471b920ec4c5eed451d"
+    },
+    "mechanical_recovery": {
+      "path": "provenance/pilots/v14_answer_boundary_recurrence_20260908/raw/mechanical_recovery.json",
+      "sha256": "6ef93bf9b1d168910d94ac3320fdebb84774941f1f36bd4277ade27347f843df"
+    }
+  },
+  "eval": {
+    "path": "data/v10/functional_eval.jsonl",
+    "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e"
+  },
+  "model_order": [
+    "task",
+    "semantic"
+  ],
+  "models": [
+    {
+      "id": "task",
+      "checkpoint": "runs/v14/boundary_training/task_seed47_step8/final",
+      "manifest_sha256": "00561bf8fd6f1b4eec52061fe88684198dbaa8ea2feee1d948bd202eb43523ad",
+      "workspace_sha256": "2861d3421fde4d9532142517f86ae1a4984806b3f872ead6d426f1fee6ec0e00"
+    },
+    {
+      "id": "semantic",
+      "checkpoint": "runs/v14/boundary_training/semantic_seed47_step8/final",
+      "manifest_sha256": "067c48cb1d312e1e0fa504f889343d5bd825140a49e0a3e2deec2004bf3113f2",
+      "workspace_sha256": "3e2c9ace61b7aa08c1efb93e0b8e6d9466ba52073395cf20c0c599ea06a518b2"
+    }
+  ],
+  "model_contract": {
+    "name_or_path": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "dtype": "bfloat16",
+    "attn_implementation": "sdpa",
+    "route_mode": "deferred",
+    "boundary_layer": 16,
+    "reader_steps": 1,
+    "workspace_norm_kind": "layer_norm",
+    "workspace_norm_eps": 0.00001,
+    "use_chat_template": false,
+    "functional_elicitation": "symmetric_instruction",
+    "mixed_precision": "bf16"
+  },
+  "cases": [
+    {
+      "id": "w0_s0_q0",
+      "world_index": 0,
+      "side": 0,
+      "query_index": 0,
+      "affected": true
+    },
+    {
+      "id": "w0_s1_q0",
+      "world_index": 0,
+      "side": 1,
+      "query_index": 0,
+      "affected": true
+    },
+    {
+      "id": "w0_s0_q2",
+      "world_index": 0,
+      "side": 0,
+      "query_index": 2,
+      "affected": false
+    },
+    {
+      "id": "w0_s1_q2",
+      "world_index": 0,
+      "side": 1,
+      "query_index": 2,
+      "affected": false
+    },
+    {
+      "id": "w1_s0_q0",
+      "world_index": 1,
+      "side": 0,
+      "query_index": 0,
+      "affected": true
+    },
+    {
+      "id": "w1_s1_q0",
+      "world_index": 1,
+      "side": 1,
+      "query_index": 0,
+      "affected": true
+    },
+    {
+      "id": "w1_s0_q2",
+      "world_index": 1,
+      "side": 0,
+      "query_index": 2,
+      "affected": false
+    },
+    {
+      "id": "w1_s1_q2",
+      "world_index": 1,
+      "side": 1,
+      "query_index": 2,
+      "affected": false
+    }
+  ],
+  "expected_cases_per_model": 8,
+  "horizons": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "expected_rows": 320,
+  "boundary_layer": 16,
+  "fixed_tokens_across_all_cells": true,
+  "free_generation": false,
+  "fixed_turn": {
+    "force_original_answer_token": true,
+    "separator": "\n",
+    "repeat_same_query": true,
+    "answer_boundary_at_every_horizon": true
+  },
+  "controls": [
+    "learned_pair",
+    "gram_matched_random",
+    "unrelated_family",
+    "sham"
+  ],
+  "lanes": [
+    "full_route",
+    "answer_boundary_only",
+    "non_boundary_only",
+    "current_query_only",
+    "prior_history_only",
+    "oracle_global_answer_axis",
+    "oracle_answer_orthogonal"
+  ],
+  "position_contract": {
+    "answer_boundary_only": "Apply the reader update only to the final token at the current Answer: boundary.",
+    "non_boundary_only": "Apply the reader update to every valid query position except the final answer-boundary token.",
+    "current_query_only": "At h0 use the complete initial prompt. At h1-h4 use only the frozen repeated query suffix after the most recent forced original-answer token, including the final answer boundary.",
+    "prior_history_only": "Apply the update only before the current-query span; this is an exact zero lane at h0.",
+    "full_route": "Replay the complete one-step reader update over all valid positions.",
+    "disjoint_reconstruction": "In native BF16 input space, boundary plus non-boundary and current-query plus prior-history must each reconstruct the full replay exactly."
+  },
+  "oracle_contract": {
+    "basis": "The full-sequence local gradient of the affected donor-minus-original margin or unaffected original-minus-alternative margin through native layers 16-31.",
+    "projection": "Globally project each intact or twin update onto the flattened local-gradient direction; the paired orthogonal residual is also decoded.",
+    "label_aware": true,
+    "architecture_selection_eligible": false,
+    "semantic_promotion_eligible": false
+  },
+  "oracle_lanes_eligible_for_architecture_selection": false,
+  "measurements": {
+    "1_native_position_ablation": "Compare signed intact/twin effects for full, boundary, non-boundary, current-query, and prior-history native BF16 replays.",
+    "2_local_linear_attribution": "At all five horizons, record the full-sequence answer-gradient projection for requested and actual native updates in every lane.",
+    "3_label_aware_oracle": "Decode the global answer-axis projection and its orthogonal residual as diagnostic ceilings only; they cannot select a deployable route.",
+    "4_specificity": "Retain learned, positionwise full-Gram random, unrelated-world same-query, and sham pairs for affected and unaffected cases.",
+    "5_predecessor_replication": "The learned full-route and answer-boundary effects and base readout must exactly reproduce the frozen recurrence report before new interpretation."
+  },
+  "predeclared_focus": {
+    "model": "semantic",
+    "population": "affected",
+    "horizon": 4,
+    "reason": "The predecessor showed donor-directed boundary-only and reversed full-route effects in this cell.",
+    "independent_confirmation": false
+  },
+  "seed": 47,
+  "random_seed": 271828,
+  "control_tolerance": 0.000002,
+  "cpu_threads": 2,
+  "cuda_allocator_fraction": 0.9,
+  "expected_runtime": {
+    "python": "3.14.4",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0",
+    "cuda": "13.2"
+  },
+  "required_environment": {
+    "PYTHONPATH": "src",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "HF_DATASETS_OFFLINE": "1",
+    "TOKENIZERS_PARALLELISM": "false",
+    "HF_HUB_DISABLE_PROGRESS_BARS": "1",
+    "OMP_NUM_THREADS": "2",
+    "PYTORCH_ALLOC_CONF": "backend:native,expandable_segments:True"
+  },
+  "source_identity": {
+    "scripts/run_v14_position_composition.py": "27cd47b2649da9e87bbcc913349f3f535b36e0214f9472a48f953f057cffd002",
+    "scripts/run_v14_answer_boundary_recurrence.py": "c598001072203c354261c8b8f95058fef8827621701d3af20792ebe9d082c958",
+    "scripts/run_v14_experimental_chat.py": "18396229fca3812f8258557dc80bb91f4d4215a24361f6f65097256ac8a146b7",
+    "scripts/run_v14_boundary_training.py": "9f9d597df2277ee684e21cd215ee479d86b8c4d62c0a5809b6643a38fb655dac",
+    "scripts/v13_visibility_trace.py": "39e9321598123bf27800450b04ab4807c3ce15b4dcf0a3158e06d753593de55d",
+    "src/latent_workspace_ft_v10/engine.py": "3e7659b7c927cab23b4d994ce2e320d99431e4ba657d560c1094bc36de596178",
+    "src/latent_workspace_ft_v10/model_binding.py": "58360a21e6ef717ae00a8f8715f2b5ff2a277fb6bdce583dba2a6e6bd1869e18",
+    "src/latent_workspace_ft_v10/workspace_core.py": "600bb0f308cff66d5d793eb5853cef3b51710f75a77cbe3cd1d0a930a6754dd0",
+    "src/latent_workspace_ft_v10/cache_binding.py": "f3c5dc1c10654a8be5aa28acc3fba6bd00698c9b57f721378722ea19febb71ff"
+  },
+  "output": "provenance/raw/v14_position_composition_20260913/report.json",
+  "authorized_actions": {
+    "checkpoint_load": true,
+    "full_sequence_local_answer_gradient": true,
+    "position_masked_native_bf16_replay": true,
+    "label_aware_oracle_diagnostic": true,
+    "optimizer_or_training": false,
+    "free_generation": false,
+    "model_download": false,
+    "weight_write_or_delete": false,
+    "layer_case_horizon_threshold_or_lane_selection": false,
+    "semantic_promotion": false
+  },
+  "stop_rule": "Execute every frozen cell once. Preserve failures. Do not select a layer, case, horizon, control, threshold, position mask, or oracle lane after target-model scoring.",
+  "claim_boundary": "This fixed-token assay can locate how complete reader updates at layer 16 are mediated by answer-boundary, non-boundary, current-query, and prior-history positions for eight frozen Mistral cases and two existing checkpoints. The label-aware local-gradient projection is an oracle diagnostic, not a deployable architecture candidate. The assay does not train a position gate, validate free generation, establish semantic memory, generalization, capability, K/V accumulation, portability, or speed. It cannot rescue the failed grouped F1-F5 gates; the scientific winner remains none."
+}

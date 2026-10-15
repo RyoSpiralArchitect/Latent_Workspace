@@ -1,0 +1,104 @@
+{
+  "format": "v15-completion-portability-diagnostic-v1",
+  "status": "EXACT_REPLAY_MISMATCH",
+  "comparison": "exact JSON types/structure and binary64 bits; no tolerance acceptance",
+  "counts": {
+    "scalar_pairs": 7083,
+    "exact_scalar_matches": 7079,
+    "float64_pairs": 3228,
+    "exact_float64_matches": 3224,
+    "non_float_scalar_pairs": 3855,
+    "exact_non_float_scalar_matches": 3855,
+    "differences": 4,
+    "float64_differences": 4,
+    "other_differences": 0
+  },
+  "structure_types_and_non_float_values_exact": true,
+  "differences": [
+    {
+      "path": "/rows/2/alias_start/conditional_probabilities/1",
+      "kind": "float64_value",
+      "expected": 0.4604522695873658,
+      "observed": 0.46045226958736585,
+      "expected_bits_hex": "3fdd780ccbcfca1f",
+      "observed_bits_hex": "3fdd780ccbcfca20",
+      "observed_minus_expected": 5.551115123125783e-17,
+      "ulp_distance": 1
+    },
+    {
+      "path": "/rows/2/alias_start/total_probability",
+      "kind": "float64_value",
+      "expected": 0.9921291923370904,
+      "observed": 0.9921291923370903,
+      "expected_bits_hex": "3fefbf85b84fd48f",
+      "observed_bits_hex": "3fefbf85b84fd48e",
+      "observed_minus_expected": -1.1102230246251565e-16,
+      "ulp_distance": 1
+    },
+    {
+      "path": "/rows/49/alias_start/conditional_probabilities/1",
+      "kind": "float64_value",
+      "expected": 0.9520768387533605,
+      "observed": 0.9520768387533604,
+      "expected_bits_hex": "3fee7769d8b73124",
+      "observed_bits_hex": "3fee7769d8b73123",
+      "observed_minus_expected": -1.1102230246251565e-16,
+      "ulp_distance": 1
+    },
+    {
+      "path": "/rows/75/completion/total_probability",
+      "kind": "float64_value",
+      "expected": 0.6764722199905318,
+      "observed": 0.6764722199905316,
+      "expected_bits_hex": "3fe5a5a911b06116",
+      "observed_bits_hex": "3fe5a5a911b06115",
+      "observed_minus_expected": -1.1102230246251565e-16,
+      "ulp_distance": 1
+    }
+  ],
+  "diagnostic_only": true,
+  "replacement_validation": false,
+  "tolerance_acceptance_performed": false,
+  "local_strict_verifier": {
+    "status": "FAILED",
+    "exception_type": "ValueError",
+    "message": "Completion summary mismatch"
+  },
+  "remote_validation": {
+    "status": "SEPARATE_RECORDED_RECEIPT_NOT_REEXECUTED_HERE",
+    "path": "/Users/ryohiga/SpiralReality/worktrees/latent-workspace-ft-v14-semantic-chat/provenance/pilots/v15_completion_mass_20261010/VALIDATION.json",
+    "sha256": "14605aae64391450391bcbaa2b438e2a815956a4eb7c6c08ef7de410e7e70393",
+    "recorded_status": "VERIFIED_RECEIPTS",
+    "origin_runtime": {
+      "cuda": "13.2",
+      "python": "3.14.4",
+      "torch": "2.13.0+cu132",
+      "transformers": "5.15.0"
+    }
+  },
+  "origin": {
+    "runtime": {
+      "cuda": "13.2",
+      "python": "3.14.4",
+      "torch": "2.13.0+cu132",
+      "transformers": "5.15.0"
+    },
+    "source_commit": "012c5172788b333fdc14ca81fbcbe53c10c2e96c"
+  },
+  "local": {
+    "python": "3.13.13",
+    "implementation": "CPython",
+    "platform": "macOS-26.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "system": "Darwin",
+    "libc_name": "UNKNOWN",
+    "libc_version": "UNKNOWN",
+    "math_library_identity": "UNKNOWN"
+  },
+  "inputs": {
+    "report_sha256": "6e0a3297f09e45718620a8c6622ddfc14ce2d3bc7bf26ee220624e7000ca0694",
+    "scores_sha256": "7a0aee0167e17df351f559a4b511d62daa260e8cf7f2219ee9d52a5e7b968d19",
+    "artifact_index_sha256": "cf9d317676287c1ab958ab52a42e297763eaf8137fe149c4ee768f0e9cbbf548"
+  },
+  "interpretation": "This lists observed exact replay differences without assigning their cause. ULP distances describe mismatches; they do not waive the sealed exact-equality gate. The recorded remote validation is distinct from local strict verification."
+}

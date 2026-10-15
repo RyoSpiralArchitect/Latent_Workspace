@@ -1,0 +1,92 @@
+{
+  "elapsed_seconds": 99.78295387500839,
+  "ended_at": "2026-10-09T20:43:32.047095+00:00",
+  "observation": {
+    "api_finish": "stop",
+    "judgment": {
+      "added_facts": "entailed",
+      "assessment_en": "The response correctly answers 'no' but provides faulty reasoning. It validly derives that Joren outranks Ione and that Mira outranks Ione, but then invalidly infers that Joren cannot outrank Mira merely because both outrank Ione. The actual relationship (Mira outranks Joren) follows from the chain Mira > Eris > Luma > Joren, which the explanation ignores. All added factual claims are entailed by the visible facts, but the logical connection is invalid.",
+      "commitment": "no",
+      "contradiction": "absent",
+      "evidence": {
+        "added_facts": [
+          "Joren outranks Ione",
+          "Mira is ranked above Ione"
+        ],
+        "commitment": [
+          "no"
+        ],
+        "contradiction": [],
+        "reasoning": [
+          "Since Mira is ranked above Ione, Joren is not ranked above Mira"
+        ]
+      },
+      "reasoning": "faulty"
+    },
+    "response_id": "4f57b850d8604fa7b6fa4939501065b4",
+    "response_model": "mistral-large-4",
+    "status": "valid_diagnosis",
+    "verified_evidence": {
+      "added_facts": [
+        {
+          "codepoint_spans": [
+            [
+              100,
+              119
+            ]
+          ],
+          "quote": "Joren outranks Ione"
+        },
+        {
+          "codepoint_spans": [
+            [
+              127,
+              152
+            ]
+          ],
+          "quote": "Mira is ranked above Ione"
+        }
+      ],
+      "commitment": [
+        {
+          "codepoint_spans": [
+            [
+              0,
+              2
+            ],
+            [
+              163,
+              165
+            ]
+          ],
+          "quote": "no"
+        }
+      ],
+      "contradiction": [],
+      "reasoning": [
+        {
+          "codepoint_spans": [
+            [
+              121,
+              184
+            ]
+          ],
+          "quote": "Since Mira is ranked above Ione, Joren is not ranked above Mira"
+        }
+      ]
+    }
+  },
+  "request_id": "mistral-study-1f6603115e24a274df717c81-r0",
+  "response_sha256": "bfc4a1f5f88f301890dda6896c26c4d55385192ab77a74855de27c64064738ae",
+  "started_at": "2026-10-09T20:41:52.263826+00:00",
+  "status": "response_recorded",
+  "usage_receipt": {
+    "actual_billed_cost_usd": null,
+    "bound_exceeded": false,
+    "input_tokens": 1138,
+    "output_tokens": 5708,
+    "status": "REPORTED_BY_API",
+    "total_tokens": 6846,
+    "usage_based_undiscounted_cost_usd": "0.02540712"
+  }
+}

@@ -1,0 +1,403 @@
+{
+  "artifacts": {
+    "instrument_calibration.jsonl": {
+      "bytes": 235038,
+      "sha256": "ed104934dc8e7e7033412cfcb42120e086d454063302e5cdb3beb56ee15bf2c5"
+    },
+    "instrument_holdout.jsonl": {
+      "bytes": 233978,
+      "sha256": "326ee638549b32c2a9ff35480f19c1f6da4ce8ecdbfeed24d075c81dfea76117"
+    }
+  },
+  "checks": {
+    "family_atomicity": true,
+    "frozen_metadata_integrity": true,
+    "global_reversal_label_inversion": true,
+    "internal_nonadjacent_primary": true,
+    "matched_hops_and_edit_distance": true,
+    "parsed_text_oracle": true,
+    "query_text_balance_within_family_role": true,
+    "world_and_family_split_disjointness": true
+  },
+  "claim_boundary": "Structural candidates only. No model was scored, no training or full task qualification occurred. Holdout is family-disjoint, not unseen wording. Causal metrics must exclude easy controls.",
+  "errors": [],
+  "format": "v14-instrument-corpus-audit-v1",
+  "generator_sources": {
+    "v13_task_fixture.py": "26480c2d5673d979be3c3142452324c6dc083e2810e7541e4a5b8c009163f4d3",
+    "v14_instrument_corpus.py": "0a0103a8f752ed5c7e76ae2dd22be1c93382480a8918c6d2fd389bf15ec5bbdc"
+  },
+  "holdout_model_scored": false,
+  "model_capability_assessed": false,
+  "passed": true,
+  "scope": "STRUCTURAL_CANDIDATES_AND_CALIBRATION_SCREEN_ONLY",
+  "seed": 1402,
+  "splits": {
+    "calibration": {
+      "easy_cases": 96,
+      "easy_records": 24,
+      "families": 12,
+      "primary_case_counts_by_hop_and_affected": {
+        "2": {
+          "false": 64,
+          "true": 64
+        },
+        "3": {
+          "false": 64,
+          "true": 64
+        },
+        "4": {
+          "false": 64,
+          "true": 64
+        }
+      },
+      "primary_cases": 384,
+      "primary_families_by_hop": {
+        "2": 4,
+        "3": 4,
+        "4": 4
+      },
+      "primary_records": 96,
+      "reversal_added_primary_cases_with_verified_label_inversion": 192,
+      "shortcut_probes": {
+        "easy": {
+          "direct_edge_endpoint_abstaining": {
+            "abstentions": 0,
+            "accuracy_answered": 1.0,
+            "answered": 96,
+            "cases": 96,
+            "correct": 96,
+            "correct_fraction_all_cases": 1.0,
+            "coverage": 1.0
+          },
+          "direct_edge_endpoint_fallback_no": {
+            "abstentions": 0,
+            "accuracy_answered": 1.0,
+            "answered": 96,
+            "cases": 96,
+            "correct": 96,
+            "correct_fraction_all_cases": 1.0,
+            "coverage": 1.0
+          },
+          "interpretation": "Majority lookups fit and score the same split; they are not learned held-out baselines. Exact balancing and named shortcut failure do not rule out other shortcuts. Easy controls are separate and admit direct-edge solutions.",
+          "memory_blind_internal_inversion_fallback_no": {
+            "abstentions": 0,
+            "accuracy_answered": 0.0,
+            "answered": 96,
+            "cases": 96,
+            "correct": 0,
+            "correct_fraction_all_cases": 0.0,
+            "coverage": 1.0
+          },
+          "query_only_constant_no": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 96,
+            "cases": 96,
+            "correct": 48,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_only_constant_yes": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 96,
+            "cases": 96,
+            "correct": 48,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_position_in_sample_majority": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 96,
+            "cases": 96,
+            "correct": 48,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_text_in_sample_majority": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 96,
+            "cases": 96,
+            "correct": 48,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "scope": "TEXT_ONLY_STRUCTURAL_DIAGNOSTICS_NOT_MODEL_CAPABILITY",
+          "symbolic_path_oracle": {
+            "abstentions": 0,
+            "accuracy_answered": 1.0,
+            "answered": 96,
+            "cases": 96,
+            "correct": 96,
+            "correct_fraction_all_cases": 1.0,
+            "coverage": 1.0
+          }
+        },
+        "primary": {
+          "direct_edge_endpoint_abstaining": {
+            "abstentions": 384,
+            "accuracy_answered": null,
+            "answered": 0,
+            "cases": 384,
+            "correct": 0,
+            "correct_fraction_all_cases": 0.0,
+            "coverage": 0.0
+          },
+          "direct_edge_endpoint_fallback_no": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 384,
+            "cases": 384,
+            "correct": 192,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "interpretation": "Majority lookups fit and score the same split; they are not learned held-out baselines. Exact balancing and named shortcut failure do not rule out other shortcuts. Easy controls are separate and admit direct-edge solutions.",
+          "memory_blind_internal_inversion_fallback_no": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 384,
+            "cases": 384,
+            "correct": 192,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_only_constant_no": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 384,
+            "cases": 384,
+            "correct": 192,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_only_constant_yes": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 384,
+            "cases": 384,
+            "correct": 192,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_position_in_sample_majority": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 384,
+            "cases": 384,
+            "correct": 192,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_text_in_sample_majority": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 384,
+            "cases": 384,
+            "correct": 192,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "scope": "TEXT_ONLY_STRUCTURAL_DIAGNOSTICS_NOT_MODEL_CAPABILITY",
+          "symbolic_path_oracle": {
+            "abstentions": 0,
+            "accuracy_answered": 1.0,
+            "answered": 384,
+            "cases": 384,
+            "correct": 384,
+            "correct_fraction_all_cases": 1.0,
+            "coverage": 1.0
+          }
+        }
+      }
+    },
+    "holdout": {
+      "easy_cases": 96,
+      "easy_records": 24,
+      "families": 12,
+      "primary_case_counts_by_hop_and_affected": {
+        "2": {
+          "false": 64,
+          "true": 64
+        },
+        "3": {
+          "false": 64,
+          "true": 64
+        },
+        "4": {
+          "false": 64,
+          "true": 64
+        }
+      },
+      "primary_cases": 384,
+      "primary_families_by_hop": {
+        "2": 4,
+        "3": 4,
+        "4": 4
+      },
+      "primary_records": 96,
+      "reversal_added_primary_cases_with_verified_label_inversion": 192,
+      "shortcut_probes": {
+        "easy": {
+          "direct_edge_endpoint_abstaining": {
+            "abstentions": 0,
+            "accuracy_answered": 1.0,
+            "answered": 96,
+            "cases": 96,
+            "correct": 96,
+            "correct_fraction_all_cases": 1.0,
+            "coverage": 1.0
+          },
+          "direct_edge_endpoint_fallback_no": {
+            "abstentions": 0,
+            "accuracy_answered": 1.0,
+            "answered": 96,
+            "cases": 96,
+            "correct": 96,
+            "correct_fraction_all_cases": 1.0,
+            "coverage": 1.0
+          },
+          "interpretation": "Majority lookups fit and score the same split; they are not learned held-out baselines. Exact balancing and named shortcut failure do not rule out other shortcuts. Easy controls are separate and admit direct-edge solutions.",
+          "memory_blind_internal_inversion_fallback_no": {
+            "abstentions": 0,
+            "accuracy_answered": 0.0,
+            "answered": 96,
+            "cases": 96,
+            "correct": 0,
+            "correct_fraction_all_cases": 0.0,
+            "coverage": 1.0
+          },
+          "query_only_constant_no": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 96,
+            "cases": 96,
+            "correct": 48,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_only_constant_yes": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 96,
+            "cases": 96,
+            "correct": 48,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_position_in_sample_majority": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 96,
+            "cases": 96,
+            "correct": 48,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_text_in_sample_majority": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 96,
+            "cases": 96,
+            "correct": 48,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "scope": "TEXT_ONLY_STRUCTURAL_DIAGNOSTICS_NOT_MODEL_CAPABILITY",
+          "symbolic_path_oracle": {
+            "abstentions": 0,
+            "accuracy_answered": 1.0,
+            "answered": 96,
+            "cases": 96,
+            "correct": 96,
+            "correct_fraction_all_cases": 1.0,
+            "coverage": 1.0
+          }
+        },
+        "primary": {
+          "direct_edge_endpoint_abstaining": {
+            "abstentions": 384,
+            "accuracy_answered": null,
+            "answered": 0,
+            "cases": 384,
+            "correct": 0,
+            "correct_fraction_all_cases": 0.0,
+            "coverage": 0.0
+          },
+          "direct_edge_endpoint_fallback_no": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 384,
+            "cases": 384,
+            "correct": 192,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "interpretation": "Majority lookups fit and score the same split; they are not learned held-out baselines. Exact balancing and named shortcut failure do not rule out other shortcuts. Easy controls are separate and admit direct-edge solutions.",
+          "memory_blind_internal_inversion_fallback_no": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 384,
+            "cases": 384,
+            "correct": 192,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_only_constant_no": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 384,
+            "cases": 384,
+            "correct": 192,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_only_constant_yes": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 384,
+            "cases": 384,
+            "correct": 192,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_position_in_sample_majority": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 384,
+            "cases": 384,
+            "correct": 192,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "query_text_in_sample_majority": {
+            "abstentions": 0,
+            "accuracy_answered": 0.5,
+            "answered": 384,
+            "cases": 384,
+            "correct": 192,
+            "correct_fraction_all_cases": 0.5,
+            "coverage": 1.0
+          },
+          "scope": "TEXT_ONLY_STRUCTURAL_DIAGNOSTICS_NOT_MODEL_CAPABILITY",
+          "symbolic_path_oracle": {
+            "abstentions": 0,
+            "accuracy_answered": 1.0,
+            "answered": 384,
+            "cases": 384,
+            "correct": 384,
+            "correct_fraction_all_cases": 1.0,
+            "coverage": 1.0
+          }
+        }
+      }
+    }
+  },
+  "status": "STRUCTURAL_CANDIDATES_VALIDATED",
+  "task_qualified": false,
+  "training_authorized": false,
+  "uncertainty_unit": "ORIGINAL_WORLD_FAMILY_INCLUDING_EDITS_REVERSALS_WORDING_EASY_CONTROLS",
+  "wording_generalization_qualified": false
+}

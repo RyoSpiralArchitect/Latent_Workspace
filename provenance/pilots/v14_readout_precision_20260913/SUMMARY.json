@@ -1,0 +1,160 @@
+{
+  "format": "latent-workspace-v14-readout-precision-summary-v1",
+  "status": "QUALIFIED_EXECUTION",
+  "winner": "none",
+  "semantic_effect_qualified": false,
+  "execution": {
+    "source_commit": "9ca8c195c76b0d0d77db4c699e6e7722345dee13",
+    "host": "SpiralReality-furnace",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "models": [
+      "task",
+      "semantic"
+    ],
+    "cases_per_model": 8,
+    "controls": [
+      "learned_pair",
+      "gram_matched_random",
+      "unrelated_family",
+      "sham"
+    ],
+    "horizons": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "lanes_per_row": 7,
+    "readouts": [
+      "native_bf16_head",
+      "fp32_choice_head"
+    ],
+    "rows": 320,
+    "elapsed_seconds": 65.37872193474323,
+    "cuda_peak_allocated_bytes": 15478553600,
+    "training_performed": false,
+    "free_generation_performed": false,
+    "weights_written_or_deleted": false
+  },
+  "integrity": {
+    "raw_report_sha256": "2f1c910e574a4637221ffbab2de572738582183673ba53c91fd733813151ada7",
+    "plan_sha256": "d5c7d0e265e5dc08ee186aeab4d8ac185673975c75a9eb996541a3130292b4c7",
+    "mechanical_execution_qualified": true,
+    "all_model_mechanical_checks_true": true,
+    "same_normalized_hidden_fed_both_heads": true,
+    "native_path_reproduced_all_320_predecessor_rows_exactly": true,
+    "native_logits_dtype": "torch.bfloat16",
+    "diagnostic_choice_logits_dtype": "torch.float32",
+    "sham_exact_noop_in_both_heads": true
+  },
+  "measurement_1_predeclared_semantic_affected_horizon_4": {
+    "focus_is_predecessor_informed_not_independent_confirmation": true,
+    "learned_pair": {
+      "full_route": {
+        "native_mean_signed_pair_effect": -0.046875,
+        "native_positive_zero_negative": [
+          1,
+          0,
+          3
+        ],
+        "fp32_mean_signed_pair_effect": 0.007672548294067383,
+        "fp32_positive_zero_negative": [
+          3,
+          0,
+          1
+        ]
+      },
+      "answer_boundary_only": {
+        "native_mean_signed_pair_effect": 0.078125,
+        "native_positive_zero_negative": [
+          3,
+          1,
+          0
+        ],
+        "fp32_mean_signed_pair_effect": 0.006254911422729492,
+        "fp32_positive_zero_negative": [
+          3,
+          0,
+          1
+        ]
+      },
+      "non_boundary_only": {
+        "native_mean_signed_pair_effect": 0.046875,
+        "native_positive_zero_negative": [
+          2,
+          2,
+          0
+        ],
+        "fp32_mean_signed_pair_effect": -0.007511138916015625,
+        "fp32_positive_zero_negative": [
+          1,
+          0,
+          3
+        ]
+      },
+      "boundary_non_boundary_interaction": {
+        "native_mean": -0.171875,
+        "native_positive_zero_negative": [
+          0,
+          1,
+          3
+        ],
+        "native_minimum": -0.375,
+        "native_maximum": 0.0,
+        "fp32_mean": 0.008928775787353516,
+        "fp32_positive_zero_negative": [
+          3,
+          0,
+          1
+        ],
+        "fp32_minimum": -0.024272918701171875,
+        "fp32_maximum": 0.045749664306640625
+      },
+      "intact_twin_prediction_changes_in_every_position_lane_and_both_heads": 0,
+      "native_fp32_prediction_disagreements_in_every_position_lane_and_member": 0
+    },
+    "interpretation": "The predecessor's negative full-route mean and strongly negative composition interaction do not survive the FP32 two-choice projection from the identical final-normalized state. Three of four full-route cases become donor-directed, but no discrete answer changes."
+  },
+  "measurement_2_precision_localization": {
+    "shared_computation": "Native Mistral layers 16-31 and final RMSNorm execute once; both heads read the same final last-token hidden state.",
+    "native_replication_scope": "The native path retains the predecessor's full-sequence, full-vocabulary BF16 head shape and exactly reproduces every base, intact, twin, lane, and effect readout.",
+    "absolute_interaction_mean_reduction_fraction": 0.9480434862568708,
+    "full_route_mean_sign_changed_from_negative_to_positive": true,
+    "interaction_mean_sign_changed_from_negative_to_positive": true,
+    "interpretation": "The coarse final readout arithmetic is the dominant located source of the earlier sign reversal. This does not isolate output casting alone because the diagnostic path also uses a selected-row FP32 matmul rather than the full-vocabulary BF16 kernel."
+  },
+  "measurement_3_controls_and_specificity": {
+    "semantic_affected_horizon_4_fp32": {
+      "learned_full_route_mean": 0.007672548294067383,
+      "gram_matched_random_full_route_mean": -0.008832693099975586,
+      "unrelated_family_full_route_mean": -0.0048444271087646484,
+      "sham_full_route_mean": 0.0,
+      "learned_answer_boundary_mean": 0.006254911422729492,
+      "gram_matched_random_answer_boundary_mean": -0.008861064910888672,
+      "unrelated_family_answer_boundary_mean": 0.00861978530883789,
+      "sham_answer_boundary_mean": 0.0
+    },
+    "semantic_unaffected_horizon_4_fp32_mean_absolute": {
+      "full_route": 0.029226303100585938,
+      "answer_boundary_only": 0.014261245727539062,
+      "non_boundary_only": 0.006869316101074219,
+      "current_query_only": 0.007459163665771484,
+      "prior_history_only": 0.027065753936767578
+    },
+    "interpretation": "Random, unrelated, and unaffected perturbations remain on the same small scale as the learned affected effect. The precision bridge is mechanically localized but not semantically specific."
+  },
+  "overall_conclusion": {
+    "supported": [
+      "The prior native BF16 position-composition result is exactly reproducible in a dual-head implementation.",
+      "For the predeclared semantic affected horizon-4 cell, the strongly negative composition interaction nearly disappears in the FP32 two-choice readout from the same final-normalized hidden state.",
+      "Final readout arithmetic is therefore a concrete bridge candidate between preserved hidden-state differences and the coarse native answer-logit lattice."
+    ],
+    "not_supported": [
+      "A discrete intact-to-twin answer change in the predeclared cell.",
+      "Semantic specificity, because unrelated and unaffected controls remain comparable.",
+      "A full-FP32 decoder result, a deployable precision policy, semantic memory, generalization, or promotion of either checkpoint."
+    ],
+    "smallest_next_gate": "Freeze a constrained multi-turn generation harness before scoring. Compare base query-only, base inline, full-route, answer-boundary-only, and non-boundary-only trajectories under fixed-history and free-history modes, retaining native BF16 and FP32 two-choice readouts. Treat trajectory behavior as diagnostic only and preserve winner none."
+  }
+}

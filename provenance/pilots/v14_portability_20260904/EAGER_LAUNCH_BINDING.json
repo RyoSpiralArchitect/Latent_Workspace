@@ -1,0 +1,57 @@
+{
+  "curation": {
+    "curator_sha256": "4414956ca87e2a2bf4cb42ac3ec1931f667da39a256b2d938b4b685ce6967385",
+    "not_byte_identical_to_raw_receipt": true,
+    "raw_sha256": "b568178fc3e94c7a9bc18a9e664faae080cefa49b4d437eef2ff2c6b8c603b03",
+    "transform": "Absolute local paths replaced with labelled roots; numerical/content fields retained."
+  },
+  "receipt": {
+    "environment": {
+      "HF_DATASETS_OFFLINE": "1",
+      "HF_HUB_OFFLINE": "1",
+      "OMP_NUM_THREADS": "2",
+      "PYTHONPATH": "src",
+      "PYTORCH_ALLOC_CONF": "backend:native,expandable_segments:True",
+      "TOKENIZERS_PARALLELISM": "false",
+      "TRANSFORMERS_OFFLINE": "1"
+    },
+    "format": "latent-workspace-v14-next-cell-launch-v1",
+    "git_commit": "d7d6f0a50e1888276146aa111ddb5ccd21f1f607",
+    "next_cell": {
+      "argv": [
+        "$PYTHON_EXECUTABLE",
+        "scripts/run_v14_portability_canary.py",
+        "--model-path",
+        "$MODEL_SNAPSHOT",
+        "--output-dir",
+        "$REPO/runs/v14/olmo2_base_bf16_eager_20260904",
+        "--device",
+        "cuda",
+        "--dtype",
+        "bfloat16",
+        "--attention-implementation",
+        "eager",
+        "--check-gradients"
+      ],
+      "id": "olmo2_base_bf16_eager"
+    },
+    "plan_sha256": "e7f6da28213f5d61a57ec8ff2e8d55cde731dabf0819fffae02e51f150b58ca3",
+    "previous_cell": "olmo2_base_bf16_sdpa",
+    "previous_receipt_sha256": "dc8a2e530b76841ad37c2cf3585080f72d4501d21b75b53206b0b7dd00db3d1b",
+    "previous_snapshot_all_payload_sha256_unchanged": true,
+    "previous_status": "COMPLETE",
+    "resource_check": {
+      "available_ram_gib": 85,
+      "compute_processes": 0,
+      "gpu_total_mib": 32607,
+      "gpu_used_mib": 10,
+      "previous_process_exited": true,
+      "tool": "spiral status"
+    },
+    "source_or_tolerance_changes": false,
+    "unset_environment": [
+      "PYTORCH_CUDA_ALLOC_CONF",
+      "PYTORCH_HIP_ALLOC_CONF"
+    ]
+  }
+}

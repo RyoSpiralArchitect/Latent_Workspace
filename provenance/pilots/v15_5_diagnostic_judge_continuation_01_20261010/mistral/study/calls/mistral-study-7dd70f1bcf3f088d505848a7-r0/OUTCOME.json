@@ -1,0 +1,104 @@
+{
+  "elapsed_seconds": 45.0064159159956,
+  "ended_at": "2026-10-09T22:14:02.064373+00:00",
+  "observation": {
+    "api_finish": "stop",
+    "judgment": {
+      "added_facts": "unsupported",
+      "assessment_en": "The response answers yes to the question, matching the visible fact. However, the explanation contains an internal contradiction by asserting both that Aster is ranked above Cyra and that Cyra is not ranked, which are incompatible. The reasoning is faulty as it uses the unsupported premise that Cyra is not ranked to conclude Aster is ranked above Cyra. The claim that Cyra is not ranked is an unsupported added fact.",
+      "commitment": "yes",
+      "contradiction": "present",
+      "evidence": {
+        "added_facts": [
+          "Cyra is not ranked"
+        ],
+        "commitment": [
+          "yes"
+        ],
+        "contradiction": [
+          "Aster is ranked above Cyra",
+          "Cyra is not ranked"
+        ],
+        "reasoning": [
+          "Cyra is not ranked, so Aster is ranked above Cyra"
+        ]
+      },
+      "reasoning": "faulty"
+    },
+    "response_id": "eaaa20e9fea14dfc93ab80685e29de1a",
+    "response_model": "mistral-large-4",
+    "status": "valid_diagnosis",
+    "verified_evidence": {
+      "added_facts": [
+        {
+          "codepoint_spans": [
+            [
+              177,
+              195
+            ]
+          ],
+          "quote": "Cyra is not ranked"
+        }
+      ],
+      "commitment": [
+        {
+          "codepoint_spans": [
+            [
+              0,
+              3
+            ]
+          ],
+          "quote": "yes"
+        }
+      ],
+      "contradiction": [
+        {
+          "codepoint_spans": [
+            [
+              145,
+              171
+            ],
+            [
+              200,
+              226
+            ]
+          ],
+          "quote": "Aster is ranked above Cyra"
+        },
+        {
+          "codepoint_spans": [
+            [
+              177,
+              195
+            ]
+          ],
+          "quote": "Cyra is not ranked"
+        }
+      ],
+      "reasoning": [
+        {
+          "codepoint_spans": [
+            [
+              177,
+              226
+            ]
+          ],
+          "quote": "Cyra is not ranked, so Aster is ranked above Cyra"
+        }
+      ]
+    }
+  },
+  "request_id": "mistral-study-7dd70f1bcf3f088d505848a7-r0",
+  "response_sha256": "0715ef5fffa5b4be4cfdd5f5add4c73fe0315511cffcd8841ee392b32ddd9eb7",
+  "started_at": "2026-10-09T22:13:17.057425+00:00",
+  "status": "response_recorded",
+  "usage_receipt": {
+    "actual_billed_cost_usd": null,
+    "bound_exceeded": false,
+    "input_tokens": 1104,
+    "output_tokens": 5077,
+    "status": "REPORTED_BY_API",
+    "total_tokens": 6181,
+    "usage_based_undiscounted_cost_usd": "0.0227233"
+  }
+}

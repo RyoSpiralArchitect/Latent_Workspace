@@ -1,0 +1,100 @@
+# V15.5 continuation 01 execution handoff
+
+Client date: 2026-10-10 (Asia/Tokyo). **TERMINAL: HALTED_NO_RETRY**.
+The process exited at **08:00:02 JST**. The continuation has 155 valid diagnoses,
+four ambiguous timeout outcomes and 161 never-dispatched requests. Combined
+main coverage is 343/512; study plus repeats has 374 valid, one invalid, eight
+unknown and 161 never dispatched. OpenAI remains blocked. See the
+[terminal results](README.md) and [FINISHED.json](mistral/study/FINISHED.json).
+
+The heartbeat was paused at Ryō's explicit request before termination and must
+remain paused. Publication continued directly in this chat. No further paid
+call, retry or continuation is authorized. The instructions below retain launch
+lineage and offline verification commands; they are not a command to relaunch.
+
+Launch confirmed at **07:02:25 JST** (`2026-10-09T22:02:25.402258+00:00`).
+Paid continuation source: `92bd66a0024f8c4b4442d1addfa4105f60287b96`, pushed
+before dispatch. Owned Python PID: **77732**; local exec session: **37079**.
+An attached `caffeinate` process prevented idle sleep during the run. The
+completion heartbeat is now PAUSED; it must not start any model call. The source seal is
+`9048e149936b45e4564bdf93934b45bf5eabd54485cae34aecac8d471c7bb111`.
+Read [STARTED.json](mistral/study/STARTED.json) for the authoritative launch
+receipt and `mistral/study/FINISHED.json` for the terminal receipt.
+
+## Exact scope and lineage
+
+- Checkout: `/Users/ryohiga/SpiralReality/worktrees/latent-workspace-ft-v14-semantic-chat`.
+- Branch: `SpiralReality/v15-5-judge-diagnostics`.
+- Remote: `https://github.com/RyoSpiralArchitect/Latent_Workspace.git`.
+- Parent partial-result commit: `5a27d0d663dfd3e3a6f607256fe0201439929386`.
+- Original paid source: `59ac10623c0f088d61481e1cfbb9898c206002b5`.
+- New bundle: `provenance/pilots/v15_5_diagnostic_judge_continuation_01_20261010`.
+- Protocol: [continuation 01](../../../docs/v15_5/DIAGNOSTIC_CONTINUATION_01.md).
+- Target: exactly 320 Mistral study r0 requests that had never been dispatched.
+  Manifest hash: `5259a36f5afa912191af349503925aaa3e351a05e1e5fd8138f3e4c072bdb766`.
+- New source and request selection: [CONTINUATION_SEAL.json](CONTINUATION_SEAL.json).
+  All 1,042 files in the original bundle and the original 79-file source seal
+  remain unchanged. Never edit the original bundle, even its historical README.
+- Mistral calibration PASS is reused. The same model ID, body, seed, temperature,
+  caps, timeout, concurrency and dispatch spacing are used. No provider or rubric
+  substitutions. No new calibration calls or learner generations.
+- The four ambiguous original requests and one invalid repeat are **excluded**,
+  not retried. OpenAI's calibration FAIL and all 544 undispatched study requests
+  remain excluded. Overall status stays `INCOMPLETE_OR_CALIBRATION_BLOCKED`.
+- All 274 selected local tests passed (33 new continuation checks); Ruff passed;
+  original cue receipts verified with expression gate **FAIL**. This is not CI
+  or scientific qualification. [Prelaunch receipt](PRELAUNCH_VALIDATION.json).
+
+## Launch and monitoring
+
+The source must be committed before the one authorized launch. `STARTED.json`
+records its exact commit, PID and start time. The process is local CPU plus the
+official Mistral API, not Furnace. `caffeinate` may prevent idle sleep only while
+the owned process runs; it is not a job restart mechanism.
+
+After launch, inspect `mistral/study/calls/*/OUTCOME.json` and the exact process.
+Do not re-run `run --execute`, even if only a STARTED or RESERVATION exists.
+No automatic retries. A new HTTP/transport failure stops dispatch and drains
+in-flight requests. Process loss without FINISHED requires a recovery decision.
+Unknown remote execution/billing must remain unknown.
+
+## Terminal publication, offline only
+
+Once `mistral/study/FINISHED.json` exists, replay the original and continuation
+before interpreting results. These commands make no API calls:
+
+```sh
+PYTHONPATH=src:scripts .venv/bin/python scripts/continue_v15_5_diagnostic_judge.py verify
+PYTHONPATH=src:scripts .venv/bin/python scripts/continue_v15_5_diagnostic_judge.py write-analysis
+PYTHONPATH=src:scripts .venv/bin/python scripts/continue_v15_5_diagnostic_judge.py verify-analysis
+```
+
+Use `write-analysis` only if this bundle's `analysis/` is absent. If present,
+verify without rewriting. The original analysis is never changed. The combined
+view preserves every original reservation, all 512 main records, 32 fixed repeat
+coordinates, both calibrations, and the 1,120-request original plan denominator.
+It counts calibration usage once and links each main Mistral row to its raw
+source bundle. The prelaunch coverage ceiling was 508/512. The terminal result
+is 343 valid main diagnoses, eight unknown outcomes and 161 never dispatched;
+the original four unknown outcomes were not resolved or replaced.
+
+Prepare an English results README here with all completed/invalid/unknown/
+undispatched denominators, repeat disagreements, usage, exact original-output
+illustrations, missingness limits and the unchanged old FAIL. Update root README
+and `docs/v15/NEXT_STEPS.md` with bounded interpretation and proposed learner
+factors only. No training or new learner generations, new judge requests,
+threshold/rubric changes, provider substitutions, source-seal edits or weight
+deletion. Any additional completion effort needs a separate human decision.
+
+Verify both seals, the original cue bundle, the selected 274 tests, Ruff, literal
+panel replay, report numbers/links and staged publication. Preserve trailing
+spaces inside original-output fences. Scan for credentials/unrelated content.
+Check branch/remote/staged diff, then commit and push **only this branch**. Do not
+create or merge a PR. Record local checks separately from CI (no workflow here).
+
+Do not reactivate `v15-5-judge-run-completion`; Ryō requested direct work instead.
+Both the original and continuation cells are terminal and cannot be resumed.
+The exclusive combined analysis has been written and verified. After publishing
+this partial result, request a decision before any new transport experiment or
+the remaining 161 never-dispatched calls. Never retry the eight ambiguous calls
+or replace the invalid repeat merely to complete a denominator.
