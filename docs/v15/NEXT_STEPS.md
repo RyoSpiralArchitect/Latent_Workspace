@@ -50,6 +50,40 @@ MMLU is a descriptive, no-workspace preservation screen, not a training target,
 workspace benchmark or formal non-inferiority gate. No new training is selected
 in this evaluation phase, and model-seed replication remains outstanding.
 
+The [terminal population replay](../../provenance/pilots/v16_population_diagnostics_20261015/RESULTS.md)
+now passes all four completed arms. Original/common/raw/slot ordinary MMLU is
+356/356/355/354 of 570; strict is 355/352/352/348. Every strict regression ends
+in a native tied maximum, but no loss is rescued. Slot has nonzero centered
+variation and about 27.24% remaining common-route budget; selection is near
+uniform, intended FP64 donor direction remains 127 positive / 129 negative,
+and donor flips remain 0/256. This favors testing a selection-only relation
+reader before a cap change or global gain, without claiming causality.
+
+The prospective [V18 preparation](../v18/PREPARATION.md) now separates three
+prerequisites: general complete-window reductions (the current objective has
+fixed diagnostic denominators), an immutable original-base reference with
+qualified ownership, and one trace-supported reader factor. The additive
+[window/reference owner](../v18/WINDOW_REFERENCE.md) now implements the first
+and the supplied-bank ownership portion of the second; real reference capture,
+preservation loss, reader factor and 7B training remain pending.
+Its [corrected-source qualification](../../provenance/pilots/v18_window_reference_recovery_01_20261015/README.md)
+passes 310/310 independently on CPU/CUDA with offline replay. The original
+post-test source-guard failure stays recorded. The next
+[operand-selection proposal](../v18/SELECTION_FACTOR_PROPOSAL.md) is not yet
+implemented or launched; keep the common route separate from the intervention.
+Keep the proposed zero-loss correctness floor while
+freezing its still-pending benchmark/slice/statistical manifest; "no marked
+decline" in a descriptive subset is not noninferiority qualification.
+The [behavior-bank draft](../v18/BEHAVIOR_EVALUATION.md) and
+[manual Claude sheet](../v18/CLAUDE_REVIEW_SHEET.md) prepare separate correctness
+and preference ledgers. Full-updated models must not share the old frozen-base
+prefix cache, and zero-workspace parity targets their own updated backbone.
+API credentials may be used under the authorized future evaluator scope but
+have not been read or used for these documents. No V17 history is implied.
+The [conditional HF beta preparation](../v18/HF_RELEASE.md) adds inference-only
+export/parity, evidence-complete model-card and rights/account checks. It does
+not publish V16 as V18 or silently lower the historical correctness policy.
+
 2026-10-13 review addendum: [PR #11 review and migration requirements](READOUT_REVIEW_20261013.md).
 Future launches require isolated, pre-import cleanliness checks including
 untracked source. The migration must also preserve/bind pair-level graph
