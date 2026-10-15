@@ -48,10 +48,11 @@ Everything past the pre-registered endpoints is post-hoc and descriptive.
 7. **The bridge never learned the relational task.** With memory, held-out
    accuracy stayed at the frozen base (V19 "ranked above" 272/512 versus 274/512
    without memory). In the frozen design the language model receives one
-   bounded nudge at the answer position, so the bridge itself must retrieve two
-   entities' ranks, compare them and encode the answer. The same model answers
-   above chance when the facts are inline (V11 Gate-0: F1 above chance and above
-   query-only).
+   bounded nudge at the answer position, so the bridge itself must find the
+   relation between the two queried entities (for the flip's affected
+   questions a single stated fact, for multi-hop questions a chain) and encode
+   the answer. The same model answers well above chance when the facts are
+   inline (V11 Gate-0: 0.78 against 0.50 query-only).
 
 ## Engineering lessons
 

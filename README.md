@@ -29,10 +29,11 @@ NOT_ESTABLISHED**.
   another project's job appeared; the third never ran. Ryō closed V19 there,
   without an attempt 02; the lessons are collected in the
   [closeout](docs/v19/CLOSEOUT.md).
-- **[V20 scope](docs/v20/SCOPE.md):** content use is one of three lanes.
-  Conversation branching and paired generation quality versus base, where V14
-  already saw branching and judge-preferred differences, get their own
-  endpoints.
+- **[V20 scope](docs/v20/SCOPE.md):** a square of four corners, each with its
+  own endpoint: Deliberation (v4's latent lattice, restored), Occupancy
+  (branching across turns), Availability (the flip) and Consequence (paired
+  generation quality versus base, where V14 already saw judge-preferred
+  differences).
 - **Release goal:** a conditional Hugging Face beta,
   **mistral-7b-instruct-v0.3-LTWS β**, only after memory use, non-regression and
   export parity are established ([release checklist](docs/v18/HF_RELEASE.md)).
@@ -42,7 +43,7 @@ NOT_ESTABLISHED**.
 
 | Version | Focus | Start here |
 | --- | --- | --- |
-| V20 | Scope (planning): content use, conversation branching and paired generation quality as separate lanes | [scope](docs/v20/SCOPE.md) |
+| V20 | Scope (planning): a square of Deliberation, Occupancy, Availability and Consequence, each with its own endpoint | [scope](docs/v20/SCOPE.md) |
 | V19 | Separate norm budgets for the common and workspace routes: dual-budget reader and owners, frozen diagnostic attempt 01 | [design](docs/v19/DUAL_BUDGET.md) |
 | V18 | Complete windows and reference ownership, operand selection, selection owners, first 7B pilot, frozen-backbone diagnostic | [roadmap](docs/v18/FULL_UPDATE_ROADMAP.md) |
 | V17 | — | There is no V17. The maintainer skipped the number by mistake; the gap means nothing. |
@@ -56,7 +57,8 @@ V13–V18 were developed as stacked branches and merged into `main` on
 2026-10-15 (PRs #14, #12, #13, #15, #16 and #17). Three V11/V12-era
 fixes that `main` had received are kept in history but not in the merged
 sources, because V14–V18 seals pin those files byte for byte; see PR #14.
-V19, its stopped diagnostic, closeout and the V20 scope followed in PR #18.
+V19, its stopped diagnostic, closeout and the V20 scope followed in PR #18,
+and the V20 square in PR #19.
 
 ## V19: separate norm budgets for the common and workspace routes
 

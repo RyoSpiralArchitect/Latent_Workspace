@@ -1,8 +1,8 @@
 # V20 scope: what the Latent Workspace is for
 
-2026-10-15. **PLANNING NOTE / NOT FROZEN / NO NEW RUNS, GENERATIONS OR JUDGE
-CALLS.** The old **FAIL / winner:none / non_regression NOT_ESTABLISHED** is
-unchanged.
+2026-10-15, square added 2026-10-16. **PLANNING NOTE / NOT FROZEN / NO NEW
+RUNS, GENERATIONS OR JUDGE CALLS.** The old **FAIL / winner:none /
+non_regression NOT_ESTABLISHED** is unchanged.
 
 ## Ryō's point
 
@@ -56,6 +56,50 @@ v6.5's changed learning trajectory, V14's judge-preferred differences and
 branching, and V18's step-2 divergence "through the backbone, not through
 memory".
 
+The v4 idea itself left the line quietly. v5 had turned the token-local K-step
+update into a causal-broadcast lattice (positions × latent steps). The v9
+objective matrix was a 2×2 of `LatentWorkspaceLoss` (`lw`, weight 0.02) against
+the flip objective (`cf`) on that lattice, but v9 stopped at 28 of 190 runs. On
+Mistral-7B the loss was on only in V10's short smokes (one to eight optimizer
+steps; the planned 512-step matrix stayed blocked). V11 to V14 kept the lattice
+with the loss weight at 0, for at most 16 steps, and the bridges introduced in
+V14 carried V15 onward. The code is still in
+[`engine.py`](../../src/latent_workspace_ft_v10/engine.py).
+
+## Ryō's square (2026-10-16)
+
+> v4の時点が一番素直な発想ではあったんだよな。でも一方で君のいう通りflip
+> testが出てきたのはある種必然でもあったと思う、なのでその△案に加えて、v4の
+> 時点の思想を担保する角を入れて四角としてみるのはどうかな
+
+v4 was the most direct form of the idea; the flip test was also, in a sense,
+inevitable: v5 and v6.5 showed signs of an effect that was hard to attribute,
+and the flip gives a causal, content-specific handle. So the triad gains a
+fourth corner that secures v4's idea. v6.5 had set it aside on purpose ("not
+only the workspace as an always-active organ"); the square brings it back as a
+goal of its own.
+
+| Corner | Question | Identifiable test | Record so far | Lane |
+| --- | --- | --- | --- | --- |
+| **Deliberation** (潜在熟考; v4) | Does the model think through a latent lattice formed from its own hidden states, and does that computation reach its outputs at inference? | Step dependence at matched capacity (K latent steps against one) and loss of the gain when the lattice is bypassed at inference; `LatentWorkspaceLoss` geometry as health diagnostics, not claims | GPT-2 (v4–v5): direct contribution small. Mistral-7B: loss on only in V10's 1–8-step smokes; lattice without it for at most 16 steps (V11–V14) | D |
+| **Occupancy** | Is a workspace state active and holding information, and does it persist across turns? | State metrics; persistence and branching across turns against random-perturbation controls | V19 route active at its cap; V14 branching, not donor-directed | B |
+| **Availability** | Can the state be recruited when needed? Content-specifically: does a local memory edit flip only affected answers? | Donor-directed flips (endpoint unchanged), read through a ladder: slots → read output → FP64 gap → published answer | V16–V19: 0 flips, FP64 direction at chance; only the last two rungs measured | A |
+| **Consequence** | What does forming it leave in the base model and its outputs? | Paired generation versus base; backbone drift versus workspace contribution | v6.5's changed learning; V14 judge-preferred differences; V18 backbone divergence | C |
+
+Ryō confirmed the name on 2026-10-16: **Deliberation (潜在熟考)**. It differs
+from Occupancy as computing differs from holding: a state can be active and
+retained without the model doing work through it.
+
+**How the corners meet the world-pair data.** Every affected question is hop 1:
+the edited fact is stated in the context (train 512/512, eval 128/128).
+The flip therefore tests retrieval, Availability, not composition. Unaffected
+questions span hops 1–5. With the facts inline the base answers hops 2–5
+better than hop 1 (V11 Gate-0: 449/512 = 0.88 against 349/512 = 0.68), so hop
+depth alone is not a clean difficulty axis for Deliberation. Its test should
+rest on step dependence and bypass at matched capacity, on cases the base gets
+wrong with the facts inline, or on a task family built so that composition is
+required.
+
 ## What the record already shows
 
 **Generation differences judged against base** (V14,
@@ -91,7 +135,7 @@ donor-directed. Branching is real and reproducible: the workspace reaches
 generation and changes where a conversation goes. Whether those branches are
 better than base, or than any perturbation of the same size, is untested.
 
-## Three lanes, each with its own endpoint
+## Four lanes, each with its own endpoint
 
 **A. Content use** — the V15–V19 endpoint as frozen: held-out donor-directed
 flips against a norm-matched random-pair control, world-level sign test.
@@ -126,12 +170,19 @@ shift (workspace norm 0.25 for any real memory). Such a shift may change
 generations for better or worse; lane C measures that, and only lane A or the
 random and zero-memory controls can attribute a gain to memory.
 
+**D. Latent deliberation** (v4's corner). Bring back a latent lattice formed
+from the model's own hidden states under the V16+ owners and sealed execution.
+Endpoint: a gain from K latent steps over a matched-capacity single-step
+control on pre-registered cases, which disappears when the lattice is bypassed
+at inference, with geometry health reported alongside. It can share the
+world-pair data with lane A, so one run can read both corners.
+
 ## Path to the β
 
 The [release checklist](../v18/HF_RELEASE.md) already asks for no marked
 degradation plus interesting, reproducible behavioral differences, and keeps
-content use as a separate claim. Lanes B and C are those behavioral
-differences; lane A is the separate claim. One sentence there still expects the
+content use as a separate claim. Lanes B, C and D are behavioral claims;
+lane A stays the separate content claim. One sentence there still expects the
 candidate "after memory use is established". Whether
 **mistral-7b-instruct-v0.3-LTWS β** may ship with lane A reported as
 `NOT_ESTABLISHED` is Ryō's decision; this note does not change the checklist.
