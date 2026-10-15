@@ -77,15 +77,24 @@ def contract(base, mode, preparation):
     }
 
 
-def native(dtype=torch.float32, full=True, mode="ordered_difference", factor="slot_contrast",
-           cap=0.25, checkpointing=True):
+def native(
+    dtype=torch.float32,
+    full=True,
+    mode="ordered_difference",
+    factor="slot_contrast",
+    cap=0.25,
+    checkpointing=True,
+):
     original = parts(dtype, full)
     bridge = dual(original.bridge, factor, cap)
     preparation = prepare_native_gradient_checkpointing(original.base) if checkpointing else None
     before = tree_hash(rng_state())
     learner = DualBudgetNativeLearner(
-        MistralTrainingBinding(original.base, 1), bridge, workspace_policy=policy(mode),
-        full_update=full, optimizer_config=OPT,
+        MistralTrainingBinding(original.base, 1),
+        bridge,
+        workspace_policy=policy(mode),
+        full_update=full,
+        optimizer_config=OPT,
         run_contract=contract(original.base, mode, preparation),
     )
     assert tree_hash(rng_state()) == before
@@ -110,8 +119,13 @@ def update(learner):
     rows = []
     for key, labels in (("affected", (0, 1)), ("unaffected", (1, 1))):
         loss, components = adapted_pair_objective(
-            learner.pipeline, write_for(learner), prefix_ids=span.prefix_ids, span=span,
-            candidate_ids=(6, 7), labels=labels, contract=CONTRACT,
+            learner.pipeline,
+            write_for(learner),
+            prefix_ids=span.prefix_ids,
+            span=span,
+            candidate_ids=(6, 7),
+            labels=labels,
+            contract=CONTRACT,
         )
         values = {name: float(value.detach()) for name, value in components.items()}
         spill = learner.backward_pair(key, loss)
@@ -134,13 +148,22 @@ def state(learner):
 
 def restore_native(target, payload, *, expected_policy=None, receipt=None):
     return DualBudgetNativeLearner.restore(
-        target.binding, target.bridge, payload,
-        expected_workspace_policy=target.workspace_policy if expected_policy is None
+        target.binding,
+        target.bridge,
+        payload,
+        expected_workspace_policy=target.workspace_policy
+        if expected_policy is None
         else expected_policy,
         expected_metadata=META,
         expected_run_contract=target.run_contract,
         expected_state_sha256=tree_hash(payload) if receipt is None else receipt,
     )
+
+
+def fill_normal(parameter, std, seed):
+    """Device-independent fill: draw on CPU, then copy to the parameter's device."""
+    generator = torch.Generator().manual_seed(seed)
+    parameter.copy_(torch.randn(parameter.shape, generator=generator) * std)
 
 
 def memory(slots=3, equal=False, seed=3):
@@ -175,8 +198,8 @@ def test_workspace_budget_is_independent_of_a_saturated_common_route():
     v18 = SelectionWorkspaceBridge(left.bridge).to(DEVICE)
     v19 = dual(right.bridge, cap=0.25)
     with torch.no_grad():
-        v18.common.up.weight.normal_(std=50.0, generator=torch.Generator().manual_seed(1))
-        v18.up.weight.normal_(std=50.0, generator=torch.Generator().manual_seed(2))
+        fill_normal(v18.common.up.weight, 50.0, 1)
+        fill_normal(v18.up.weight, 50.0, 2)
     v19.load_state_dict(v18.state_dict())
     values, mask = memory()
     q = query()
@@ -195,8 +218,8 @@ def test_saturated_common_starves_v18_gradient_but_not_v19():
     v18 = SelectionWorkspaceBridge(left.bridge).to(DEVICE)
     v19 = dual(right.bridge, cap=0.25)
     with torch.no_grad():
-        v18.common.up.weight.normal_(std=1e4, generator=torch.Generator().manual_seed(1))
-        v18.up.weight.normal_(std=0.1, generator=torch.Generator().manual_seed(2))
+        fill_normal(v18.common.up.weight, 1e4, 1)
+        fill_normal(v18.up.weight, 0.1, 2)
     v19.load_state_dict(v18.state_dict())
     values, mask = memory()
     q = query()
@@ -214,7 +237,7 @@ def test_zero_up_and_equal_slots_give_an_exact_zero_workspace():
     q = query()
     assert not bool(v19.parts(q, q, values, mask)["interaction"].count_nonzero())
     with torch.no_grad():
-        v19.up.weight.normal_(std=0.2, generator=torch.Generator().manual_seed(5))
+        fill_normal(v19.up.weight, 0.2, 5)
     equal, equal_mask = memory(equal=True)
     assert not bool(v19.parts(q, q, equal, equal_mask)["interaction"].count_nonzero())
     raw = dual(parts().bridge, "raw_matched_control", cap=1.0)
@@ -261,7 +284,9 @@ def test_state_binding_owns_partitions_and_rejects_foreign_objects():
     guard = DualBudgetStateBinding(bridge, pipeline)
     described = guard.describe()
     assert {k: len(v) for k, v in described["parameter_partitions"].items()} == {
-        "writer": 20, "common_reader": 6, "workspace": 6,
+        "writer": 20,
+        "common_reader": 6,
+        "workspace": 6,
     }
     assert described["reader"]["workspace_cap"] == 0.25
     other = SelectionWorkspaceBridge(parts().bridge).to(DEVICE)
@@ -318,8 +343,11 @@ def test_native_owner_rejects_the_v18_reader():
     v18 = SelectionWorkspaceBridge(original.bridge).to(DEVICE)
     with pytest.raises(ValueError):
         DualBudgetNativeLearner(
-            MistralTrainingBinding(original.base, 1), v18, workspace_policy=policy(),
-            full_update=True, optimizer_config=OPT,
+            MistralTrainingBinding(original.base, 1),
+            v18,
+            workspace_policy=policy(),
+            full_update=True,
+            optimizer_config=OPT,
             run_contract=contract(original.base, "ordered_difference", None),
         )
 
@@ -334,8 +362,7 @@ def window_owner(dtype, full, factor="slot_contrast", cap=0.25, mode="ordered_di
     binding = MistralTrainingBinding(original.base, 1)
     run = {
         "original_base_sha256": tree_hash(original.base.state_dict()),
-        "objective": {"terms": copy.deepcopy(CONTRACT), "eos_weight": 0.0,
-                      "query_mode": "final"},
+        "objective": {"terms": copy.deepcopy(CONTRACT), "eos_weight": 0.0, "query_mode": "final"},
         "preparation": preparation,
         "data": "tiny V19 window fixture; no semantic claim",
         CONTRACT_KEY: policy(mode),
@@ -344,8 +371,14 @@ def window_owner(dtype, full, factor="slot_contrast", cap=0.25, mode="ordered_di
     run["reference_source"] = dict(bank.source._asdict())
     before = tree_hash(rng_state())
     learner = V19DualBudgetWindowLearner(
-        binding, bridge, workspace_policy=policy(mode), full_update=full,
-        optimizer_config=OPT, run_contract=run, schedule=schedule(), reference_bank=bank,
+        binding,
+        bridge,
+        workspace_policy=policy(mode),
+        full_update=full,
+        optimizer_config=OPT,
+        run_contract=run,
+        schedule=schedule(),
+        reference_bank=bank,
     )
     assert tree_hash(rng_state()) == before and WINDOW_KEY not in run
     return learner, bank
@@ -358,8 +391,11 @@ def window_update(learner):
     rows = []
     for identifier in spec.ids:
         components, spill = learner.backward_pair(
-            identifier, write_memory=write_for(learner), prefix_ids=span.prefix_ids,
-            span=span, candidate_ids=(6, 7),
+            identifier,
+            write_memory=write_for(learner),
+            prefix_ids=span.prefix_ids,
+            span=span,
+            candidate_ids=(6, 7),
         )
         rows.append((identifier, {k: float(v.detach()) for k, v in components.items()}, spill))
     return rows, learner.step()
@@ -378,10 +414,15 @@ def test_window_owner_complete_windows_and_independent_restore(tmp_path, dtype, 
     target, target_bank = window_owner(dtype, full, cap=cap)
     payload = torch.load(tmp_path / "window1.pt", map_location="cpu", weights_only=True)
     restored = V19DualBudgetWindowLearner.restore(
-        target.binding, target.bridge, payload,
-        expected_workspace_policy=policy(), expected_metadata=META,
-        expected_run_contract=target.base_run_contract, expected_schedule=schedule(),
-        expected_reference_bank=target_bank, expected_state_sha256=receipt["state_sha256"],
+        target.binding,
+        target.bridge,
+        payload,
+        expected_workspace_policy=policy(),
+        expected_metadata=META,
+        expected_run_contract=target.base_run_contract,
+        expected_schedule=schedule(),
+        expected_reference_bank=target_bank,
+        expected_state_sha256=receipt["state_sha256"],
     )
     assert restored.completed_steps == 1
     assert tree_hash(window_update(restored)) == tree_hash(second)
@@ -393,8 +434,13 @@ def test_window_owner_raw_factor_and_partial_window_rejection(tmp_path):
     span = bound()
     learner.begin_window()
     first = learner.current_spec.ids[0]
-    learner.backward_pair(first, write_memory=write_for(learner), prefix_ids=span.prefix_ids,
-                          span=span, candidate_ids=(6, 7))
+    learner.backward_pair(
+        first,
+        write_memory=write_for(learner),
+        prefix_ids=span.prefix_ids,
+        span=span,
+        candidate_ids=(6, 7),
+    )
     with pytest.raises(ValueError, match="complete-window"):
         learner.payload(META)
     with pytest.raises(ValueError):
@@ -410,8 +456,13 @@ def test_window_restore_rejects_a_v18_envelope_format():
     target, target_bank = window_owner(torch.float32, True)
     with pytest.raises(ValueError, match="V19 window checkpoint format"):
         V19DualBudgetWindowLearner.restore(
-            target.binding, target.bridge, forged,
-            expected_workspace_policy=policy(), expected_metadata=META,
-            expected_run_contract=target.base_run_contract, expected_schedule=schedule(),
-            expected_reference_bank=target_bank, expected_state_sha256=tree_hash(forged),
+            target.binding,
+            target.bridge,
+            forged,
+            expected_workspace_policy=policy(),
+            expected_metadata=META,
+            expected_run_contract=target.base_run_contract,
+            expected_schedule=schedule(),
+            expected_reference_bank=target_bank,
+            expected_state_sha256=tree_hash(forged),
         )
