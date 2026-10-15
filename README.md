@@ -81,8 +81,44 @@ The prospective [V18 preparation](docs/v18/PREPARATION.md) integrates these
 diagnostics with original-base preservation and a generalized complete-window
 reduction contract. Its additive [window/reference state layer](docs/v18/WINDOW_REFERENCE.md)
 now [passes 310/310 tiny tests on CPU and CUDA](provenance/pilots/v18_window_reference_recovery_01_20261015/README.md),
-including source/receipt replay; the original guard failure is retained. No new 7B training,
-preservation loss or reader-selection mechanism is implied.
+including source/receipt replay; the original guard failure is retained. This
+foundation alone implies no 7B training, preservation loss or selection mechanism.
+The subsequent [additive operand-selection prototype](docs/v18/OPERAND_SELECTION.md)
+now separates common and interaction queries. Its
+[authorized continuation](provenance/pilots/v18_operand_selection_continuation_01_20261015/README.md)
+completes **200/200 CPU and CUDA engineering tests**, then **12/12 controlled
+reader-only fits per runtime**, with exact same-runtime offline replay.
+Ordered selection passes every seed's toy learnability gate (held-out strict
+**1,150/1,152, 1,152/1,152, 1,152/1,152**), but **not** the +5 pp advantage gate.
+All three final-state comparisons retain their failed permutation-tolerance
+checks; only 9/12 control bundles pass per runtime. The
+[original CUDA admission failure](provenance/pilots/v18_operand_selection_20261015/README.md)
+is unchanged. The [next boundary is the actual writer](docs/v18/ACTUAL_WRITER_TRANSITION.md),
+not a 7B launch, owner admission, semantic winner or non-regression claim.
+The [saved-state numerical diagnosis](provenance/pilots/v18_selection_permutation_20261015/README.md)
+now completes 12/12 states on CPU and CUDA. Repeats and instrumentation parity
+are exact, but **0/24 historical logit arrays reproduce bit-for-bit**, despite
+zero historical/new answer changes in 13,824 state-query observations per
+runtime. Centered-memory rounding is localized in the new execution, not yet
+established as the historical cause. All cells retain
+`BLOCKED_CONTROL_REPRODUCTION_MISMATCH`. The separate
+[flag intervention](provenance/pilots/v18_replay_flags_20261015/README.md) now
+explains that observed discrepancy: retaining historical flags reproduces all 24
+historical arrays and full controls; freezing all parameters reproduces all 24
+prior diagnostic outputs. Both policies remain eval/no-grad. The historical
+six permutation failures remain unchanged. The actual-writer helper has 42
+tests and the [selection state guard](docs/v18/SELECTION_STATE_GUARD.md) has 76;
+neither is a fitted writer or a full update/resume owner. That diagnostic's
+combined selected suite passes 533 local CPU tests. The separate additive
+[selection native owner](provenance/pilots/v18_selection_owner_local_20261015/README.md)
+now passes 150 tiny local mechanics tests and ten CPU process-restart cases,
+with exact next-update state and RNG agreement. Its
+[window envelope](provenance/pilots/v18_selection_window_20261015/README.md)
+then passed sealed Furnace CPU and CUDA qualification: 102 tests and ten
+independent-process restart pairs per device, verified offline. 7B integration
+remains pending; these checks do not repair the historical permutation failures
+or establish semantic improvement. The [full-update roadmap](docs/v18/FULL_UPDATE_ROADMAP.md)
+orders state ownership, native capacity, FT, benchmark and conditional release.
 The [behavior protocol](docs/v18/BEHAVIOR_EVALUATION.md) separates original base,
 updated backbone and workspace effects; a blank
 [Claude manual review sheet](docs/v18/CLAUDE_REVIEW_SHEET.md) supports a later
@@ -90,6 +126,14 @@ blinded transfer without a Claude API key. No new answer bank or judgments exist
 The conditional [Hugging Face beta release checklist](docs/v18/HF_RELEASE.md)
 targets **mistral-7b-instruct-ver0.3-LTWspaced β**, pending agreed acceptance,
 V18 evidence, licensing and fresh-load export parity. Nothing was uploaded.
+
+The separately authorized [V16 engineering-weight retirement](provenance/inventory/v16_engineering_retirement_20261015/README.md)
+has now removed four completed update/resume-test checkpoints, **54.213 GiB**,
+after publishing their hashes and 40 evidence bindings. All six active V16
+comparison saves remain (latest/previous per condition), as do the original
+model/cache and V18 diagnostic states. Terminal free space is **156.235 GiB**;
+the [one-arm forecast](docs/v18/SELECTION_OWNER_PLAN.md) is distinct from the
+unmet 242-GiB three-arm envelope. Git records do not reconstruct deleted weights.
 
 The [2026-10-13 readout PR review](docs/v15/READOUT_REVIEW_20261013.md) adds a
 pre-import source guard for future runs and qualifies the historical

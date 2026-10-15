@@ -1,0 +1,37 @@
+{
+  "schema": "v18-selection-qualification-v1",
+  "test_files": [
+    "tests/test_v18_operand_query.py",
+    "tests/test_v18_selection_reader.py",
+    "tests/test_v18_selection_pipeline.py"
+  ],
+  "expected_cases_by_file": {
+    "tests/test_v18_operand_query.py": 87,
+    "tests/test_v18_selection_reader.py": 85,
+    "tests/test_v18_selection_pipeline.py": 28
+  },
+  "expected_test_cases": 200,
+  "max_threads": 2,
+  "gpu_memory_limit_gib": 4,
+  "wall_limit_seconds": 900,
+  "arms": ["final", "ordered_difference", "symmetric_mean"],
+  "device_env": "LATENT_SLOT_STATE_TEST_DEVICE",
+  "fresh_process_per_device": true,
+  "offline_environment": {
+    "HF_HUB_OFFLINE": "1",
+    "HF_DATASETS_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "HF_HUB_DISABLE_TELEMETRY": "1",
+    "DO_NOT_TRACK": "1",
+    "TOKENIZERS_PARALLELISM": "false",
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"
+  },
+  "claim_ceiling": "tiny inference-text binding/split-query/native-readout arithmetic only; no learner admission, learning, semantic or 7B qualification",
+  "real_model_updates": 0,
+  "new_sequences": 0,
+  "judge_calls": 0,
+  "weight_deletions": 0,
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED"
+}

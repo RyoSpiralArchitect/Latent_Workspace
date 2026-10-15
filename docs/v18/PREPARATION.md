@@ -9,9 +9,10 @@ name. No intermediate V17 experiment or qualification is implied.
 
 The additive [window/reference ownership implementation](WINDOW_REFERENCE.md)
 now addresses unit 1 and the immutable supplied-bank portion of unit 2. Real
-reference capture, preservation loss, selection mechanism and full-update
-training remain unimplemented or unlaunched. See its separate qualification
-record; implementation is not a semantic or non-regression result.
+reference capture, preservation loss and full-update training remain
+unimplemented or unlaunched. The separate selection prototype now has bounded
+controlled-slot learning evidence, not actual-writer or native-Mistral evidence.
+Implementation is not a semantic or non-regression result.
 
 ## Evidence boundary
 
@@ -49,8 +50,9 @@ Near-uniform selection of centered values is the leading **observational**
 bottleneck; intended FP64 direction is positive in 127/256 affected queries,
 negative in 129/256. A selection-only relational-query/read factor is therefore
 the narrow next hypothesis, initially preserving writer/common/output map/cap
-and native arithmetic. It still needs a tiny reciprocal-binding learning test
-and matched controls, not a formula chosen from trace magnitudes alone.
+and native arithmetic. This motivated the subsequently completed tiny
+reciprocal-binding study described below, not a formula chosen from trace
+magnitudes alone. Actual-writer and contextual-state accessibility remain open.
 
 Ryō's conditional destination is a Hugging Face beta named
 **mistral-7b-instruct-ver0.3-LTWspaced β**. The
@@ -128,6 +130,16 @@ format, not ignored metadata or unowned reader buffers.
 
 ## Engineering unit 3: choose one interaction factor from the measured chain
 
+Current status: the [text-bound operand prototype](OPERAND_SELECTION.md) is
+implemented and has 200/200 source-isolated CPU and CUDA engineering passes.
+The [authorized continuation](../../provenance/pilots/v18_operand_selection_continuation_01_20261015/README.md)
+completed 12/12 controlled-slot fits per runtime. Ordered selection passes all
+three seeds' learnability gates; its strict scores are 1,150/1,152, 1,152/1,152
+and 1,152/1,152. It does not meet the +5 pp advantage gate. Final-state
+permutation checks fail in every seed on both runtimes, unchanged and retained.
+The original GPU-contention rejection is retained separately. This does not
+admit the reader into the owner or establish native-model improvement.
+
 The [read-only observer](../../src/latent_workspace_ft_v10/v16_population_probe.py)
 separates these hypotheses; none is established by interaction magnitude alone.
 
@@ -148,9 +160,10 @@ causal patch. One-factor intervention is required before a mechanistic claim.
 
 The next [selection-factor proposal](SELECTION_FACTOR_PROPOSAL.md) makes this
 concrete: keep the common query unchanged and compare final-state, ordered
-operand-difference and symmetric-operand interaction queries. It is not yet an
-implemented reader or an admitted experiment; begin with reciprocal binding on
-controlled slots, then the actual writer, before selecting a 7B cell.
+operand-difference and symmetric-operand interaction queries. That prototype and
+its first controlled-slot study are now completed, without checkpoint-owner
+admission. The [actual-writer transition](ACTUAL_WRITER_TRANSITION.md) is the
+next separate, not-yet-frozen study before real contextual states and a 7B cell.
 
 ## Behavior and judge preparation
 

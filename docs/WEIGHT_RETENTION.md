@@ -81,3 +81,20 @@ V15/V16 states, original base-model caches and other projects remain protected;
 the planned V16 comparison still retains two checkpoints per condition. No
 weight backups were created; hashes/metadata cannot reconstruct deleted weights.
 Cleanup is not a model-quality claim and does not erase old failures or missingness.
+
+## Closed engineering roles — 2026-10-15
+
+Ryō subsequently authorized recording and deleting obsolete intermediate weights.
+The [four-file V16 engineering retirement](../provenance/inventory/v16_engineering_retirement_20261015/README.md)
+removed only the completed frozen adapter-migration and full adapter-recovery
+step 1/2 bodies: **54.212977 GiB**. These are explicitly retired engineering
+conditions, not ordinary latest-two rotation or proven byte duplicates. The
+original migration remains incomplete overall; the separate recovery retains
+its engineering PASS. Their compact source/update/replay evidence is unchanged.
+
+The exact live hashes and 40 evidence bindings were committed and pushed before
+unlink. All six active V16 scientific saves (latest/previous per condition),
+V15 states, V18 diagnostic inputs/tensors and the original model/cache remain
+outside the deletion scope. Available space reached **156.235443 GiB**; that is
+not the former 242-GiB three-arm budget. No checkpoint payload backup exists,
+and the Git ledger cannot reconstruct the four deleted files.
