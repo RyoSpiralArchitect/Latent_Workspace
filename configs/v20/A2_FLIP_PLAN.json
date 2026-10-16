@@ -1,0 +1,210 @@
+{
+ "schema": "v20-a2-flip-v1",
+ "version": "V20 = A2 (Ryō, 2026-10-16)",
+ "question": "With pinned Mistral-7B frozen and the world facts given only as a separately encoded memory, does a v5 lattice over the memory and question states feeding v4's gated logit residual answer from the memory, so that the twin's facts flip the affected held-out answers?",
+ "corner": "Availability, lane A of docs/v20/SCOPE.md",
+ "backbone": {
+  "repository": "mistralai/Mistral-7B-Instruct-v0.3",
+  "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+  "original_base_sha256": "9db998af86c8105f0a2d774c10f777e190f86e54473b6b756bb51b225064a189",
+  "frozen": true,
+  "dtype": "bfloat16"
+ },
+ "full_update": false,
+ "data": {
+  "train": {
+   "path": "data/v10/functional_train.jsonl",
+   "sha256": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3",
+   "world_pairs": 256
+  },
+  "dev": {
+   "path": "data/v10/functional_eval.jsonl",
+   "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+   "world_pairs": 64
+  },
+  "final": {
+   "path": "configs/v16/population_20261015/functional.json",
+   "sha256": "606038154264601fc0b0669433287f42caf0fb137bbdc7cda90ab9a8c13a8643",
+   "world_pairs": 128
+  }
+ },
+ "data_checks": "V19 symbolic-oracle labels, affected pattern, label balance and split audit; data file hashes",
+ "rendering": {
+  "function": "scripts/v15_cue_contract.py render_case",
+  "renderer": "native_chat",
+  "cue": "present",
+  "information": "query_only",
+  "check": "both sides render the same prompt (V15 LiveStore)",
+  "row_order": "world, query"
+ },
+ "memory": {
+  "texts": "V15 LiveStore contexts: v15_assay_summary.canonical_facts(record.contexts[side], reverse) and run_v14_precision_bridge.unrelated_context(record)",
+  "tokens": "tokenizer.encode(text, add_special_tokens=False), as V15-V19",
+  "keys": [
+   "intact",
+   "twin",
+   "reverse_intact",
+   "reverse_twin",
+   "unrelated"
+  ],
+  "states": "host residual stream at memory_boundary (engine DecoderHost.to_cut), bfloat16: V19's writer input"
+ },
+ "memory_boundary": 16,
+ "candidates": [
+  " no",
+  " yes"
+ ],
+ "candidate_ids": [
+  1476,
+  5849
+ ],
+ "eos_token_id": 2,
+ "features": {
+  "question_states": "DecoderHost.to_cut(question, memory_boundary) at every prompt position (bfloat16)",
+  "base_logits": "native logits of the two candidates at the last prompt position",
+  "parity": "per question row, the frozen head on the final states and the decoder continued from the cut both reproduce the full native logits bitwise",
+  "memory_states": "DecoderHost.to_cut(memory text, memory_boundary) at every position (bfloat16)",
+  "format": "FEATURES_<split>.safetensors and ROWS_<split>.json.gz"
+ },
+ "route": {
+  "composition": "latent_workspace.composition.DeliberationRoute with deferred memory: each row's memory states packed before its question states",
+  "hidden_dim": 4096,
+  "vocab_size": 32768,
+  "steps": 4,
+  "workspace_dim": 256,
+  "attention_heads": 8,
+  "ff_multiplier": 2.0,
+  "dropout": 0.05,
+  "anchor_refresh": "initial_only",
+  "causal_window": 0,
+  "rank": 32,
+  "gate_init_bias": -2.0,
+  "initialization": "per-component derived seeds; the arms of one seed share every parameter"
+ },
+ "arms": [
+  "memory",
+  "query_only"
+ ],
+ "arm_definitions": {
+  "memory": "every training row reads its own side's facts as memory",
+  "query_only": "the same route and rows without memory"
+ },
+ "seeds": [
+  2026101701,
+  2026101702,
+  2026101703
+ ],
+ "training": {
+  "device": "cpu",
+  "dtype": "float32",
+  "threads": 8,
+  "deterministic_algorithms": true,
+  "objective": "choice-normalized cross-entropy over the two candidates at the last prompt position",
+  "updates": 512,
+  "epochs": 4,
+  "batch_size": 32,
+  "learning_rate": 0.0003,
+  "betas": [
+   0.9,
+   0.999
+  ],
+  "adam_eps": 1e-08,
+  "weight_decay": 0.01,
+  "weight_decay_policy": "engine._uses_weight_decay",
+  "max_grad_norm": 1.0,
+  "schedule": "constant",
+  "loss_tokens_per_row": 32,
+  "loss_tokens_per_batch": 256,
+  "spectral_every": 16,
+  "contrastive_groups": "world",
+  "randomness": "data order per epoch, dropout and loss sampling per update, all derived from (seed, step)",
+  "rows": "train split, both sides x 8 questions = 4,096 rows",
+  "workspace_loss": "none"
+ },
+ "dev_evaluation_steps": [
+  0,
+  128,
+  256,
+  384,
+  512
+ ],
+ "checkpoint_steps": [
+  256
+ ],
+ "truncation_steps": [
+  1,
+  2,
+  3
+ ],
+ "conditions": [
+  "intact",
+  "twin",
+  "reverse_intact",
+  "reverse_twin",
+  "unrelated",
+  "random_intact",
+  "random_twin",
+  "none"
+ ],
+ "random_memory_seed": 470016,
+ "endpoints": {
+  "split": "final",
+  "step": 512,
+  "affected_queries": 256,
+  "rule": {
+   "chance_control": "random_pair",
+   "sign_test_alpha": 0.001,
+   "minimum_actual_flips": 26,
+   "minimum_flip_margin_over_random": 20
+  },
+  "source": "configs/v19/FROZEN_DIAGNOSTIC_PLAN.json endpoints, unchanged (engine availability.diagnose)",
+  "learning_check": "the same rule on the train split (512 affected questions; intact, twin and random-pair memory): a seed that fails it is NOT_LEARNED",
+  "verdicts": [
+   "CONTENT_REACHES_ANSWERS",
+   "DIRECTIONAL_ONLY",
+   "NOT_ESTABLISHED",
+   "NOT_LEARNED"
+  ],
+  "overall": "CONTENT_REACHES_ANSWERS if every seed reaches it; DIRECTIONAL_ONLY if every seed is at least directional; NOT_LEARNED if no seed learned; otherwise NOT_ESTABLISHED"
+ },
+ "descriptive_probe": {
+  "l2": 0.001,
+  "iterations": 200
+ },
+ "replay": {
+  "arm": "memory",
+  "seed": 2026101701,
+  "from_step": 256,
+  "execute_step": 257
+ },
+ "resources": {
+  "admission_free_gib": 31,
+  "allocator_cap_gib": 30.5,
+  "abort_free_gib": 0.75,
+  "host_admission_available_gib": 100,
+  "host_abort_available_gib": 24,
+  "disk_free_gib": 50,
+  "max_elapsed_seconds": 7200,
+  "cpu_threads": 2
+ },
+ "storage_forecast_bytes": 8589934592,
+ "qualification_test_files": [],
+ "qualification_cases": 0,
+ "qualification_device_env": [
+  "LATENT_V20_TEST_DEVICE",
+  "LATENT_V19_TEST_DEVICE"
+ ],
+ "qualification_wall_seconds": 900,
+ "qualification_gpu_limit_gib": 4,
+ "pass_status": "V20_A2_FLIP_COMPLETE_NOT_FULL_UPDATE_OR_RELEASE",
+ "process_policy": "each role a fresh process through scripts/run_source_sealed.py, in order, stopping at the first failure",
+ "no_retry": true,
+ "scope": "Frozen backbone. A pass shows that the system (host plus workspace) answers from a memory the host never saw with the question, on held-out worlds of this task family; not that memory moves the native head, nor general reasoning, non-regression or language quality.",
+ "new_sequences": 0,
+ "judge_calls": 0,
+ "weight_deletions": 0,
+ "native_weight_updates": 0,
+ "old_expression_gate": "FAIL",
+ "winner": "none",
+ "non_regression": "NOT_ESTABLISHED"
+}
