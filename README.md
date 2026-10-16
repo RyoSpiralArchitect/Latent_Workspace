@@ -34,6 +34,12 @@ NOT_ESTABLISHED**.
   (branching across turns), Availability (the flip) and Consequence (paired
   generation quality versus base, where V14 already saw judge-preferred
   differences).
+- **V20 D1, the first Deliberation test:** with Mistral-7B frozen and the facts
+  inline, v4's route lifts held-out accuracy from 0.68 to 0.88–0.91 in every
+  seed, but four latent steps do not beat one, and a readout of the last hidden
+  state alone reaches 0.81–0.89:
+  [`LATTICE_GAIN_WITHOUT_STEP_DEPENDENCE`](provenance/pilots/v20_deliberation_pilot_20261016/README.md),
+  a readout gap rather than deliberation.
 - **Release goal:** a conditional Hugging Face beta,
   **mistral-7b-instruct-v0.3-LTWS β**, only after memory use, non-regression and
   export parity are established ([release checklist](docs/v18/HF_RELEASE.md)).

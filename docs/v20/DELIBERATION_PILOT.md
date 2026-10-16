@@ -1,6 +1,12 @@
 # V20 D1: does the v4 lattice deliberate on Mistral-7B?
 
-2026-10-16. **FROZEN BEFORE LAUNCH.** The first V20 experiment, agreed with Ryō,
+2026-10-16. **RESULT: `LATTICE_GAIN_WITHOUT_STEP_DEPENDENCE`** (all roles
+complete; the dispatcher's endpoint step failed on an import path, so the
+endpoints were computed offline by the sealed function). The route lifts
+held-out accuracy by 20–23 points in every seed, but four latent steps do not
+beat one, and a readout without any lattice gets most of the gain. See the
+[results](../../provenance/pilots/v20_deliberation_pilot_20261016/README.md).
+Frozen before launch as follows. The first V20 experiment, agreed with Ryō,
 reads the Deliberation corner (潜在熟考) of the [V20 square](SCOPE.md). The
 old **FAIL / winner:none / non_regression NOT_ESTABLISHED** is unchanged.
 
