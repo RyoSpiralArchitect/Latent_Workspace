@@ -109,7 +109,8 @@ sources, because V14–V18 seals pin those files byte for byte; see PR #14.
 V19, its stopped diagnostic, closeout and the first scope note followed in
 PR #18. V19.5 followed in PRs #19–#22: the square (#19), the D1 Deliberation
 pilot (#20), the architecture with the `latent_workspace` engine (#21) and the
-A1 Availability ladder (#22).
+A1 Availability ladder (#22). V20's A2 groundwork and power checks followed in
+PR #23.
 
 ## V19: separate norm budgets for the common and workspace routes
 
