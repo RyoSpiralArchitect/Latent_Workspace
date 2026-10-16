@@ -9,6 +9,13 @@ are frozen; this module is the living home (docs/ARCHITECTURE.md). Parity:
 Every component is initialized from its own derived seed, and data order,
 dropout and loss sampling derive only from (seed, update), so a run is exact
 and a fresh process replays any update bitwise.
+
+Options added in the engine (V20 A2), explicit changes with their own tests:
+``FeatureBank`` rows may share stored segments (``segments``) and may carry a
+deferred memory (``memory``: states, offsets and one memory segment per row),
+which ``update`` and ``evaluate`` hand to the route; ``evaluate(final=True)``
+also returns each row's last latent state. Without them the behavior is the
+promoted one, bit for bit.
 """
 
 from __future__ import annotations
@@ -100,33 +107,91 @@ def fingerprint(named):
     return digest.hexdigest()
 
 
-class FeatureBank:
-    """Frozen final hidden states (concatenated rows) with base candidate logits."""
+def _segments(states, offsets, segments, rows, name):
+    if offsets.ndim != 1 or offsets[0] != 0 or offsets[-1] != states.shape[0]:
+        raise ValueError(f"{name} offsets must span the stored states")
+    if segments.shape != (rows,) or (
+        rows and (int(segments.min()) < 0 or int(segments.max()) >= offsets.numel() - 1)
+    ):
+        raise ValueError(f"{name} segments must name one stored segment per row")
+    return segments.long()
 
-    def __init__(self, hidden, offsets, base_logits, targets, worlds):
+
+def _gather(states, offsets, segments):
+    """Left-aligned FP32 states [B, width, H] and mask for the given segments."""
+    lengths = [int(offsets[s + 1] - offsets[s]) for s in segments]
+    width = max(lengths)
+    values = torch.zeros(len(segments), width, states.shape[1], dtype=torch.float32)
+    mask = torch.zeros(len(segments), width, dtype=torch.long)
+    for row, (s, length) in enumerate(zip(segments, lengths, strict=True)):
+        start = int(offsets[s])
+        values[row, :length] = states[start : start + length].float()
+        mask[row, :length] = 1
+    return values, mask
+
+
+def packed_mask(memory_mask, mask):
+    """The mask of ``composition.pack_memory``'s output: memory then query, left-aligned."""
+    lengths = memory_mask.long().sum(1) + mask.long().sum(1)
+    positions = torch.arange(memory_mask.shape[1] + mask.shape[1])
+    return (positions[None] < lengths[:, None]).long()
+
+
+class FeatureBank:
+    """Frozen final hidden states (concatenated rows) with base candidate logits.
+
+    ``segments`` (optional): the stored segment each row reads, so rows can share
+    states. ``memory`` (optional): ``(states, offsets, segments)`` of a deferred
+    memory, one memory segment per row.
+    """
+
+    def __init__(
+        self, hidden, offsets, base_logits, targets, worlds, *, segments=None, memory=None
+    ):
         if offsets.ndim != 1 or offsets[0] != 0 or offsets[-1] != hidden.shape[0]:
             raise ValueError("Offsets must span the hidden rows")
-        n = offsets.numel() - 1
+        n = offsets.numel() - 1 if segments is None else segments.numel()
         if base_logits.shape != (n, 2) or targets.shape != (n,) or worlds.shape != (n,):
             raise ValueError("Row metadata shapes")
         self.hidden, self.offsets = hidden, offsets
         self.base_logits = base_logits.float()
         self.targets, self.worlds = targets.long(), worlds.long()
+        self.segments = None
+        if segments is not None:
+            self.segments = _segments(hidden, offsets, segments, n, "Row")
+        self.memory = None
+        if memory is not None:
+            states, memory_offsets, memory_segments = memory
+            memory_segments = _segments(states, memory_offsets, memory_segments, n, "Memory")
+            self.memory = (states, memory_offsets, memory_segments)
 
     def __len__(self):
-        return self.offsets.numel() - 1
+        return self.offsets.numel() - 1 if self.segments is None else self.segments.numel()
 
     def batch(self, indices):
-        lengths = [int(self.offsets[i + 1] - self.offsets[i]) for i in indices]
-        width = max(lengths)
-        hidden = torch.zeros(len(indices), width, self.hidden.shape[1], dtype=torch.float32)
-        mask = torch.zeros(len(indices), width, dtype=torch.long)
-        for row, (i, length) in enumerate(zip(indices, lengths, strict=True)):
-            start = int(self.offsets[i])
-            hidden[row, :length] = self.hidden[start : start + length].float()
-            mask[row, :length] = 1
+        segments = list(indices) if self.segments is None else self.segments[indices].tolist()
+        hidden, mask = _gather(self.hidden, self.offsets, segments)
         index = torch.tensor(list(indices), dtype=torch.long)
         return hidden, mask, self.base_logits[index], self.targets[index], self.worlds[index]
+
+    def memory_batch(self, indices):
+        """Left-aligned FP32 memory states and mask for ``indices``; ``None`` without memory."""
+        if self.memory is None:
+            return None
+        states, offsets, segments = self.memory
+        return _gather(states, offsets, segments[indices].tolist())
+
+    def with_memory(self, memory):
+        """The same rows read with another memory, or with none."""
+        return FeatureBank(
+            self.hidden,
+            self.offsets,
+            self.base_logits,
+            self.targets,
+            self.worlds,
+            segments=self.segments,
+            memory=memory,
+        )
 
 
 @dataclass(frozen=True)
@@ -177,8 +242,14 @@ def update(route, loss, optimizer, bank, config, step):
     if loss is not None:
         loss.train()
     torch.manual_seed(component_seed(config.seed, f"step{step}"))
-    hidden, mask, base, targets, worlds = bank.batch(batch_indices(config, len(bank), step))
-    delta, latents, anchor, gate = route(hidden, mask)
+    indices = batch_indices(config, len(bank), step)
+    hidden, mask, base, targets, worlds = bank.batch(indices)
+    memory = bank.memory_batch(indices)
+    if memory is None:
+        delta, latents, anchor, gate = route(hidden, mask)
+    else:
+        delta, latents, anchor, gate = route(hidden, mask, *memory)
+        mask = packed_mask(memory[1], mask)
     task = F.cross_entropy(base + delta, targets)
     total, stats = task, None
     if config.workspace_loss_weight:
@@ -212,14 +283,27 @@ def update(route, loss, optimizer, bank, config, step):
 
 
 @torch.no_grad()
-def evaluate(route, bank, batch_size=64, steps=None):
-    """Adapted candidate logits [n, 2] in row order (fixed batching)."""
+def evaluate(route, bank, batch_size=64, steps=None, final=False):
+    """Adapted candidate logits [n, 2] in row order (fixed batching).
+
+    With ``final``, also each row's last latent state at its answer position [n, W].
+    """
     route.eval()
-    outputs = []
+    outputs, finals = [], []
     with route.truncated(steps):
         for start in range(0, len(bank), batch_size):
             indices = list(range(start, min(start + batch_size, len(bank))))
             hidden, mask, base, _, _ = bank.batch(indices)
-            delta, _, _, _ = route(hidden, mask)
+            memory = bank.memory_batch(indices)
+            if memory is None:
+                delta, latents, anchor, _ = route(hidden, mask)
+            else:
+                delta, latents, anchor, _ = route(hidden, mask, *memory)
+                mask = packed_mask(memory[1], mask)
             outputs.append(base + delta)
-    return torch.cat(outputs)
+            if final:
+                last = mask.long().sum(1) - 1
+                states = anchor if latents is None else latents[:, :, -1]
+                finals.append(states[torch.arange(len(indices)), last])
+    adapted = torch.cat(outputs)
+    return (adapted, torch.cat(finals)) if final else adapted

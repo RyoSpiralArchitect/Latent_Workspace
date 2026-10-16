@@ -5,6 +5,12 @@
 over host states feeding v4's gated low-rank logit residual, as in V19.5 D1.
 The historical file is frozen; this module is the living home
 (docs/ARCHITECTURE.md). Parity: ``test_deliberation_route_is_the_d1_route``.
+
+Option added in the engine (V20 A2), an explicit change with its own tests:
+**deferred memory**. ``forward(hidden, mask, memory, memory_mask)`` places each
+row's valid memory states before its valid query states (``pack_memory``), so
+query positions attend to a memory the host never saw with the query. Without
+``memory`` the forward is the promoted one, bit for bit.
 """
 
 from __future__ import annotations
@@ -20,6 +26,35 @@ from .routes import LowRankWorkspaceLogitAdapter
 from .training import component_seed, seeded
 
 MAX_STEPS = 4
+
+
+def pack_memory(memory, memory_mask, hidden, mask):
+    """Per row: its valid memory states, then its valid query states, then padding.
+
+    Both inputs must be left-aligned (valid states first), as ``FeatureBank``
+    batches them. Returns the packed states [B, M + L, H] and their mask.
+    """
+    if memory.ndim != 3 or memory_mask is None or memory_mask.shape != memory.shape[:2]:
+        raise ValueError("Expected memory [B, M, H] and memory_mask [B, M]")
+    if memory.shape[0] != hidden.shape[0] or memory.shape[2] != hidden.shape[2]:
+        raise ValueError("Memory and query differ in batch or width")
+    counts = []
+    for values, name in ((memory_mask, "memory"), (mask, "query")):
+        count = values.long().sum(1)
+        positions = torch.arange(values.shape[1], device=values.device)
+        if not torch.equal(values.long(), (positions[None] < count[:, None]).long()):
+            raise ValueError(f"The {name} mask must be left-aligned")
+        counts.append(count)
+    if (counts[1] < 1).any():
+        raise ValueError("Empty row")
+    width = memory.shape[1] + hidden.shape[1]
+    packed = hidden.new_zeros(hidden.shape[0], width, hidden.shape[2])
+    packed_mask = mask.new_zeros(hidden.shape[0], width)
+    for row, (m, q) in enumerate(zip(counts[0].tolist(), counts[1].tolist(), strict=True)):
+        packed[row, :m] = memory[row, :m]
+        packed[row, m : m + q] = hidden[row, :q]
+        packed_mask[row, : m + q] = 1
+    return packed, packed_mask
 
 
 class DeliberationRoute(nn.Module):
@@ -88,10 +123,16 @@ class DeliberationRoute(nn.Module):
         finally:
             self.lattice.steps = old
 
-    def forward(self, hidden, mask):
-        """Return (candidate logit deltas at the last valid position, latents, anchor, gate)."""
+    def forward(self, hidden, mask, memory=None, memory_mask=None):
+        """Return (candidate logit deltas at the last valid position, latents, anchor, gate).
+
+        With ``memory``, the lattice runs over the packed [memory; query] sequence;
+        the gate and the residual still come from the query's last position.
+        """
         if hidden.ndim != 3 or mask.shape != hidden.shape[:2]:
             raise ValueError("Expected hidden [B, L, H] and mask [B, L]")
+        if memory is not None:
+            hidden, mask = pack_memory(memory, memory_mask, hidden, mask)
         last = mask.long().sum(1) - 1
         if (last < 0).any():
             raise ValueError("Empty row")
