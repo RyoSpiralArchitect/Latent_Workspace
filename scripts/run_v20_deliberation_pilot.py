@@ -530,6 +530,9 @@ def replay_run(torch, args, plan, banks):
 
 
 def endpoints_for(raw, plan):
+    # The dispatcher never runs load_runtime; dispatch 01 failed here on the import path.
+    if str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
     from latent_workspace_ft_v10 import v20_deliberation as deliberation
 
     rows = v19().read_gz(raw / "extract" / "ROWS_final.json.gz")
