@@ -140,6 +140,7 @@ test was shown to fail on a deliberate violation.
 | `host` | `DecoderHost` | new |
 | `scratch` | `ScratchDecoder` (custom split interface) | new |
 | `ladder` | Availability-ladder probes, world sign tests, rung verdict (A1) | new |
+| `availability` | lane A's flip endpoint: choices, contrasts, V19's diagnosis, V16's random-memory control | new; reproduces V19's recorded diagnosis from its saved scores |
 | `execution` | sealed-run skeleton: receipts, qualification, roles, no-retry dispatch | new; replaces per-run copies from A1 on |
 
 [Parity tests](../tests/test_latent_workspace_stack.py) show bitwise-identical
