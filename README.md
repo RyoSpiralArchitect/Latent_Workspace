@@ -8,7 +8,7 @@ frozen before launch, execute from a sealed commit on a remote CUDA node
 historical claim ceiling is unchanged: **FAIL / winner:none / non_regression
 NOT_ESTABLISHED**.
 
-## Status (2026-10-15)
+## Status (2026-10-16)
 
 - **V18 engineering is complete on the real model.** The selection window owner
   passed sealed CPU/CUDA qualification, and the first
@@ -29,17 +29,32 @@ NOT_ESTABLISHED**.
   another project's job appeared; the third never ran. Ryō closed V19 there,
   without an attempt 02; the lessons are collected in the
   [closeout](docs/v19/CLOSEOUT.md).
-- **[V20 scope](docs/v20/SCOPE.md):** a square of four corners, each with its
-  own endpoint: Deliberation (v4's latent lattice, restored), Occupancy
-  (branching across turns), Availability (the flip) and Consequence (paired
-  generation quality versus base, where V14 already saw judge-preferred
-  differences).
-- **V20 D1, the first Deliberation test:** with Mistral-7B frozen and the facts
-  inline, v4's route lifts held-out accuracy from 0.68 to 0.88–0.91 in every
-  seed, but four latent steps do not beat one, and a readout of the last hidden
-  state alone reaches 0.81–0.89:
-  [`LATTICE_GAIN_WITHOUT_STEP_DEPENDENCE`](provenance/pilots/v20_deliberation_pilot_20261016/README.md),
-  a readout gap rather than deliberation.
+- **V19.5, between V19 and V20.** Its files keep the `v20` names under which
+  they were frozen and sealed ([docs/v20](docs/v20/README.md)).
+  - **[Scope](docs/v20/SCOPE.md):** a square of four corners, each with its
+    own endpoint: Deliberation (v4's latent lattice, restored), Occupancy
+    (branching across turns), Availability (the flip) and Consequence (paired
+    generation quality versus base, where V14 already saw judge-preferred
+    differences).
+  - **[Architecture](docs/ARCHITECTURE.md):** one living engine,
+    [`latent_workspace`](src/latent_workspace/), frozen history and rule
+    tests.
+  - **D1, the first Deliberation test:** with Mistral-7B frozen and the facts
+    inline, v4's route lifts held-out accuracy from 0.68 to 0.88–0.91 in every
+    seed, but four latent steps do not beat one, and a readout of the last
+    hidden state alone reaches 0.81–0.89:
+    [`LATTICE_GAIN_WITHOUT_STEP_DEPENDENCE`](provenance/pilots/v20_deliberation_pilot_20261016/README.md),
+    a readout gap rather than deliberation.
+  - **A1, the Availability ladder on V19's checkpoints:** the pre-registered
+    verdict is `CONTENT_ABSENT_IN_MEMORY` at all three states, but the memory
+    probe never learned to use memory, and at update 256 the workspace read
+    output carried the content (161 of 256 held-out affected questions,
+    p = 7e-5), weaker by update 512
+    ([results](provenance/pilots/v20_a1_ladder_20261016/README.md)). Read
+    descriptively, the content is lost in transport to the answer.
+- **V20 is A2, next:** the flip through v4's logit route on the engine, which
+  maps the workspace onto the answer logits instead of adding it to the last
+  hidden state. Not yet designed or run.
 - **Release goal:** a conditional Hugging Face beta,
   **mistral-7b-instruct-v0.3-LTWS β**, only after memory use, non-regression and
   export parity are established ([release checklist](docs/v18/HF_RELEASE.md)).
@@ -64,7 +79,8 @@ outside the engine.
 
 | Version | Focus | Start here |
 | --- | --- | --- |
-| V20 | Scope (planning): a square of Deliberation, Occupancy, Availability and Consequence, each with its own endpoint | [scope](docs/v20/SCOPE.md) |
+| V20 | A2: the flip through v4's logit route, on the `latent_workspace` engine (next) | [docs/v20](docs/v20/README.md) |
+| V19.5 | The square of Deliberation, Occupancy, Availability and Consequence; the architecture and `latent_workspace` engine; D1 (Deliberation pilot) and A1 (Availability ladder). Files keep their `v20` names. | [scope](docs/v20/SCOPE.md) |
 | V19 | Separate norm budgets for the common and workspace routes: dual-budget reader and owners, frozen diagnostic attempt 01 | [design](docs/v19/DUAL_BUDGET.md) |
 | V18 | Complete windows and reference ownership, operand selection, selection owners, first 7B pilot, frozen-backbone diagnostic | [roadmap](docs/v18/FULL_UPDATE_ROADMAP.md) |
 | V17 | — | There is no V17. The maintainer skipped the number by mistake; the gap means nothing. |
@@ -78,9 +94,10 @@ V13–V18 were developed as stacked branches and merged into `main` on
 2026-10-15 (PRs #14, #12, #13, #15, #16 and #17). Three V11/V12-era
 fixes that `main` had received are kept in history but not in the merged
 sources, because V14–V18 seals pin those files byte for byte; see PR #14.
-V19, its stopped diagnostic, closeout and the V20 scope followed in PR #18,
-the V20 square in PR #19, the V20 D1 Deliberation pilot in PR #20, and the
-architecture with the `latent_workspace` engine in PR #21.
+V19, its stopped diagnostic, closeout and the first scope note followed in
+PR #18. V19.5 followed in PRs #19–#22: the square (#19), the D1 Deliberation
+pilot (#20), the architecture with the `latent_workspace` engine (#21) and the
+A1 Availability ladder (#22).
 
 ## V19: separate norm budgets for the common and workspace routes
 

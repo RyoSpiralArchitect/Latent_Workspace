@@ -65,6 +65,22 @@ def test_history_is_frozen():
     )
 
 
+def test_legacy_pinned_sources_are_unchanged():
+    """V15's legacy validation, used by every V15+ model role, pins these 303 files.
+
+    Editing one (pyproject.toml included) would stop every later extraction at runtime.
+    """
+    seal = json.loads(
+        (ROOT / "provenance/pilots/v15_reader_factors_20261010/SOURCE_SEAL.json").read_text()
+    )
+    changed = sorted(
+        name
+        for name, sha in seal["source_hashes"].items()
+        if not (ROOT / name).exists() or digest(ROOT / name) != sha
+    )
+    assert not changed, f"Pinned by V15's legacy validation: {changed}"
+
+
 def test_src_holds_only_the_engine_and_frozen_history():
     packages = {
         p.name for p in (ROOT / "src").iterdir() if p.is_dir() and (p / "__init__.py").exists()

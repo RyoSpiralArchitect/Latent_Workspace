@@ -1,0 +1,121 @@
+{
+  "schema": "v20-a1-ladder-v1",
+  "question": "Where is memory content (intact against twin facts) lost in V19's frozen dual-budget pipeline: in the written memory, in the read output, or on the way to the native head?",
+  "corner": "Availability (lane A); docs/v20/SCOPE.md, docs/ARCHITECTURE.md",
+  "pass_status": "V20_A1_LADDER_COMPLETE_NOT_TRAINING_OR_RELEASE",
+  "v19": {
+    "source_commit": "097d8dd13856ed1611f9b1c0ab41f9f069773606",
+    "plan": "configs/v19/FROZEN_DIAGNOSTIC_PLAN.json",
+    "plan_sha256": "a70681ab5e2e16ee7ffebfa4f540fffae48c344ff319aedc24003d88bba4a7cb",
+    "arm": "ordered_cap025",
+    "receipts": "/home/ryospiralarchitect/spiralreality/SpiralReality/tmp/latent-v19-frozen-diagnostic-20261015/raw/ordered_cap025",
+    "checkpoints": "/home/ryospiralarchitect/spiralreality/SpiralReality/tmp/latent-v19-frozen-diagnostic-20261015/checkpoints/ordered_cap025",
+    "receipt_sha256": {
+      "CONTEXT.json": "a40a9e563d44cf62723793ae3f15268411337ef19e63de1454823d187a489afe",
+      "INITIAL.json": "81d7979511185f51d368a4867782a6964678cd57df43c887de52823704d9781a",
+      "CHECKPOINT_step256.json": "678060b05a487f0afcf48d54245f4de0cdcca95b5646bba498f5b281f0d31e09",
+      "CHECKPOINT_step512.json": "8921b6252d94820bb56de47cf97b2c861f1abfb76afb6403e169317673610d85"
+    },
+    "result": "provenance/pilots/v19_frozen_dual_budget_20261015/README.md"
+  },
+  "states": [
+    "initial",
+    "step256",
+    "step512"
+  ],
+  "splits": {
+    "fit": "train",
+    "test": "final"
+  },
+  "conditions": [
+    "intact",
+    "twin",
+    "reverse_intact",
+    "unrelated",
+    "random_intact"
+  ],
+  "extraction_checks": [
+    "V19's runtime arithmetic (CPU threads, one interop thread, highest float32 matmul precision, TF32 off) is set before the model loads, as V19's roles did; restores require the recorded execution policy",
+    "V19 receipts and checkpoint bodies match their pinned hashes",
+    "the initial state is rebuilt by V19's code and matches V19's INITIAL fingerprint",
+    "store receipts (renderings, spans, contexts) equal V19's for both splits",
+    "the pipeline residual equals the recomputed common + workspace parts exactly",
+    "zero memory reproduces the frozen direct base exactly",
+    "reader queries do not depend on memory"
+  ],
+  "probes": {
+    "threads": 8,
+    "attention": {
+      "width": 64,
+      "steps": 300,
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "seeds": [
+        1,
+        2,
+        3
+      ]
+    },
+    "contrast": {
+      "l2": 0.001,
+      "iterations": 200
+    },
+    "routes": [
+      "interaction",
+      "common",
+      "delta"
+    ],
+    "primary_route": "interaction"
+  },
+  "endpoints": {
+    "alpha": 0.01,
+    "memory": "On the 128 held-out worlds (256 affected pairs), the attention probe's content following (both sides right) beats both the zeroed-memory and the shuffled-memory probe, each by a one-sided sign test over worlds at p <= alpha, in every probe seed.",
+    "reading": "The primary route's contrast probe (intact minus twin read output, predicting the intact answer) beats chance by a one-sided sign test over held-out worlds (two affected questions each) at p <= alpha.",
+    "transport": "Known from V19: the FP64 intended answer-gap change is donor-directed for 129 of 256 held-out questions and no published answer flips.",
+    "verdicts": [
+      "CONTENT_ABSENT_IN_MEMORY",
+      "LOST_IN_READING",
+      "LOST_IN_TRANSPORT"
+    ],
+    "verdict_rule": "memory fails: CONTENT_ABSENT_IN_MEMORY; memory passes and reading fails: LOST_IN_READING; both pass: LOST_IN_TRANSPORT. One verdict per state."
+  },
+  "descriptive": [
+    "probe accuracy on all held-out rows, per probe and control",
+    "contrast-probe accuracy for the common route and the total residual",
+    "form control: the same contrast probe on intact minus reverse_intact (same facts, reversed order)",
+    "distinguishability: median |intact - twin| / |intact - reverse_intact| for memory and each route"
+  ],
+  "resources": {
+    "admission_free_gib": 31,
+    "allocator_cap_gib": 30.5,
+    "abort_free_gib": 0.75,
+    "host_admission_available_gib": 100,
+    "host_abort_available_gib": 24,
+    "disk_free_gib": 50,
+    "max_elapsed_seconds": 5400,
+    "cpu_threads": 2
+  },
+  "storage_forecast_bytes": 8589934592,
+  "qualification_test_files": [
+    "tests/test_latent_workspace_ladder.py",
+    "tests/test_latent_workspace_execution.py",
+    "tests/test_v20_a1_ladder.py"
+  ],
+  "qualification_cases": 18,
+  "qualification_device_env": [
+    "LATENT_V20_TEST_DEVICE",
+    "LATENT_V19_TEST_DEVICE"
+  ],
+  "qualification_wall_seconds": 900,
+  "qualification_gpu_limit_gib": 4,
+  "process_policy": "each role a fresh process through scripts/run_source_sealed.py, in order, stopping at the first failure",
+  "no_retry": true,
+  "scope": "Probes of a frozen, historical pipeline. A pass says the content is extractable from that rung by these small probes; a fail says these probes could not extract it. No workspace training, no answer changes, no claim about memory use by the native model.",
+  "new_sequences": 0,
+  "judge_calls": 0,
+  "weight_deletions": 0,
+  "native_weight_updates": 0,
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED"
+}
