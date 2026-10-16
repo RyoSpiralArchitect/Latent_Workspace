@@ -152,8 +152,8 @@ is transport. Next, and V20 itself: A2, the flip through v4's logit route. Its
 [power checks](../../provenance/pilots/v20_a2_flip_20261016/DEV_POWER_CHECKS.md)
 found the wall is depth. The frozen host reads a separately encoded memory at
 cut 0–4 and not from cut 8 on, while V16–V19 wrote memory at cut 16. A2
-becomes a sealed depth ladder, and a workspace that writes into the lower
-layers comes after it.
+becomes a sealed [depth ladder](A2_DEPTH_LADDER.md), and a workspace that
+writes into the lower layers comes after it.
 
 **B. Conversation branching.** Natural multi-turn dialogues, with the
 constrained harness kept as a mechanical probe. Conditions: original base;

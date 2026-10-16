@@ -64,7 +64,8 @@ NOT_ESTABLISHED**.
   train-split worlds only). The frozen host reads such a memory at cut 0–4
   and not from cut 8 on, and V16–V19 wrote theirs at cut 16. With memory at
   cut 4 and D1's readout, the system answers from memory: 0.76 against 0.49
-  with random memory. Next, a sealed depth ladder (cuts 0, 4, 8, 16, with and
+  with random memory. Next, the sealed
+  [depth ladder](docs/v20/A2_DEPTH_LADDER.md) (cuts 0, 4, 8, 16, with and
   without the route), then a workspace that writes memory into the lower
   layers.
 - **Release goal:** a conditional Hugging Face beta,
