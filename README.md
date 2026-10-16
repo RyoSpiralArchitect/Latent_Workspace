@@ -45,6 +45,18 @@ NOT_ESTABLISHED**.
   export parity are established ([release checklist](docs/v18/HF_RELEASE.md)).
   Nothing has been uploaded.
 
+## Architecture
+
+[ARCHITECTURE.md](docs/ARCHITECTURE.md) maps every module onto one stack (host
+binding, workspace algorithms, routes, composition, ownership, instruments) and
+sets the migration rules toward portability to other models and to training
+from scratch. Its first slice is the version-free package
+[`latent_workspace`](src/latent_workspace/): hosts over the existing cut
+protocol (Mistral, OLMo2, GPT-2 and a small from-scratch decoder), the three
+routes (logit, answer-position, cut) and stable names for the historical
+algorithms, each pinned to its source by
+[parity tests](tests/test_latent_workspace_stack.py).
+
 ## Version map
 
 | Version | Focus | Start here |
