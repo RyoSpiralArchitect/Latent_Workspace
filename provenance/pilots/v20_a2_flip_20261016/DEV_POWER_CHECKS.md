@@ -76,9 +76,78 @@ NOT_ESTABLISHED** is unchanged.
      2–3 of 128 affected questions flipped. The upper half does not use facts
      the lower half never saw.
 
+## Follow-ups agreed with Ryō: more data, retrieval supervision, the host reading memory
+
+Ryō asked for both remedies to be tried before any design was frozen. Same
+within-train split, same memory (cut 16) unless stated.
+
+6. **More training worlds** ([make_big_train.py](dev/make_big_train.py),
+   [dev_extract_big.py](dev/dev_extract_big.py)).
+   - *Data:* the engine's generator, with the canonical train settings,
+     reproduces the train split byte for byte. With seed 20261016 it gave
+     2,045 fresh worlds after dropping 3 that overlap any split (12.5 GB of
+     features, 288 s).
+   - *Result:* trained on them plus worlds 0–191 (35,792 rows, 2,048 updates;
+     [dev_retrieval.py](dev/dev_retrieval.py) with weight 0), held-out
+     accuracy was 0.48–0.49, with 0 flips and 0 changed predictions.
+7. **Retrieval supervision during training**
+   ([dev_retrieval.py](dev/dev_retrieval.py), weight 1.0).
+   - *Setup:* for hop-1 questions, a cross-entropy pulls the answer
+     position's step-0 attention onto the memory line naming both question
+     entities.
+   - *Result:* the attention moved (line mass about 22% → 37%), but the
+     answer did not: held-out 0.49–0.52, 0 flips.
+8. **The host's upper half learning to read the memory**
+   ([dev_lora_prefix.py](dev/dev_lora_prefix.py)).
+   - *Setup:* LoRA (rank 16) on attention q/k/v/o of layers 16–31, memory
+     packed before the question at cut 16; 576 steps of batch 16 at
+     learning rate 2e-4.
+   - *Result:* predictions collapsed to one answer (held-out 0.50 for intact,
+     twin and no memory), with 0 flips against 3 for random memory.
+9. **Injection depth, frozen host, no training**
+   ([dev_depth.py](dev/dev_depth.py)). Memory and question each run alone
+   through the layers below cut k, are packed (memory first), and the host
+   continues.
+
+   | Cut | Accuracy (intact / twin) | Random memory | Flips (actual / random) | Worlds +/− (p) |
+   | ---: | --- | --- | --- | --- |
+   | 0 (facts as a text prefix) | 0.77 / 0.79 | 0.49–0.50 | 31 / 2 | 39 / 25 (0.05) |
+   | 4 | 0.57 / 0.58 | 0.50 | 23 / 1 | 36 / 28 (0.19) |
+   | 8 | 0.48 / 0.48 | 0.48–0.50 | 1 / 5 | 30 / 30 (0.55) |
+   | 12 | 0.49 / 0.50 | 0.47–0.48 | 6 / 12 | 37 / 22 (0.03) |
+   | 16 | 0.48 / 0.49 | 0.49–0.51 | 2 / 14 | 22 / 18 (0.32) |
+
+10. **Injection depth with D1's readout**
+    ([dev_shallow_features.py](dev/dev_shallow_features.py),
+    [dev_shallow_train.py](dev/dev_shallow_train.py),
+    [dev_depth_route.py](dev/dev_depth_route.py)). D1's route
+    (`DeliberationRoute`, 4 steps, D1's settings) was trained on the final
+    states entering the head, with memory at cut k, worlds 0–191, and read
+    on worlds 192–255.
+
+    | Cut | Accuracy (intact / twin) | Random memory | Flips (actual / random) | Worlds +/− (p) | Lane A rule |
+    | ---: | --- | --- | --- | --- | --- |
+    | 0 | 0.84 / 0.84 | 0.48–0.49 | 27 / 15 | 58 / 6 (5e-12) | `DIRECTIONAL_ONLY` |
+    | 4 | 0.76 / 0.76 | 0.49 | 13 / 9 | 46 / 18 (3e-4) | `DIRECTIONAL_ONLY` |
+    | 8 | 0.59 / 0.59 | 0.50 | 20 / 11 | 35 / 29 (0.27) | `NOT_ESTABLISHED` |
+
+    These are 64 worlds and 128 affected questions, against the rule's 128
+    worlds and 256; the thresholds are applied as written.
+
 ## What it means
 
-Launched as drafted, A2 would almost surely end `NOT_LEARNED`. The v4 lattice
+Launched as drafted, A2 would almost surely end `NOT_LEARNED`.
+
+**The wall is depth.** The frozen Mistral reads a memory encoded apart from
+the question when it enters at cut 0–4, and does not read it at cut 8 or
+deeper. It integrates facts with a question in its lower layers. V16–V19
+wrote memory at cut 16, where the host cannot read it, which may explain
+their zero flips. Nothing small that was trained here taught the host to read
+deeper: the lattice route, retrieval supervision, eight times the training
+worlds, or LoRA on the upper half. With memory at cut 4 and D1's readout, the
+system does answer from memory: 0.76 against 0.49 with random memory, and a
+donor-directed shift in 46 of 64 worlds. The affected answers themselves still
+flip in only 13 of 128 questions. The v4 lattice
 route behaves as a readout. It learns quickly when the answer is already in a
 host state (D1, facts inline) or sits directly in a memory token (check 2).
 Within these budgets it does not begin to learn relational retrieval from a
