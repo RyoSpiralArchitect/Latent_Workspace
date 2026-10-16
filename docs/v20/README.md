@@ -12,3 +12,8 @@ Two versions share this folder (Ryō, 2026-10-16).
 - **V20** is A2: the flip through v4's logit route, on the engine. It starts
   from what A1 and V19 point at: content reached the workspace read output but
   barely moved the answer.
+  - [Power checks](../../provenance/pilots/v20_a2_flip_20261016/DEV_POWER_CHECKS.md)
+    stopped the first design before launch. The frozen host reads a
+    separately encoded memory only from shallow cuts (0–4).
+  - `scripts/run_v20_a2_flip.py` and `configs/v20/A2_FLIP_PLAN.json` are that
+    design's drafts, never frozen or sealed. The depth ladder replaces them.

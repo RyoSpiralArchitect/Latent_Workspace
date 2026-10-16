@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Sealed V20 A2: the flip through v4's logit route, with the facts only in memory.
 
+DRAFT, never frozen or sealed. Its power checks
+(provenance/pilots/v20_a2_flip_20261016/DEV_POWER_CHECKS.md) showed that the
+route cannot start to read memory written at cut 16, and that the frozen host
+reads such a memory only from shallow cuts; the depth ladder replaces this draft.
+
 With pinned Mistral-7B-Instruct-v0.3 frozen and the world facts given only as a
 separately encoded memory (V19's context encoding: the host's residual stream
 at cut 16 of the canonical facts, never in the prompt), does a v5 lattice over

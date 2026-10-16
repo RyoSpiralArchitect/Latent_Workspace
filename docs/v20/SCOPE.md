@@ -148,7 +148,12 @@ Reported as its own claim. First: [A1](A1_LADDER.md), the Availability ladder
 on the V19 checkpoints (where is the content lost?):
 [`CONTENT_ABSENT_IN_MEMORY` by rule, not readable literally](../../provenance/pilots/v20_a1_ladder_20261016/README.md).
 The read output carried the content at update 256, so the descriptive reading
-is transport. Next, and V20 itself: A2, the flip through v4's logit route.
+is transport. Next, and V20 itself: A2, the flip through v4's logit route. Its
+[power checks](../../provenance/pilots/v20_a2_flip_20261016/DEV_POWER_CHECKS.md)
+found the wall is depth. The frozen host reads a separately encoded memory at
+cut 0–4 and not from cut 8 on, while V16–V19 wrote memory at cut 16. A2
+becomes a sealed depth ladder, and a workspace that writes into the lower
+layers comes after it.
 
 **B. Conversation branching.** Natural multi-turn dialogues, with the
 constrained harness kept as a mechanical probe. Conditions: original base;
