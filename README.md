@@ -118,7 +118,7 @@ V19, its stopped diagnostic, closeout and the first scope note followed in
 PR #18. V19.5 followed in PRs #19–#22: the square (#19), the D1 Deliberation
 pilot (#20), the architecture with the `latent_workspace` engine (#21) and the
 A1 Availability ladder (#22). V20's A2 groundwork and power checks followed in
-PR #23.
+PR #23, and the A2 depth ladder in PR #24.
 
 ## V19: separate norm budgets for the common and workspace routes
 
