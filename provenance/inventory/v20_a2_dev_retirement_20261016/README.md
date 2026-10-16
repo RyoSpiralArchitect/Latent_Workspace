@@ -1,6 +1,6 @@
 # Retirement of two V20 A2 development feature folders
 
-2026-10-16. **INVENTORY PUBLISHED; NOTHING DELETED YET.** Ryō's request:
+2026-10-16. **TERMINAL: exactly these two folders retired, by Ryō, at 09:08:23Z.** All six files matched the inventory before removal; 17,359,974,877 bytes freed, available space 61,993,750,528 → 79,353,753,600 bytes ([receipt](DELETE_FINISHED.json), [postflight](POSTFLIGHT.json)). Ryō's request:
 "容量が逼迫していたら、途中のものでもう使わないのは台帳に記録して消してゆこう".
 The bounded interpretation: retire the two folders below and nothing else. It
 is not a retention policy and does not cover any other file.
