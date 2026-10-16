@@ -27,16 +27,16 @@ Every component below serves at least one of them.
 | --- | --- | --- |
 | **1. Host binding** | Decoder cuts (run to cut N, continue from cut N), the native head, prompt rendering | `model_binding.FunctionalBoundaryAdapter` (GPT-2, Mistral, OLMo2, and a custom interface), `v15_readout.NativeWorkspaceReadout` (any linear head), `readout_transport` (`ReadoutAdapter` protocol, `inject_last`), `hf_readout_adapter`, `hf_training_readout`; Mistral-only: `training_binding`, `cache_binding`, `MistralPrecisionBridgeAdapter` |
 | **2. Workspace algorithms** | Writers, lattices, readers, budgets, losses, operators; no host layout | `workspace_core` (v9 writer and reader, v4 logit adapter), `engine` (v4.1 and v5 lattices, `LatentWorkspaceLoss`), readers in `precision_bridge`, `query_modulated_bridge`, `v16_slot_contrast`, `v18_selection_reader`, `v19_dual_budget_reader`; `normalization`, `numerics`, `observability` |
-| **3. Routes** | Where the workspace speaks to the host | logit residual (v4 adapter, used by V20 D1); answer-position residual through the native head (`inject_last`, V15–V19); residual at a cut with the rest of the decoder run (v9 reader, `engine`'s functional route) |
+| **3. Routes** | Where the workspace speaks to the host | logit residual (v4 adapter, used by V19.5 D1); answer-position residual through the native head (`inject_last`, V15–V19); residual at a cut with the rest of the decoder run (v9 reader, `engine`'s functional route) |
 | **4. Composition** | Writer + lattice + reader + route over a host, text-bound queries | `v15_pipeline`, `adapted_workspace`, `v18_selection_pipeline`, `v19_dual_budget_pipeline`, `engine`'s functional forward, `v20_deliberation.DeliberationRoute`; `reader_query`, `v18_operand_query` |
-| **5. Ownership and training** | State guards, exact resume, complete windows, objectives | `v15_native_learner` (used by 16 modules), `adapter_native_learner(_v2)`, per-reader state guards, learners and window learners (V16, V18, V19), `v15_5_learner`, `adapted_pair_objective`, `v18_window_objective`, `v18_reference_bank`; V20 D1's frozen-feature trainer |
+| **5. Ownership and training** | State guards, exact resume, complete windows, objectives | `v15_native_learner` (used by 16 modules), `adapter_native_learner(_v2)`, per-reader state guards, learners and window learners (V16, V18, V19), `v15_5_learner`, `adapted_pair_objective`, `v18_window_objective`, `v18_reference_bank`; V19.5 D1's frozen-feature trainer |
 | **6. Instruments and execution** | Measurement by corner; sealed runs | `v16_comparison_eval`, `v18_native_eval` (transport decomposition), `v16_population_probe`, `reader_factor_audit`, `bridge_mechanistic`, `learner_gradient_audit`, `answer_bank_generation`, `v15_generation`; `scripts/run_source_sealed.py`, one runner and verifier per run (178 scripts, 178 test files) |
 
 ## Where the islands are
 
 1. **v4/v5/v9 algorithms live in a 17,612-line monolith.** V14 moved the v9
    writer, reader and v4 adapter into `workspace_core`, but the lattices and
-   `LatentWorkspaceLoss` are still reached only through `engine.py`. V20 D1
+   `LatentWorkspaceLoss` are still reached only through `engine.py`. V19.5 D1
    imports them from there.
 2. **Each V16–V19 reader carries a full private stack**: pipeline, state guard,
    learner and window learner. V19's owners were derived from V18's by text
@@ -71,7 +71,7 @@ Every component below serves at least one of them.
 - **Workspace** = writer + optional lattice + reader + budget + **route**,
   built from a descriptor. Every historical version becomes a descriptor:
   v4 = lattice + logit route; v9 = writer + reader + cut route; V14–V19 =
-  bridge + answer route; V20 D1 = lattice + logit route over final states.
+  bridge + answer route; V19.5 D1 = lattice + logit route over final states.
 - **One owner** (state guard, exact resume, complete windows), with parameter
   partitions read from the descriptor instead of copied per reader.
 - **Instruments by corner, not by version**, and route-agnostic. Availability
