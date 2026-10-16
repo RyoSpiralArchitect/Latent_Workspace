@@ -45,6 +45,21 @@ NOT_ESTABLISHED**.
   export parity are established ([release checklist](docs/v18/HF_RELEASE.md)).
   Nothing has been uploaded.
 
+## Architecture
+
+[ARCHITECTURE.md](docs/ARCHITECTURE.md) maps every module onto one stack (host
+binding, workspace algorithms, routes, composition, ownership, instruments)
+toward portability to other models and to training from scratch.
+[`latent_workspace`](src/latent_workspace/) is the engine: it owns its code and
+never imports the frozen historical package. Historical algorithms enter it only
+by promotion, a verbatim copy pinned by a
+[parity test](tests/test_latent_workspace_stack.py); so far the cut protocol
+(Mistral, OLMo2, GPT-2, and a small from-scratch decoder), the native readout,
+v4.1/v5 lattices, `LatentWorkspaceLoss`, v4's logit adapter and the exact
+statistics, with three routes (logit, answer-position, cut).
+[Rule tests](tests/test_architecture_rules.py) keep generality from growing
+outside the engine.
+
 ## Version map
 
 | Version | Focus | Start here |
@@ -64,7 +79,8 @@ V13–V18 were developed as stacked branches and merged into `main` on
 fixes that `main` had received are kept in history but not in the merged
 sources, because V14–V18 seals pin those files byte for byte; see PR #14.
 V19, its stopped diagnostic, closeout and the V20 scope followed in PR #18,
-the V20 square in PR #19 and the V20 D1 Deliberation pilot in PR #20.
+the V20 square in PR #19, the V20 D1 Deliberation pilot in PR #20, and the
+architecture with the `latent_workspace` engine in PR #21.
 
 ## V19: separate norm budgets for the common and workspace routes
 
