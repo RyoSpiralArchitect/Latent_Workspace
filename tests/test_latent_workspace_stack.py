@@ -11,7 +11,7 @@ from test_v15_full_update import tiny
 from transformers import GPT2Config, GPT2LMHeadModel, Olmo2Config, Olmo2ForCausalLM
 
 import latent_workspace as lw
-from latent_workspace import stats
+from latent_workspace import composition, stats, training
 from latent_workspace_ft_v10 import (
     engine,
     model_binding,
@@ -213,6 +213,105 @@ def test_statistics_are_the_historical_statistics():
     labels = ("A", "B", "C")
     for route, step in (([passed] * 3, [passed] * 3), ([passed] * 3, [failed]), ([failed], [])):
         assert stats.verdict(route, step, labels) == v20_deliberation.verdict(route, step, labels)
+
+
+def d1_features(rows=12, hidden=16, seed=21):
+    """Variable-length frozen features in D1's bank layout."""
+    generator = torch.Generator().manual_seed(seed)
+    lengths = torch.randint(3, 7, (rows,), generator=generator)
+    offsets = torch.cat([torch.zeros(1, dtype=torch.long), lengths.cumsum(0)])
+    states = torch.randn(int(offsets[-1]), hidden, generator=generator).to(torch.bfloat16)
+    base = torch.randn(rows, 2, generator=generator)
+    targets = torch.randint(0, 2, (rows,), generator=generator)
+    worlds = torch.arange(rows) // 4
+    return states, offsets, base, targets, worlds
+
+
+def d1_route(module, steps, seed=5):
+    return module.DeliberationRoute(
+        16, 43, (6, 7), steps=steps, seed=seed, workspace_dim=8, heads=2, rank=4
+    )
+
+
+@pytest.mark.parametrize("steps", [0, 1, 4])
+def test_deliberation_route_is_the_d1_route(steps):
+    new, old = d1_route(composition, steps), d1_route(v20_deliberation, steps)
+    sn, so = new.state_dict(), old.state_dict()
+    assert sn.keys() == so.keys() and all(torch.equal(sn[k], so[k]) for k in sn)
+    names = ["adapter.up.weight", "gate.weight"]
+    if steps:
+        names += ["lattice.attention.out.weight", "lattice.candidate_out.weight"]
+    open_paths(new, old, names=names)
+    bank = training.FeatureBank(*d1_features())
+    hidden, mask, _, _, _ = bank.batch(list(range(6)))
+    for mode in ("train", "eval"):
+        outputs = []
+        for route in (new, old):
+            getattr(route, mode)()
+            route.zero_grad(set_to_none=True)
+            torch.manual_seed(9)
+            delta, latents, anchor, gate = route(hidden, mask)
+            (delta.square().sum() + gate.sum()).backward()
+            outputs.append(((delta, latents, anchor, gate), grads(route)))
+        (a, ga), (b, gb) = outputs
+        assert all(
+            (x is None and y is None) or torch.equal(x, y) for x, y in zip(a, b, strict=True)
+        )
+        assert ga.keys() == gb.keys() and all(torch.equal(ga[k], gb[k]) for k in ga)
+    if steps == 4:
+        with new.truncated(2), old.truncated(2):
+            assert torch.equal(new(hidden, mask)[0], old(hidden, mask)[0])
+
+
+def test_frozen_feature_training_is_the_d1_trainer():
+    features = d1_features(rows=16)
+    runs = []
+    for module, routes in ((training, composition), (v20_deliberation, v20_deliberation)):
+        route = d1_route(routes, 4, seed=3)
+        loss = module.workspace_loss(3, 8)
+        bank = module.FeatureBank(*features)
+        config = module.TrainConfig(
+            seed=3,
+            updates=3,
+            batch_size=4,
+            learning_rate=1e-3,
+            weight_decay=0.01,
+            max_grad_norm=1.0,
+            workspace_loss_weight=0.02,
+            loss_tokens_per_row=2,
+            loss_tokens_per_batch=6,
+            spectral_every=2,
+        )
+        named = module.trainable(route, loss)
+        optimizer = module.optimizer_for(named, config.learning_rate, config.weight_decay)
+        receipts = [module.update(route, loss, optimizer, bank, config, step) for step in (1, 2, 3)]
+        runs.append(
+            dict(
+                receipts=receipts,
+                fingerprint=module.fingerprint(named),
+                evaluated=module.evaluate(route, bank, batch_size=5),
+                order=[module.batch_indices(config, len(bank), s) for s in (1, 4, 5)],
+            )
+        )
+    new, old = runs
+    assert new["receipts"] == old["receipts"] and new["fingerprint"] == old["fingerprint"]
+    assert torch.equal(new["evaluated"], old["evaluated"]) and new["order"] == old["order"]
+    named = training.trainable(d1_route(composition, 4))
+    assert [training._uses_weight_decay(n, p) for n, p in named] == [
+        engine._uses_weight_decay(n, p) for n, p in named
+    ]
+    mask = torch.tensor([[1, 1, 1, 0], [1, 1, 0, 0], [1, 1, 1, 1]])
+    for per_row, cap in ((2, 5), (9, 4)):
+        assert all(
+            torch.equal(x, y)
+            for x, y in zip(
+                training.sample_positions(mask, per_row, cap, torch.Generator().manual_seed(1)),
+                v20_deliberation.sample_positions(
+                    mask, per_row, cap, torch.Generator().manual_seed(1)
+                ),
+                strict=True,
+            )
+        )
 
 
 # ---- engine composition --------------------------------------------------------
