@@ -201,6 +201,14 @@ candidate "after memory use is established". Whether
 **mistral-7b-instruct-v0.3-LTWS β** may ship with lane A reported as
 `NOT_ESTABLISHED` is Ryō's decision; this note does not change the checklist.
 
+**Evaluating the next full-update weights (Ryō, 2026-10-16).** Base Mistral
+already does reasonably on MMLU, so a gain there would be small. Read the
+full-update weights on harder benchmarks, where base Mistral struggles and an
+improvement or accuracy gain would be visible, and on multi-step reasoning
+inside the workspace (for example accuracy by hop depth). Either could show
+what the record has not yet seen. This is a planning note: no generation or
+benchmark run is authorized by it.
+
 ## Not authorized here
 
 No generation, judge request (API or manual), training run, upload or
