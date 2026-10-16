@@ -137,6 +137,8 @@ test was shown to fail on a deliberate violation.
 | `stats` | exact paired statistics | promoted: `v20_deliberation.py` |
 | `host` | `DecoderHost` | new |
 | `scratch` | `ScratchDecoder` (custom split interface) | new |
+| `ladder` | Availability-ladder probes, world sign tests, rung verdict (A1) | new |
+| `execution` | sealed-run skeleton: receipts, qualification, roles, no-retry dispatch | new; replaces per-run copies from A1 on |
 
 [Parity tests](../tests/test_latent_workspace_stack.py) show bitwise-identical
 state, outputs and gradients against every original, and native logits through

@@ -139,7 +139,8 @@ better than base, or than any perturbation of the same size, is untested.
 
 **A. Content use** — the V15–V19 endpoint as frozen: held-out donor-directed
 flips against a norm-matched random-pair control, world-level sign test.
-Reported as its own claim.
+Reported as its own claim. First: [A1](A1_LADDER.md), the Availability ladder
+on the V19 checkpoints (where is the content lost?).
 
 **B. Conversation branching.** Natural multi-turn dialogues, with the
 constrained harness kept as a mechanical probe. Conditions: original base;
