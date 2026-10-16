@@ -11,7 +11,7 @@ from test_v15_full_update import tiny
 from transformers import GPT2Config, GPT2LMHeadModel, Olmo2Config, Olmo2ForCausalLM
 
 import latent_workspace as lw
-from latent_workspace import stats
+from latent_workspace import composition, stats, training
 from latent_workspace_ft_v10 import (
     engine,
     model_binding,
@@ -215,6 +215,105 @@ def test_statistics_are_the_historical_statistics():
         assert stats.verdict(route, step, labels) == v20_deliberation.verdict(route, step, labels)
 
 
+def d1_features(rows=12, hidden=16, seed=21):
+    """Variable-length frozen features in D1's bank layout."""
+    generator = torch.Generator().manual_seed(seed)
+    lengths = torch.randint(3, 7, (rows,), generator=generator)
+    offsets = torch.cat([torch.zeros(1, dtype=torch.long), lengths.cumsum(0)])
+    states = torch.randn(int(offsets[-1]), hidden, generator=generator).to(torch.bfloat16)
+    base = torch.randn(rows, 2, generator=generator)
+    targets = torch.randint(0, 2, (rows,), generator=generator)
+    worlds = torch.arange(rows) // 4
+    return states, offsets, base, targets, worlds
+
+
+def d1_route(module, steps, seed=5):
+    return module.DeliberationRoute(
+        16, 43, (6, 7), steps=steps, seed=seed, workspace_dim=8, heads=2, rank=4
+    )
+
+
+@pytest.mark.parametrize("steps", [0, 1, 4])
+def test_deliberation_route_is_the_d1_route(steps):
+    new, old = d1_route(composition, steps), d1_route(v20_deliberation, steps)
+    sn, so = new.state_dict(), old.state_dict()
+    assert sn.keys() == so.keys() and all(torch.equal(sn[k], so[k]) for k in sn)
+    names = ["adapter.up.weight", "gate.weight"]
+    if steps:
+        names += ["lattice.attention.out.weight", "lattice.candidate_out.weight"]
+    open_paths(new, old, names=names)
+    bank = training.FeatureBank(*d1_features())
+    hidden, mask, _, _, _ = bank.batch(list(range(6)))
+    for mode in ("train", "eval"):
+        outputs = []
+        for route in (new, old):
+            getattr(route, mode)()
+            route.zero_grad(set_to_none=True)
+            torch.manual_seed(9)
+            delta, latents, anchor, gate = route(hidden, mask)
+            (delta.square().sum() + gate.sum()).backward()
+            outputs.append(((delta, latents, anchor, gate), grads(route)))
+        (a, ga), (b, gb) = outputs
+        assert all(
+            (x is None and y is None) or torch.equal(x, y) for x, y in zip(a, b, strict=True)
+        )
+        assert ga.keys() == gb.keys() and all(torch.equal(ga[k], gb[k]) for k in ga)
+    if steps == 4:
+        with new.truncated(2), old.truncated(2):
+            assert torch.equal(new(hidden, mask)[0], old(hidden, mask)[0])
+
+
+def test_frozen_feature_training_is_the_d1_trainer():
+    features = d1_features(rows=16)
+    runs = []
+    for module, routes in ((training, composition), (v20_deliberation, v20_deliberation)):
+        route = d1_route(routes, 4, seed=3)
+        loss = module.workspace_loss(3, 8)
+        bank = module.FeatureBank(*features)
+        config = module.TrainConfig(
+            seed=3,
+            updates=3,
+            batch_size=4,
+            learning_rate=1e-3,
+            weight_decay=0.01,
+            max_grad_norm=1.0,
+            workspace_loss_weight=0.02,
+            loss_tokens_per_row=2,
+            loss_tokens_per_batch=6,
+            spectral_every=2,
+        )
+        named = module.trainable(route, loss)
+        optimizer = module.optimizer_for(named, config.learning_rate, config.weight_decay)
+        receipts = [module.update(route, loss, optimizer, bank, config, step) for step in (1, 2, 3)]
+        runs.append(
+            dict(
+                receipts=receipts,
+                fingerprint=module.fingerprint(named),
+                evaluated=module.evaluate(route, bank, batch_size=5),
+                order=[module.batch_indices(config, len(bank), s) for s in (1, 4, 5)],
+            )
+        )
+    new, old = runs
+    assert new["receipts"] == old["receipts"] and new["fingerprint"] == old["fingerprint"]
+    assert torch.equal(new["evaluated"], old["evaluated"]) and new["order"] == old["order"]
+    named = training.trainable(d1_route(composition, 4))
+    assert [training._uses_weight_decay(n, p) for n, p in named] == [
+        engine._uses_weight_decay(n, p) for n, p in named
+    ]
+    mask = torch.tensor([[1, 1, 1, 0], [1, 1, 0, 0], [1, 1, 1, 1]])
+    for per_row, cap in ((2, 5), (9, 4)):
+        assert all(
+            torch.equal(x, y)
+            for x, y in zip(
+                training.sample_positions(mask, per_row, cap, torch.Generator().manual_seed(1)),
+                v20_deliberation.sample_positions(
+                    mask, per_row, cap, torch.Generator().manual_seed(1)
+                ),
+                strict=True,
+            )
+        )
+
+
 # ---- engine composition --------------------------------------------------------
 
 
@@ -320,3 +419,123 @@ def test_scratch_host_trains_with_a_workspace_through_a_cut():
         losses.append(float(loss.detach()))
     assert losses[-1] < 0.5 * losses[0]
     assert all(p.grad is not None for p in lattice.parameters() if p.requires_grad)
+
+
+# ---- deferred memory (V20 A2): an engine option on the promoted route and trainer ----
+
+
+def left_aligned(lengths, width, hidden=16, seed=0):
+    generator = torch.Generator().manual_seed(seed)
+    values = torch.randn(len(lengths), width, hidden, generator=generator)
+    mask = (torch.arange(width)[None] < torch.tensor(lengths)[:, None]).long()
+    return values * mask[..., None], mask
+
+
+def test_deferred_memory_packs_memory_before_the_query():
+    route = d1_route(composition, 4, seed=8).eval()
+    open_paths(route, names=["adapter.up.weight", "gate.weight", "lattice.attention.out.weight"])
+    memory, memory_mask = left_aligned([3, 0, 5], 5, seed=1)
+    hidden, mask = left_aligned([4, 2, 3], 4, seed=2)
+    delta, latents, _, gate = route(hidden, mask, memory, memory_mask)
+    for row in range(3):
+        m, q = int(memory_mask[row].sum()), int(mask[row].sum())
+        alone = torch.cat([memory[row, :m], hidden[row, :q]])[None]
+        expected, _, _, expected_gate = route(alone, torch.ones(1, m + q, dtype=torch.long))
+        assert torch.allclose(delta[row], expected[0], atol=1e-6, rtol=0)
+        assert torch.allclose(gate[row], expected_gate[0], atol=1e-6, rtol=0)
+    assert latents.shape[1] == 9
+    moved = memory + torch.randn(memory.shape, generator=torch.Generator().manual_seed(3))
+    assert not torch.allclose(
+        route(hidden, mask, moved * memory_mask[..., None], memory_mask)[0][0], delta[0]
+    )
+    empty = route(hidden, mask, memory, memory_mask)[0][1]  # row 1 has no memory
+    assert torch.allclose(empty, route(hidden, mask)[0][1], atol=1e-6, rtol=0)
+    with pytest.raises(ValueError, match="left-aligned"):
+        route(hidden, mask, memory, memory_mask.flip(1))
+    with pytest.raises(ValueError, match="Empty row"):
+        route(hidden, mask * 0, memory, memory_mask)
+
+
+def test_feature_bank_shares_segments_and_carries_memory():
+    states, offsets, base, targets, worlds = d1_features(rows=4)
+    shared = training.FeatureBank(
+        states,
+        offsets,
+        base[[0, 1, 1, 3]],
+        targets[[0, 1, 1, 3]],
+        worlds[[0, 1, 1, 3]],
+        segments=torch.tensor([0, 1, 1, 3]),
+    )
+    copies = training.FeatureBank(states, offsets, base, targets, worlds)
+    for got, want in zip(shared.batch([1, 2]), copies.batch([1, 1]), strict=True):
+        assert torch.equal(got, want)
+    memory = (states, offsets, torch.tensor([3, 0, 2, 2]))
+    bank = shared.with_memory(memory)
+    values, mask = bank.memory_batch([0, 3])
+    assert torch.equal(values, copies.batch([3, 2])[0]) and torch.equal(
+        mask, copies.batch([3, 2])[1]
+    )
+    assert shared.memory_batch([0]) is None and bank.with_memory(None).memory is None
+    route = d1_route(composition, 2, seed=4)
+    open_paths(route, names=["adapter.up.weight", "gate.weight"])
+    adapted, final = training.evaluate(route, bank, batch_size=3, final=True)
+    hidden, query_mask, rows_base, _, _ = bank.batch([0, 1, 2, 3])
+    delta, latents, _, _ = route(hidden, query_mask, *bank.memory_batch([0, 1, 2, 3]))
+    assert torch.allclose(adapted, rows_base + delta, atol=1e-6, rtol=0) and final.shape == (4, 8)
+    with pytest.raises(ValueError, match="segments"):
+        shared.with_memory((states, offsets, torch.tensor([0, 1, 9, 2])))
+
+
+def test_deferred_memory_route_learns_what_only_the_memory_holds():
+    """Both sides of a pair share one query and differ only in memory and answer (as in A2):
+    the memory route learns to read the planted answer, a query-only route stays at chance."""
+    generator = torch.Generator().manual_seed(17)
+    pairs, hidden = 48, 16
+    rows = 2 * pairs
+    first = torch.randint(0, 2, (pairs,), generator=generator)
+    labels = torch.stack([first, 1 - first], 1).flatten()
+    direction = torch.randn(hidden, generator=generator)
+    queries = torch.randn(pairs * 3, hidden, generator=generator).to(torch.bfloat16)
+    query_offsets, query_segments = torch.arange(0, pairs * 3 + 1, 3), torch.arange(rows) // 2
+    memories = 0.5 * torch.randn(rows * 2, hidden, generator=generator)
+    memories[1::2] += 2.0 * (2 * labels[:, None] - 1) * direction
+    memory_offsets = torch.arange(0, rows * 2 + 1, 2)
+    base, worlds = torch.zeros(rows, 2), torch.arange(rows) // 2
+    config = training.TrainConfig(
+        seed=2,
+        updates=240,
+        batch_size=16,
+        learning_rate=3e-3,
+        weight_decay=0.0,
+        max_grad_norm=1.0,
+        workspace_loss_weight=0.0,
+        loss_tokens_per_row=0,
+        loss_tokens_per_batch=0,
+        spectral_every=1,
+    )
+    held_out = {}
+    for name, carried in (("memory", True), ("query_only", False)):
+        route = composition.DeliberationRoute(
+            hidden, 43, (6, 7), steps=1, seed=2, workspace_dim=8, heads=2, rank=4, dropout=0.0
+        )
+
+        def bank(n, carried=carried):
+            rows_bank = training.FeatureBank(
+                queries,
+                query_offsets,
+                base[:n],
+                labels[:n],
+                worlds[:n],
+                segments=query_segments[:n],
+            )
+            return rows_bank.with_memory(
+                (memories.to(torch.bfloat16), memory_offsets, torch.arange(n)) if carried else None
+            )
+
+        optimizer = training.optimizer_for(training.trainable(route), 3e-3, 0.0)
+        train = bank(64)  # pairs 0-31; pairs 32-47 are never trained on
+        for step in range(1, config.updates + 1):
+            training.update(route, None, optimizer, train, config, step)
+        adapted = training.evaluate(route, bank(rows))[64:]
+        held_out[name] = float((adapted.argmax(1) == labels[64:]).float().mean())
+    assert held_out["memory"] >= 0.9 and held_out["query_only"] == 0.5, held_out

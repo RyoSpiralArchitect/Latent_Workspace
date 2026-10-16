@@ -52,9 +52,21 @@ NOT_ESTABLISHED**.
     p = 7e-5), weaker by update 512
     ([results](provenance/pilots/v20_a1_ladder_20261016/README.md)). Read
     descriptively, the content is lost in transport to the answer.
-- **V20 is A2, next:** the flip through v4's logit route on the engine, which
-  maps the workspace onto the answer logits instead of adding it to the last
-  hidden state. Not yet designed or run.
+- **V20 is A2, the flip through v4's logit route.** The engine now holds D1's
+  lattice route and trainer (promoted, parity-tested) with a deferred-memory
+  option. It also holds lane A's flip endpoint, which rebuilds V19's recorded
+  diagnosis exactly from its saved scores. The power check before launch
+  stopped the first design: a lattice over memory written at cut 16 never
+  starts to learn to read it. Neither eight times the training worlds,
+  retrieval supervision nor LoRA on the host's upper half changed that.
+  Injecting the separately encoded memory at different depths showed why
+  ([power checks](provenance/pilots/v20_a2_flip_20261016/DEV_POWER_CHECKS.md),
+  train-split worlds only). The frozen host reads such a memory at cut 0–4
+  and not from cut 8 on, and V16–V19 wrote theirs at cut 16. With memory at
+  cut 4 and D1's readout, the system answers from memory: 0.76 against 0.49
+  with random memory. Next, a sealed depth ladder (cuts 0, 4, 8, 16, with and
+  without the route), then a workspace that writes memory into the lower
+  layers.
 - **Release goal:** a conditional Hugging Face beta,
   **mistral-7b-instruct-v0.3-LTWS β**, only after memory use, non-regression and
   export parity are established ([release checklist](docs/v18/HF_RELEASE.md)).
@@ -97,7 +109,8 @@ sources, because V14–V18 seals pin those files byte for byte; see PR #14.
 V19, its stopped diagnostic, closeout and the first scope note followed in
 PR #18. V19.5 followed in PRs #19–#22: the square (#19), the D1 Deliberation
 pilot (#20), the architecture with the `latent_workspace` engine (#21) and the
-A1 Availability ladder (#22).
+A1 Availability ladder (#22). V20's A2 groundwork and power checks followed in
+PR #23.
 
 ## V19: separate norm budgets for the common and workspace routes
 

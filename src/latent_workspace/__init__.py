@@ -6,6 +6,7 @@ enter only by promotion (copied once, pinned by a parity test, recorded in
 ``configs/architecture/PROMOTIONS.json``).
 """
 
+from .composition import DeliberationRoute
 from .cuts import BoundaryDescriptor, FunctionalBoundaryAdapter
 from .host import DecoderHost, Host
 from .lattice import (
@@ -26,6 +27,7 @@ from .routes import (
     LowRankWorkspaceLogitAdapter,
 )
 from .scratch import ScratchDecoder
+from .training import FeatureBank, TrainConfig
 
 __all__ = [
     "AnswerResidualRoute",
@@ -36,6 +38,8 @@ __all__ = [
     "CausalLatentWorkspace",
     "CutResidualRoute",
     "DecoderHost",
+    "DeliberationRoute",
+    "FeatureBank",
     "FunctionalBoundaryAdapter",
     "Host",
     "LatentWorkspaceLoss",
@@ -48,5 +52,6 @@ __all__ = [
     "ResidualInjection",
     "ScratchDecoder",
     "TokenLocalLattice",
+    "TrainConfig",
     "inject_last",
 ]

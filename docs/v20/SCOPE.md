@@ -148,7 +148,12 @@ Reported as its own claim. First: [A1](A1_LADDER.md), the Availability ladder
 on the V19 checkpoints (where is the content lost?):
 [`CONTENT_ABSENT_IN_MEMORY` by rule, not readable literally](../../provenance/pilots/v20_a1_ladder_20261016/README.md).
 The read output carried the content at update 256, so the descriptive reading
-is transport. Next, and V20 itself: A2, the flip through v4's logit route.
+is transport. Next, and V20 itself: A2, the flip through v4's logit route. Its
+[power checks](../../provenance/pilots/v20_a2_flip_20261016/DEV_POWER_CHECKS.md)
+found the wall is depth. The frozen host reads a separately encoded memory at
+cut 0–4 and not from cut 8 on, while V16–V19 wrote memory at cut 16. A2
+becomes a sealed depth ladder, and a workspace that writes into the lower
+layers comes after it.
 
 **B. Conversation branching.** Natural multi-turn dialogues, with the
 constrained harness kept as a mechanical probe. Conditions: original base;
@@ -200,6 +205,14 @@ lane A stays the separate content claim. One sentence there still expects the
 candidate "after memory use is established". Whether
 **mistral-7b-instruct-v0.3-LTWS β** may ship with lane A reported as
 `NOT_ESTABLISHED` is Ryō's decision; this note does not change the checklist.
+
+**Evaluating the next full-update weights (Ryō, 2026-10-16).** Base Mistral
+already does reasonably on MMLU, so a gain there would be small. Read the
+full-update weights on harder benchmarks, where base Mistral struggles and an
+improvement or accuracy gain would be visible, and on multi-step reasoning
+inside the workspace (for example accuracy by hop depth). Either could show
+what the record has not yet seen. This is a planning note: no generation or
+benchmark run is authorized by it.
 
 ## Not authorized here
 

@@ -135,9 +135,12 @@ test was shown to fail on a deliberate violation.
 | `losses` | `LatentWorkspaceLoss` | promoted: `engine.py` |
 | `routes` | v4 logit adapter; logit, answer and cut routes | adapter promoted from `workspace_core.py`; routes new |
 | `stats` | exact paired statistics | promoted: `v20_deliberation.py` |
+| `composition` | `DeliberationRoute`: lattice over host states into the logit route (V19.5 D1) | promoted: `v20_deliberation.py` |
+| `training` | frozen-feature training: derived seeds, feature bank, exact updates, evaluation | promoted: `v20_deliberation.py`, `engine.py` |
 | `host` | `DecoderHost` | new |
 | `scratch` | `ScratchDecoder` (custom split interface) | new |
 | `ladder` | Availability-ladder probes, world sign tests, rung verdict (A1) | new |
+| `availability` | lane A's flip endpoint: choices, contrasts, V19's diagnosis, V16's random-memory control | new; reproduces V19's recorded diagnosis from its saved scores |
 | `execution` | sealed-run skeleton: receipts, qualification, roles, no-retry dispatch | new; replaces per-run copies from A1 on |
 
 [Parity tests](../tests/test_latent_workspace_stack.py) show bitwise-identical
