@@ -25,7 +25,7 @@ from latent_workspace import execution as ex  # noqa: E402
 
 ENTRY = "scripts/run_v20_a1_ladder.py"
 PLAN = "configs/v20/A1_LADDER_PLAN.json"
-PLAN_CANONICAL_SHA256 = "e41db15c432a20292833123d38bfa17109d0b0fbefb283b8696857d653d5fa80"
+PLAN_CANONICAL_SHA256 = "67b465aa1e712e750ad37c59be36329af3e6d52ceb1ac4cefc3888dc3aedef71"
 STATES = ("initial", "step256", "step512")
 ROLES = (*(f"extract_{state}" for state in STATES), "probe")
 CONDITIONS = ("intact", "twin", "reverse_intact", "unrelated", "random_intact")
@@ -202,6 +202,11 @@ def extract_body(state):
         from safetensors.torch import save_file
 
         core.load_runtime()
+        plan19 = ex.read(ROOT / plan["v19"]["plan"])
+        v19().validate_plan(plan19)
+        # V19's roles fixed threads, TF32 and matmul precision before loading the model;
+        # the checkpoints' execution policy records them, so a restore needs the same.
+        runtime = load("run_v16_adapter_full_recovery_02").runtime(core, plan19)
         torch = core.torch
         guard = core.legacy.Guard(plan["resources"], args.output)
         guard("admission", admission=True, forecast_bytes=plan["storage_forecast_bytes"])
@@ -211,8 +216,6 @@ def extract_body(state):
             * ex.GIB
             / torch.cuda.get_device_properties(0).total_memory
         )
-        plan19 = ex.read(ROOT / plan["v19"]["plan"])
-        v19().validate_plan(plan19)
         parent, objective, architecture, _ = core.legacy.validate()
         records = v19().load_records(plan19)
         v19().validate_data(core.legacy.old, records)
@@ -225,7 +228,9 @@ def extract_body(state):
         if initial is not None:
             light = v19().light_fingerprint(core, learner.inner)
             ex.require(light == initial, "Rebuilt initial state differs from V19's")
-        outcome = dict(state=state, completed_steps=learner.completed_steps, splits={})
+        outcome = dict(
+            state=state, completed_steps=learner.completed_steps, runtime=runtime, splits={}
+        )
         for split in SPLITS:
             tensors, rows = extract_rows(
                 learner,
