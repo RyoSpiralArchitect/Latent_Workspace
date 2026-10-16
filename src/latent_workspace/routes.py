@@ -6,7 +6,9 @@
 - ``CutResidualRoute`` (v9): a residual added at cut N; the host's own remaining
   layers, final norm and head continue.
 
-The adapter, gate and native readout are the historical modules and arithmetic.
+``LowRankWorkspaceLogitAdapter`` is promoted verbatim from ``workspace_core.py``
+in ``latent_workspace_ft_v10`` at ``d4cd1ee0340a``; the historical file is frozen.
+Parity: ``test_logit_adapter_and_operators_are_historical``.
 """
 
 from __future__ import annotations
@@ -15,7 +17,33 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from latent_workspace_ft_v10.workspace_core import LowRankWorkspaceLogitAdapter
+from .operators import NormalizationSpec
+
+
+class LowRankWorkspaceLogitAdapter(nn.Module):
+    """Maps the final workspace state to a low-rank residual over vocabulary."""
+
+    def __init__(
+        self,
+        workspace_dim: int,
+        vocab_size: int,
+        rank: int,
+        norm_spec: NormalizationSpec = NormalizationSpec(),
+    ) -> None:
+        super().__init__()
+        if rank < 1:
+            raise ValueError("rank must be positive.")
+        self.norm = norm_spec.build(workspace_dim)
+        self.down = nn.Linear(workspace_dim, rank, bias=False)
+        self.up = nn.Linear(rank, vocab_size, bias=False)
+        nn.init.normal_(self.down.weight, mean=0.0, std=0.02)
+        nn.init.zeros_(self.up.weight)
+
+    def forward(self, final_state: torch.Tensor) -> torch.Tensor:
+        return self.up(F.gelu(self.down(self.norm(final_state))))
+
+
+LowRankLogitAdapter = LowRankWorkspaceLogitAdapter
 
 
 class LogitResidualRoute(nn.Module):

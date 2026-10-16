@@ -1,10 +1,9 @@
 """Host binding: the model-specific half of the stack behind one small protocol.
 
 A host runs its decoder to cut N, continues from cut N to logits, exposes the
-normalized final states that enter its head, and its head. ``DecoderHost``
-delegates to the historical ``FunctionalBoundaryAdapter`` (GPT-2, Mistral, OLMo2,
-and any model with the custom split interface, which is how a from-scratch model
-joins) and to ``NativeWorkspaceReadout``; neither changes here.
+normalized final states that enter its head, and its head. ``DecoderHost`` uses
+the engine's cut protocol (GPT-2, Mistral, OLMo2, and any model with the custom
+split interface, which is how a from-scratch model joins) and native readout.
 """
 
 from __future__ import annotations
@@ -14,8 +13,8 @@ from typing import Protocol
 import torch
 from torch import nn
 
-from latent_workspace_ft_v10.model_binding import FunctionalBoundaryAdapter
-from latent_workspace_ft_v10.v15_readout import NativeWorkspaceReadout
+from .cuts import FunctionalBoundaryAdapter
+from .readout import NativeWorkspaceReadout
 
 
 class Host(Protocol):

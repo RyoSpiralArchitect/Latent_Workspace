@@ -1,40 +1,52 @@
-"""Latent Workspace: one stack over portable hosts (docs/ARCHITECTURE.md).
+"""Latent Workspace engine: one stack over portable hosts (docs/ARCHITECTURE.md).
 
-The version-free public API. It wraps the historical ``latent_workspace_ft_v10``
-modules without changing them; parity tests pin every wrapper to its source.
+The living home of every general concept. It owns its code and never imports the
+frozen historical package ``latent_workspace_ft_v10``; historical algorithms
+enter only by promotion (copied once, pinned by a parity test, recorded in
+``configs/architecture/PROMOTIONS.json``).
 """
 
-from .components import (
+from .cuts import BoundaryDescriptor, FunctionalBoundaryAdapter
+from .host import DecoderHost, Host
+from .lattice import (
+    CausalBroadcastAttention,
+    CausalBroadcastLatentWorkspace,
     CausalBroadcastLattice,
-    DualBudgetBridge,
-    FunctionalMemoryReader,
-    FunctionalMemoryWriter,
-    LatentWorkspaceLoss,
-    LowRankLogitAdapter,
-    PrecisionBridge,
-    QueryModulatedBridge,
-    ReaderState,
+    CausalLatentWorkspace,
     TokenLocalLattice,
 )
-from .host import DecoderHost, Host
-from .routes import AnswerResidualRoute, CutResidualRoute, LogitResidualRoute
+from .losses import LatentWorkspaceLoss
+from .operators import NormalizationSpec
+from .readout import NativeReadoutResult, NativeWorkspaceReadout, ResidualInjection, inject_last
+from .routes import (
+    AnswerResidualRoute,
+    CutResidualRoute,
+    LogitResidualRoute,
+    LowRankLogitAdapter,
+    LowRankWorkspaceLogitAdapter,
+)
 from .scratch import ScratchDecoder
 
 __all__ = [
     "AnswerResidualRoute",
+    "BoundaryDescriptor",
+    "CausalBroadcastAttention",
+    "CausalBroadcastLatentWorkspace",
     "CausalBroadcastLattice",
+    "CausalLatentWorkspace",
     "CutResidualRoute",
     "DecoderHost",
-    "DualBudgetBridge",
-    "FunctionalMemoryReader",
-    "FunctionalMemoryWriter",
+    "FunctionalBoundaryAdapter",
     "Host",
     "LatentWorkspaceLoss",
     "LogitResidualRoute",
     "LowRankLogitAdapter",
-    "PrecisionBridge",
-    "QueryModulatedBridge",
-    "ReaderState",
+    "LowRankWorkspaceLogitAdapter",
+    "NativeReadoutResult",
+    "NativeWorkspaceReadout",
+    "NormalizationSpec",
+    "ResidualInjection",
     "ScratchDecoder",
     "TokenLocalLattice",
+    "inject_last",
 ]

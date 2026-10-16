@@ -1,10 +1,13 @@
 # Latent Workspace architecture: one stack, portable hosts
 
-2026-10-16. **PROPOSAL; no behavior change.** Ryō asked to organize the
-versions so that they stop being islands, keeping the repository's goal in
+2026-10-16. **Adopted with Ryō; no behavior change.** Ryō asked to organize
+the versions so that they stop being islands, keeping the repository's goal in
 view: portability to the fine-tuning of other models, and to training from
-scratch. Historical modules, runners and seals stay untouched; every past run
-stays verifiable from its execution commit.
+scratch. Ryō then sharpened one requirement: generality must not grow in a
+wrapper while the engine stays behind, as had begun to happen in the first
+draft, where the new package re-exported historical code. The rules below make
+that structural. Historical modules, runners and seals stay untouched; every
+past run stays verifiable from its execution commit.
 
 ## What the stack is for
 
@@ -57,8 +60,9 @@ Every component below serves at least one of them.
 
 ## Target: one stack, versions as configurations
 
-- A version-free package, `latent_workspace` (`src/latent_workspace/`), is the
-  public API. It wraps and re-exports; the historical package stays as it is.
+- `latent_workspace` (`src/latent_workspace/`) **is the engine**: the single,
+  living home of every general concept. It owns its code and never imports the
+  historical package `latent_workspace_ft_v10`, which is frozen.
 - **Host** = cut protocol + native head + renderer. Implementations: HF
   decoders through `FunctionalBoundaryAdapter` (GPT-2, Mistral, OLMo2; Llama
   and Qwen layouts to add behind the same fail-closed checks), and a
@@ -88,17 +92,56 @@ Every component below serves at least one of them.
   descriptors and instruments apply, so scratch and fine-tuning results are
   comparable.
 
-## Migration rules (seal-safe)
+## Rules that keep generality in the engine
 
-1. Historical modules and sealed runners stay byte-identical, so every past
-   run remains verifiable from its execution commit and runnable from `main`.
-2. The new package wraps. Parity tests, in the style of V14's legacy parity
-   tests, show on fixed tiny cases that each wrapper reproduces the historical
-   module exactly (outputs, gradients, state).
-3. New experiments import only `latent_workspace`.
-4. Order: (a) host, routes, descriptors, and the lattice and loss behind the
-   new package; (b) the Availability ladder; (c) the generic owner; (d) the
-   ScratchHost and a second HF family.
+Each rule is enforced by a test in
+[`test_architecture_rules.py`](../tests/test_architecture_rules.py), and each
+test was shown to fail on a deliberate violation.
+
+1. **One living engine.** `latent_workspace` never imports
+   `latent_workspace_ft_v10` (`test_the_engine_never_imports_history`).
+2. **History is frozen.** Every file of the historical package is pinned by
+   hash in [FROZEN_HISTORY.json](../configs/architecture/FROZEN_HISTORY.json);
+   a change or a new file needs a deliberate manifest update in the same
+   commit, and `src/` holds only these two packages (`test_history_is_frozen`,
+   `test_src_holds_only_the_engine_and_frozen_history`).
+3. **Promotion, not wrapping.** Historical code enters the engine as a verbatim
+   copy recorded in [PROMOTIONS.json](../configs/architecture/PROMOTIONS.json)
+   with its origin hash and a parity test against the frozen original
+   (`test_every_promotion_is_pinned`). Changing the engine's copy afterwards is
+   an explicit algorithm change with its own test, never silent drift.
+4. **Thin experiments.** New runners and scripts handle data, plans and
+   receipts but define no components (`nn.Module` classes). A component an
+   experiment needs is added to the engine in the same change
+   (`test_new_code_defines_no_components_outside_the_engine`); today's scripts
+   are grandfathered by name.
+5. **Variants are options, not copies.** A new algorithm variant becomes an
+   option of an engine component, selected by a descriptor; V19's dual budget,
+   for example, becomes a budget option of the reader when the reader is
+   promoted. (Review rule.)
+6. **Historical artifacts are read with historical code.** Analyses of sealed
+   runs, such as A1 on the V19 checkpoints, may load them with the frozen
+   modules; anything reusable they need, such as the ladder instrument, lives in
+   the engine.
+
+### What the engine holds now
+
+| Engine module | Contents | Origin |
+| --- | --- | --- |
+| `cuts` | cut protocol and boundary descriptors (GPT-2, Mistral, OLMo2, custom) | promoted: `model_binding.py` |
+| `readout` | native full-head readout, FP32 residual injection | promoted: `v15_readout.py`, `readout_transport.py` |
+| `operators` | `NormalizationSpec` | promoted: `normalization.py` |
+| `lattice` | v4.1 token-local and v5 causal-broadcast lattices | promoted: `engine.py` |
+| `losses` | `LatentWorkspaceLoss` | promoted: `engine.py` |
+| `routes` | v4 logit adapter; logit, answer and cut routes | adapter promoted from `workspace_core.py`; routes new |
+| `stats` | exact paired statistics | promoted: `v20_deliberation.py` |
+| `host` | `DecoderHost` | new |
+| `scratch` | `ScratchDecoder` (custom split interface) | new |
+
+[Parity tests](../tests/test_latent_workspace_stack.py) show bitwise-identical
+state, outputs and gradients against every original, and native logits through
+all cuts for tiny Mistral, OLMo2, GPT-2 and the scratch decoder. Writers,
+readers and owners are promoted when an experiment first needs them.
 
 ## The three agreed experiments on this stack
 

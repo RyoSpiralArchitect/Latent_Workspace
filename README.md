@@ -48,14 +48,17 @@ NOT_ESTABLISHED**.
 ## Architecture
 
 [ARCHITECTURE.md](docs/ARCHITECTURE.md) maps every module onto one stack (host
-binding, workspace algorithms, routes, composition, ownership, instruments) and
-sets the migration rules toward portability to other models and to training
-from scratch. Its first slice is the version-free package
-[`latent_workspace`](src/latent_workspace/): hosts over the existing cut
-protocol (Mistral, OLMo2, GPT-2 and a small from-scratch decoder), the three
-routes (logit, answer-position, cut) and stable names for the historical
-algorithms, each pinned to its source by
-[parity tests](tests/test_latent_workspace_stack.py).
+binding, workspace algorithms, routes, composition, ownership, instruments)
+toward portability to other models and to training from scratch.
+[`latent_workspace`](src/latent_workspace/) is the engine: it owns its code and
+never imports the frozen historical package. Historical algorithms enter it only
+by promotion, a verbatim copy pinned by a
+[parity test](tests/test_latent_workspace_stack.py); so far the cut protocol
+(Mistral, OLMo2, GPT-2, and a small from-scratch decoder), the native readout,
+v4.1/v5 lattices, `LatentWorkspaceLoss`, v4's logit adapter and the exact
+statistics, with three routes (logit, answer-position, cut).
+[Rule tests](tests/test_architecture_rules.py) keep generality from growing
+outside the engine.
 
 ## Version map
 
