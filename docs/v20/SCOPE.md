@@ -88,7 +88,7 @@ goal of its own.
 | --- | --- | --- | --- | --- |
 | **Deliberation** (潜在熟考; v4) | Does the model think through a latent lattice formed from its own hidden states, and does that computation reach its outputs at inference? | Step dependence at matched capacity (K latent steps against one) and loss of the gain when the lattice is bypassed at inference; `LatentWorkspaceLoss` geometry as health diagnostics, not claims | GPT-2 (v4–v5): direct contribution small. Mistral-7B: loss on only in V10's 1–8-step smokes; lattice without it for at most 16 steps (V11–V14). V19.5 D1: +20–23 points on held-out worlds with the facts inline, but no step dependence: a readout gap, not deliberation | D |
 | **Occupancy** | Is a workspace state active and holding information, and does it persist across turns? | State metrics; persistence and branching across turns against random-perturbation controls | V19 route active at its cap; V14 branching, not donor-directed | B |
-| **Availability** | Can the state be recruited when needed? Content-specifically: does a local memory edit flip only affected answers? | Donor-directed flips (endpoint unchanged), read through a ladder: slots → read output → FP64 gap → published answer | V16–V19: 0 flips, FP64 direction at chance. V19.5 A1: the memory probe was underpowered; at V19's update 256 the workspace read output carried the content (161/256 held out), weaker by 512: lost in transport, descriptively | A |
+| **Availability** | Can the state be recruited when needed? Content-specifically: does a local memory edit flip only affected answers? | Donor-directed flips (endpoint unchanged), read through a ladder: slots → read output → FP64 gap → published answer | V16–V19: 0 flips, FP64 direction at chance. V19.5 A1: the memory probe was underpowered; at V19's update 256 the workspace read output carried the content (161/256 held out), weaker by 512: lost in transport, descriptively. V20 A2 depth ladder: the frozen host reads a separately encoded memory at cut 0 (`CONTENT_REACHES_ANSWERS`, 55 flips of 256); with v4's route at cut 4 (`DIRECTIONAL_ONLY`, 0.79–0.83 against 0.50); not from cut 8 on, where V16–V19 wrote theirs | A |
 | **Consequence** | What does forming it leave in the base model and its outputs? | Paired generation versus base; backbone drift versus workspace contribution | v6.5's changed learning; V14 judge-preferred differences; V18 backbone divergence | C |
 
 Ryō confirmed the name on 2026-10-16: **Deliberation (潜在熟考)**. It differs
@@ -152,8 +152,9 @@ is transport. Next, and V20 itself: A2, the flip through v4's logit route. Its
 [power checks](../../provenance/pilots/v20_a2_flip_20261016/DEV_POWER_CHECKS.md)
 found the wall is depth. The frozen host reads a separately encoded memory at
 cut 0–4 and not from cut 8 on, while V16–V19 wrote memory at cut 16. A2
-becomes a sealed [depth ladder](A2_DEPTH_LADDER.md), and a workspace that
-writes into the lower layers comes after it.
+becomes a sealed [depth ladder](A2_DEPTH_LADDER.md):
+[read depth host 0, route 4](../../provenance/pilots/v20_a2_depth_ladder_20261016/README.md).
+A workspace that writes a compact memory into the lower layers comes next.
 
 **B. Conversation branching.** Natural multi-turn dialogues, with the
 constrained harness kept as a mechanical probe. Conditions: original base;

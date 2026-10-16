@@ -1,6 +1,13 @@
 # V20 A2: the depth ladder — how deep can a memory enter the host?
 
-2026-10-16. **FROZEN BEFORE LAUNCH.** V20 is A2, the flip through v4's logit
+2026-10-16. **RESULT: read depth host 0, route 4.** At cut 0 (the facts as a text
+prefix) the frozen host reaches `CONTENT_REACHES_ANSWERS`, the first time lane
+A's endpoint has been met, and so does D1's route in every seed. At cut 4 (the
+facts' own states after four layers) the system with the route answers from
+memory (0.79–0.83 against 0.50 with random memory) and is `DIRECTIONAL_ONLY`
+(two seeds of three reach content). Nothing passes from cut 8 on. See the
+[results](../../provenance/pilots/v20_a2_depth_ladder_20261016/README.md).
+Frozen before launch as follows. V20 is A2, the flip through v4's logit
 route (Ryō). The [power checks](../../provenance/pilots/v20_a2_flip_20261016/DEV_POWER_CHECKS.md)
 that stopped A2's first design found the wall is depth. Ryō chose to seal that
 finding as A2 first, then build toward a workspace that writes into the lower
