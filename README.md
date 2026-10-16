@@ -86,8 +86,9 @@ V13–V18 were developed as stacked branches and merged into `main` on
 fixes that `main` had received are kept in history but not in the merged
 sources, because V14–V18 seals pin those files byte for byte; see PR #14.
 V19, its stopped diagnostic, closeout and the V20 scope followed in PR #18,
-the V20 square in PR #19, the V20 D1 Deliberation pilot in PR #20, and the
-architecture with the `latent_workspace` engine in PR #21.
+the V20 square in PR #19, the V20 D1 Deliberation pilot in PR #20, the
+architecture with the `latent_workspace` engine in PR #21, and the V20 A1
+Availability ladder in PR #22.
 
 ## V19: separate norm budgets for the common and workspace routes
 
