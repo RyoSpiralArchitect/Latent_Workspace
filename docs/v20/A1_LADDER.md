@@ -1,6 +1,12 @@
 # V20 A1: where does memory content get lost?
 
-2026-10-16. **FROZEN BEFORE LAUNCH.** The first of the three experiments agreed
+2026-10-16. **RESULT: `CONTENT_ABSENT_IN_MEMORY` at all three states by the
+rule below, but not readable literally.** The memory probe never learned to use
+memory, and at update 256 the read-output test passed (161 of 256 held-out
+affected questions, p = 7e-5), which content absent from memory could not
+produce. Read descriptively, the content is lost in transport. See the
+[results](../../provenance/pilots/v20_a1_ladder_20261016/README.md).
+Frozen before launch as follows. The first of the three experiments agreed
 with Ryō (A1 → A2 → D2), on the Availability corner of the
 [V20 square](SCOPE.md) and built on the [engine](../ARCHITECTURE.md). The old
 **FAIL / winner:none / non_regression NOT_ESTABLISHED** is unchanged.

@@ -40,6 +40,13 @@ NOT_ESTABLISHED**.
   state alone reaches 0.81–0.89:
   [`LATTICE_GAIN_WITHOUT_STEP_DEPENDENCE`](provenance/pilots/v20_deliberation_pilot_20261016/README.md),
   a readout gap rather than deliberation.
+- **V20 A1, the Availability ladder on V19's checkpoints:** the pre-registered
+  verdict is `CONTENT_ABSENT_IN_MEMORY` at all three states, but the memory
+  probe never learned to use memory, and at update 256 the workspace read
+  output carried the content (161 of 256 held-out affected questions,
+  p = 7e-5), weaker by update 512
+  ([results](provenance/pilots/v20_a1_ladder_20261016/README.md)). Read
+  descriptively, the content is lost in transport to the answer.
 - **Release goal:** a conditional Hugging Face beta,
   **mistral-7b-instruct-v0.3-LTWS β**, only after memory use, non-regression and
   export parity are established ([release checklist](docs/v18/HF_RELEASE.md)).
