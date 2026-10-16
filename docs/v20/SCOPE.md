@@ -81,7 +81,7 @@ goal of its own.
 
 | Corner | Question | Identifiable test | Record so far | Lane |
 | --- | --- | --- | --- | --- |
-| **Deliberation** (潜在熟考; v4) | Does the model think through a latent lattice formed from its own hidden states, and does that computation reach its outputs at inference? | Step dependence at matched capacity (K latent steps against one) and loss of the gain when the lattice is bypassed at inference; `LatentWorkspaceLoss` geometry as health diagnostics, not claims | GPT-2 (v4–v5): direct contribution small. Mistral-7B: loss on only in V10's 1–8-step smokes; lattice without it for at most 16 steps (V11–V14) | D |
+| **Deliberation** (潜在熟考; v4) | Does the model think through a latent lattice formed from its own hidden states, and does that computation reach its outputs at inference? | Step dependence at matched capacity (K latent steps against one) and loss of the gain when the lattice is bypassed at inference; `LatentWorkspaceLoss` geometry as health diagnostics, not claims | GPT-2 (v4–v5): direct contribution small. Mistral-7B: loss on only in V10's 1–8-step smokes; lattice without it for at most 16 steps (V11–V14). V20 D1: +20–23 points on held-out worlds with the facts inline, but no step dependence: a readout gap, not deliberation | D |
 | **Occupancy** | Is a workspace state active and holding information, and does it persist across turns? | State metrics; persistence and branching across turns against random-perturbation controls | V19 route active at its cap; V14 branching, not donor-directed | B |
 | **Availability** | Can the state be recruited when needed? Content-specifically: does a local memory edit flip only affected answers? | Donor-directed flips (endpoint unchanged), read through a ladder: slots → read output → FP64 gap → published answer | V16–V19: 0 flips, FP64 direction at chance; only the last two rungs measured | A |
 | **Consequence** | What does forming it leave in the base model and its outputs? | Paired generation versus base; backbone drift versus workspace contribution | v6.5's changed learning; V14 judge-preferred differences; V18 backbone divergence | C |
@@ -175,7 +175,12 @@ from the model's own hidden states under the V16+ owners and sealed execution.
 Endpoint: a gain from K latent steps over a matched-capacity single-step
 control on pre-registered cases, which disappears when the lattice is bypassed
 at inference, with geometry health reported alongside. It can share the
-world-pair data with lane A, so one run can read both corners.
+world-pair data with lane A, so one run can read both corners. First
+experiment: [D1](DELIBERATION_PILOT.md), frozen backbone with the facts inline:
+[`LATTICE_GAIN_WITHOUT_STEP_DEPENDENCE`](../../provenance/pilots/v20_deliberation_pilot_20261016/README.md).
+A Deliberation test needs a setting where one forward pass does not already
+contain the answer, such as a lattice that feeds back into the model's own
+processing.
 
 ## Path to the β
 
