@@ -539,3 +539,72 @@ def test_deferred_memory_route_learns_what_only_the_memory_holds():
         adapted = training.evaluate(route, bank(rows))[64:]
         held_out[name] = float((adapted.argmax(1) == labels[64:]).float().mean())
     assert held_out["memory"] >= 0.9 and held_out["query_only"] == 0.5, held_out
+
+
+# ---- memory written into the host at a cut (V20 A2 depth ladder) -------------------
+
+
+@pytest.mark.parametrize("kind", ["mistral", "olmo2", "gpt2", "scratch"])
+def test_hosts_expose_their_final_states_from_every_cut(kind):
+    host = lw.DecoderHost(host_model(kind))
+    ids, mask = inputs(6)
+    native = host.final_states(ids, mask)
+    for cut in range(host.layer_count + 1):
+        hidden = host.to_cut(ids, mask, cut)
+        states = host.from_cut_states(hidden, mask, cut)
+        assert torch.equal(host.head(states), host.from_cut(hidden, mask, cut)), cut
+        assert torch.equal(states, native), cut
+
+
+def prefix_parts(seed=8, memory=5, query=4):
+    generator = torch.Generator().manual_seed(seed)
+    memory_ids = torch.randint(1, 43, (1, memory), generator=generator)
+    query_ids = torch.randint(1, 43, (1, query), generator=generator)
+    return memory_ids, query_ids
+
+
+@pytest.mark.parametrize("kind", ["mistral", "olmo2"])
+def test_cut_prefix_route_at_cut_zero_is_the_inline_forward(kind):
+    """On a rotary-position host, a memory written at cut 0 is the memory text inline."""
+    host = lw.DecoderHost(host_model(kind))
+    memory_ids, query_ids = prefix_parts()
+    route = composition.CutPrefixRoute(host, 0)
+    ones = torch.ones_like
+    states, logits, mask = route(
+        host.to_cut(query_ids, ones(query_ids), 0),
+        ones(query_ids),
+        host.to_cut(memory_ids, ones(memory_ids), 0),
+        ones(memory_ids),
+    )
+    inline = torch.cat([memory_ids, query_ids], 1)
+    assert torch.equal(logits, host.logits(inline, ones(inline)))
+    assert torch.equal(states, host.final_states(inline, ones(inline)))
+    assert mask.tolist() == [[1] * 9]
+
+
+def test_cut_prefix_route_packs_rows_and_reads_memory_at_a_deeper_cut():
+    host = lw.DecoderHost(host_model("mistral"))
+    route = composition.CutPrefixRoute(host, 1)
+    rows = [prefix_parts(seed, m, q) for seed, m, q in ((1, 5, 4), (2, 3, 6))]
+
+    def encode(ids_list):
+        width = max(ids.shape[1] for ids in ids_list)
+        hidden = torch.zeros(len(ids_list), width, 16)
+        mask = torch.zeros(len(ids_list), width, dtype=torch.long)
+        for row, ids in enumerate(ids_list):
+            hidden[row, : ids.shape[1]] = host.to_cut(ids, torch.ones_like(ids), 1)[0]
+            mask[row, : ids.shape[1]] = 1
+        return hidden, mask
+
+    memory, memory_mask = encode([m for m, _ in rows])
+    query, query_mask = encode([q for _, q in rows])
+    _, logits, mask = route(query, query_mask, memory, memory_mask)
+    for row, (m, q) in enumerate(rows):
+        alone, alone_logits, _ = route(*encode([q]), *encode([m]))
+        last = int(mask[row].sum()) - 1
+        assert torch.allclose(logits[row, last], alone_logits[0, -1], atol=1e-5, rtol=0)
+    other = memory + torch.randn(memory.shape, generator=torch.Generator().manual_seed(3))
+    _, moved, _ = route(query, query_mask, other * memory_mask[..., None], memory_mask)
+    assert not torch.allclose(moved[0, 8], logits[0, 8])
+    with pytest.raises(ValueError, match="Cut"):
+        composition.CutPrefixRoute(host, 3)

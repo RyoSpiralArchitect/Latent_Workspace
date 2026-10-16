@@ -31,6 +31,8 @@ class Host(Protocol):
 
     def from_cut(self, hidden, attention_mask, cut) -> torch.Tensor: ...
 
+    def from_cut_states(self, hidden, attention_mask, cut) -> torch.Tensor: ...
+
     def final_states(self, input_ids, attention_mask) -> torch.Tensor: ...
 
     def logits(self, input_ids, attention_mask) -> torch.Tensor: ...
@@ -63,6 +65,10 @@ class DecoderHost:
 
     def from_cut(self, hidden, attention_mask, cut):
         return self.cuts.decode(hidden, attention_mask, cut)
+
+    def from_cut_states(self, hidden, attention_mask, cut):
+        """The normalized states entering the head when the host continues from ``cut``."""
+        return self.cuts.decode_states(hidden, attention_mask, cut)
 
     def final_states(self, input_ids, attention_mask):
         custom = getattr(self.model, "final_states", None)

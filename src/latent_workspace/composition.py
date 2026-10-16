@@ -11,6 +11,12 @@ Option added in the engine (V20 A2), an explicit change with its own tests:
 row's valid memory states before its valid query states (``pack_memory``), so
 query positions attend to a memory the host never saw with the query. Without
 ``memory`` the forward is the promoted one, bit for bit.
+
+``CutPrefixRoute`` (V20 A2) writes a memory into the host at cut N: memory states
+enter as positions before the query's, and the host's own remaining layers read
+them. On a rotary-position host (Mistral, OLMo2) a memory written at cut 0 is the
+memory text inline, bit for bit; a host that adds absolute positions at its
+embedding keeps each part's own positions below the cut.
 """
 
 from __future__ import annotations
@@ -55,6 +61,25 @@ def pack_memory(memory, memory_mask, hidden, mask):
         packed[row, m : m + q] = hidden[row, :q]
         packed_mask[row, : m + q] = 1
     return packed, packed_mask
+
+
+class CutPrefixRoute:
+    """Memory written into the host at cut N, as positions before the query.
+
+    ``hidden``/``mask`` and ``memory``/``memory_mask`` are cut-N states of a query and a
+    memory encoded apart (left-aligned). Returns the normalized final states, the
+    logits and the mask, all in the packed [memory; query] layout.
+    """
+
+    def __init__(self, host, cut):
+        if not 0 <= int(cut) <= host.layer_count:
+            raise ValueError("Cut must lie between 0 and the host's layer count")
+        self.host, self.cut = host, int(cut)
+
+    def __call__(self, hidden, mask, memory, memory_mask):
+        packed, packed_mask = pack_memory(memory, memory_mask, hidden, mask)
+        states = self.host.from_cut_states(packed, packed_mask, self.cut)
+        return states, self.host.head(states), packed_mask
 
 
 class DeliberationRoute(nn.Module):

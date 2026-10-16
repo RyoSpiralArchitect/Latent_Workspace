@@ -39,6 +39,16 @@ def test_availability_reproduces_v19():
         assert new["left_prediction"] == stored["left_prediction"]
         assert new["right_prediction"] == stored["right_prediction"]
         rebuilt.append(new)
+    order = sorted({(c["world"], c["query"]) for c in report["contrasts"]})
+    labels = {(c["world"], c["query"]): c["labels"] for c in report["contrasts"]}
+    questions = [dict(world=w, query=q, labels=labels[w, q]) for w, q in order]
+    factors = [f for f in availability.FACTORS if f in {c["factor"] for c in report["contrasts"]}]
+    built = availability.contrasts(
+        questions, lambda c: [rows[(w, q, c)]["scores"] for w, q in order], factors
+    )
+    by_key = {(c["world"], c["query"], c["factor"]): c for c in rebuilt}
+    assert all(b == by_key[b["world"], b["query"], b["factor"]] for b in built)
+    assert len(built) == len(questions) * len(factors)
     recorded = json.loads((V19 / "DIAGNOSIS.json").read_text())
     diagnosis = availability.diagnose(rebuilt, RULE)
     assert diagnosis == {k: recorded[k] for k in diagnosis}
