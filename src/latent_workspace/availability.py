@@ -52,6 +52,32 @@ def contrast(world, query, factor, labels, left, right):
     }
 
 
+def contrasts(questions, read, factors):
+    """Contrast records for ``questions`` (dicts with world, query and labels).
+
+    ``read(condition)`` returns that condition's (no, yes) scores in question order;
+    ``factors`` names entries of ``FACTORS``.
+    """
+    choices, records = {}, []
+    for factor in factors:
+        left, right = FACTORS[factor]
+        for name in (left, right):
+            if name not in choices:
+                choices[name] = [choice(scores) for scores in read(name)]
+        for index, row in enumerate(questions):
+            records.append(
+                contrast(
+                    row["world"],
+                    row["query"],
+                    factor,
+                    row["labels"],
+                    choices[left][index],
+                    choices[right][index],
+                )
+            )
+    return records
+
+
 def diagnose(contrasts, rule):
     """V19's memory-content endpoint over ``contrasts``.
 

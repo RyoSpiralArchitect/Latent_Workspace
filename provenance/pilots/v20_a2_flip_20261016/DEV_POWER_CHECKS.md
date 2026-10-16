@@ -3,8 +3,11 @@
 2026-10-16. A1's lesson was to check, before launch, that a plan's own settings
 can detect planted content at real scale. The A2 draft failed that check, so
 A2 was not frozen, sealed or launched. These development checks decide the
-design; they are recorded here with their scripts in [dev/](dev/). Nothing here
-touched the dev or final splits. The old **FAIL / winner:none / non_regression
+design; they are recorded here with their scripts in [dev/](dev/). The
+scripts import the draft runner (`scripts/run_v20_a2_flip.py`) from the dev
+checkout at `1fe66c8`. The draft left the tree when the
+[depth ladder](../../../docs/v20/A2_DEPTH_LADDER.md) replaced it; git history
+keeps it. Nothing here touched the dev or final splits. The old **FAIL / winner:none / non_regression
 NOT_ESTABLISHED** is unchanged.
 
 ## The draft that was checked

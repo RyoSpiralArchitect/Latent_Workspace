@@ -4,6 +4,10 @@ Promoted verbatim from ``model_binding.py`` in ``latent_workspace_ft_v10`` at
 ``d4cd1ee0340a``. The historical files are frozen; this module is the living home
 (docs/ARCHITECTURE.md). Parity: ``test_cut_protocol_is_the_historical_protocol``.
 
+Added in the engine (V20 A2), with its own test: ``decode_states``, the normalized
+states that enter the head when the host continues from a cut, so that
+``head(decode_states(...))`` is ``decode(...)`` bit for bit. Nothing promoted changed.
+
 Original notes:
 
 Model-owned, no-cache decoder boundaries for Latent Workspace.
@@ -569,6 +573,35 @@ class FunctionalBoundaryAdapter:
         if self._kind == "olmo2":
             return self._olmo2_encode(input_ids, attention_mask, boundary_layer)
         return self._gpt2_encode(input_ids, attention_mask, boundary_layer)
+
+    def decode_states(
+        self,
+        hidden: torch.Tensor,
+        attention_mask: torch.Tensor,
+        boundary_layer: int,
+    ) -> torch.Tensor:
+        """Continue from the cut and return the normalized states that enter the head."""
+        if self._kind == "custom":
+            boundary = self._validate_boundary(boundary_layer, self.layer_count())
+            states = getattr(self.base_model, "functional_states_from_boundary", None)
+            if states is None:
+                raise TypeError("Custom host lacks functional_states_from_boundary")
+            return states(hidden, attention_mask, boundary)
+        if self._kind in ("mistral", "olmo2"):
+            decoder = self.base_model.model
+            boundary = self._validate_boundary(boundary_layer, len(decoder.layers))
+            run = self._run_mistral_layers if self._kind == "mistral" else self._run_olmo2_layers
+            return decoder.norm(run(hidden, attention_mask, decoder.layers[boundary:]))
+        transformer = self.base_model.transformer
+        blocks = transformer.h
+        boundary = self._validate_boundary(boundary_layer, len(blocks))
+        cache_position, position_ids = self._position_tensors(hidden)
+        causal_mask = self._gpt2_causal_mask(
+            transformer, hidden, attention_mask, cache_position, position_ids
+        )
+        for block in blocks[boundary:]:
+            hidden = self._call_gpt2_block(block, hidden, causal_mask, cache_position, position_ids)
+        return transformer.ln_f(hidden)
 
     def decode(
         self,

@@ -1,15 +1,15 @@
 {
- "status": "DRAFT_NOT_FROZEN_SUPERSEDED_BY_THE_DEPTH_LADDER",
- "schema": "v20-a2-flip-v1",
+ "schema": "v20-a2-depth-ladder-v1",
  "version": "V20 = A2 (Ryō, 2026-10-16)",
- "question": "With pinned Mistral-7B frozen and the world facts given only as a separately encoded memory, does a v5 lattice over the memory and question states feeding v4's gated logit residual answer from the memory, so that the twin's facts flip the affected held-out answers?",
+ "question": "With pinned Mistral-7B frozen, how deep can a memory encoded apart from the question enter the host and still be read: by the host alone, and with v4's route over the host's final states? Lane A's flip endpoint, unchanged, at cuts 0, 4, 8 and 16.",
  "corner": "Availability, lane A of docs/v20/SCOPE.md",
  "backbone": {
   "repository": "mistralai/Mistral-7B-Instruct-v0.3",
   "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
   "original_base_sha256": "9db998af86c8105f0a2d774c10f777e190f86e54473b6b756bb51b225064a189",
   "frozen": true,
-  "dtype": "bfloat16"
+  "dtype": "bfloat16",
+  "layers": 32
  },
  "full_update": false,
  "data": {
@@ -35,8 +35,7 @@
   "renderer": "native_chat",
   "cue": "present",
   "information": "query_only",
-  "check": "both sides render the same prompt (V15 LiveStore)",
-  "row_order": "world, query"
+  "check": "both sides render the same prompt (V15 LiveStore)"
  },
  "memory": {
   "texts": "V15 LiveStore contexts: v15_assay_summary.canonical_facts(record.contexts[side], reverse) and run_v14_precision_bridge.unrelated_context(record)",
@@ -48,9 +47,15 @@
    "reverse_twin",
    "unrelated"
   ],
-  "states": "host residual stream at memory_boundary (engine DecoderHost.to_cut), bfloat16: V19's writer input"
+  "encoding": "memory and question each run alone through the layers below the cut (engine DecoderHost.to_cut); the memory's states enter as positions before the question's and the host continues (engine CutPrefixRoute)",
+  "cut_zero": "at cut 0 the memory is its text as a prefix; checked bitwise against the inline forward on sampled rows"
  },
- "memory_boundary": 16,
+ "cuts": [
+  0,
+  4,
+  8,
+  16
+ ],
  "candidates": [
   " no",
   " yes"
@@ -61,14 +66,14 @@
  ],
  "eos_token_id": 2,
  "features": {
-  "question_states": "DecoderHost.to_cut(question, memory_boundary) at every prompt position (bfloat16)",
-  "base_logits": "native logits of the two candidates at the last prompt position",
-  "parity": "per question row, the frozen head on the final states and the decoder continued from the cut both reproduce the full native logits bitwise",
-  "memory_states": "DecoderHost.to_cut(memory text, memory_boundary) at every position (bfloat16)",
-  "format": "FEATURES_<split>.safetensors and ROWS_<split>.json.gz"
+  "question_states": "normalized final states at the question positions (entering the frozen head), bfloat16",
+  "host_logits": "the frozen host's own logits of the two candidates at the last position, with the memory in place",
+  "rows": "train: (world, side, question) with each side's own facts; final: every question under every condition",
+  "parity_every": "every parity_every-th row: head(final states) equals the decoder continued from the cut, and at cut 0 the inline forward, bitwise"
  },
+ "parity_every": 64,
  "route": {
-  "composition": "latent_workspace.composition.DeliberationRoute with deferred memory: each row's memory states packed before its question states",
+  "composition": "latent_workspace.composition.DeliberationRoute (D1's route) over the question-position final states; gated low-rank residual on the host's logits",
   "hidden_dim": 4096,
   "vocab_size": 32768,
   "steps": 4,
@@ -80,20 +85,21 @@
   "causal_window": 0,
   "rank": 32,
   "gate_init_bias": -2.0,
-  "initialization": "per-component derived seeds; the arms of one seed share every parameter"
+  "initialization": "per-component derived seeds; the route and readout of one seed share every common parameter"
  },
  "arms": [
-  "memory",
-  "query_only"
+  "route",
+  "readout"
  ],
  "arm_definitions": {
-  "memory": "every training row reads its own side's facts as memory",
-  "query_only": "the same route and rows without memory"
+  "host": "the frozen host's own answer with the memory in place; no training",
+  "route": "D1's four-step lattice route, trained",
+  "readout": "D1's readout control (no lattice step, last position), trained; descriptive"
  },
  "seeds": [
-  2026101701,
-  2026101702,
-  2026101703
+  2026101711,
+  2026101712,
+  2026101713
  ],
  "training": {
   "device": "cpu",
@@ -119,32 +125,20 @@
   "spectral_every": 16,
   "contrastive_groups": "world",
   "randomness": "data order per epoch, dropout and loss sampling per update, all derived from (seed, step)",
-  "rows": "train split, both sides x 8 questions = 4,096 rows",
+  "rows": "train split, both sides x 8 questions = 4,096 rows, each side's own facts as memory",
   "workspace_loss": "none"
  },
- "dev_evaluation_steps": [
-  0,
-  128,
-  256,
-  384,
-  512
- ],
  "checkpoint_steps": [
   256
- ],
- "truncation_steps": [
-  1,
-  2,
-  3
  ],
  "conditions": [
   "intact",
   "twin",
+  "random_intact",
+  "random_twin",
   "reverse_intact",
   "reverse_twin",
   "unrelated",
-  "random_intact",
-  "random_twin",
   "none"
  ],
  "random_memory_seed": 470016,
@@ -159,22 +153,18 @@
    "minimum_flip_margin_over_random": 20
   },
   "source": "configs/v19/FROZEN_DIAGNOSTIC_PLAN.json endpoints, unchanged (engine availability.diagnose)",
-  "learning_check": "the same rule on the train split (512 affected questions; intact, twin and random-pair memory): a seed that fails it is NOT_LEARNED",
+  "per_cut": "host: one verdict; route and readout: CONTENT_REACHES_ANSWERS if every seed reaches it, DIRECTIONAL_ONLY if every seed is at least directional, otherwise NOT_ESTABLISHED",
+  "read_depth": "the deepest cut whose verdict is at least DIRECTIONAL_ONLY, for the host and for the route, or none",
   "verdicts": [
    "CONTENT_REACHES_ANSWERS",
    "DIRECTIONAL_ONLY",
-   "NOT_ESTABLISHED",
-   "NOT_LEARNED"
-  ],
-  "overall": "CONTENT_REACHES_ANSWERS if every seed reaches it; DIRECTIONAL_ONLY if every seed is at least directional; NOT_LEARNED if no seed learned; otherwise NOT_ESTABLISHED"
- },
- "descriptive_probe": {
-  "l2": 0.001,
-  "iterations": 200
+   "NOT_ESTABLISHED"
+  ]
  },
  "replay": {
-  "arm": "memory",
-  "seed": 2026101701,
+  "arm": "route",
+  "cut": 4,
+  "seed": 2026101711,
   "from_step": 256,
   "execute_step": 257
  },
@@ -188,19 +178,24 @@
   "max_elapsed_seconds": 7200,
   "cpu_threads": 2
  },
- "storage_forecast_bytes": 8589934592,
- "qualification_test_files": [],
- "qualification_cases": 0,
+ "storage_forecast_bytes_per_cut": 6442450944,
+ "qualification_test_files": [
+  "tests/test_v20_a2_depth_ladder.py",
+  "tests/test_latent_workspace_availability.py",
+  "tests/test_latent_workspace_execution.py",
+  "tests/test_latent_workspace_stack.py"
+ ],
+ "qualification_cases": 58,
  "qualification_device_env": [
   "LATENT_V20_TEST_DEVICE",
   "LATENT_V19_TEST_DEVICE"
  ],
  "qualification_wall_seconds": 900,
  "qualification_gpu_limit_gib": 4,
- "pass_status": "V20_A2_FLIP_COMPLETE_NOT_FULL_UPDATE_OR_RELEASE",
+ "pass_status": "V20_A2_DEPTH_LADDER_COMPLETE_NOT_FULL_UPDATE_OR_RELEASE",
  "process_policy": "each role a fresh process through scripts/run_source_sealed.py, in order, stopping at the first failure",
  "no_retry": true,
- "scope": "Frozen backbone. A pass shows that the system (host plus workspace) answers from a memory the host never saw with the question, on held-out worlds of this task family; not that memory moves the native head, nor general reasoning, non-regression or language quality.",
+ "scope": "Frozen backbone. A verdict at cut k says whether this system answers held-out questions from a memory that entered at cut k, on this task family. It is not a claim about memory moving the native head beyond that cut, general reasoning, non-regression or language quality.",
  "new_sequences": 0,
  "judge_calls": 0,
  "weight_deletions": 0,

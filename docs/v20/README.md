@@ -15,5 +15,9 @@ Two versions share this folder (Ryō, 2026-10-16).
   - [Power checks](../../provenance/pilots/v20_a2_flip_20261016/DEV_POWER_CHECKS.md)
     stopped the first design before launch. The frozen host reads a
     separately encoded memory only from shallow cuts (0–4).
-  - `scripts/run_v20_a2_flip.py` and `configs/v20/A2_FLIP_PLAN.json` are that
-    design's drafts, never frozen or sealed. The depth ladder replaces them.
+  - The [depth ladder](A2_DEPTH_LADDER.md) seals that finding: memory
+    written into the host at cuts 0, 4, 8 and 16, with and without v4's
+    route. [Results](../../provenance/pilots/v20_a2_depth_ladder_20261016/README.md):
+    read depth host 0, route 4. The first design's draft runner and plan were never frozen. They
+    left the tree when the depth ladder replaced them, and git history keeps
+    them (commit `1fe66c8`).

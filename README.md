@@ -64,9 +64,17 @@ NOT_ESTABLISHED**.
   train-split worlds only). The frozen host reads such a memory at cut 0–4
   and not from cut 8 on, and V16–V19 wrote theirs at cut 16. With memory at
   cut 4 and D1's readout, the system answers from memory: 0.76 against 0.49
-  with random memory. Next, a sealed depth ladder (cuts 0, 4, 8, 16, with and
-  without the route), then a workspace that writes memory into the lower
-  layers.
+  with random memory.
+- **V20 A2, the depth ladder** ([results](provenance/pilots/v20_a2_depth_ladder_20261016/README.md)):
+  - *Cut 0* (the facts as a text prefix): the frozen host reaches
+    `CONTENT_REACHES_ANSWERS`, 55 of 256 held-out answers flipped. This is
+    the first time lane A's endpoint has been met. With D1's route the flips
+    rise to 71–118 in every seed.
+  - *Cut 4* (the facts' own states after four layers): the system with the
+    route answers from memory, 0.79–0.83 against 0.50 with random memory,
+    `DIRECTIONAL_ONLY`.
+  - *Cut 8 and deeper:* the memory is not read.
+  - *Next:* a workspace that writes a compact memory into the lower layers.
 - **Release goal:** a conditional Hugging Face beta,
   **mistral-7b-instruct-v0.3-LTWS β**, only after memory use, non-regression and
   export parity are established ([release checklist](docs/v18/HF_RELEASE.md)).
@@ -110,7 +118,7 @@ V19, its stopped diagnostic, closeout and the first scope note followed in
 PR #18. V19.5 followed in PRs #19–#22: the square (#19), the D1 Deliberation
 pilot (#20), the architecture with the `latent_workspace` engine (#21) and the
 A1 Availability ladder (#22). V20's A2 groundwork and power checks followed in
-PR #23.
+PR #23, and the A2 depth ladder in PR #24.
 
 ## V19: separate norm budgets for the common and workspace routes
 

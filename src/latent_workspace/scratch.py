@@ -1,9 +1,10 @@
 """A small decoder trained from scratch, joined through the custom split interface.
 
-It implements ``functional_forward_to_boundary``, ``functional_forward_from_boundary``
-and ``functional_num_layers``, so the historical cut protocol and every route
-treat it exactly like an HF host. Pre-norm blocks with causal SDPA and a learned
-position table; deliberately plain, not a claim about any architecture choice.
+It implements ``functional_forward_to_boundary``, ``functional_forward_from_boundary``,
+``functional_states_from_boundary`` and ``functional_num_layers``, so the historical
+cut protocol and every route treat it exactly like an HF host. Pre-norm blocks with
+causal SDPA and a learned position table; deliberately plain, not a claim about any
+architecture choice.
 """
 
 from __future__ import annotations
@@ -57,10 +58,13 @@ class ScratchDecoder(nn.Module):
             hidden = block(hidden, attention_mask)
         return hidden
 
-    def functional_forward_from_boundary(self, hidden, attention_mask, boundary):
+    def functional_states_from_boundary(self, hidden, attention_mask, boundary):
         for block in self.blocks[boundary:]:
             hidden = block(hidden, attention_mask)
-        return self.lm_head(self.norm(hidden))
+        return self.norm(hidden)
+
+    def functional_forward_from_boundary(self, hidden, attention_mask, boundary):
+        return self.lm_head(self.functional_states_from_boundary(hidden, attention_mask, boundary))
 
     def final_states(self, input_ids, attention_mask):
         hidden = self.functional_forward_to_boundary(input_ids, attention_mask, len(self.blocks))
