@@ -136,7 +136,7 @@ test was shown to fail on a deliberate violation.
 | `routes` | v4 logit adapter; logit, answer and cut routes | adapter promoted from `workspace_core.py`; routes new |
 | `stats` | exact paired statistics | promoted: `v20_deliberation.py` |
 | `composition` | `DeliberationRoute`: lattice over host states into the logit route (V19.5 D1), with deferred memory; `CutPrefixRoute`: memory written into the host at a cut (V20 A2) | promoted: `v20_deliberation.py`; options and prefix route new |
-| `training` | frozen-feature training: derived seeds, feature bank, exact updates, evaluation; content gating (V20 A4) | promoted: `v20_deliberation.py`, `engine.py`; gating option new |
+| `training` | frozen-feature training: derived seeds, feature bank, exact updates, evaluation; content gating (V20 A4) and a decaying learning rate (V20 A5) | promoted: `v20_deliberation.py`, `engine.py`; both options new |
 | `host` | `DecoderHost` | new |
 | `scratch` | `ScratchDecoder` (custom split interface) | new |
 | `ladder` | Availability-ladder probes, world sign tests, rung verdict (A1) | new |

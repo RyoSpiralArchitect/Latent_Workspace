@@ -17,8 +17,10 @@ which ``update`` and ``evaluate`` hand to the route; ``evaluate(final=True)``
 also returns each row's last latent state. Content gating (V20 A4): ``update``
 may take a ``mismatch`` bank, the same rows read with a memory that does not
 answer the question, and pushes the route's residual there to zero with weight
-``TrainConfig.mismatch_weight``. Without them the behavior is the promoted one,
-bit for bit.
+``TrainConfig.mismatch_weight``. A stable end (V20 A5): with
+``TrainConfig.decay_from`` the learning rate falls linearly after that update
+(``learning_rate_at``). Without them the behavior is the promoted one, bit for
+bit.
 """
 
 from __future__ import annotations
@@ -210,6 +212,16 @@ class TrainConfig:
     loss_tokens_per_batch: int
     spectral_every: int
     mismatch_weight: float = 0.0
+    decay_from: int = 0
+
+
+def learning_rate_at(config, step):
+    """The learning rate of 1-based ``step``: constant, or with ``decay_from`` falling
+    linearly after that update to ``learning_rate / (updates - decay_from + 1)`` at the last."""
+    if not config.decay_from or step <= config.decay_from:
+        return config.learning_rate
+    span = config.updates - config.decay_from + 1
+    return config.learning_rate * (config.updates - step + 1) / span
 
 
 def epoch_order(seed, epoch, rows):
@@ -252,6 +264,8 @@ def update(route, loss, optimizer, bank, config, step, mismatch=None):
         raise ValueError("A mismatch bank needs a positive mismatch_weight, and only then")
     if mismatch is not None and len(mismatch) != len(bank):
         raise ValueError("The mismatch bank must align with the bank row for row")
+    if not 0 <= config.decay_from < config.updates:
+        raise ValueError("decay_from must lie in [0, updates)")
     route.train()
     if loss is not None:
         loss.train()
@@ -288,6 +302,9 @@ def update(route, loss, optimizer, bank, config, step, mismatch=None):
         penalty = off_delta.square().mean()
         total = total + config.mismatch_weight * penalty
     named = trainable(route, loss if config.workspace_loss_weight else None)
+    if config.decay_from:
+        for group in optimizer.param_groups:
+            group["lr"] = learning_rate_at(config, step)
     optimizer.zero_grad(set_to_none=True)
     total.backward()
     norm = torch.nn.utils.clip_grad_norm_([p for _, p in named], config.max_grad_norm)
