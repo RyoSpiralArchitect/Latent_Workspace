@@ -1,0 +1,374 @@
+{
+ "schema": "v20-a5-stable-route-v1",
+ "version": "V20 A5 (Ryō, 2026-10-18): A4's gated cut-4 route with a stable end of training, toward the LTWS β",
+ "question": "Does A4's content-gated cut-4 route meet lane A's flip endpoint in every seed when its learning rate decays over the second half of training, instead of being scored under a constant rate?",
+ "corner": "Availability, lane A of docs/v20/SCOPE.md",
+ "backbone": {
+  "repository": "mistralai/Mistral-7B-Instruct-v0.3",
+  "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+  "original_base_sha256": "9db998af86c8105f0a2d774c10f777e190f86e54473b6b756bb51b225064a189",
+  "frozen": true,
+  "dtype": "bfloat16",
+  "layers": 32
+ },
+ "full_update": false,
+ "data": {
+  "train": {
+   "path": "data/v10/functional_train.jsonl",
+   "sha256": "8ca42ca2908a3d554849b6fb0054f838c424fdfed48ca478bbac7174740feea3",
+   "world_pairs": 256
+  },
+  "dev": {
+   "path": "data/v10/functional_eval.jsonl",
+   "sha256": "fcd7bdd3966cbcd0fd02315ee76c813aaf51b82f913abdd074f1585d5958386e",
+   "world_pairs": 64
+  },
+  "final": {
+   "path": "configs/v16/population_20261015/functional.json",
+   "sha256": "606038154264601fc0b0669433287f42caf0fb137bbdc7cda90ab9a8c13a8643",
+   "world_pairs": 128
+  }
+ },
+ "data_checks": "the sealed records' data hashes and row alignment; no new extraction",
+ "rendering": {
+  "function": "scripts/v15_cue_contract.py render_case",
+  "renderer": "native_chat",
+  "cue": "present",
+  "information": "query_only",
+  "check": "both sides render the same prompt (V15 LiveStore)"
+ },
+ "memory": {
+  "texts": "V15 LiveStore contexts: v15_assay_summary.canonical_facts(record.contexts[side], reverse) and run_v14_precision_bridge.unrelated_context(record)",
+  "tokens": "tokenizer.encode(text, add_special_tokens=False), as V15-V19",
+  "keys": [
+   "intact",
+   "twin",
+   "reverse_intact",
+   "reverse_twin",
+   "unrelated"
+  ],
+  "encoding": "memory and question each run alone through the layers below the cut (engine DecoderHost.to_cut); the memory's states enter as positions before the question's and the host continues (engine CutPrefixRoute)",
+  "cut_zero": "at cut 0 the memory is its text as a prefix; checked bitwise against the inline forward on sampled rows"
+ },
+ "cut": 4,
+ "candidates": [
+  " no",
+  " yes"
+ ],
+ "candidate_ids": [
+  1476,
+  5849
+ ],
+ "eos_token_id": 2,
+ "sources": {
+  "ladder": {
+   "run": "V20 A2 depth ladder: sealed 1daa358d0a745fc71baa62aefef3c9858dc1920b, plan 295392251ca596e55997bf8ada4ec530ce6ac6ac46af5bfc7eb6db1d4231ecd1, verified locally and on Furnace",
+   "raw": "../../latent-v20-a2-depth-ladder-20261016/raw",
+   "relative_to": "this run's raw folder; the task roots sit side by side under tmp/ on Furnace",
+   "reused": "the cut-4 train rows (each side's own facts) and final rows (every condition), the host's scores and the ungated route's final scores",
+   "features": {
+    "extract_cut4/FEATURES_train.safetensors": {
+     "bytes": 1855553792,
+     "sha256": "20b58342890fd879a38e78a4836b655b9ee21cf43a6607e8ddc91e1d494133f6"
+    },
+    "extract_cut4/FEATURES_final.safetensors": {
+     "bytes": 3709862144,
+     "sha256": "ee9e4285c50817f0ccef188d34171460e392bff6d538caa15188af88ff8e5c3f"
+    }
+   },
+   "receipts": {
+    "extract_cut4/FINISHED.json": {
+     "bytes": 7929,
+     "sha256": "b63184bb7326c72da69dc33e5a43ed5acf1f7640dc20ff5bdf70ca18d2326886"
+    },
+    "extract_cut4/ROWS_train.json.gz": {
+     "bytes": 28126,
+     "sha256": "99cde9950fa864d2870d35aee018616991190fa47bab7ea65277f78a6c14fe18"
+    },
+    "extract_cut4/ROWS_final.json.gz": {
+     "bytes": 66447,
+     "sha256": "bffd59cc494db6c42b78cb09d39f0f1100d1f32ca260e36c4ee6f9aa5254e992"
+    },
+    "extract_cut4/HOST_SCORES_final.json.gz": {
+     "bytes": 22765,
+     "sha256": "f6b5fccfc9970738fa4c3987dcbbd3e3beb6134236d2228e05b9990a8052eefe"
+    },
+    "extract_cut4/QUESTIONS_final.json.gz": {
+     "bytes": 10140,
+     "sha256": "a1e56ec124444b0b6527c8d4fc722469ad39f0070cf8b261a29f9127fad592e3"
+    },
+    "route_cut4_s1/FINISHED.json": {
+     "bytes": 7511,
+     "sha256": "8bb29136879ff091985fc051ff91a69f186afcd3e9e0f5eba0890d62ddd6edea"
+    },
+    "route_cut4_s1/eval_route_final_step512.json.gz": {
+     "bytes": 117678,
+     "sha256": "752ed9530181c4cb18680103c4d226578a32628b5134d8554efb646c04e8f889"
+    },
+    "route_cut4_s2/FINISHED.json": {
+     "bytes": 7510,
+     "sha256": "3524ceb95cd38e62d3404c3afc02c5e13ecdb198bc7a4c2c417c80b49375ac9a"
+    },
+    "route_cut4_s2/eval_route_final_step512.json.gz": {
+     "bytes": 117246,
+     "sha256": "2f919f9a6d3d131d679bfc8ada772f040fea6ea0c04de7b3711f63c844981af5"
+    },
+    "route_cut4_s3/FINISHED.json": {
+     "bytes": 7511,
+     "sha256": "3dd664b021a1337edc812d8e610ff797f801020be2d7bc4dba76ea15b8a8b5ce"
+    },
+    "route_cut4_s3/eval_route_final_step512.json.gz": {
+     "bytes": 116655,
+     "sha256": "46d65e5d90714dc1999601b209f71cc6123aa9aa27a6a3c3ca1efbecf3b77ea4"
+    },
+    "endpoints/ENDPOINTS.json": {
+     "bytes": 102770,
+     "sha256": "a3f203c32193a0e841613a588c5d58b794d1f5827949351de7e292893f092da5"
+    }
+   }
+  },
+  "a4": {
+   "run": "V20 A4 content-gated cut-4 route: sealed 6bf97c24133dea7eb5a786c64697de184832d85c, plan 1f4de6c04e83389671c65e0928c80bf89d0d08363c41e82c325e34bd4daa6ddc, verified locally and on Furnace",
+   "raw": "../../latent-v20-a4-gated-route-20261017/raw",
+   "relative_to": "this run's raw folder",
+   "reused": "the 4,096 mismatch rows, the gated route's final scores, and seed 1's update receipts",
+   "features": {
+    "extract_mismatch/FEATURES_mismatch.safetensors": {
+     "bytes": 1855553792,
+     "sha256": "9a572f0f0b625bb7342af44cdd7d0efd0f98333a4feeb922f787d9bede3d02aa"
+    }
+   },
+   "receipts": {
+    "FINISHED.json": {
+     "bytes": 9180,
+     "sha256": "4d8eafa76325f90c45cac450e821fa6e59c3b3ac5a86ed5edf2d87cbee507bd8"
+    },
+    "endpoints/ENDPOINTS.json": {
+     "bytes": 25813,
+     "sha256": "88fc9d221d1f0c2a041b4c7deab7d05fe49493fef161aabe4fdc5c741642c1c9"
+    },
+    "extract_mismatch/FINISHED.json": {
+     "bytes": 7353,
+     "sha256": "0bcae2e5a79dbfe609c9349016a3de5019d9323c5772f1e7a569bdead4707317"
+    },
+    "extract_mismatch/HOST_SCORES_mismatch.json.gz": {
+     "bytes": 11513,
+     "sha256": "c9cd15f55f8d8cc8c73ad82e7ef4a4b2aa8f0e431ac67e2fd8e9d7a7ae89e57b"
+    },
+    "extract_mismatch/ROWS_mismatch.json.gz": {
+     "bytes": 26209,
+     "sha256": "45a56d4bced4ae4279a4de347be6dc7416ba19dbb679d1643adacba4902cc794"
+    },
+    "gated_s1/FINGERPRINTS.json": {
+     "bytes": 334,
+     "sha256": "ce0af015f90a5e8a8f6ca2529ad28451632ff6d7b1fad19679fc5bee481adf3e"
+    },
+    "gated_s1/FINISHED.json": {
+     "bytes": 6893,
+     "sha256": "d4e7a394ac07d8d1a228359abc5468c52d8728e97b23da0079e680c5f1402642"
+    },
+    "gated_s1/eval_gated_final_step512.json.gz": {
+     "bytes": 116677,
+     "sha256": "7cc0f4cd184f4bb79f67399c7291ab35bdf044074e945c0487d1e4f878e4684c"
+    },
+    "gated_s1/updates_gated.jsonl": {
+     "bytes": 116045,
+     "sha256": "9b94bf295bf53c2f8477c7737b2b199dda3dddca248077d006d6c9c1e6c46e86"
+    },
+    "gated_s2/FINISHED.json": {
+     "bytes": 6582,
+     "sha256": "4bdf494cd208c7ac919ba1d7ec78a4a0eb572179c1eb069cbf7e353dc34327d2"
+    },
+    "gated_s2/eval_gated_final_step512.json.gz": {
+     "bytes": 116507,
+     "sha256": "309b4b76b66094006fa4695768ce0a39001c4db41ab2de0695146d11a4718ea1"
+    },
+    "gated_s3/FINISHED.json": {
+     "bytes": 6582,
+     "sha256": "48d90a08c101fd2413492afc5cf93867bab99c4584ba10ddadd474cb7e0e24aa"
+    },
+    "gated_s3/eval_gated_final_step512.json.gz": {
+     "bytes": 115296,
+     "sha256": "c7586140a8a5c649d8a14e4b205b98488c3bd9d4c65761be5fb1dace9035aa8a"
+    }
+   }
+  }
+ },
+ "mismatch": {
+  "definition": "for each train row (world w, question q, side s): the facts of another training world on side s that do not name both entities of question q, so they do not answer it",
+  "rule": "the first o = (w + stride * k) mod 256, k = 1, 2, ..., whose six names (metadata.orders[0]) do not include both names of metadata.query_pairs[q]",
+  "stride": 97,
+  "why_not_both": "the name pool has 12 names and a world uses 6, so 23% of plain (w + 97) mod 256 memories name both entities and state an answer",
+  "rows": "one per train row, in the ladder's train row order: final states at the question positions and the host's candidate logits, as the ladder's extraction",
+  "checks": "every parity_every-th row: the head on the final states equals the decoder continued from the cut, and the row re-read with its own memory equals the ladder's stored features, bitwise"
+ },
+ "gating": {
+  "weight": 0.3,
+  "penalty": "weight x the mean square of the route's two-candidate residual on the mismatch rows of each update's batch",
+  "engine": "latent_workspace.training.update(mismatch=...) with TrainConfig.mismatch_weight",
+  "never_trained_on": "lane A's random-pair control, the dev split and the final split",
+  "choice": "development checks on train worlds only (provenance/pilots/v20_a4_gated_route_20261017/DEV_CHECKS.md)"
+ },
+ "route": {
+  "composition": "latent_workspace.composition.DeliberationRoute (D1's route) over the question-position final states; gated low-rank residual on the host's logits",
+  "hidden_dim": 4096,
+  "vocab_size": 32768,
+  "steps": 4,
+  "workspace_dim": 256,
+  "attention_heads": 8,
+  "ff_multiplier": 2.0,
+  "dropout": 0.05,
+  "anchor_refresh": "initial_only",
+  "causal_window": 0,
+  "rank": 32,
+  "gate_init_bias": -2.0,
+  "initialization": "per-component derived seeds; the route and readout of one seed share every common parameter"
+ },
+ "arms": [
+  "stable"
+ ],
+ "arm_definitions": {
+  "host": "the frozen host's own answer with the memory at cut 4 (the ladder's); no training",
+  "stable": "A4's gated route with the learning rate decaying after update 256",
+  "gated": "comparator: A4's gated route (constant learning rate), from its pinned scores",
+  "ungated": "comparator: the ladder's route at cut 4, from its pinned scores",
+  "ensemble": "descriptive: the mean of the three stable seeds' candidate logits"
+ },
+ "seeds": [
+  2026101711,
+  2026101712,
+  2026101713
+ ],
+ "training": {
+  "device": "cpu",
+  "dtype": "float32",
+  "threads": 8,
+  "deterministic_algorithms": true,
+  "objective": "choice-normalized cross-entropy over the two candidates at the last prompt position",
+  "updates": 512,
+  "epochs": 4,
+  "batch_size": 32,
+  "learning_rate": 0.0003,
+  "betas": [
+   0.9,
+   0.999
+  ],
+  "adam_eps": 1e-08,
+  "weight_decay": 0.01,
+  "weight_decay_policy": "engine._uses_weight_decay",
+  "max_grad_norm": 1.0,
+  "schedule": "constant 3e-4 to update 256, then linear decay: lr(step) = 3e-4 x (513 - step) / 257 for step > 256, reaching 1.2e-6 at update 512 (engine training.learning_rate_at)",
+  "loss_tokens_per_row": 32,
+  "loss_tokens_per_batch": 256,
+  "spectral_every": 16,
+  "contrastive_groups": "world",
+  "randomness": "data order per epoch, dropout and loss sampling per update, all derived from (seed, step)",
+  "rows": "the ladder's 4,096 train rows (both sides x 8 questions x 256 worlds), each with its own facts; every update also reads the same batch rows with their mismatch memory",
+  "workspace_loss": "none",
+  "decay_from": 256
+ },
+ "checkpoint_steps": [
+  256
+ ],
+ "conditions": [
+  "intact",
+  "twin",
+  "random_intact",
+  "random_twin",
+  "reverse_intact",
+  "reverse_twin",
+  "unrelated",
+  "none"
+ ],
+ "endpoints": {
+  "split": "final",
+  "step": 512,
+  "affected_queries": 256,
+  "rule": {
+   "chance_control": "random_pair",
+   "sign_test_alpha": 0.001,
+   "minimum_actual_flips": 26,
+   "minimum_flip_margin_over_random": 20
+  },
+  "source": "configs/v19/FROZEN_DIAGNOSTIC_PLAN.json endpoints, unchanged (engine availability.diagnose)",
+  "verdict": "stable: CONTENT_REACHES_ANSWERS if every seed reaches it, DIRECTIONAL_ONLY if every seed is at least directional, otherwise NOT_ESTABLISHED (the ladder's per-arm rule)",
+  "primary": "the stable verdict",
+  "comparison": "per seed against A4's gated route and the ladder's ungated route: verdict, flips, random-pair flips, accuracy and the gap moved from the host's under each condition (descriptive)",
+  "verdicts": [
+   "CONTENT_REACHES_ANSWERS",
+   "DIRECTIONAL_ONLY",
+   "NOT_ESTABLISHED"
+  ]
+ },
+ "comparators": {
+  "gated": {
+   "verdict": "NOT_ESTABLISHED",
+   "per_seed": [
+    "NOT_ESTABLISHED",
+    "CONTENT_REACHES_ANSWERS",
+    "CONTENT_REACHES_ANSWERS"
+   ]
+  },
+  "ungated": {
+   "verdict": "DIRECTIONAL_ONLY",
+   "per_seed": [
+    "CONTENT_REACHES_ANSWERS",
+    "CONTENT_REACHES_ANSWERS",
+    "DIRECTIONAL_ONLY"
+   ]
+  },
+  "host": "NOT_ESTABLISHED"
+ },
+ "beta_candidate": {
+  "seed": 2026101711,
+  "rule": "if the primary verdict is CONTENT_REACHES_ANSWERS, the stable route of this seed is the LTWS β candidate and the other seeds are replicates; fixed before launch so that no seed is chosen on the final split. Publication remains Ryō's separate decision."
+ },
+ "reproduce": {
+  "seed": 2026101711,
+  "updates": "gated_s1/updates_gated.jsonl",
+  "scores": "gated_s1/eval_gated_final_step512.json.gz",
+  "fingerprint": "a35e796c02be9a2973cca90705b74b1d8cb7e9e519c1224703e19f5c6983f1f6",
+  "why": "A4's gated route of seed 1, retrained here from the pinned records: equal receipts, fingerprint and scores show that the comparison with A4 differs only by the learning rate"
+ },
+ "replay": {
+  "arm": "stable",
+  "seed": 2026101711,
+  "from_step": 256,
+  "execute_step": 257,
+  "why": "update 257 is the first with a decayed learning rate"
+ },
+ "resources": {
+  "admission_free_gib": 31,
+  "allocator_cap_gib": 30.5,
+  "abort_free_gib": 0.75,
+  "host_admission_available_gib": 100,
+  "host_abort_available_gib": 24,
+  "disk_free_gib": 50,
+  "max_elapsed_seconds": 7200,
+  "cpu_threads": 2
+ },
+ "qualification_test_files": [
+  "tests/test_v20_a5_stable_route.py",
+  "tests/test_latent_workspace_availability.py",
+  "tests/test_latent_workspace_execution.py",
+  "tests/test_latent_workspace_stack.py"
+ ],
+ "qualification_cases": 59,
+ "qualification_device_env": [
+  "LATENT_V20_TEST_DEVICE",
+  "LATENT_V19_TEST_DEVICE"
+ ],
+ "qualification_wall_seconds": 900,
+ "qualification_gpu_limit_gib": 4,
+ "pass_status": "V20_A5_STABLE_ROUTE_COMPLETE_NOT_FULL_UPDATE_OR_RELEASE",
+ "process_policy": "each role a fresh process through scripts/run_source_sealed.py, in order, stopping at the first failure",
+ "no_retry": true,
+ "scope": "Frozen backbone. The verdict says whether this system (frozen host plus the stable gated route) answers held-out questions from a memory written at cut 4, on this task family, in every seed. It is not a claim about memory moving the native head, general reasoning, non-regression or language quality, and it is not a release decision.",
+ "new_sequences": 0,
+ "judge_calls": 0,
+ "weight_deletions": 0,
+ "native_weight_updates": 0,
+ "old_expression_gate": "FAIL",
+ "winner": "none",
+ "non_regression": "NOT_ESTABLISHED"
+}

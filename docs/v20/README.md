@@ -33,3 +33,7 @@ Two versions share this folder (Ryō, 2026-10-16).
     `NOT_ESTABLISHED` by the all-seeds rule (seeds 2 and 3 content, seed 1
     scored after a late training disturbance). Gating closed the random-memory
     weak point in every seed.
+  - **A5**, toward the LTWS β (Ryō, 2026-10-18): A4's route with a
+    [stable end of training](A5_STABLE_ROUTE.md), a learning rate that decays
+    over the second half
+    ([development](../../provenance/pilots/v20_a5_stable_route_20261018/DEV_CHECKS.md)).
