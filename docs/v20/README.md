@@ -21,3 +21,11 @@ Two versions share this folder (Ryō, 2026-10-16).
     read depth host 0, route 4. The first design's draft runner and plan were never frozen. They
     left the tree when the depth ladder replaced them, and git history keeps
     them (commit `1fe66c8`).
+  - **A3** (development) tried Ryō's option 3, a compact memory written into
+    the lower layers. Eight soft tokens at cut 0 carry an unseen world's facts
+    well enough for the host to reproduce them, but no reader tried could
+    answer from them ([checks](../../provenance/pilots/v20_a3_shallow_writer_20261016/DEV_CHECKS.md)).
+  - **A4** refines the low-layer version the ladder supports, following Ryō's
+    fallback: the [content-gated cut-4 route](A4_GATED_ROUTE.md), trained to
+    leave answers alone when the memory does not answer the question
+    ([development](../../provenance/pilots/v20_a4_gated_route_20261017/DEV_CHECKS.md)).
