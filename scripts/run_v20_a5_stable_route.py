@@ -45,7 +45,7 @@ LADDER = A4.LADDER
 load = LADDER.load
 ENTRY = "scripts/run_v20_a5_stable_route.py"
 PLAN = "configs/v20/A5_STABLE_ROUTE_PLAN.json"
-PLAN_CANONICAL_SHA256 = "b8357d51670ec92ae74d39bb4edf78833d6ac79a7b05196a32b24591a70686bd"
+PLAN_CANONICAL_SHA256 = "1b5ce8e9e6c9a818fc39222e9a9b80f3e7c0ab11e9add95dcf67c0f247a38d77"
 CUT = 4
 SEEDS = 3
 ARM = "stable"
@@ -56,7 +56,7 @@ ARM_PASS = "V20_A5_STABLE_ROUTE_COMPLETE"
 REPRODUCE_PASS = "V20_A5_A4_GATED_ROUTE_REPRODUCED_EXACTLY"
 REPLAY_PASS = "V20_A5_FRESH_PROCESS_EXACT_REPLAY"
 ENDPOINT_PASS = "V20_A5_ENDPOINTS_COMPLETE"
-QUALIFICATION_CASES = 59
+QUALIFICATION_CASES = 60
 
 
 def validate_plan(plan):
@@ -72,6 +72,7 @@ def validate_plan(plan):
         and plan["beta_candidate"]["seed"] in plan["seeds"]
         and math.gcd(plan["mismatch"]["stride"], plan["data"]["train"]["world_pairs"]) == 1
         and plan["qualification_cases"] == QUALIFICATION_CASES
+        and ex.qualification_devices(plan) == ("cpu",)
         and plan["endpoints"]["rule"]["chance_control"] == "random_pair"
         and all(plan[k] == v for k, v in ex.CEILING.items()),
         "Frozen V20 A5 plan semantics changed",

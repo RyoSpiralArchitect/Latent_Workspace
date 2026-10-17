@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# One serial dispatch of the sealed V20 A5 stable route. Tiny CPU qualification, tiny
-# CUDA qualification, then the runner's own dispatcher (reproduce -> three stable
-# roles -> replay -> endpoints). Each stage starts only if the previous
-# exited 0. No retry.
+# One serial dispatch of the sealed V20 A5 stable route, attempt 02. Tiny CPU
+# qualification (the plan qualifies on CPU alone: every role runs on CPU), then the
+# runner's own dispatcher (reproduce -> three stable roles -> replay -> endpoints).
+# Each stage starts only if the previous exited 0. No retry.
 set -u
 B=/home/ryospiralarchitect/spiralreality/SpiralReality
-W=$B/worktrees/latent-workspace-v20-a5-stable-route-20261018
-T=$B/tmp/latent-v20-a5-stable-route-20261018
+W=$B/worktrees/latent-workspace-v20-a5-stable-route-attempt02-20261018
+T=$B/tmp/latent-v20-a5-stable-route-attempt02-20261018
 PY=$B/worktrees/aether-cuda-pretrain-20260822/.venv/bin/python
 SEAL=$T/SOURCE_SEAL.json
 ENTRY=scripts/run_v20_a5_stable_route.py
@@ -16,7 +16,7 @@ note() { echo "$(date -u +%FT%TZ) $*" >> "$LOG"; }
 for path in "$T/qualification" "$T/raw" "$T/checkpoints"; do
   if [ -e "$path" ]; then note "refuse: $path exists"; exit 91; fi
 done
-for device in cpu cuda; do
+for device in cpu; do
   note "dispatch qualify-$device"
   "$PY" -I scripts/run_source_sealed.py --seal "$SEAL" --entry "$ENTRY" -- \
     qualify --seal "$SEAL" --device "$device" --output "$T/qualification/$device" \

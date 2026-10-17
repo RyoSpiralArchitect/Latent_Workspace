@@ -40,6 +40,7 @@ def test_plan_hash_and_semantics():
     assert all(PLAN[k] == a4[k] for k in ("route", "gating", "mismatch", "seeds", "conditions"))
     assert PLAN["sources"]["ladder"]["features"] == a4["source"]["features"]
     assert PLAN["beta_candidate"]["seed"] == PLAN["seeds"][0]
+    assert run.ex.qualification_devices(PLAN) == ("cpu",)
 
 
 def role_args(root, role):

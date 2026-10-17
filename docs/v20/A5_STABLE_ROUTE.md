@@ -90,13 +90,21 @@ A's rule from V19, unchanged:
   the plan and rehashed by each role that reads it.
 - **Alignment:** A4's mismatch rows align with the ladder's train rows, row
   for row.
-- **Qualification:** tiny CPU and CUDA runs of the
+- **Qualification:** a tiny CPU run of the
   [A5 tests](../../tests/test_v20_a5_stable_route.py) and the engine's
   [stack](../../tests/test_latent_workspace_stack.py) (with the schedule
   option's tests),
   [availability](../../tests/test_latent_workspace_availability.py) and
-  [execution](../../tests/test_latent_workspace_execution.py) suites: 59
+  [execution](../../tests/test_latent_workspace_execution.py) suites: 60
   cases.
+  - **Amended before any role ran.** Attempt 01 also ran a CUDA
+    qualification. Its 59 tests passed, but the skeleton requires a positive
+    CUDA peak, and no A5 test touches CUDA, so it stopped there. No role ran
+    and nothing about the outcome was observed
+    ([attempt 01](../../provenance/pilots/v20_a5_stable_route_20261018/attempt01/README.md)).
+  - Every A5 role runs on CPU, so the plan now qualifies on CPU alone. This
+    uses the engine's new `qualification_devices` option, whose test adds the
+    60th case. The design and the endpoint are unchanged.
 - **Verifier:** the [offline verifier](../../scripts/verify_v20_a5_stable_route.py)
   recomputes every verdict from the saved scores, and checks each route's
   logged learning rates against the plan's schedule.
