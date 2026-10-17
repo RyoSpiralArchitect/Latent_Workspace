@@ -14,8 +14,11 @@ Options added in the engine (V20 A2), explicit changes with their own tests:
 ``FeatureBank`` rows may share stored segments (``segments``) and may carry a
 deferred memory (``memory``: states, offsets and one memory segment per row),
 which ``update`` and ``evaluate`` hand to the route; ``evaluate(final=True)``
-also returns each row's last latent state. Without them the behavior is the
-promoted one, bit for bit.
+also returns each row's last latent state. Content gating (V20 A4): ``update``
+may take a ``mismatch`` bank, the same rows read with a memory that does not
+answer the question, and pushes the route's residual there to zero with weight
+``TrainConfig.mismatch_weight``. Without them the behavior is the promoted one,
+bit for bit.
 """
 
 from __future__ import annotations
@@ -206,6 +209,7 @@ class TrainConfig:
     loss_tokens_per_row: int
     loss_tokens_per_batch: int
     spectral_every: int
+    mismatch_weight: float = 0.0
 
 
 def epoch_order(seed, epoch, rows):
@@ -236,8 +240,18 @@ def sample_positions(mask, per_row, cap, generator):
     return rows, cols
 
 
-def update(route, loss, optimizer, bank, config, step):
-    """One owned update; dropout and loss sampling depend only on (seed, step)."""
+def update(route, loss, optimizer, bank, config, step, mismatch=None):
+    """One owned update; dropout and loss sampling depend only on (seed, step).
+
+    ``mismatch`` (optional, content gating): a bank aligned row for row with ``bank``
+    whose memory does not answer the question. The route reads the same batch rows from
+    it, and ``config.mismatch_weight`` times the mean square of its residual there joins
+    the loss, so the route learns to move answers only with memory about the question.
+    """
+    if (mismatch is not None) != (config.mismatch_weight > 0) or config.mismatch_weight < 0:
+        raise ValueError("A mismatch bank needs a positive mismatch_weight, and only then")
+    if mismatch is not None and len(mismatch) != len(bank):
+        raise ValueError("The mismatch bank must align with the bank row for row")
     route.train()
     if loss is not None:
         loss.train()
@@ -264,6 +278,15 @@ def update(route, loss, optimizer, bank, config, step):
             contrastive_group_ids=worlds[rows],
         )
         total = task + config.workspace_loss_weight * stats["loss"]
+    if mismatch is not None:
+        off_hidden, off_mask, _, _, _ = mismatch.batch(indices)
+        off_memory = mismatch.memory_batch(indices)
+        if off_memory is None:
+            off_delta = route(off_hidden, off_mask)[0]
+        else:
+            off_delta = route(off_hidden, off_mask, *off_memory)[0]
+        penalty = off_delta.square().mean()
+        total = total + config.mismatch_weight * penalty
     named = trainable(route, loss if config.workspace_loss_weight else None)
     optimizer.zero_grad(set_to_none=True)
     total.backward()
@@ -279,6 +302,8 @@ def update(route, loss, optimizer, bank, config, step):
     }
     if stats is not None:
         receipt["workspace_loss"] = float(stats["loss"].detach())
+    if mismatch is not None:
+        receipt["mismatch_penalty"] = float(penalty.detach())
     return receipt
 
 

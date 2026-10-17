@@ -608,3 +608,160 @@ def test_cut_prefix_route_packs_rows_and_reads_memory_at_a_deeper_cut():
     assert not torch.allclose(moved[0, 8], logits[0, 8])
     with pytest.raises(ValueError, match="Cut"):
         composition.CutPrefixRoute(host, 3)
+
+
+# ---- content gating (V20 A4): an engine option on the trainer -------------------------
+
+
+def gating_config(weight, **changes):
+    values = dict(
+        seed=3,
+        updates=3,
+        batch_size=4,
+        learning_rate=1e-3,
+        weight_decay=0.01,
+        max_grad_norm=1.0,
+        workspace_loss_weight=0.0,
+        loss_tokens_per_row=0,
+        loss_tokens_per_batch=0,
+        spectral_every=1,
+        mismatch_weight=weight,
+    )
+    values.update(changes)
+    return training.TrainConfig(**values)
+
+
+def gating_banks(deferred):
+    states, offsets, base, targets, worlds = d1_features(rows=16)
+    other = d1_features(rows=16, seed=22)
+    if not deferred:
+        return training.FeatureBank(states, offsets, base, targets, worlds), training.FeatureBank(
+            *other
+        )
+    bank = training.FeatureBank(
+        states, offsets, base, targets, worlds, memory=(other[0], other[1], torch.arange(16))
+    )
+    return bank, bank.with_memory((other[0], other[1], torch.arange(16).roll(5)))
+
+
+@pytest.mark.parametrize("deferred", [False, True])
+def test_content_gating_adds_the_mismatch_residual_penalty(deferred):
+    """The option is exactly cross-entropy plus the weight times the mean square of the
+    route's residual on the same batch rows read with the mismatch memory."""
+    bank, mismatch = gating_banks(deferred)
+    config = gating_config(0.3)
+    names = ["adapter.up.weight", "gate.weight", "lattice.attention.out.weight"]
+    engine_route, hand_route, plain_route = (d1_route(composition, 2, seed=3) for _ in range(3))
+    open_paths(engine_route, hand_route, plain_route, names=names)
+    optimizers = [
+        training.optimizer_for(training.trainable(r), config.learning_rate, config.weight_decay)
+        for r in (engine_route, hand_route, plain_route)
+    ]
+    receipts = [
+        training.update(engine_route, None, optimizers[0], bank, config, step, mismatch)
+        for step in (1, 2, 3)
+    ]
+    for step in (1, 2, 3):
+        hand_route.train()
+        torch.manual_seed(training.component_seed(config.seed, f"step{step}"))
+        indices = training.batch_indices(config, len(bank), step)
+
+        def residual(source):
+            hidden, mask, _, _, _ = source.batch(indices)
+            memory = source.memory_batch(indices)
+            return hand_route(hidden, mask, *(memory or ()))[0]
+
+        _, _, base, targets, _ = bank.batch(indices)
+        task = torch.nn.functional.cross_entropy(base + residual(bank), targets)
+        penalty = residual(mismatch).square().mean()
+        total = task + 0.3 * penalty
+        optimizers[1].zero_grad(set_to_none=True)
+        total.backward()
+        torch.nn.utils.clip_grad_norm_(list(hand_route.parameters()), config.max_grad_norm)
+        optimizers[1].step()
+        assert receipts[step - 1]["mismatch_penalty"] == float(penalty.detach())
+        assert receipts[step - 1]["total_loss"] == float(total.detach())
+        assert receipts[step - 1]["task_loss"] == float(task.detach())
+    named = [training.trainable(r) for r in (engine_route, hand_route, plain_route)]
+    assert training.fingerprint(named[0]) == training.fingerprint(named[1])
+    plain = gating_config(0.0)
+    plain_receipts = [
+        training.update(plain_route, None, optimizers[2], bank, plain, step) for step in (1, 2, 3)
+    ]
+    assert "mismatch_penalty" not in plain_receipts[0]
+    assert training.fingerprint(named[2]) != training.fingerprint(named[0])
+
+
+def test_content_gating_checks_its_options():
+    bank, mismatch = gating_banks(False)
+    route = d1_route(composition, 1)
+    optimizer = training.optimizer_for(training.trainable(route), 1e-3, 0.0)
+    for config, other in (
+        (gating_config(0.0), mismatch),
+        (gating_config(0.3), None),
+        (gating_config(-0.3), mismatch),
+    ):
+        with pytest.raises(ValueError, match="mismatch_weight"):
+            training.update(route, None, optimizer, bank, config, 1, other)
+    short = training.FeatureBank(*d1_features(rows=12, seed=22))
+    with pytest.raises(ValueError, match="row for row"):
+        training.update(route, None, optimizer, bank, gating_config(0.3), 1, short)
+
+
+def test_content_gating_quiets_the_route_on_memory_without_the_answer():
+    """Planted as the deferred-memory test: the memory states the answer. A memory that
+    does not (a larger isotropic one) still moves an ungated route's answers; with gating
+    on such memories the route moves them far less and still reads the real memory."""
+    generator = torch.Generator().manual_seed(17)
+    pairs, hidden = 48, 16
+    rows = 2 * pairs
+    first = torch.randint(0, 2, (pairs,), generator=generator)
+    labels = torch.stack([first, 1 - first], 1).flatten()
+    direction = torch.randn(hidden, generator=generator)
+    queries = torch.randn(pairs * 3, hidden, generator=generator).to(torch.bfloat16)
+    query_offsets, query_segments = torch.arange(0, pairs * 3 + 1, 3), torch.arange(rows) // 2
+    memories = 0.5 * torch.randn(rows * 2, hidden, generator=generator)
+    memories[1::2] += 2.0 * (2 * labels[:, None] - 1) * direction
+    blank = 2.0 * torch.randn(rows * 2, hidden, generator=generator)
+    states = torch.cat([memories, blank]).to(torch.bfloat16)
+    offsets = torch.arange(0, rows * 4 + 1, 2)
+    base, worlds = torch.zeros(rows, 2), torch.arange(rows) // 2
+
+    def bank(n, memory_offset=0):
+        rows_bank = training.FeatureBank(
+            queries, query_offsets, base[:n], labels[:n], worlds[:n], segments=query_segments[:n]
+        )
+        return rows_bank.with_memory((states, offsets, torch.arange(n) + memory_offset))
+
+    measured = {}
+    for weight in (0.0, 1.0):
+        route = composition.DeliberationRoute(
+            hidden, 43, (6, 7), steps=1, seed=2, workspace_dim=8, heads=2, rank=4, dropout=0.0
+        )
+        config = training.TrainConfig(
+            seed=2,
+            updates=240,
+            batch_size=16,
+            learning_rate=3e-3,
+            weight_decay=0.0,
+            max_grad_norm=1.0,
+            workspace_loss_weight=0.0,
+            loss_tokens_per_row=0,
+            loss_tokens_per_batch=0,
+            spectral_every=1,
+            mismatch_weight=weight,
+        )
+        optimizer = training.optimizer_for(training.trainable(route), 3e-3, 0.0)
+        train = bank(64)  # pairs 0-31; pairs 32-47 are never trained on
+        mismatch = bank(64, memory_offset=rows) if weight else None
+        for step in range(1, config.updates + 1):
+            training.update(route, None, optimizer, train, config, step, mismatch)
+        read = training.evaluate(route, bank(rows))[64:]
+        unread = training.evaluate(route, bank(rows, memory_offset=rows))[64:]
+        measured[weight] = (
+            float((read.argmax(1) == labels[64:]).float().mean()),
+            float((unread[:, 1] - unread[:, 0]).abs().mean()),
+        )
+    (plain_accuracy, plain_moved), (gated_accuracy, gated_moved) = measured[0.0], measured[1.0]
+    assert plain_accuracy >= 0.9 and gated_accuracy >= 0.9, measured
+    assert gated_moved < 0.5 * plain_moved, measured
