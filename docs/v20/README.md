@@ -29,3 +29,7 @@ Two versions share this folder (Ryō, 2026-10-16).
     fallback: the [content-gated cut-4 route](A4_GATED_ROUTE.md), trained to
     leave answers alone when the memory does not answer the question
     ([development](../../provenance/pilots/v20_a4_gated_route_20261017/DEV_CHECKS.md)).
+    [Results](../../provenance/pilots/v20_a4_gated_route_20261017/README.md):
+    `NOT_ESTABLISHED` by the all-seeds rule (seeds 2 and 3 content, seed 1
+    scored after a late training disturbance). Gating closed the random-memory
+    weak point in every seed.

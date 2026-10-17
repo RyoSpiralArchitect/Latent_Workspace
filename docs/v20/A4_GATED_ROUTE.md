@@ -1,6 +1,14 @@
 # V20 A4: the content-gated cut-4 route
 
-2026-10-18. **Frozen before launch.** Ryō's fallback after A3: take "the
+2026-10-18. **RESULT: `NOT_ESTABLISHED`** by the all-seeds rule. Seeds 2 and
+3 reach `CONTENT_REACHES_ANSWERS` with margins of 51 and 50 over random
+memory. Seed 1 passes the flip thresholds (30 against 4) but not the world sign
+test (p = 0.046); it was scored right after a late training disturbance, at
+accuracy 0.68. Gating closed the ungated route's weak point in every seed:
+random-pair flips fell from 24, 32 and 46 to 4, and memory that is not about
+the question barely moves answers. See the
+[results](../../provenance/pilots/v20_a4_gated_route_20261017/README.md).
+Frozen before launch as follows. Ryō's fallback after A3: take "the
 workspace works better in the lower layers" as the knowledge, and refine the
 low-layer version the [depth ladder](A2_DEPTH_LADDER.md) supports. The old
 **FAIL / winner:none / non_regression NOT_ESTABLISHED** is unchanged.
