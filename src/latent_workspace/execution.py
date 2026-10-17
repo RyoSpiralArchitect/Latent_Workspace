@@ -1,7 +1,9 @@
 """Sealed execution: receipts, qualification and the role/dispatch skeleton.
 
 Every sealed run follows one skeleton: a pre-import source check against a
-committed seal, tiny CPU and CUDA qualification, roles run as fresh processes in
+committed seal, tiny CPU and CUDA qualification (CPU alone when the plan names only
+``cpu`` in ``qualification_devices``, for a run whose roles never use a GPU), roles
+run as fresh processes in
 a fixed order that stop at the first failure, STARTED/FINISHED receipts with
 file manifests, and no retry. A runner supplies only its plan, its roles and the
 status each role must reach. Endpoints are computed inside a role, so the
@@ -104,6 +106,13 @@ def offline_environment():
     os.environ.update(OFFLINE)
 
 
+def qualification_devices(plan):
+    """The devices a plan qualifies on: CPU and CUDA, or CPU alone for a CPU-only run."""
+    devices = tuple(plan.get("qualification_devices", ("cpu", "cuda")))
+    require(devices in (("cpu",), ("cpu", "cuda")), "Qualification devices")
+    return devices
+
+
 class SealedRun:
     """One sealed run: ``qualify``, ``run-role`` and ``dispatch`` over fixed roles.
 
@@ -134,6 +143,7 @@ class SealedRun:
 
     def qualify(self, args):
         source, core, seal, check, plan = self.preflight(args)
+        require(args.device in qualification_devices(plan), f"{args.device} is not qualified")
         require(not args.output.resolve().is_relative_to(self.root), "Output outside source")
         args.output.mkdir(parents=True, exist_ok=False)
         write_new(
@@ -213,8 +223,9 @@ class SealedRun:
 
     def qualification(self, path, seal, plan):
         result = {}
-        for device in ("cpu", "cuda"):
+        for device in qualification_devices(plan):
             bundle = path / device
+            require((bundle / "FINISHED.json").is_file(), f"{device} qualification missing")
             start, end = read(bundle / "STARTED.json"), read(bundle / "FINISHED.json")
             files = manifest(bundle)
             files.pop("FINISHED.json")
@@ -228,7 +239,7 @@ class SealedRun:
                 end["status"] == self.tiny_pass
                 and end["pytest_exit_code"] == 0
                 and end["counts"] == counts,
-                "Both CPU and CUDA qualification must pass",
+                "Every qualification device must pass",
             )
             require(all(end[k] == v for k, v in CEILING.items()), "Qualification ceiling")
             result[device] = manifest(bundle)
