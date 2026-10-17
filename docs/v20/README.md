@@ -37,3 +37,7 @@ Two versions share this folder (Ryō, 2026-10-16).
     [stable end of training](A5_STABLE_ROUTE.md), a learning rate that decays
     over the second half
     ([development](../../provenance/pilots/v20_a5_stable_route_20261018/DEV_CHECKS.md)).
+    [Results](../../provenance/pilots/v20_a5_stable_route_20261018/README.md):
+    `NOT_ESTABLISHED` by the all-seeds rule. The three seeds are now nearly
+    identical (58–60 flips against 4), and seed 3 misses the world sign test
+    by two worlds (80 of 128, needing 82).

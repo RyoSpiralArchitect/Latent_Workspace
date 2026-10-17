@@ -1,6 +1,15 @@
 # V20 A5: the gated cut-4 route with a stable end of training
 
-2026-10-18. **Frozen before launch.** After A4, Ryō asked to merge and keep
+2026-10-18. **RESULT (attempt 02): `NOT_ESTABLISHED`** by the all-seeds rule.
+Seeds 1 and 2 reach `CONTENT_REACHES_ANSWERS`. Seed 3 has the most flips (60
+against 4) and the best accuracy, but 80 of 128 worlds point the donor's way
+(p = 0.003; the test needs 82). The stable end made the three seeds nearly
+identical (accuracy 0.84–0.85, 58–60 flips against 4), so the shortfall is the
+world sign test at its threshold, not training. The mean of the three seeds
+meets the endpoint (descriptive). The β candidate is not eligible by the rule
+fixed below. See the
+[results](../../provenance/pilots/v20_a5_stable_route_20261018/README.md).
+Frozen before launch as follows. After A4, Ryō asked to merge and keep
 moving toward the LTWS β. The old **FAIL / winner:none / non_regression
 NOT_ESTABLISHED** is unchanged.
 
