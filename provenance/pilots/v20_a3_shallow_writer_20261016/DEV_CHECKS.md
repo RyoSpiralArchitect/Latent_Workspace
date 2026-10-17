@@ -120,3 +120,30 @@ them in one pass.
   distance of the teacher's, yet its answers did not follow (KL stayed near
   0.5, accuracy at chance). The part of the state that carries the answer is
   what the slots fail to supply.
+
+## 7. The host learning to read the compact memory (LoRA, gisting-style) ([dev_writer5.py](dev/dev_writer5.py))
+
+- *Setup:* as section 6 (seed 2026101741, 4,000 autoencoding steps), with
+  LoRA (rank 16, 13.6M parameters) on attention q/k/v/o of all 32 host layers.
+  LoRA is trained together with the writer, at learning rate 2e-4. The teacher
+  is the host with LoRA off reading the text. Loss: KL plus state cosine plus
+  the answer cross-entropy, 3,000 steps of batch 8.
+- *Training:* the warm start reached 0.019. The student's states first came
+  within 0.04 cosine distance of the teacher's (step 1,000), then
+  destabilized (0.97 at step 1,500, 0.34 at step 3,000). KL stayed at
+  0.4–0.6.
+- *Held-out:* 0.50 / 0.48, with 4 flips against 4 random and worlds 38 / 26
+  (p = 0.08). The teacher scored 0.77 / 0.79.
+
+## Where this leaves option 3 (2026-10-17)
+
+A compact memory at the host's lowest layer can be written. Eight soft tokens
+carry an unseen world's facts well enough for the frozen host to reproduce
+them (sections 4–5). It cannot be read for answers by any means tried here:
+the frozen host, D1's route, distillation, or a LoRA-adapted host trained
+with it. One setting of each was tried, so this is not proof that it cannot
+be done; ICAE and gisting used far more data and training. Ryō's fallback
+(2026-10-17) applies: take "the workspace works better in the lower layers"
+as the knowledge, and refine the low-layer version the depth ladder already
+supports. That is the cut-4 latent memory with v4's route, where two seeds
+of three met lane A's endpoint.
