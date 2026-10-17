@@ -1,6 +1,11 @@
 # Retirement of the feature files of finished V19.5/V20 runs
 
-2026-10-17. **PROPOSED: not yet run.** Ryō's standing request (2026-10-16):
+2026-10-17. **TERMINAL: exactly these 16 files retired, by Ryō, at 15:28:36Z.**
+All 16 files matched the inventory before removal; 27,015,893,072 bytes
+freed, available space 46,323,466,240 → 73,339,457,536 bytes
+([receipt](DELETE_FINISHED.json), [postflight](POSTFLIGHT.json): all 16
+absent, the kept cut-4 files rehashed and equal, every run's receipts
+present). Ryō's standing request (2026-10-16):
 "容量が逼迫していたら、途中のものでもう使わないのは台帳に記録して消してゆこう".
 Ryō approved these files on 2026-10-17 ("うん、これでやろう"). The bounded
 interpretation: retire the 16 files below and nothing else. It is not a
@@ -10,9 +15,9 @@ retention policy and does not cover any other file.
 
 The sealed A4 run (the content-gated cut-4 route) reuses the depth ladder's
 cut-4 features and extracts new rows. The resource guard of every run keeps
-50 GiB free on Furnace's filesystem. Before this retirement, 45.2 GiB were
-available (48,568,233,984 bytes), which is below the guard's floor. Retiring
-these files frees 25.2 GiB, which leaves about 70.4 GiB.
+50 GiB free on Furnace's filesystem. When the inventory was made, 45.2 GiB
+were available (48,568,233,984 bytes), which is below the guard's floor; at
+removal, 43.1 GiB. Retiring these files freed 25.2 GiB and left 68.3 GiB.
 
 ## Exact scope
 
