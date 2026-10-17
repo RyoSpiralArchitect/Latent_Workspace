@@ -1,0 +1,97 @@
+{
+ "schema": "ltws-package-v1",
+ "name": "mistral-7b-instruct-v0.3-LTWS β",
+ "status": "PACKAGING REHEARSAL. Not a release candidate and not uploaded; whether and what to release is Ryō's decision under docs/v18/HF_RELEASE.md.",
+ "host": {
+  "repository": "mistralai/Mistral-7B-Instruct-v0.3",
+  "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+  "original_base_sha256": "9db998af86c8105f0a2d774c10f777e190f86e54473b6b756bb51b225064a189",
+  "layers": 32,
+  "dtype": "bfloat16",
+  "frozen": true,
+  "weights": "not included: load the pinned upstream revision, unchanged"
+ },
+ "memory": {
+  "cut": 4,
+  "text": "canonical fact lines (engine package.canonical_facts), tokenized without special tokens",
+  "encoding": "the memory alone through the host's layers below the cut; its states enter before the question's at the cut and the host's remaining layers continue"
+ },
+ "candidates": [
+  " no",
+  " yes"
+ ],
+ "candidate_ids": [
+  1476,
+  5849
+ ],
+ "prompt": {
+  "instruction": "Use the world facts to decide whether the ranking statement is true. If it is false, answer no; if it is true, answer yes. Output exactly one lowercase word: no or yes.",
+  "query_suffix": " Answer:",
+  "template": "the tokenizer's native chat template, one user turn, generation prompt",
+  "source": "V15 query-only rendering with the answer cue (scripts/v15_cue_contract.py)"
+ },
+ "route": {
+  "hidden_dim": 4096,
+  "vocab_size": 32768,
+  "steps": 4,
+  "workspace_dim": 256,
+  "attention_heads": 8,
+  "ff_multiplier": 2.0,
+  "dropout": 0.05,
+  "rank": 32,
+  "gate_init_bias": -2.0
+ },
+ "training": {
+  "run": "V20 A5 attempt 02 (source 14ddacf, plan 1b5ce8e9e6c9a818fc39222e9a9b80f3e7c0ab11e9add95dcf67c0f247a38d77)",
+  "data": "train split, 256 world pairs (data/v10/functional_train.jsonl)",
+  "gating": 0.3,
+  "schedule": "constant 3e-4 to update 256, then linear decay: lr(step) = 3e-4 x (513 - step) / 257 for step > 256, reaching 1.2e-6 at update 512 (engine training.learning_rate_at)"
+ },
+ "evidence": {
+  "lane_a": {
+   "beta_candidate_eligible": false,
+   "beta_candidate_seed": 2026101711,
+   "ensemble": "CONTENT_REACHES_ANSWERS",
+   "gated": "NOT_ESTABLISHED",
+   "gated_per_seed": [
+    "NOT_ESTABLISHED",
+    "CONTENT_REACHES_ANSWERS",
+    "CONTENT_REACHES_ANSWERS"
+   ],
+   "host": "NOT_ESTABLISHED",
+   "stable": "NOT_ESTABLISHED",
+   "stable_per_seed": [
+    "CONTENT_REACHES_ANSWERS",
+    "CONTENT_REACHES_ANSWERS",
+    "NOT_ESTABLISHED"
+   ],
+   "ungated": "DIRECTIONAL_ONLY",
+   "ungated_per_seed": [
+    "CONTENT_REACHES_ANSWERS",
+    "CONTENT_REACHES_ANSWERS",
+    "DIRECTIONAL_ONLY"
+   ]
+  },
+  "records": "provenance/pilots/v20_a5_stable_route_20261018/README.md"
+ },
+ "members": [
+  {
+   "name": "s1",
+   "file": "route_s1.safetensors",
+   "fingerprint": "1f1647596b6b12a86b50b132577d96666d827b83ee364f3712d6e39a373eb0a9",
+   "source": "V20 A5 stable_s1, seed 2026101711, update 512"
+  },
+  {
+   "name": "s2",
+   "file": "route_s2.safetensors",
+   "fingerprint": "4ced0b029f0d405a66ecc193db14e4771f888f66d01caafd589043d1a6d2f35a",
+   "source": "V20 A5 stable_s2, seed 2026101712, update 512"
+  },
+  {
+   "name": "s3",
+   "file": "route_s3.safetensors",
+   "fingerprint": "949a1e281a9002761e71db381a20809152922229d7beac5a2e88496be4f904bd",
+   "source": "V20 A5 stable_s3, seed 2026101713, update 512"
+  }
+ ]
+}

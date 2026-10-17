@@ -41,3 +41,6 @@ Two versions share this folder (Ryō, 2026-10-16).
     `NOT_ESTABLISHED` by the all-seeds rule. The three seeds are now nearly
     identical (58–60 flips against 4), and seed 3 misses the world sign test
     by two worlds (80 of 128, needing 82).
+  - **The β package** (rehearsal; Ryō, 2026-10-18): [the package](BETA_PACKAGE.md)
+    of A5's routes, checked against the sealed scores, and a
+    [model card draft](BETA_MODEL_CARD_DRAFT.md). Nothing is uploaded.
