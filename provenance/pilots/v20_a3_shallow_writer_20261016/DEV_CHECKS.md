@@ -96,3 +96,27 @@ host alone scored 0.48 / 0.49 (7 flips against 29 random). D1's route, fitted
 on the host's final states, scored 0.50 / 0.50 (3 against 20). The host can
 unroll the facts from the slots, but cannot read "is A ranked above B?" from
 them in one pass.
+
+## 6. Context distillation from the host reading the text ([dev_writer4.py](dev/dev_writer4.py))
+
+- *Teacher:* the frozen host reading the fact text before the question. This
+  is the depth ladder's cut 0, which met lane A's endpoint.
+- *Student:* the same host reading the writer's 8 soft tokens.
+- *Training:* after an autoencoding warm start, the writer is trained so
+  that the student matches the teacher. The loss is KL on the answer plus
+  cosine distance of the final states at the question positions, on 35,792
+  question rows from train worlds 0–191 and the generated worlds (no labels
+  needed). 3,000 steps of batch 8.
+
+| Run (seed) | Warm-start reproduction loss | Distillation, final | Student held-out | Teacher held-out |
+| --- | --- | --- | --- | --- |
+| 2026101751, 2,000 autoencoding steps | stuck at 1.08–1.13 | KL 0.45, cosine distance 0.55 | 0.50 / 0.50, 0 flips / 23 random | 0.77 / 0.79, 32 flips |
+| 2026101741, 4,000 autoencoding steps | 0.184 → 0.019 | KL 0.54, cosine distance **0.09** | 0.48 / 0.51, 7 flips / 30 random | 0.77 / 0.79, 32 flips |
+
+- **Seed sensitivity:** in one seed of two the autoencoding warm start did
+  not take off.
+- **States matched, answers did not:** from a good warm start, the
+  student's states at the question positions came within 0.09 cosine
+  distance of the teacher's, yet its answers did not follow (KL stayed near
+  0.5, accuracy at chance). The part of the state that carries the answer is
+  what the slots fail to supply.
