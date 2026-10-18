@@ -765,3 +765,49 @@ def test_content_gating_quiets_the_route_on_memory_without_the_answer():
     (plain_accuracy, plain_moved), (gated_accuracy, gated_moved) = measured[0.0], measured[1.0]
     assert plain_accuracy >= 0.9 and gated_accuracy >= 0.9, measured
     assert gated_moved < 0.5 * plain_moved, measured
+
+
+# ---- a stable end of training (V20 A5): an engine option on the trainer --------------
+
+
+def test_learning_rate_decays_linearly_after_decay_from():
+    config = gating_config(0.0, updates=512, learning_rate=3e-4, decay_from=256)
+    assert training.learning_rate_at(config, 1) == training.learning_rate_at(config, 256) == 3e-4
+    assert training.learning_rate_at(config, 257) == 3e-4 * 256 / 257
+    assert training.learning_rate_at(config, 512) == 3e-4 / 257
+    constant = gating_config(0.0, updates=512, learning_rate=3e-4)
+    assert {training.learning_rate_at(constant, s) for s in (1, 300, 512)} == {3e-4}
+
+
+@pytest.mark.parametrize("weight", [0.0, 0.3])
+def test_decay_sets_each_update_learning_rate(weight):
+    """With ``decay_from`` the update is the same update run at ``learning_rate_at``."""
+    bank, mismatch = gating_banks(False)
+    config = gating_config(weight, updates=6, decay_from=2)
+    routes = [d1_route(composition, 2, seed=3) for _ in range(2)]
+    open_paths(*routes, names=["adapter.up.weight", "gate.weight"])
+    optimizers = [
+        training.optimizer_for(training.trainable(r), config.learning_rate, config.weight_decay)
+        for r in routes
+    ]
+    plain = gating_config(weight, updates=6)
+    other = mismatch if weight else None
+    for step in range(1, 7):
+        engine = training.update(routes[0], None, optimizers[0], bank, config, step, other)
+        for group in optimizers[1].param_groups:
+            group["lr"] = training.learning_rate_at(config, step)
+        hand = training.update(routes[1], None, optimizers[1], bank, plain, step, other)
+        assert engine == hand
+    fingerprints = [training.fingerprint(training.trainable(r)) for r in routes]
+    assert fingerprints[0] == fingerprints[1]
+    assert [g["lr"] for g in optimizers[0].param_groups] == [config.learning_rate / 5] * 2
+    with pytest.raises(ValueError, match="decay_from"):
+        training.update(
+            routes[0],
+            None,
+            optimizers[0],
+            bank,
+            gating_config(weight, updates=6, decay_from=6),
+            1,
+            other,
+        )

@@ -30,11 +30,11 @@ class StubRun(ex.SealedRun):
         return source, stub_core(), SEAL, {"checked": True}, PLAN
 
 
-def qualification_bundles(root, tiny_pass="TINY", tests=2):
-    for device in ("cpu", "cuda"):
+def qualification_bundles(root, tiny_pass="TINY", tests=2, plan=PLAN, devices=("cpu", "cuda")):
+    for device in devices:
         bundle = root / device
         bundle.mkdir(parents=True)
-        ex.write_new(bundle / "STARTED.json", dict(seal=SEAL, plan=PLAN, device=device))
+        ex.write_new(bundle / "STARTED.json", dict(seal=SEAL, plan=plan, device=device))
         ex.write_new(
             bundle / "FINISHED.json",
             dict(
@@ -83,6 +83,30 @@ def test_qualification_binds_both_devices_and_rejects_tampering(tmp_path):
     (bundles / "cpu" / "extra.txt").write_text("tamper")
     with pytest.raises(ValueError, match="Qualification artifact bytes"):
         run.qualification(bundles, SEAL, PLAN)
+
+
+def test_a_cpu_only_plan_qualifies_on_cpu_alone(tmp_path):
+    """A run whose roles never use a GPU may name only ``cpu``; the default needs both."""
+    cpu_only = dict(PLAN, qualification_devices=["cpu"])
+
+    class CpuRun(StubRun):
+        def preflight(self, args):
+            return (*super().preflight(args)[:4], cpu_only)
+
+    run = runner(tmp_path)
+    run.__class__ = CpuRun
+    bundles = qualification_bundles(tmp_path / "qualification", plan=cpu_only, devices=("cpu",))
+    assert set(run.qualification(bundles, SEAL, cpu_only)) == {"cpu"}
+    cpu_alone = qualification_bundles(tmp_path / "default", devices=("cpu",))
+    with pytest.raises(ValueError, match="cuda qualification missing"):
+        run.qualification(cpu_alone, SEAL, PLAN)
+    args = Namespace(seal=tmp_path / "SEAL.json", output=tmp_path / "q_cuda", device="cuda")
+    with pytest.raises(ValueError, match="cuda is not qualified"):
+        run.qualify(args)
+    assert not args.output.exists()
+    for devices in (["cuda"], ["cpu", "gpu"], []):
+        with pytest.raises(ValueError, match="Qualification devices"):
+            ex.qualification_devices(dict(PLAN, qualification_devices=devices))
 
 
 def role_args(tmp_path, role):
