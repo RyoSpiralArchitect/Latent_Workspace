@@ -2,7 +2,7 @@
 
 2026-10-18. **PUBLIC:
 [RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)
-(revision `d6a60790`, the card's third revision).** It was uploaded privately
+(revision `58f5203d`, the card's fourth revision).** It was uploaded privately
 and verified from fresh downloads, then made public on Ryō's request. After A5, Ryō chose to start packaging the β alongside the
 research ("2でいこう"). This builds and checks the package that a release
 would ship, from V20 A5's sealed routes. Whether to release, and what, stays
@@ -164,4 +164,6 @@ hf記述を整えて、元Repoにも辿り着けるようにもしながら"; th
 - **No adapter tuning:** the routes are not tuned further as an adapter, and
   adapter performance is not a target. Later experiments serve the full
   fine-tune.
-- **On the Hub:** the card states that the next release is not an adapter.
+- **On the Hub:** the card states that the next release is not an adapter
+  (rc6, Hub revision `58f5203d`, verified from a fresh download:
+  [record](../../provenance/beta/ltws_beta_hub_private_20261018/README.md)).

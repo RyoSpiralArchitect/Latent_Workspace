@@ -2,10 +2,12 @@
 
 2026-10-18. **PUBLIC:
 [RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)
-at revision `d6a60790`, the card's third revision.** It was first uploaded
+at revision `58f5203d`, the card's fourth revision.** It was first uploaded
 privately and verified from a fresh download, twice, then made public at
-revision `2a55dc3e` on Ryō's request. The third revision was verified from a
-fresh download too ([below](#third-revision-free-generation-and-llm-judges)).
+revision `2a55dc3e` on Ryō's request. The third and fourth revisions were
+verified from fresh downloads too
+([third](#third-revision-free-generation-and-llm-judges),
+[fourth](#fourth-revision-v10-is-planned-as-a-full-fine-tune)).
 
 ## Ryō's decisions (2026-10-18)
 
@@ -133,3 +135,30 @@ to lead readers to the source repository ("まずβのhf記述を整えて、元
 - **Checked without a token, from the Mac:** the model page answers HTTP 200;
   the API reports revision `d6a60790`, public, 27 files; the card served from
   `main` equals [the repository's](../../../release/ltws_beta/README.md).
+
+## Fourth revision: v1.0 is planned as a full fine-tune
+
+Ryō's direction: the β is an adapter only to learn what a full fine-tune needs,
+and the card should say that the next release is not an adapter ("hf repoのβの
+記述にも次はadapterではないことも明記しておこう"). See
+[BETA_PACKAGE.md](../../../docs/v20/BETA_PACKAGE.md).
+
+- **rc6:** built at `02b2d3c` (manifest `2ea022c2…9693`) and checked
+  ([record](../ltws_beta_release_candidate_20261018/README.md)). Only the card
+  changed, with the descriptor and `NOTICE` naming the new source commit.
+- **Before the upload:** #33 was merged (`main` at `fd26ea7`).
+- **Upload:** Hub commit `58f5203da9d2c7e365daf1626e629f160de225a1`
+  ([output](download4/upload.out), [timeline](download4/UPLOAD_TIMELINE.log)),
+  from the same logged-in CLI. No LFS file was uploaded.
+- **On the Hub** ([state](download4/HUB_STATE.json)): public, 27 files; the
+  routes' LFS SHA-256 values equal rc6's manifest.
+- **Checked from a fresh download** into `tmp/ltws-beta-hub-download4-20261018`
+  ([script](download4/run_hub4.sh), [timeline](download4/TIMELINE.log)):
+  - `MANIFEST.json` and the card are byte-identical to rc6's;
+  - the full user-path check passed with the download's own loader
+    ([output](download4/check_release.out)), with the same numbers;
+  - `example.py` printed the card's output, and the folder still loaded
+    afterwards with no cache files written.
+- **Without a token:** the page answers HTTP 200; the API reports revision
+  `58f5203d`, public, 27 files; the card served from `main` equals
+  [the repository's](../../../release/ltws_beta/README.md).
