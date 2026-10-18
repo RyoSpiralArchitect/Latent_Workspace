@@ -65,6 +65,22 @@ result["answer"], result["mean"]  # "yes" / "no", and the [no, yes] logits
 - **Questions:** they end with ` Answer:`, as in training ("Is X ranked above
   Y? Answer:" or "Does X outrank Y? Answer:").
 
+Output of `example.py` (checked run, CUDA). The third question is answered
+wrongly under both memories: the right answer is "no", from Aster > Joren >
+Cyra.
+
+```text
+Is Aster ranked above Joren? Answer:     memory=facts    answer=yes (yes - no = +1.62)
+Is Aster ranked above Joren? Answer:     memory=swapped  answer=no  (yes - no = -0.69)
+Is Aster ranked above Joren? Answer:     memory=none     answer=yes (yes - no = +2.73)
+Is Luma ranked above Doran? Answer:      memory=facts    answer=yes (yes - no = +5.44)
+Is Luma ranked above Doran? Answer:      memory=swapped  answer=yes (yes - no = +4.01)
+Is Luma ranked above Doran? Answer:      memory=none     answer=yes (yes - no = +1.97)
+Does Cyra outrank Aster? Answer:         memory=facts    answer=yes (yes - no = +2.91)
+Does Cyra outrank Aster? Answer:         memory=swapped  answer=yes (yes - no = +1.14)
+Does Cyra outrank Aster? Answer:         memory=none     answer=no  (yes - no = -1.46)
+```
+
 ## Evidence
 
 All figures come from sealed, offline-verified runs on held-out worlds: 128
@@ -89,6 +105,21 @@ world pairs, 1,024 questions, 256 of them affected by the paired fact change.
   moves the answer's logit gap by 0.01–0.09. The right memory moves it by
   4.2–4.3.
 
+Accuracy by kind of question (held-out, the original and the swapped facts):
+
+| Questions | LTWS β (mean) | Mistral, facts as text | Mistral, latent memory alone | No memory |
+| --- | --- | --- | --- | --- |
+| the adjacent pair the swap reverses (2 per world) | 0.55 / 0.57 | 0.58 | 0.53 | 0.52 |
+| ... answered right under both versions (of 256) | 65 | 55 | 44 | — |
+| other pairs, "Does X outrank Y?" (1–4 steps apart) | 0.93 | 0.77 | 0.59 | 0.53 |
+| the top and bottom of the ranking ("Is X ranked above Y?") | 1.00 | 0.89 | 0.65 | 0.55 |
+
+Most of the β's accuracy comes from relations the swap leaves unchanged. It
+reads them from the memory: without memory they are near chance. **The pair
+the swap reverses is the hard case.** The β answers both versions right for
+65 of 256 such questions, against 55 for Mistral reading the same facts as
+text, and 4 under random memory.
+
 The package was checked against the sealed runs: in a fresh environment it
 reproduces their routes and scores, and their answers end to end from text.
 Records:
@@ -105,6 +136,9 @@ Records:
     each);
   - the two question forms above, in English;
   - yes/no answers. Nothing else is evaluated.
+- **Weak on the fine distinction:** when two fact sets differ only in one
+  adjacent pair, it answers that pair right under both about one time in four
+  (see the table above).
 - **Not provided:** general question answering, text generation through the
   routes, or any claim about reasoning, intelligence, safety or quality
   elsewhere.

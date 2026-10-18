@@ -1,5 +1,9 @@
 # mistral-7b-instruct-v0.3-LTWS β
 
+**SUPERSEDED (2026-10-18) by the release candidate's card,
+[release/ltws_beta/README.md](../../release/ltws_beta/README.md)**, after Ryō chose
+the mean of the three routes and Apache-2.0. Kept as the rehearsal's draft.
+
 **UNRELEASED MODEL-CARD DRAFT (packaging rehearsal, 2026-10-18).** Nothing has
 been uploaded and no Hub repository exists. Hub metadata and model-index are
 intentionally absent until Ryō decides on a release, and the namespace and
