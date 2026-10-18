@@ -1,7 +1,9 @@
 # The LTWS β package
 
-2026-10-18. **Uploaded privately to `RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta`
-and verified from a fresh download; public only on Ryō's final OK.** After A5, Ryō chose to start packaging the β alongside the
+2026-10-18. **PUBLIC:
+[RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)
+(revision `2a55dc3e`).** It was uploaded privately and verified from fresh
+downloads, then made public on Ryō's request. After A5, Ryō chose to start packaging the β alongside the
 research ("2でいこう"). This builds and checks the package that a release
 would ship, from V20 A5's sealed routes. Whether to release, and what, stays
 Ryō's decision under the [release checklist](../v18/HF_RELEASE.md).
@@ -131,4 +133,11 @@ Results are recorded in the
 repository (Hub commit `eb370d71`), and passed the full check again from a
 fresh download ([record](../../provenance/beta/ltws_beta_hub_private_20261018/README.md)).
 
-**Remaining:** Ryō's final OK to make the repository public.
+**Then (Ryō, "さらに技術詳細や意図に踏み込んで初見にわかりやすいふうに書き換えて …
+open repoにしてGitHub Repoからもリンクを貼ってみよう"):**
+- **Card:** rewritten for first-time readers.
+- **Benchmarks:** simple ones against the base model were added
+  ([record](../../provenance/beta/ltws_beta_benchmarks_20261018/README.md)).
+- **Release:** the second revision (rc4) was checked from a fresh download, and
+  the repository was made public.
+- **Links:** the GitHub README links the model.
