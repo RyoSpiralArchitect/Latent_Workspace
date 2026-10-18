@@ -57,7 +57,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--rehearsal", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--copyright-holder", default=UNRESOLVED)
+    parser.add_argument("--copyright-holder", required=True)
+    parser.add_argument("--repository", required=True, help="the Hub repository ID")
     args = parser.parse_args()
     commit = clean_commit()
     descriptor, routes = package.load(args.rehearsal)
@@ -78,10 +79,9 @@ def main():
     names = [m["name"] for m in descriptor["members"]]
     release = dict(
         descriptor,
-        status=(
-            "β RELEASE CANDIDATE (research preview). Not uploaded: publication, namespace "
-            "and copyright holder await Ryō."
-        ),
+        status="β (research preview): one synthetic task family; read the card.",
+        repository=args.repository,
+        copyright=args.copyright_holder,
         default=dict(
             reading="mean",
             members=names,
@@ -113,7 +113,8 @@ def main():
                 commit=commit,
                 files=len(manifest["files"]),
                 members=list(members),
-                copyright_resolved=args.copyright_holder != UNRESOLVED,
+                repository=args.repository,
+                copyright=args.copyright_holder,
                 status=loaded["status"],
             ),
             ensure_ascii=False,

@@ -159,5 +159,11 @@ Records:
 
 ## License
 
-Apache-2.0 (see [LICENSE](LICENSE) and [NOTICE](NOTICE)). Mistral-7B-Instruct-v0.3
-is Apache-2.0 by Mistral AI and is not redistributed here.
+Apache-2.0 (see [LICENSE](LICENSE) and [NOTICE](NOTICE)), © 2026 Ryo Higa /
+RyoSpiralArchitect.
+
+- **The loader code:** its copy here is Apache-2.0. In the
+  [source repository](https://github.com/RyoSpiralArchitect/Latent_Workspace)
+  the same code is AGPL-3.0-or-later.
+- **Mistral-7B-Instruct-v0.3:** Apache-2.0 by Mistral AI, and not
+  redistributed here.
