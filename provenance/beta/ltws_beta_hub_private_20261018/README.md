@@ -1,7 +1,7 @@
 # LTWS β on the Hub — private upload record
 
 2026-10-18. **Uploaded to a private repository and verified from a fresh
-download. Not public: visibility changes only on Ryō's final OK.**
+download, twice. Ryō then asked to make it public.**
 
 ## Ryō's decisions (2026-10-18)
 
@@ -55,7 +55,32 @@ AGPL-3.0-or-later the same day (#29).
 4. **Afterwards:** the copy still loads, and no cache files were written
    ([output](reload.out)).
 
+## Second revision: the rewritten card and the benchmarks
+
+Ryō then asked for a card that first-time readers can follow, simple benchmarks
+against the base model, and an open repository linked from GitHub ("さらに技術詳細
+や意図に踏み込んで初見にわかりやすいふうに書き換えて … open repoにしてGitHub
+Repoからもリンクを貼ってみよう").
+
+- **rc4:** built at `06053d80f2c15a3322649075d739524ccddeedc1` with the
+  rewritten card ([rc4](../ltws_beta_release_candidate_20261018/rc4/), manifest
+  `a2bdba37…34e14c`). It passed the same user-path check with the same numbers.
+  - The routes and the loader are unchanged.
+  - The [benchmarks](../ltws_beta_benchmarks_20261018/README.md) in the card
+    were run with the first revision, `eb370d71`.
+- **Upload:** rc4 went to the still-private repository as Hub commit
+  `2a55dc3e56e6f07aa4977bd21f5ee893a157b18c`. No LFS file changed.
+- **Check from a fresh download:** that revision was downloaded into
+  `tmp/ltws-beta-hub-download2-20261018` and checked in full
+  ([download2/](download2/), [Hub state](download2/HUB_STATE.json)):
+  - the manifest is byte-identical;
+  - 1,024 / 1,024 prompts;
+  - 6,144 / 6,144 host logits, final states and answers;
+  - lane A's verdicts equal A5's for every route and for their mean;
+  - `example.py` gives the card's output, and nothing was written into the
+    folder.
+
 ## Remaining
 
-- **Ryō's final OK** to make the repository public.
-- **PR #28:** merge after review.
+The repository goes public after #28 is merged, so that the card's links to the
+source repository resolve.

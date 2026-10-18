@@ -1,0 +1,132 @@
+{
+ "schema": "ltws-package-v1",
+ "name": "mistral-7b-instruct-v0.3-LTWS β",
+ "status": "β (research preview): one synthetic task family; read the card.",
+ "host": {
+  "repository": "mistralai/Mistral-7B-Instruct-v0.3",
+  "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+  "original_base_sha256": "9db998af86c8105f0a2d774c10f777e190f86e54473b6b756bb51b225064a189",
+  "layers": 32,
+  "dtype": "bfloat16",
+  "frozen": true,
+  "weights": "not included: load the pinned upstream revision, unchanged"
+ },
+ "memory": {
+  "cut": 4,
+  "text": "canonical fact lines (engine package.canonical_facts), tokenized without special tokens",
+  "encoding": "the memory alone through the host's layers below the cut; its states enter before the question's at the cut and the host's remaining layers continue"
+ },
+ "candidates": [
+  " no",
+  " yes"
+ ],
+ "candidate_ids": [
+  1476,
+  5849
+ ],
+ "prompt": {
+  "instruction": "Use the world facts to decide whether the ranking statement is true. If it is false, answer no; if it is true, answer yes. Output exactly one lowercase word: no or yes.",
+  "query_suffix": " Answer:",
+  "template": "the tokenizer's native chat template, one user turn, generation prompt",
+  "source": "V15 query-only rendering with the answer cue (scripts/v15_cue_contract.py)"
+ },
+ "route": {
+  "hidden_dim": 4096,
+  "vocab_size": 32768,
+  "steps": 4,
+  "workspace_dim": 256,
+  "attention_heads": 8,
+  "ff_multiplier": 2.0,
+  "dropout": 0.05,
+  "rank": 32,
+  "gate_init_bias": -2.0
+ },
+ "training": {
+  "run": "V20 A5 attempt 02 (source 14ddacf, plan 1b5ce8e9e6c9a818fc39222e9a9b80f3e7c0ab11e9add95dcf67c0f247a38d77)",
+  "data": "train split, 256 world pairs (data/v10/functional_train.jsonl)",
+  "gating": 0.3,
+  "schedule": "constant 3e-4 to update 256, then linear decay: lr(step) = 3e-4 x (513 - step) / 257 for step > 256, reaching 1.2e-6 at update 512 (engine training.learning_rate_at)"
+ },
+ "evidence": {
+  "lane_a": {
+   "beta_candidate_eligible": false,
+   "beta_candidate_seed": 2026101711,
+   "ensemble": "CONTENT_REACHES_ANSWERS",
+   "gated": "NOT_ESTABLISHED",
+   "gated_per_seed": [
+    "NOT_ESTABLISHED",
+    "CONTENT_REACHES_ANSWERS",
+    "CONTENT_REACHES_ANSWERS"
+   ],
+   "host": "NOT_ESTABLISHED",
+   "stable": "NOT_ESTABLISHED",
+   "stable_per_seed": [
+    "CONTENT_REACHES_ANSWERS",
+    "CONTENT_REACHES_ANSWERS",
+    "NOT_ESTABLISHED"
+   ],
+   "ungated": "DIRECTIONAL_ONLY",
+   "ungated_per_seed": [
+    "CONTENT_REACHES_ANSWERS",
+    "CONTENT_REACHES_ANSWERS",
+    "DIRECTIONAL_ONLY"
+   ]
+  },
+  "records": "provenance/pilots/v20_a5_stable_route_20261018/README.md"
+ },
+ "members": [
+  {
+   "name": "s1",
+   "file": "route_s1.safetensors",
+   "fingerprint": "1f1647596b6b12a86b50b132577d96666d827b83ee364f3712d6e39a373eb0a9",
+   "source": "V20 A5 stable_s1, seed 2026101711, update 512"
+  },
+  {
+   "name": "s2",
+   "file": "route_s2.safetensors",
+   "fingerprint": "4ced0b029f0d405a66ecc193db14e4771f888f66d01caafd589043d1a6d2f35a",
+   "source": "V20 A5 stable_s2, seed 2026101712, update 512"
+  },
+  {
+   "name": "s3",
+   "file": "route_s3.safetensors",
+   "fingerprint": "949a1e281a9002761e71db381a20809152922229d7beac5a2e88496be4f904bd",
+   "source": "V20 A5 stable_s3, seed 2026101713, update 512"
+  }
+ ],
+ "repository": "RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta",
+ "copyright": "Ryo Higa / RyoSpiralArchitect",
+ "default": {
+  "reading": "mean",
+  "members": [
+   "s1",
+   "s2",
+   "s3"
+  ],
+  "decided": "Ryō, 2026-10-18: the mean of the three routes, Apache-2.0"
+ },
+ "license": "apache-2.0",
+ "loader": {
+  "package": "latent_workspace",
+  "source": "https://github.com/RyoSpiralArchitect/Latent_Workspace",
+  "commit": "06053d80f2c15a3322649075d739524ccddeedc1",
+  "files": {
+   "latent_workspace/__init__.py": "f09451f150988930e43a11ec0a91111418e9665cdb7c51a0ef7f3ee61e657dbe",
+   "latent_workspace/availability.py": "961cd714eb211d8c86793c60fc81fee1711afdb5b5a8c9eedae57c377d69f776",
+   "latent_workspace/composition.py": "9e93c0ec4c24481a6905613939543ade732e555590e5d0b6832113c4c8ee6fce",
+   "latent_workspace/cuts.py": "480582efeed28398cf1ea13fbe99c790c1d36ec37ddcc3757b8dab4d34e835a5",
+   "latent_workspace/execution.py": "9bfe359de6399bef20eba1c2c6bde5b0e2f46fd82237f5825f688325f793267c",
+   "latent_workspace/host.py": "3f4ad755f1bcd8fc813eea293849ce2113bef3bc6a1d15efd1d0ca406572bffa",
+   "latent_workspace/ladder.py": "1cb2ed4fcf22c886ae9eac1cd5e3a464d8f3f070ed5c89c13b3928bb1c5b3367",
+   "latent_workspace/lattice.py": "973bc83e5d6404cd01de998ca71e081cf8016bb678e15aac74683f6221e3385c",
+   "latent_workspace/losses.py": "219144546185f49aeb464361a7a3e9f48dccdc25fe5acb978ac1edfbac5409d8",
+   "latent_workspace/operators.py": "abbb0c13899df5d9ccd27d184b4f8ff083b6f80e65cd6a1ac4a4c18a6e3d2818",
+   "latent_workspace/package.py": "aa956c93df45dfe403ae87fae496d752708acfbba4cbc3e2b852e257070a5679",
+   "latent_workspace/readout.py": "121443c36c5b507450e2bf4930b08a0664688d3d9eeffa567880c7845a234ee4",
+   "latent_workspace/routes.py": "092744011271ef34cb8de2729f6718f9973f6801ca15563a36c1dd92122dd0f0",
+   "latent_workspace/scratch.py": "524591dbcb4ed8b42b1927132fbe20b7cb86b0f850b41e5a77d2607fefdc06d6",
+   "latent_workspace/stats.py": "3631fd13570addccbb59544bbca5b6b5f8392878a1c9b4a53f0939bccddcdd0a",
+   "latent_workspace/training.py": "4e48f226964f620cdf54396a0bfd7fc35b3a7345e8135bc14efbe6e2302eda83"
+  }
+ }
+}

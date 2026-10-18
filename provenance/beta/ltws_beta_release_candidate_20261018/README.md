@@ -73,6 +73,10 @@ and card add the dual-license note. It passed the same check with the same
 numbers. It was then uploaded privately and checked again from a fresh
 download ([record](../ltws_beta_hub_private_20261018/README.md)).
 
+**rc4**, built at `06053d8`, has the card rewritten for first-time readers and
+the benchmarks ([rc4/](rc4/), manifest `a2bdba37…`). Its routes and loader are
+unchanged. It passed the same check, and is the Hub's second revision.
+
 ## What the card now says about accuracy
 
 Computed from the sealed records for the card, held-out, under the original and
