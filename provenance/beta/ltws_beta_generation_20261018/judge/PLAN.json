@@ -1,0 +1,41 @@
+{
+ "boolq_sha256": "dbad2984e58eaa2184b6d0acfe2e94a73b9868381046255d6be6c3bed9088b68",
+ "generations_sha256": "863898a5d99284c10f20e42ff5613f0c78f14eb69b5cc4868f9aa6f070a799c4",
+ "orders": [
+  "AB",
+  "BA"
+ ],
+ "pairs": [
+  "latent-vs-closed",
+  "latent-vs-prompt",
+  "prompt-vs-closed"
+ ],
+ "prepared_at": "2026-10-18T11:22:23.265305+00:00",
+ "prompt_characters": 2216834,
+ "questions": 200,
+ "requests": 1200,
+ "requests_sha256": "87b6732def793adbdf8493cab218a7279e9fa5088b3db1a898276ac6f16b1ac5",
+ "schema": {
+  "additionalProperties": false,
+  "properties": {
+   "better": {
+    "enum": [
+     "A",
+     "B",
+     "tie"
+    ],
+    "type": "string"
+   },
+   "reason": {
+    "type": "string"
+   }
+  },
+  "required": [
+   "better",
+   "reason"
+  ],
+  "type": "object"
+ },
+ "template": "You are comparing two answers to a yes/no question about a passage.\n\nPassage:\n\"\"\"\n{passage}\n\"\"\"\n\nQuestion: {question}\nCorrect answer: {gold}\n\nAnswer A:\n\"\"\"\n{answer_a}\n\"\"\"\n\nAnswer B:\n\"\"\"\n{answer_b}\n\"\"\"\n\nDecide which answer is better.\n- First, correctness: an answer that reaches the correct yes/no verdict is better than one that does not.\n- Then, faithfulness: prefer the explanation that agrees with the passage and makes fewer false or unsupported claims.\n- Style and length matter only if the answers are otherwise equal.\n- Some answers stop mid-sentence at a length limit; do not count that against them.\n- If neither answer is better, answer \"tie\".\n\nReply with only a JSON object: {{\"better\": \"A\" or \"B\" or \"tie\", \"reason\": \"<one sentence>\"}}",
+ "template_sha256": "5e9eebf6c56045cf71bba0e843d44d1c1c6be86659855e5ee38470760a5e1874"
+}
