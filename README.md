@@ -8,6 +8,22 @@ frozen before launch, execute from a sealed commit on a remote CUDA node
 historical claim ceiling is unchanged: **FAIL / winner:none / non_regression
 NOT_ESTABLISHED**.
 
+## LTWS β (2026-10-18)
+
+**[mistral-7b-instruct-v0.3-LTWS β](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)**
+is on Hugging Face as a research preview, under Apache-2.0.
+
+- **What it is:** frozen Mistral-7B-Instruct-v0.3 answers yes/no questions
+  from facts held as latent memory, written after its fourth layer, through a
+  small trained route.
+- **On standard benchmarks:** it leaves Mistral unchanged, with identical
+  logits.
+- **On BoolQ:** frozen Mistral reads a real passage held as latent memory
+  almost as well as from its prompt (0.831 against 0.850).
+- **Details:** design, checks and records are in
+  [docs/v20/BETA_PACKAGE.md](docs/v20/BETA_PACKAGE.md); the benchmarks are in
+  [provenance/beta/ltws_beta_benchmarks_20261018](provenance/beta/ltws_beta_benchmarks_20261018/README.md).
+
 ## Status (2026-10-16)
 
 - **V18 engineering is complete on the real model.** The selection window owner

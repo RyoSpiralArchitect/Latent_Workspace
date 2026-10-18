@@ -8,7 +8,9 @@ A package is a folder made from a sealed run's routes. It never holds the host's
   route's architecture, the host it reads (repository, revision, base hash), the cut at
   which memory enters, the candidate tokens, the prompt contract, and each member's
   parameter fingerprint and source.
-- ``MANIFEST.json``: every other file's bytes and SHA-256.
+- ``MANIFEST.json``: every other file's bytes and SHA-256, in subfolders too (a release
+  adds its card, license, example and loader code). Python caches, ``.cache/`` and
+  ``.gitattributes`` are ignored.
 
 ``load`` rebuilds the routes from the package alone, after checking the manifest and each
 route's fingerprint.
@@ -114,6 +116,33 @@ def _digest(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
+def content_files(path):
+    """Every file of a package, as POSIX paths relative to it, without caches."""
+    path = Path(path)
+    files = []
+    for item in sorted(path.rglob("*")):
+        parts = item.relative_to(path).parts
+        if not item.is_file() or item.name == ".gitattributes" or item.suffix == ".pyc":
+            continue
+        if any(part in ("__pycache__", ".cache", ".git") for part in parts):
+            continue
+        files.append("/".join(parts))
+    return files
+
+
+def write_manifest(path):
+    """Write ``MANIFEST.json`` over every other file of the package; returns it."""
+    path = Path(path)
+    files = {
+        name: {"bytes": (path / name).stat().st_size, "sha256": _digest(path / name)}
+        for name in content_files(path)
+        if name != "MANIFEST.json"
+    }
+    manifest = dict(files=files)
+    (path / "MANIFEST.json").write_text(json.dumps(manifest, indent=1) + "\n")
+    return manifest
+
+
 def build_route(spec, candidate_ids, seed=0):
     """A route with the descriptor's architecture (its initial values are overwritten)."""
     return composition.DeliberationRoute(
@@ -152,12 +181,7 @@ def export(path, routes, descriptor):
         members.append(dict(name=name, file=filename, fingerprint=fingerprint, source=source))
     full = dict(schema=SCHEMA, **descriptor, members=members)
     (path / "descriptor.json").write_text(json.dumps(full, indent=1, ensure_ascii=False) + "\n")
-    files = {
-        p.name: {"bytes": p.stat().st_size, "sha256": _digest(p)}
-        for p in sorted(path.iterdir())
-        if p.is_file()
-    }
-    (path / "MANIFEST.json").write_text(json.dumps(dict(files=files), indent=1) + "\n")
+    write_manifest(path)
     return full
 
 
@@ -167,8 +191,7 @@ def load(path):
 
     path = Path(path)
     manifest = json.loads((path / "MANIFEST.json").read_text())["files"]
-    present = {p.name for p in path.iterdir() if p.is_file()} - {"MANIFEST.json"}
-    if present != set(manifest):
+    if set(content_files(path)) - {"MANIFEST.json"} != set(manifest):
         raise ValueError("Package files differ from the manifest")
     for name, entry in manifest.items():
         actual = path / name
@@ -208,7 +231,12 @@ class LatentMemory:
     @torch.no_grad()
     def write(self, facts):
         """The latent memory of ``facts``: their states at the cut, computed alone."""
-        return self._to_cut(render_memory(self.tokenizer, facts))
+        return self.write_ids(render_memory(self.tokenizer, facts))
+
+    @torch.no_grad()
+    def write_ids(self, ids):
+        """The latent memory of already tokenized text (no special tokens)."""
+        return self._to_cut(list(ids))
 
     @torch.no_grad()
     def read(self, query, memory=None):

@@ -1,7 +1,7 @@
-# The LTWS β package (rehearsal)
+# The LTWS β package
 
-2026-10-18. **PACKAGING REHEARSAL: nothing uploaded, no Hub repository
-created.** After A5, Ryō chose to start packaging the β alongside the
+2026-10-18. **Uploaded privately to `RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta`
+and verified from a fresh download; public only on Ryō's final OK.** After A5, Ryō chose to start packaging the β alongside the
 research ("2でいこう"). This builds and checks the package that a release
 would ship, from V20 A5's sealed routes. Whether to release, and what, stays
 Ryō's decision under the [release checklist](../v18/HF_RELEASE.md).
@@ -90,17 +90,45 @@ Results are recorded in the
   - no text generation through the route;
   - no claim about reasoning, non-regression elsewhere or language quality.
 
-## Decisions that are Ryō's
+## Decisions
 
-1. **Release:** whether and when. The all-seeds criterion is not met; the
-   checklist leaves shipping with lane A not established to Ryō.
-2. **Members:** one route (A5's pre-registered candidate is seed 1) or the
-   mean of the three.
-3. **Hub identity:** the namespace and repository ID. The provisional slug is
-   `mistral-7b-instruct-v0.3-LTWS-beta`.
-4. **License:** for the new code and the route weights. The upstream model
-   is Apache-2.0.
-5. **Contents:** besides the routes, which loader code (the engine's
-   `package` module and what it imports), which examples, and whether to
-   include the synthetic worlds.
-6. **Card:** a review of the [model card draft](BETA_MODEL_CARD_DRAFT.md).
+**Taken by Ryō on 2026-10-18** ("うん、これでいこう!!"):
+
+- **Members:** the β reads the **mean of the three routes**. A5's
+  pre-registered rule named seed 1 alone, and only if every seed passed. The
+  mean was descriptive in A5, so choosing it here, after A5, is a release
+  choice, not an evaluation result. The card says so.
+- **License:** **Apache-2.0** for the new code and the route weights, as for
+  the upstream model.
+- **Merges:** A5 (#26) and the rehearsal (#27) were merged into `main`.
+
+**The release candidate** follows from these:
+- **Contents:** the routes, the descriptor with the mean as the default
+  reading, the engine's `latent_workspace` package copied unchanged from a
+  clean commit, an example, the card, `LICENSE` and `NOTICE`.
+- **Sources:** the folder is built by
+  [build_ltws_beta_release.py](../../scripts/build_ltws_beta_release.py) from
+  [release/ltws_beta/](../../release/ltws_beta/).
+- **Check:** [check_ltws_beta_release.py](../../scripts/check_ltws_beta_release.py)
+  loads the folder as a user would. It runs isolated, with only the folder's
+  own code and transformers' loader, and recomputes lane A from the release's
+  readings. Record:
+  [release candidate](../../provenance/beta/ltws_beta_release_candidate_20261018/README.md).
+
+**Taken by Ryō later the same day** ("うん、そのアカウントであってる!
+名前はRyo Higa / RyoSpiralArchitect でゆこう! やり方もそれで良きだよ"):
+
+- **Repository:** `RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta`.
+- **Copyright holder:** Ryo Higa / RyoSpiralArchitect, in `NOTICE` and the
+  card.
+- **Procedure:** a private repository first, the same check on a fresh
+  download, then public.
+- **The source repository** became AGPL-3.0-or-later (#29). The β release stays
+  Apache-2.0: its copy of the loader is licensed so by the copyright holder, as
+  `NOTICE` states.
+
+**Done:** release candidate rc3 passed the check, was uploaded to the private
+repository (Hub commit `eb370d71`), and passed the full check again from a
+fresh download ([record](../../provenance/beta/ltws_beta_hub_private_20261018/README.md)).
+
+**Remaining:** Ryō's final OK to make the repository public.
