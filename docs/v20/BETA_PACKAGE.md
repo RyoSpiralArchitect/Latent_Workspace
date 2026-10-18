@@ -141,3 +141,16 @@ open repoにしてGitHub Repoからもリンクを貼ってみよう"):**
 - **Release:** the second revision (rc4) was checked from a fresh download, and
   the repository was made public.
 - **Links:** the GitHub README links the model.
+
+**Then (Ryō, "ベンチの結果はでは非劣化保証、そして では自由生成の同一seedで差分の大きく
+出たものを代表例にしつつ。回答の質をllm-as-a-judgeで判定した結果も載せて … まずβの
+hf記述を整えて、元Repoにも辿り着けるようにもしながら"; then "API使って強いモデルで
+ここは確実にjudgeしにゆこう!"):**
+- **Card:** the source repository is linked at the top, and the standard
+  benchmarks are framed as a non-degradation check.
+- **Free generation and judges:** 200 BoolQ questions answered with one
+  sampling seed per question, judged blind by GPT-6.1 Sol, Gemini 3.8 Flash
+  and Mistral Large 4
+  ([record](../../provenance/beta/ltws_beta_generation_20261018/README.md)).
+- **Release:** the third revision (rc5) passed the user-path check
+  ([record](../../provenance/beta/ltws_beta_release_candidate_20261018/README.md)).
