@@ -18,6 +18,11 @@ layers: this is the **latent memory**. Questions asked later are answered from
 that memory, through Mistral's own remaining layers plus a small trained
 **route** (about 3M parameters). Mistral's weights are not changed.
 
+**Source repository:**
+[RyoSpiralArchitect/Latent_Workspace](https://github.com/RyoSpiralArchitect/Latent_Workspace)
+on GitHub. It holds the code, the records of every run behind the numbers on
+this page, and the scripts that reproduce them.
+
 **β: a research preview.**
 - **Narrow:** it works on one synthetic task family, yes/no questions about
   rankings.
@@ -177,14 +182,16 @@ Accuracy by kind of question:
   right for 65 of 256 such questions. Mistral reading the same facts as text
   manages 55, and random memory 4.
 
-### Standard benchmarks: Mistral is unchanged
+### No degradation: without memory, the β is Mistral
 
-The β adds memory; it does not change Mistral.
+The β adds memory; it does not change Mistral. Without a memory, it runs
+Mistral's own forward pass on Mistral's own weights, and nothing is added to
+that computation. Its outputs are Mistral's by construction.
 
-- **Method:** each benchmark was scored twice, with the plain transformers
-  forward and through the β's host wrapper. The logits were **identical on
-  every item, bit for bit**, so on ordinary tasks the β's scores are
-  Mistral's own.
+- **Checked on standard benchmarks:** each item was scored twice, with the
+  plain transformers forward and through the β's host wrapper. The logits were
+  **identical on every item, bit for bit** (2,742 of 2,742), so on ordinary
+  tasks the β's scores are Mistral's own.
 - **Protocol:** the letter with the highest next-token logit after "Answer:".
   The numbers are not comparable to leaderboards that use other protocols.
 
@@ -221,6 +228,170 @@ reached Mistral in four ways (3,270 validation questions; always answering
   uncertainty per figure. The
   [benchmark script](https://github.com/RyoSpiralArchitect/Latent_Workspace/blob/main/scripts/bench_ltws_beta.py)
   shows how to hold your own text as latent memory with Mistral alone.
+
+### Free generation: Mistral writes from a passage it holds as latent memory
+
+The scores above read one token. Here Mistral **writes** its answer: yes or
+no, then a short explanation. 200 BoolQ questions (a fixed random sample) were
+each answered four ways, **with the same sampling seed** (temperature 0.7,
+top-p 0.9). The answers to a question differ only in how its passage reached
+Mistral.
+
+| How Mistral gets the passage | Verdict right (first word) |
+| --- | --- |
+| not at all (closed book) | 0.625 |
+| not at all, but asked about "the passage you were given" | 0.610 |
+| **as latent memory at layer 4, Mistral alone** | **0.840** |
+| in the prompt, as usual | 0.825 |
+
+- **Latent memory vs closed book:** where their verdicts differ, latent memory
+  is right 54 times and closed book 11.
+- **The content does it:** asked about "the passage you were given" without a
+  memory, Mistral answers like closed book. The gain comes from what the
+  memory holds.
+- **Latent memory vs the prompt:** level, 9 to 6 where they differ.
+
+**Answer quality, judged by three LLMs.** GPT-6.1 Sol (OpenAI, medium
+reasoning), Gemini 3.8 Flash (Google) and Mistral Large 4 (Mistral AI)
+compared the answers in pairs, blind. Each judge saw the passage, the
+question, the correct answer and two answers, never how the answers were
+made. Every pair was judged in both orders, and a preference counts only if
+both orders agree.
+
+| Comparison (200 questions) | Judge | First better | Tie | Second better | Orders disagree |
+| --- | --- | ---: | ---: | ---: | ---: |
+| **latent memory vs closed book** | GPT-6.1 Sol | **166** | 0 | 31 | 3 |
+| | Gemini 3.8 Flash | **163** | 5 | 22 | 10 |
+| | Mistral Large 4 | **163** | 1 | 25 | 11 |
+| latent memory vs passage in the prompt | GPT-6.1 Sol | 43 | 24 | **116** | 17 |
+| | Gemini 3.8 Flash | 34 | 41 | **114** | 11 |
+| | Mistral Large 4 | 37 | 13 | **114** | 36 |
+| passage in the prompt vs closed book (a control) | GPT-6.1 Sol | **167** | 2 | 21 | 10 |
+| | Gemini 3.8 Flash | **170** | 8 | 19 | 3 |
+| | Mistral Large 4 | **171** | 2 | 20 | 7 |
+
+- **Better than closed book, beyond the verdict:** each judge prefers the
+  latent-memory answer on over 80% of questions, and all three agree on 153.
+  Where both answers have the right verdict (114 questions), the judges still
+  prefer latent memory 92–94 times, against 10–18: its explanations use the
+  passage.
+- **Not as good as the prompt:** the verdicts are level, but each judge
+  prefers the passage-in-prompt answer about three times as often (114–116
+  against 34–43), mostly where both verdicts are right. The judges' reasons
+  point to details: from latent memory, Mistral keeps the answer and the gist,
+  but renders specifics less exactly and adds claims the passage does not
+  support.
+- **The control behaves as expected:** the passage in the prompt beats closed
+  book by a similar margin.
+- **How it was run:** once, descriptively. Gemini 3.1 Pro was tried first and
+  ran into the provider's request limit after 242 of 1,200 judgments; that
+  partial run is kept in the record and used nowhere. The
+  [record](https://github.com/RyoSpiralArchitect/Latent_Workspace/blob/main/provenance/beta/ltws_beta_generation_20261018/README.md)
+  has every answer, every judge's reply and the scripts.
+
+**Examples: where the answers differ most.** A rule fixed before any judging
+chose them: among questions where closed book and latent memory reach
+different verdicts, the largest changes in Mistral's first-token belief in the
+correct answer. It took the three largest gains and the largest loss. All
+answers to a question share one sampling seed. The passages are from BoolQ
+(CC BY-SA 3.0, drawn from Wikipedia), summarized here.
+
+**1. "Did australia fight in the battle of the somme?"** Correct: yes.
+*The passage:* Australian divisions joined the Somme offensive within its
+first weeks; the 5th Division fought at Fromelles on 19 July 1916.
+
+- **Closed book:** "No, Australia did not fight in the Battle of the Somme,
+  which was a major battle of World War I fought by the armies of the British
+  Empire and France against the German Empire. Australia was part of the
+  British Empire at the time, but their forces were primarily engaged in the
+  Gallipoli campaign and later on the Western Front, but not specifically in
+  the Battle of the Somme."
+- **Latent memory:** "Yes, Australia did fight in the Battle of the Somme. The
+  battle began on 1 July 1916, and four divisions of the Australian and New
+  Zealand Army Corps (ANZAC) were involved in the fighting, with the 5th
+  Australian Division participating in the Battle of Fromelles on 19 July 1916.
+  The Battle of Fromelles was a prelude to the main Battle of the Somme, which
+  lasted from July to November 1916."
+- **Passage in the prompt:** "Yes, Australia did fight in the Battle of the
+  Somme. The 5th Division of the Australian and New Zealand Army Corps (ANZAC)
+  participated in the Battle of Fromelles, which was part of the larger Battle
+  of the Somme, on 19 July 1916. Despite not being involved in the disastrous
+  first day on the Somme, four divisions of the Australian Imperial Force (AIF)
+  were committed to the battle within three weeks of the Allied offensive."
+- **Judges:** all three prefer latent memory to closed book. All three
+  prefer the prompt's answer to latent memory's: from latent memory, Mistral
+  calls the four divisions ANZAC where the passage says AIF, and calls
+  Fromelles a "prelude" to the Somme, which the passage does not say.
+
+**2. "Do all the numbers on a roulette wheel add up to 666?"** Correct: yes.
+*The passage:* the numbers 0 to 36 on a roulette wheel sum to 666, the
+"Number of the Beast".
+
+- **Closed book:** "No, the numbers on a standard roulette wheel do not add up
+  to 666. A European roulette wheel has numbers 1 through 36 (for a total of
+  678), and one green 0. An American roulette wheel has numbers 1 through 36, a
+  0, and a 00, for a total of 668. Neither version adds up to 666."
+- **Latent memory:** "Yes, the total sum of all the numbers on a standard
+  roulette wheel (0-36) is 666. This includes both the red and black numbers,
+  but does not include the green 0. The number 0 is not included in the sum of
+  666, but its absence does not prevent the total of all other numbers from
+  equaling 666."
+- **Passage in the prompt:** "Yes, according to the passage, the sum of all
+  the numbers on the roulette wheel (from 0 to 36) is 666. However, it's
+  important to note that this is a fictional anecdote and the actual sum of
+  numbers on a traditional roulette wheel (0, 32 red numbers, and 16 black
+  numbers) does not equal 666."
+- **Judges:** all three prefer latent memory to closed book, whose sums are
+  wrong. GPT-6.1 Sol and Gemini also prefer it to the prompt's answer, which
+  calls the fact fictional; Mistral Large 4's two orders disagree. Latent
+  memory's own slip, leaving 0 out, does not change the sum.
+
+**3. "Is soho in the west end of london?"** Correct: yes. *The passage:* the
+West End has no official boundary; a 2005 Westminster City Council report
+counted Soho among its areas.
+
+- **Closed book:** "No, Soho is not in the West End of London. Soho is located
+  centrally in London, between Mayfair to the west, Oxford Street to the north,
+  Chinatown to the east, and Covent Garden to the south. The West End refers to
+  the areas of London's central district that are primarily dominated by
+  commercial, entertainment, and residential premises, which includes
+  locations such as Piccadilly Circus, Regent Street, and Leicester Square, but
+  not Soho."
+- **Latent memory:** "Yes, Soho is in the West End of London. According to the
+  passage, the West End includes Soho as one of its constituent parts."
+- **Passage in the prompt:** "Yes, Soho is in the West End of London.
+  According to the Westminster City Council's 2005 report, Soho is one of the
+  areas included in the definition of the West End."
+- **Judges:** all three prefer latent memory to closed book. Gemini and
+  Mistral prefer the prompt's answer, which names the council's 2005 report as
+  the source; GPT-6.1 Sol's two orders disagree.
+
+**4. The largest loss: "Can you run on a dropped third strike in little
+league?"** Correct, by BoolQ's label: no. *The passage:* in Little League's
+Tee-Ball and Minor League divisions the batter is out on any third strike; in
+the Major Division and the older divisions, the batter may try for first base
+when the third strike is not caught.
+
+- **Closed book:** "No, in little league baseball, a dropped third strike
+  results in the batter being called out and does not allow the runner-up on
+  base to advance or the batter to reach base. The runner can only advance if
+  the ball is put into play or there is an error."
+- **Latent memory:** "Yes, in Little League (or the Major Division), Junior,
+  Senior, and Big League divisions, a batter may attempt to advance to first
+  base on an uncaught third strike. This rule does not apply in Tee-Ball and
+  Minor League divisions."
+- **Passage in the prompt:** "Yes, in the Major Division of Little League,
+  Junior, Senior, and Big League divisions, as well as in Little League Major
+  Division Softball and many other youth baseball leagues such as the USSSA, a
+  batter may attempt to advance to first base on an uncaught third strike. This
+  is not the case in Tee-Ball and Minor League divisions of Little League, where
+  a batter is out after the third strike regardless of whether the pitched ball
+  is caught cleanly by the catcher."
+- **Judges:** told that the correct answer is "no", all three prefer closed
+  book: their instructions put the verdict first. The two passage-reading
+  answers restate the passage's rule for the Major Division and older
+  divisions, and GPT-6.1 Sol notes that the latent-memory explanation is the
+  more faithful one.
 
 ## Use
 
@@ -272,6 +443,10 @@ Does Cyra outrank Aster? Answer:         memory=none     answer=no  (yes - no = 
 - **Can:** answer yes/no ranking questions from facts held only as latent
   memory, in the format above. It leaves answers alone when the memory is not
   about the question.
+- **Shown, not packaged:** frozen Mistral alone can read a natural passage held
+  as latent memory at layer 4, and answer questions about it in free text
+  (BoolQ, above). The scripts linked there do this; the package's API covers
+  the ranking task only.
 - **Task family only:**
   - synthetic ranking worlds (six entities from a pool of twelve, five facts
     each);
@@ -280,8 +455,8 @@ Does Cyra outrank Aster? Answer:         memory=none     answer=no  (yes - no = 
 - **Weak on the fine distinction:** when two fact sets differ only in one
   adjacent pair, it answers that pair right under both about one time in four.
 - **Not provided:**
-  - general question answering;
-  - text generation through the route;
+  - general question answering through the β's API;
+  - text generation through the route (the routes only adjust " no" / " yes");
   - any claim about reasoning, intelligence, safety or quality beyond what is
     measured here.
 - **Inherited:** the upstream model's limitations, including its lack of
@@ -306,8 +481,9 @@ Does Cyra outrank Aster? Answer:         memory=none     answer=no  (yes - no = 
   from those runs' records.
 - **The package** was checked in a fresh environment: it reproduces those
   runs' scores and verdicts end to end, from text.
-- **The benchmarks** were run once with the published package and recorded
-  with their script.
+- **The benchmarks, the free generation and the LLM judgments** were run once
+  with the published package and recorded with their scripts, settings and
+  every judge's reply.
 
 The records are in the source repository,
 [RyoSpiralArchitect/Latent_Workspace](https://github.com/RyoSpiralArchitect/Latent_Workspace):
@@ -316,7 +492,8 @@ The records are in the source repository,
 - [the routes' run (V20 A5)](https://github.com/RyoSpiralArchitect/Latent_Workspace/blob/main/provenance/pilots/v20_a5_stable_route_20261018/README.md);
 - [content gating (V20 A4)](https://github.com/RyoSpiralArchitect/Latent_Workspace/blob/main/provenance/pilots/v20_a4_gated_route_20261017/README.md);
 - [the depth ladder (V20 A2)](https://github.com/RyoSpiralArchitect/Latent_Workspace/blob/main/provenance/pilots/v20_a2_depth_ladder_20261016/README.md);
-- [the benchmarks above](https://github.com/RyoSpiralArchitect/Latent_Workspace/blob/main/provenance/beta/ltws_beta_benchmarks_20261018/README.md).
+- [the benchmarks above](https://github.com/RyoSpiralArchitect/Latent_Workspace/blob/main/provenance/beta/ltws_beta_benchmarks_20261018/README.md);
+- [the free generation and its LLM judges](https://github.com/RyoSpiralArchitect/Latent_Workspace/blob/main/provenance/beta/ltws_beta_generation_20261018/README.md).
 
 ## License
 

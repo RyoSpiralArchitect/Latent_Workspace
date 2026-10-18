@@ -77,6 +77,24 @@ download ([record](../ltws_beta_hub_private_20261018/README.md)).
 the benchmarks ([rc4/](rc4/), manifest `a2bdba37…`). Its routes and loader are
 unchanged. It passed the same check, and is the Hub's second revision.
 
+**rc5**, built at `e29ccad`, has the card's third revision ([rc5/](rc5/),
+manifest `46a47c39…6406b`):
+- **What changed:** the source repository linked at the top; the standard
+  benchmarks framed as a non-degradation check; free generation from latent
+  memory with three LLM judges
+  ([record](../ltws_beta_generation_20261018/README.md)).
+- **Unchanged:** the routes, the loader code, `example.py` and `LICENSE` are
+  byte-identical to rc4's. The descriptor differs only in the loader's source
+  commit, and `NOTICE` in the source commit it names.
+- **Check:** it passed the same user-path check with the same numbers
+  ([check](rc5/check_release.out), [timeline](rc5/TIMELINE.log)):
+  - 1,024 / 1,024 prompts;
+  - 6,144 / 6,144 host logits, final states and answers (largest score
+    difference 1.9e-6);
+  - lane A's verdicts equal A5's for every route and for their mean.
+- **The example and the reload:** `example.py` printed the card's output, and
+  the folder still loaded afterwards, with no cache files written.
+
 ## What the card now says about accuracy
 
 Computed from the sealed records for the card, held-out, under the original and

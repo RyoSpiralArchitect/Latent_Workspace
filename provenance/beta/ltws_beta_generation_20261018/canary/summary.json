@@ -1,0 +1,108 @@
+{
+ "boolq": {
+  "path": "/home/ryospiralarchitect/spiralreality/SpiralReality/tmp/ltws-beta-bench-20261018/data/boolq_validation.jsonl",
+  "rows": 3270,
+  "sha256": "dbad2984e58eaa2184b6d0acfe2e94a73b9868381046255d6be6c3bed9088b68"
+ },
+ "cut": 4,
+ "environment": {
+  "gpu": "NVIDIA GeForce RTX 5090",
+  "python": "3.12.14",
+  "torch": "2.13.0+cu132",
+  "transformers": "5.15.0"
+ },
+ "loader": "/home/ryospiralarchitect/spiralreality/SpiralReality/tmp/ltws-beta-hub-download2-20261018/mistral-7b-instruct-v0.3-LTWS-beta/latent_workspace",
+ "manifest_sha256": "a2bdba37fb52ade5367d167a0c6b8879afa044d8f40797ec57654d45de34e14c",
+ "model": "mistralai/Mistral-7B-Instruct-v0.3@c170c708c41dac9275d15a8fff4eca08d52bab71",
+ "prompts": {
+  "closed": "Answer the question. {instruction}\n\nQuestion: {question}",
+  "instruction": "Start your answer with Yes or No, then explain in one or two sentences.",
+  "latent": "Use the passage you were given to answer the question. {instruction}\n\nQuestion: {question}",
+  "latent_empty": "Use the passage you were given to answer the question. {instruction}\n\nQuestion: {question}",
+  "memory": "Passage: {passage}",
+  "prompt": "Use the passage to answer the question. {instruction}\n\nPassage: {passage}\n\nQuestion: {question}"
+ },
+ "sample": {
+  "indices": [
+   1,
+   32
+  ],
+  "limit": 2,
+  "seed": 20261018,
+  "size": 200
+ },
+ "sampling": {
+  "max_new_tokens": 64,
+  "seed_per_question": "seed + BoolQ row index, the same for every condition",
+  "temperature": 0.7,
+  "top_p": 0.9
+ },
+ "seconds": 11.1,
+ "selection": {
+  "candidates": {
+   "gains": 1,
+   "losses": 0
+  },
+  "gains": [
+   {
+    "index": 1,
+    "swing": 0.8808
+   }
+  ],
+  "losses": [],
+  "rule": "Questions where the closed-book and latent-memory verdicts differ, ranked by the change in first-token belief in the gold answer from closed book to latent memory: the 3 largest gains and the 1 largest loss."
+ },
+ "summary": {
+  "closed": {
+   "first_token_belief_accuracy": 0.5,
+   "mean_tokens": 61.5,
+   "stopped_at_length": 1,
+   "unclear": 0,
+   "verdict_accuracy": 0.5
+  },
+  "identical_text": {
+   "closed==latent": 0,
+   "closed==latent_empty": 0,
+   "latent==prompt": 0
+  },
+  "latent": {
+   "first_token_belief_accuracy": 1.0,
+   "mean_tokens": 64.0,
+   "stopped_at_length": 2,
+   "unclear": 0,
+   "verdict_accuracy": 1.0
+  },
+  "latent_empty": {
+   "first_token_belief_accuracy": 0.5,
+   "mean_tokens": 64.0,
+   "stopped_at_length": 2,
+   "unclear": 0,
+   "verdict_accuracy": 0.5
+  },
+  "majority_yes": 0.5,
+  "n": 2,
+  "prompt": {
+   "first_token_belief_accuracy": 1.0,
+   "mean_tokens": 63.0,
+   "stopped_at_length": 1,
+   "unclear": 0,
+   "verdict_accuracy": 1.0
+  }
+ },
+ "yes_no_token_ids": {
+  "no": [
+   1476,
+   2278,
+   2538,
+   3269,
+   4800,
+   8697
+  ],
+  "yes": [
+   5849,
+   6360,
+   6381,
+   10548
+  ]
+ }
+}

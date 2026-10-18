@@ -1,0 +1,67 @@
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 12193.72it/s]
+{
+ "summary": {
+  "n": 200,
+  "majority_yes": 0.665,
+  "closed": {
+   "verdict_accuracy": 0.625,
+   "unclear": 1,
+   "stopped_at_length": 2,
+   "mean_tokens": 72.895,
+   "first_token_belief_accuracy": 0.61
+  },
+  "latent": {
+   "verdict_accuracy": 0.84,
+   "unclear": 0,
+   "stopped_at_length": 0,
+   "mean_tokens": 63.465,
+   "first_token_belief_accuracy": 0.835
+  },
+  "latent_empty": {
+   "verdict_accuracy": 0.61,
+   "unclear": 0,
+   "stopped_at_length": 1,
+   "mean_tokens": 66.18,
+   "first_token_belief_accuracy": 0.59
+  },
+  "prompt": {
+   "verdict_accuracy": 0.825,
+   "unclear": 0,
+   "stopped_at_length": 0,
+   "mean_tokens": 59.29,
+   "first_token_belief_accuracy": 0.82
+  },
+  "identical_text": {
+   "closed==latent": 0,
+   "latent==prompt": 0,
+   "closed==latent_empty": 0
+  }
+ },
+ "selection": {
+  "rule": "Questions where the closed-book and latent-memory verdicts differ, ranked by the change in first-token belief in the gold answer from closed book to latent memory: the 3 largest gains and the 1 largest loss.",
+  "gains": [
+   {
+    "index": 474,
+    "swing": 1.0
+   },
+   {
+    "index": 769,
+    "swing": 1.0
+   },
+   {
+    "index": 835,
+    "swing": 1.0
+   }
+  ],
+  "losses": [
+   {
+    "index": 229,
+    "swing": -0.9998
+   }
+  ],
+  "candidates": {
+   "gains": 54,
+   "losses": 11
+  }
+ }
+}
