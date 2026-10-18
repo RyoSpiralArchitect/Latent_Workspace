@@ -218,7 +218,10 @@ def body(provider, model, prompt, options):
         model=model,
         messages=[{"role": "user", "content": prompt}],
         max_tokens=limit,
-        response_format={"type": "json_object"},
+        response_format={
+            "type": "json_schema",
+            "json_schema": {"name": "judgment", "strict": True, "schema": SCHEMA},
+        },
     )
     if options.get("temperature") is not None:
         out["temperature"] = options["temperature"]
@@ -265,6 +268,8 @@ def reply(provider, raw):
         return text, finish, finish == "end_turn", raw.get("model"), raw.get("usage"), raw.get("id")
     choice = (raw.get("choices") or [{}])[0]
     text = (choice.get("message") or {}).get("content") or ""
+    if isinstance(text, list):
+        text = "".join(part.get("text", "") for part in text if part.get("type") == "text")
     finish = choice.get("finish_reason")
     return text, finish, finish == "stop", raw.get("model"), raw.get("usage"), raw.get("id")
 
