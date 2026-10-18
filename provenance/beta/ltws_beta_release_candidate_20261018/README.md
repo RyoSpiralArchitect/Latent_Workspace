@@ -67,6 +67,12 @@ isolated (`python -I`, no `PYTHONPATH`; [script](rc2/run_rc2.sh),
 **rc1**, built at `f248dd6` with the earlier card, passed the same check with
 the same numbers ([rc1/](rc1/)). rc2 differs from it only in the card.
 
+**rc3, the uploaded candidate**, was built at `3e55594` with Ryō's copyright
+holder and repository ID ([rc3/](rc3/), manifest `343ee4c4…`). Its `NOTICE`
+and card add the dual-license note. It passed the same check with the same
+numbers. It was then uploaded privately and checked again from a fresh
+download ([record](../ltws_beta_hub_private_20261018/README.md)).
+
 ## What the card now says about accuracy
 
 Computed from the sealed records for the card, held-out, under the original and

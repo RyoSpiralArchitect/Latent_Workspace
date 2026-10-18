@@ -1,7 +1,7 @@
-# The LTWS β package (rehearsal)
+# The LTWS β package
 
-2026-10-18. **PACKAGING REHEARSAL: nothing uploaded, no Hub repository
-created.** After A5, Ryō chose to start packaging the β alongside the
+2026-10-18. **Uploaded privately to `RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta`
+and verified from a fresh download; public only on Ryō's final OK.** After A5, Ryō chose to start packaging the β alongside the
 research ("2でいこう"). This builds and checks the package that a release
 would ship, from V20 A5's sealed routes. Whether to release, and what, stays
 Ryō's decision under the [release checklist](../v18/HF_RELEASE.md).
@@ -115,13 +115,20 @@ Results are recorded in the
   readings. Record:
   [release candidate](../../provenance/beta/ltws_beta_release_candidate_20261018/README.md).
 
-**Still Ryō's, before any upload:**
+**Taken by Ryō later the same day** ("うん、そのアカウントであってる!
+名前はRyo Higa / RyoSpiralArchitect でゆこう! やり方もそれで良きだよ"):
 
-1. **Hub identity:** the namespace (user or organization) and the repository
-   ID. The provisional slug is `mistral-7b-instruct-v0.3-LTWS-beta`.
-2. **Copyright holder** for `NOTICE`. The candidate keeps a placeholder until
-   this is set.
-3. **Publication:** the explicit go to create the repository and upload.
-   - Proposed order: a private repository first, then a download into a
-     fresh folder and the same check against it.
-   - Public visibility follows only on Ryō's final OK.
+- **Repository:** `RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta`.
+- **Copyright holder:** Ryo Higa / RyoSpiralArchitect, in `NOTICE` and the
+  card.
+- **Procedure:** a private repository first, the same check on a fresh
+  download, then public.
+- **The source repository** became AGPL-3.0-or-later (#29). The β release stays
+  Apache-2.0: its copy of the loader is licensed so by the copyright holder, as
+  `NOTICE` states.
+
+**Done:** release candidate rc3 passed the check, was uploaded to the private
+repository (Hub commit `eb370d71`), and passed the full check again from a
+fresh download ([record](../../provenance/beta/ltws_beta_hub_private_20261018/README.md)).
+
+**Remaining:** Ryō's final OK to make the repository public.
