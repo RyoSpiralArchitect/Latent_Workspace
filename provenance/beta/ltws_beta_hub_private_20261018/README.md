@@ -2,8 +2,10 @@
 
 2026-10-18. **PUBLIC:
 [RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)
-at revision `2a55dc3e`.** It was first uploaded privately and verified from a
-fresh download, twice, then made public on Ryō's request.
+at revision `d6a60790`, the card's third revision.** It was first uploaded
+privately and verified from a fresh download, twice, then made public at
+revision `2a55dc3e` on Ryō's request. The third revision was verified from a
+fresh download too ([below](#third-revision-free-generation-and-llm-judges)).
 
 ## Ryō's decisions (2026-10-18)
 
@@ -97,3 +99,37 @@ Repoからもリンクを貼ってみよう").
   - the model page answers HTTP 200.
 - **Links to the model:** the source repository's README and its V20 index
   (#28).
+
+## Third revision: free generation and LLM judges
+
+Ryō asked for the card to frame the benchmarks as a non-degradation check, to
+show same-seed free generation from latent memory with LLM-judged quality, and
+to lead readers to the source repository ("まずβのhf記述を整えて、元Repoにも辿り
+着けるようにもしながら").
+
+- **rc5:** built at `e29ccad` (manifest `46a47c39…6406b`) and checked
+  ([record](../ltws_beta_release_candidate_20261018/README.md)). The card's new
+  results are in the [generation record](../ltws_beta_generation_20261018/README.md).
+- **Before the upload:** #31 was merged first (`main` at `a4760cc`). All eight
+  links from the card to the source repository exist on `main` and answered
+  HTTP 200 without a login.
+- **Upload:** `hf upload` from Furnace's logged-in CLI (the token was never read
+  or printed), Hub commit `d6a607905d53f454eafbd073dbf2af2eb3fff11f`
+  ([output](download3/upload.out), [timeline](download3/UPLOAD_TIMELINE.log)).
+  No LFS file was uploaded: the routes were already on the Hub, byte for byte.
+- **On the Hub** ([state](download3/HUB_STATE.json)): public, 27 files. The
+  routes' LFS SHA-256 values and sizes equal rc5's manifest.
+- **Checked from a fresh download** of that revision, into
+  `tmp/ltws-beta-hub-download3-20261018` on Furnace ([script](download3/run_hub3.sh),
+  [timeline](download3/TIMELINE.log)):
+  - `MANIFEST.json` and the card are byte-identical to rc5's;
+  - the full user-path check passed with the download's own loader
+    ([output](download3/check_release.out)): 1,024 / 1,024 prompts; 6,144 /
+    6,144 host logits, final states and answers (largest score difference
+    1.9e-6); lane A's verdicts equal A5's for every route and for their mean;
+  - `example.py` printed the card's output ([output](download3/example.out)),
+    and the folder still loaded afterwards with no cache files written
+    ([output](download3/reload.out)).
+- **Checked without a token, from the Mac:** the model page answers HTTP 200;
+  the API reports revision `d6a60790`, public, 27 files; the card served from
+  `main` equals [the repository's](../../../release/ltws_beta/README.md).

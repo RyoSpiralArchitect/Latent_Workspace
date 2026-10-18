@@ -2,8 +2,8 @@
 
 2026-10-18. **PUBLIC:
 [RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)
-(revision `2a55dc3e`).** It was uploaded privately and verified from fresh
-downloads, then made public on Ryō's request. After A5, Ryō chose to start packaging the β alongside the
+(revision `d6a60790`, the card's third revision).** It was uploaded privately
+and verified from fresh downloads, then made public on Ryō's request. After A5, Ryō chose to start packaging the β alongside the
 research ("2でいこう"). This builds and checks the package that a release
 would ship, from V20 A5's sealed routes. Whether to release, and what, stays
 Ryō's decision under the [release checklist](../v18/HF_RELEASE.md).
@@ -153,4 +153,6 @@ hf記述を整えて、元Repoにも辿り着けるようにもしながら"; th
   and Mistral Large 4
   ([record](../../provenance/beta/ltws_beta_generation_20261018/README.md)).
 - **Release:** the third revision (rc5) passed the user-path check
-  ([record](../../provenance/beta/ltws_beta_release_candidate_20261018/README.md)).
+  ([record](../../provenance/beta/ltws_beta_release_candidate_20261018/README.md)),
+  was uploaded as Hub revision `d6a60790` and passed it again from a fresh
+  download ([record](../../provenance/beta/ltws_beta_hub_private_20261018/README.md)).
