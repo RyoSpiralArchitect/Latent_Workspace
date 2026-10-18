@@ -156,3 +156,12 @@ hf記述を整えて、元Repoにも辿り着けるようにもしながら"; th
   ([record](../../provenance/beta/ltws_beta_release_candidate_20261018/README.md)),
   was uploaded as Hub revision `d6a60790` and passed it again from a fresh
   download ([record](../../provenance/beta/ltws_beta_hub_private_20261018/README.md)).
+
+**Direction (Ryō, 2026-10-18)** ("このままadapterとして最適化させるのではなくadapterであるのはfull FTを成功させて通す=βがなくなるver1.0までの学びを得るための過渡期として考えて、その前提でadapterとしての性能を上げることにoverfitはしない進め方でゆこう … hf repoのβの記述にも次はadapterではないことも明記しておこう"):
+- **Transitional:** the β is an adapter only to learn what a full fine-tune
+  needs. **v1.0** is planned as a full fine-tune that passes; with it, the β
+  is retired.
+- **No adapter tuning:** the routes are not tuned further as an adapter, and
+  adapter performance is not a target. Later experiments serve the full
+  fine-tune.
+- **On the Hub:** the card states that the next release is not an adapter.

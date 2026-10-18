@@ -215,6 +215,21 @@ inside the workspace (for example accuracy by hop depth). Either could show
 what the record has not yet seen. This is a planning note: no generation or
 benchmark run is authorized by it.
 
+## After the β: toward a full fine-tune (Ryō, 2026-10-18)
+
+"このままadapterとして最適化させるのではなくadapterであるのはfull FTを成功させて通す=βがなくなるver1.0までの学びを得るための過渡期として考えて、その前提でadapterとしての性能を上げることにoverfitはしない進め方でゆこう … hf repoのβの記述にも次はadapterではないことも明記しておこう"
+
+- **v1.0 is a full fine-tune, not an adapter.** The β's route is a
+  transitional instrument. It is not tuned further, and adapter scores are
+  not targets.
+- **What the β taught, for the full fine-tune:** separately written memory can
+  enter frozen Mistral at layer 4 and still be read; content gating keeps
+  memory from moving answers it is not about; a learning rate that decays late
+  keeps seeds consistent; natural text held at layer 4 keeps its gist but
+  loses details.
+- **Next experiments** ask what the full fine-tune needs, and build the checks
+  it must pass. They are not adapter optimizations.
+
 ## Not authorized here
 
 No generation, judge request (API or manual), training run, upload or
