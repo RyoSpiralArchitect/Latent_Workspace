@@ -95,6 +95,14 @@ manifest `46a47c39…6406b`):
 - **The example and the reload:** `example.py` printed the card's output, and
   the folder still loaded afterwards, with no cache files written.
 
+**rc6**, built at `02b2d3c`, adds Ryō's direction to the card ([rc6/](rc6/),
+manifest `2ea022c2…9693`): the β is transitional, and the next release, v1.0,
+is planned as a full fine-tune, not an adapter. Its routes, loader, example and
+license are byte-identical to rc5's; the descriptor and `NOTICE` differ only in
+the source commit. It passed the same check with the same numbers
+([check](rc6/check_release.out), [timeline](rc6/TIMELINE.log)), and
+`example.py` printed the card's output.
+
 ## What the card now says about accuracy
 
 Computed from the sealed records for the card, held-out, under the original and
