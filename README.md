@@ -771,3 +771,26 @@ The offline full-data audit on furnace is recorded in
 [`provenance/FURNACE_DATA_DOCTOR_RECEIPT.json`](provenance/FURNACE_DATA_DOCTOR_RECEIPT.json).
 The legacy boundary is recorded in
 [`provenance/V9_PARTIAL_HANDOFF.md`](provenance/V9_PARTIAL_HANDOFF.md).
+
+## License
+
+Copyright (C) 2026 Ryo Higa / RyoSpiralArchitect
+
+This repository is free software: you can redistribute it and/or modify it
+under the terms of the GNU Affero General Public License as published by the
+Free Software Foundation, either version 3 of the License, or (at your option)
+any later version (`AGPL-3.0-or-later`). It is distributed in the hope that it
+will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See [LICENSE](LICENSE) for
+the full text.
+
+Exceptions, under their own licenses:
+
+- **The LTWS β release:** everything under [`release/ltws_beta/`](release/ltws_beta/),
+  and the β package built from it, is licensed under Apache-2.0 by the copyright
+  holder. That covers its route weights and its copy of `src/latent_workspace`.
+- **The MMLU subset:** MIT, with its notice in
+  [`configs/v16/population_20261015/MMLU_NOTICE.md`](configs/v16/population_20261015/MMLU_NOTICE.md).
+- **Mistral-7B-Instruct-v0.3:** Apache-2.0 by Mistral AI. This applies to copies
+  of its chat template kept in provenance records. The model's weights are not in
+  this repository.
