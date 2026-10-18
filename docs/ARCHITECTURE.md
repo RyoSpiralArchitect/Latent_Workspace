@@ -141,7 +141,8 @@ test was shown to fail on a deliberate violation.
 | `scratch` | `ScratchDecoder` (custom split interface) | new |
 | `ladder` | Availability-ladder probes, world sign tests, rung verdict (A1) | new |
 | `availability` | lane A's flip endpoint: choices, contrasts, V19's diagnosis, V16's random-memory control | new; reproduces V19's recorded diagnosis from its saved scores |
-| `execution` | sealed-run skeleton: receipts, qualification, roles, no-retry dispatch | new; replaces per-run copies from A1 on |
+| `execution` | sealed-run skeleton: receipts, qualification (CPU alone for a CPU-only run), roles, no-retry dispatch | new; replaces per-run copies from A1 on |
+| `package` | the LTWS inference package: export/load of trained routes with a descriptor and manifest, V15's prompt contract, the latent-memory API (`LatentMemory.write` / `.read`) | new; canonical facts reproduce V15's, and the package check reproduces A5's sealed scores |
 
 [Parity tests](../tests/test_latent_workspace_stack.py) show bitwise-identical
 state, outputs and gradients against every original, and native logits through
