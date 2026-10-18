@@ -18,9 +18,10 @@ leaves the pair unjudged. Neither is a tie.
 
 Keys come only from the provider's environment variable and are never recorded. Requests are
 POSTed without following redirects. Transient failures (HTTP 408/409/425/429/5xx, timeouts,
-connection errors) are retried with backoff, and every attempt is counted; any other HTTP error
-stops that judge. A judgment the provider returns is recorded once, valid or invalid, and never
-re-asked.
+connection errors) are retried with backoff, honoring a delay the provider asks for, and every
+attempt is counted; any other HTTP error stops that judge. A judgment the provider returns is
+recorded once, valid or invalid, and never re-asked. A request that failed every attempt is
+recorded as failed and dispatched again by the next ``run``.
 
 Subcommands:
 
@@ -111,7 +112,7 @@ PROVIDERS = {
     ),
 }
 TRANSIENT = {408, 409, 425, 429, 500, 502, 503, 504, 529}
-ATTEMPTS = 6
+ATTEMPTS = 8
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -314,6 +315,18 @@ def call(url, payload, extra_headers, timeout=240, method="POST"):
         return json.loads(response.read())
 
 
+def retry_delay(error):
+    """Seconds the provider asks to wait: a Retry-After header or Gemini's retryDelay."""
+    wait = error.headers.get("retry-after") if error.headers else None
+    if wait and wait.replace(".", "", 1).isdigit():
+        return float(wait)
+    try:
+        found = re.search(rb'"retryDelay":\s*"(\d+(?:\.\d+)?)s"', error.read() or b"")
+    except Exception:
+        return 0.0
+    return float(found.group(1)) if found else 0.0
+
+
 def key_for(provider):
     key = os.environ.get(PROVIDERS[provider]["env"])
     if not key:
@@ -426,13 +439,12 @@ def run(args):
                     stop.set()
                     break
                 failure = f"http_{error.code}"
-                wait = error.headers.get("retry-after") if error.headers else None
-                delay = float(wait) if wait and wait.replace(".", "", 1).isdigit() else 0
+                delay = retry_delay(error)
             except (urllib.error.URLError, TimeoutError, ConnectionError, ssl.SSLError) as error:
                 failure = type(error).__name__
                 delay = 0
             if attempts < ATTEMPTS:
-                time.sleep(max(delay, min(60, 2**attempts)))
+                time.sleep(max(delay, min(120, 2**attempts)))
         row = dict(
             request,
             judge=label,
