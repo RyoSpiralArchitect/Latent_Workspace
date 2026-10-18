@@ -28,6 +28,9 @@ this page, and the scripts that reproduce them.
   rankings.
 - **Not fully established:** its main claim falls short of its pre-registered
   criterion.
+- **Transitional:** it is an adapter only while the project learns what a full
+  fine-tune needs. **The next release, v1.0, is planned as a full fine-tune,
+  not an adapter** ([what comes next](#what-comes-next)).
 
 Read [What it can and cannot do](#what-it-can-and-cannot-do) before using it.
 
@@ -463,6 +466,22 @@ Does Cyra outrank Aster? Answer:         memory=none     answer=no  (yes - no = 
   moderation mechanisms.
 - **Memory hygiene:** memory is read as given. Conflicting or untrusted facts
   are not detected.
+
+## What comes next
+
+- **v1.0 will not be an adapter.** It is planned as a full fine-tune: the
+  latent workspace learned into Mistral's own weights, with no separate route.
+  When it passes, the β is retired.
+- **The β is the transitional stage.** Its job is to teach what that full
+  fine-tune needs, so its routes will not be tuned further as an adapter.
+  So far it has shown:
+  - memory written apart can enter frozen Mistral at layer 4 and still be
+    read; from layer 8 on, it cannot;
+  - content gating keeps memory from moving answers it is not about;
+  - a learning rate that decays over the second half of training keeps seeds
+    consistent;
+  - natural text held at layer 4 keeps its gist but loses details (the free
+    generation above).
 
 ## Training
 

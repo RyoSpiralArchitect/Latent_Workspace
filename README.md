@@ -20,9 +20,17 @@ is on Hugging Face as a research preview, under Apache-2.0.
   logits.
 - **On BoolQ:** frozen Mistral reads a real passage held as latent memory
   almost as well as from its prompt (0.831 against 0.850).
+- **Free generation:** with a passage held as latent memory, Mistral's
+  written answers match the prompt's verdicts (0.840 against 0.825). Three
+  LLM judges prefer them to closed book's, and prefer the prompt's on detail.
+- **Next:** v1.0 is planned as a full fine-tune, not an adapter. The β is the
+  transitional stage that teaches what it needs, and is not tuned further as
+  an adapter ([direction](docs/v20/SCOPE.md#after-the-β-toward-a-full-fine-tune-ryō-2026-10-18)).
 - **Details:** design, checks and records are in
   [docs/v20/BETA_PACKAGE.md](docs/v20/BETA_PACKAGE.md); the benchmarks are in
-  [provenance/beta/ltws_beta_benchmarks_20261018](provenance/beta/ltws_beta_benchmarks_20261018/README.md).
+  [provenance/beta/ltws_beta_benchmarks_20261018](provenance/beta/ltws_beta_benchmarks_20261018/README.md),
+  the free generation and its judges in
+  [provenance/beta/ltws_beta_generation_20261018](provenance/beta/ltws_beta_generation_20261018/README.md).
 
 ## Status (2026-10-16)
 

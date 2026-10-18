@@ -46,4 +46,5 @@ Two versions share this folder (Ryō, 2026-10-16).
     It packages [A5's routes](BETA_PACKAGE.md) and reads the mean of the three,
     under Apache-2.0. It is checked against the sealed scores from text, and
     [benchmarked](../../provenance/beta/ltws_beta_benchmarks_20261018/README.md)
-    against the base model.
+    against the base model. It is transitional: v1.0 is planned as a full
+    fine-tune, not an adapter ([direction](SCOPE.md#after-the-β-toward-a-full-fine-tune-ryō-2026-10-18)).
