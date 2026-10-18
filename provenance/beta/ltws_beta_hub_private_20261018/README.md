@@ -1,7 +1,9 @@
-# LTWS β on the Hub — private upload record
+# LTWS β on the Hub — upload record
 
-2026-10-18. **Uploaded to a private repository and verified from a fresh
-download, twice. Ryō then asked to make it public.**
+2026-10-18. **PUBLIC:
+[RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)
+at revision `2a55dc3e`.** It was first uploaded privately and verified from a
+fresh download, twice, then made public on Ryō's request.
 
 ## Ryō's decisions (2026-10-18)
 
@@ -80,7 +82,18 @@ Repoからもリンクを貼ってみよう").
   - `example.py` gives the card's output, and nothing was written into the
     folder.
 
-## Remaining
+## Public
 
-The repository goes public after #28 is merged, so that the card's links to the
-source repository resolve.
+- **Before the switch:** #28 was merged first (`main` at `47d64c8`). All six
+  links from the card to the source repository resolve there.
+- **The switch:** the repository was set public with `huggingface_hub`'s
+  `update_repo_settings(private=False)`, from Furnace's logged-in CLI
+  environment. Its revision stayed `2a55dc3e56e6f07aa4977bd21f5ee893a157b18c`.
+- **Checked without a token:**
+  - `model_info` reports `private = False`, with 27 files;
+  - `MANIFEST.json`, downloaded anonymously, has SHA-256
+    `a2bdba37fb52ade5367d167a0c6b8879afa044d8f40797ec57654d45de34e14c`
+    (rc4's);
+  - the model page answers HTTP 200.
+- **Links to the model:** the source repository's README and its V20 index
+  (#28).
