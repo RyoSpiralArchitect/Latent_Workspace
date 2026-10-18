@@ -1,6 +1,6 @@
 # LTWS β on the Hub — upload record
 
-2026-10-18. **PUBLIC since 10:27Z:
+2026-10-18. **PUBLIC:
 [RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)
 at revision `2a55dc3e`.** It was first uploaded privately and verified from a
 fresh download, twice, then made public on Ryō's request.
