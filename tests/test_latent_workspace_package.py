@@ -116,6 +116,21 @@ def test_export_and_load_reproduce_the_routes_and_reject_tampering(tmp_path):
     with pytest.raises(ValueError, match="manifest"):
         package.load(tmp_path / "pkg")
     (tmp_path / "pkg" / "extra.txt").unlink()
+    code = tmp_path / "pkg" / "latent_workspace"
+    code.mkdir()
+    (code / "module.py").write_text("x = 1\n")
+    with pytest.raises(ValueError, match="manifest"):
+        package.load(tmp_path / "pkg")
+    written_manifest = package.write_manifest(tmp_path / "pkg")
+    assert "latent_workspace/module.py" in written_manifest["files"]
+    (code / "__pycache__").mkdir()
+    (code / "__pycache__" / "module.cpython.pyc").write_bytes(b"cache")
+    (tmp_path / "pkg" / ".gitattributes").write_text("*.safetensors filter=lfs\n")
+    package.load(tmp_path / "pkg")
+    (code / "module.py").write_text("x = 2\n")
+    with pytest.raises(ValueError, match="module.py"):
+        package.load(tmp_path / "pkg")
+    (code / "module.py").write_text("x = 1\n")
     path = tmp_path / "pkg" / "route_s2.safetensors"
     data = bytearray(path.read_bytes())
     data[-1] ^= 1
@@ -133,6 +148,8 @@ def test_latent_memory_reads_like_the_composition():
     reader = package.LatentMemory(host, StubTokenizer(), descriptor(cut=1), routes)
     query = "Is Ann ranked above Di? Answer:"
     memory = reader.write(FACTS)
+    ids_memory = reader.write_ids(package.render_memory(StubTokenizer(), FACTS))
+    assert torch.equal(memory, ids_memory)
     result = reader.read(query, memory)
     ids = torch.tensor([package.render_question(StubTokenizer(), query)])
     q = host.to_cut(ids, torch.ones_like(ids), 1)
