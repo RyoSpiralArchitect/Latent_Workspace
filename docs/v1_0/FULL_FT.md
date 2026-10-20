@@ -141,6 +141,10 @@ non-regression after training.
    hashes, completes two 7B native updates and saves, and exactly replays step
    2 from step 1 in a fresh process. This verifies the short tested graph,
    not the full configured length limits or a useful-learning endpoint.
+   The later [resource recovery](../../provenance/engineering/native_resource_probe_recovery01_20261021/README.md)
+   additionally passes 254/254 checks per device and three exact no-update
+   backward lengths through 128 memory + 128 query tokens. It does not extend
+   the optimizer-step/save/restart claim to that length.
 4. **Full-FT pilot (not launched):** freeze a finite training population and
    recipe only after canary success. Mix relevant-memory answer supervision
    with no-memory preservation examples and irrelevant-memory cases. Select
@@ -148,6 +152,14 @@ non-regression after training.
    neither beta's exposed validation examples nor judge rankings are new gold.
    The exact mixture, objective weights, update count and final holdout remain
    **UNSET**, so this document is not a dispatchable training plan.
+   [Preparation stage 01](DATA_PREPARATION.md) now supplies an oracle-checked
+   1,024-group world bank and 128 instruction seeds, plus 64 local teacher
+   candidates. Canonical policy/query remain outside teacher control:
+   the raw teacher drops policy in 48/48 world questions and changes 9/24
+   paired queries. An additive composer fixes those input contracts without
+   rewriting raw outputs; prose remains quarantined. Row-uniform sampling
+   gives the ordinary seeds only 4.05% of supervised candidate tokens, so the
+   bank is not yet a sufficient preservation recipe.
 5. **Evaluation before scale/release:** compare original direct, original
    latent-memory, updated direct, updated latent-memory, and inline-context
    controls on the same frozen inputs. Retain intact/twin/random/unrelated

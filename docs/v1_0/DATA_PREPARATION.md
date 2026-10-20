@@ -5,7 +5,7 @@
 This is **not** authorization to launch the full-FT population, paid judges,
 delete weights, replace the beta, merge a PR, or publish a model.
 
-The completed two-update/replay canary remains unchanged. A new additive
+The completed two-update/replay canary remains unchanged. An additive
 [resource probe](../../configs/v1_0/NATIVE_RESOURCE_PROBE_01.json) measures
 three forward/backward lengths up to 128 memory + 128 query tokens, with the
 native FP32 CPU masters and gradient-spill buffers present. It performs **zero**
@@ -14,6 +14,15 @@ peaks at those lengths or establish longer-context fit. Same pinned base,
 arithmetic and allocation floors; exclusive paths, sealed source and no retry.
 CPU work on dataset tooling can proceed alongside this GPU role. Teacher
 inference waits for the role to exit; it must not contend for GPU or host RAM.
+
+The [first resource attempt](../../provenance/engineering/native_resource_probe01_20261021/README.md)
+stopped before backward because the diagnostic substituted its purpose label
+for the loss identifier. After separate approval, the
+[recovery](../../provenance/engineering/native_resource_probe_recovery01_20261021/README.md)
+passed 254/254 checks on each device and all three backward rows, with both
+native and master weights unchanged. Peak CUDA allocated/reserved was
+27.696/28.365 GiB; peak host RSS was 59.267 GiB. This is still not a longer
+optimizer-step or quality result.
 
 ## Data roles
 
@@ -70,3 +79,43 @@ References:
 [llama.cpp build](https://github.com/ggml-org/llama.cpp/blob/1ba568c5ad5c6c718984bd2bf4e7c71485b706f9/docs/build.md).
 Inference backend, request settings and resource bounds must be frozen before
 the first request. A CPU-only speed result cannot be inferred from a GPU run.
+
+## Completed stage and remaining decisions
+
+The [world-bank result](../../provenance/data/native_world_bank01_20261021/README.md)
+contains 8,192 world rows from 1,024 groups plus 128 instruction seeds. Full
+regeneration passes. The 2,048 paired control duplicates are retained for
+audit, not treated as independent evidence. All canonical rows fit within
+the tested token axes, but this does not prove update/restart fit.
+
+The [teacher inspection](../../provenance/data/native_teacher_inspection01_20261021/README.md)
+completed 64/64 requests without retries, truncation or transport errors.
+All were structurally valid; semantic/training approvals remain zero.
+Post-hoc inspection found omitted memory policy in all 48 world questions and
+different question text in 9/24 twin pairs. A separately recorded compiler
+now uses immutable canonical memory/query plus teacher answer prose, producing
+64 quarantined derivatives without any new generation or raw-output edit.
+All 64 literal outputs are available in the linked human review panel.
+
+Before full FT, freeze these decisions rather than treating preparation as a
+quality gate:
+
+1. **Sampling by role and supervised tokens.** Do not silently double-count
+   paired duplicate controls. Ordinary instructions currently supply only
+   1,523/37,615 canonical candidate tokens (4.05%) under row-uniform sampling.
+   World/ordinary/absent/unrelated mixture and a finite update budget are UNSET.
+2. **Preservation targets distinct from teacher style.** Broaden instruction
+   coverage and establish original-Mistral rehearsal/anchors on independent
+   training material. A 32B teacher is a source of proposed useful behavior,
+   not proof of original-base non-regression. No new base generations or
+   preservation loss are implemented in this preparation stage.
+3. **Unseen evaluation and matched controls.** Freeze public benchmark versions,
+   token/correctness denominators, tolerances, same-seed generation prompts
+   and original/updated direct/latent/inline comparisons before FT. Use
+   development data for choices, not the final held-out set.
+4. **Length-specific update/save/restart.** The long backward result and short
+   exact replay are separate. A selected full-FT recipe must have a justified
+   resource/storage forecast and its own bounded dispatch authorization.
+
+No full FT, paid judge, additional learner generation, weight deletion, PR
+merge, beta replacement or Hub upload followed from this stage.

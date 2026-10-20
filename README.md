@@ -57,6 +57,29 @@ four-input engineering gate, not a quality gain: a finite full-FT recipe,
 longer-sequence resource qualification and original-base non-regression
 evaluation remain unmet.
 
+### Data and longer-backward preparation (2026-10-21)
+
+The separately authorized
+[resource recovery](provenance/engineering/native_resource_probe_recovery01_20261021/README.md)
+passes 254/254 CPU and CUDA checks and all three no-update backward rows up
+to 128 memory + 128 query tokens. Peak CUDA allocation/reservation is
+27.696/28.365 GiB; both native and CPU master weights remain unchanged.
+This does not extend the short optimizer-step/restart proof to those lengths.
+
+The [deterministic world bank](provenance/data/native_world_bank01_20261021/README.md)
+now contains 1,024 grouped worlds / 8,192 rows plus 128 small instruction seeds,
+with executable answer checks and disjoint groups; 2,048 control duplicates
+are explicitly counted. A [local 32B teacher inspection](provenance/data/native_teacher_inspection01_20261021/README.md)
+completed 64/64 fixed requests. All pass structural checks, but 48/48 world
+questions drop the memory-use policy and 9/24 twin pairs change question text.
+The additive composer therefore retains canonical memory/query and takes
+teacher answer prose only; all 64 derivatives remain quarantined, not approved
+for training. The [full preparation notes](docs/v1_0/DATA_PREPARATION.md) keep
+source seals, original failures, raw outputs and exact token denominators.
+Ordinary instructions are only 4.05% of canonical training-candidate answer
+tokens under row-uniform sampling: full-FT mixture, base-preservation data and
+unseen non-regression gates still need to be frozen before training.
+
 ## Current public artifact: LTWS β (2026-10-18)
  
 **[mistral-7b-instruct-v0.3-LTWS β](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)**
