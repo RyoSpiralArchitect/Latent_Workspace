@@ -81,3 +81,24 @@ def test_real_tiny_owner_accumulates_without_update_or_save(tmp_path, monkeypatc
     assert result["native_unchanged"] and result["masters_unchanged"]
     assert owner.completed_steps == 0
     assert len(list(tmp_path.glob("*.json"))) == 2
+
+
+def test_resource_contract_is_accepted_by_actual_owner_and_old_limits_unchanged():
+    from test_native_owner import setup
+
+    from latent_workspace.native_owner import NativeFullUpdateOwner
+
+    owner, _ = setup()
+    selected = plan()
+    old = ex.read(probe.ROOT / "configs/v1_0/NATIVE_RESOURCE_PROBE_01.json")
+    allowed = {"schema", "recovery_of", "qualification_cases"}
+    assert {k: v for k, v in old.items() if k not in allowed} == {
+        k: v for k, v in selected.items() if k not in allowed
+    }
+    rows = probe.resource_rows(
+        Tokenizer(), [dict(key="probe", memory_tokens=4, query_tokens=12, answer_tokens=3)]
+    )
+    contract = probe.resource_contract(owner.run_contract, rows)
+    rebuilt = NativeFullUpdateOwner(owner.graph, config=owner.config, run_contract=contract)
+    assert rebuilt.run_contract["objective"] == "query_only_token_weighted_causal_nll"
+    assert rebuilt.run_contract["data_sha256"] == ex.plan_hash(rows)

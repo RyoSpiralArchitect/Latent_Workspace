@@ -14,8 +14,8 @@ import run_native_7b_canary as prior  # noqa: E402
 from latent_workspace import execution as ex  # noqa: E402
 
 ENTRY = "scripts/run_native_resource_probe.py"
-PLAN = "configs/v1_0/NATIVE_RESOURCE_PROBE_01.json"
-PLAN_SHA256 = "9f52841cae2655f6bf2fa610917ba4722d9db161b5aa3a70be17c920c9b069e4"
+PLAN = "configs/v1_0/NATIVE_RESOURCE_PROBE_RECOVERY_01.json"
+PLAN_SHA256 = "b8e1c00ff520328c1ad5552dc18f2baa85a3d34d30c817b9d7b984edededcf84"
 TINY_PASS = "TINY_NATIVE_RESOURCE_PROBE_PASS_NOT_7B"
 ROLE_PASS = "THREE_BACKWARDS_NO_NATIVE_UPDATE"
 
@@ -28,6 +28,11 @@ def validate(plan):
         plan["no_retry"] and plan["native_weight_updates"] == plan["checkpoint_writes"] == 0,
         "No-update no-retry scope",
     )
+    recovery = plan["recovery_of"]
+    ex.require(
+        ex.digest(ROOT / recovery["terminal"]) == recovery["terminal_sha256"],
+        "Previous terminal changed",
+    )
 
 
 def effective_plan(plan):
@@ -35,6 +40,12 @@ def effective_plan(plan):
     result.update(plan)
     result["storage_forecast_bytes"] = 0
     return result
+
+
+def resource_contract(contract, rows):
+    # Diagnostic purpose is not a different loss. Keep the owner's genuine
+    # token-weighted causal-NLL identifier; only input provenance changes.
+    return {**contract, "data_sha256": ex.plan_hash(rows)}
 
 
 def resource_rows(tokenizer, profiles):
@@ -133,8 +144,7 @@ def probe(core, args, plan, seal):
     )
     rows = resource_rows(tokenizer, plan["profiles"])
     ex.write_new(args.output / "RESOURCE_INPUTS.json", rows)
-    contract["data_sha256"] = ex.plan_hash(rows)
-    contract["objective"] = "synthetic_length_probe_no_update"
+    contract = resource_contract(contract, rows)
     owner = NativeFullUpdateOwner(graph, config=config, run_contract=contract)
     result = backward_window(owner, rows, guard, args.output)
     result.update(prior.peak())
