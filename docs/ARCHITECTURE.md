@@ -143,6 +143,14 @@ test was shown to fail on a deliberate violation.
 | `availability` | lane A's flip endpoint: choices, contrasts, V19's diagnosis, V16's random-memory control | new; reproduces V19's recorded diagnosis from its saved scores |
 | `execution` | sealed-run skeleton: receipts, qualification (CPU alone for a CPU-only run), roles, no-retry dispatch | new; replaces per-run copies from A1 on |
 | `package` | the LTWS inference package: export/load of trained routes with a descriptor and manifest, V15's prompt contract, the latent-memory API (`LatentMemory.write` / `.read`) | new; canonical facts reproduce V15's, and the package check reproduces A5's sealed scores |
+| `native_memory` | differentiable memory/query composition through the native full-vocabulary head; query-only causal labels and token-weighted loss | new, post-beta; small-model graph qualification, not the production offload/checkpoint owner |
+
+The [post-beta full-FT plan](v1_0/FULL_FT.md) adds `NativeMemoryCausalLM` to
+composition, not another per-version learner. It preserves the beta host-only
+memory computation while reconnecting both token encodings to autograd. Its
+no-memory bypass equals the current host, not the pre-FT reference after an
+update. The next ownership promotion must preserve the qualified CPU-master
+arithmetic and restore guards before any new 7B full-update run.
 
 [Parity tests](../tests/test_latent_workspace_stack.py) show bitwise-identical
 state, outputs and gradients against every original, and native logits through

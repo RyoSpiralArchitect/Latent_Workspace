@@ -17,6 +17,7 @@ from .lattice import (
     TokenLocalLattice,
 )
 from .losses import LatentWorkspaceLoss
+from .native_memory import NativeMemoryCausalLM, NativeMemoryOutput
 from .operators import NormalizationSpec
 from .readout import NativeReadoutResult, NativeWorkspaceReadout, ResidualInjection, inject_last
 from .routes import (
@@ -46,6 +47,8 @@ __all__ = [
     "LogitResidualRoute",
     "LowRankLogitAdapter",
     "LowRankWorkspaceLogitAdapter",
+    "NativeMemoryCausalLM",
+    "NativeMemoryOutput",
     "NativeReadoutResult",
     "NativeWorkspaceReadout",
     "NormalizationSpec",

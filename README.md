@@ -26,6 +26,16 @@ For the architecture and portability target, read
 For run evidence, read the linked provenance records.
 For historical status, keep the dated claim ceilings attached to each run.
 
+## Toward native full fine-tuning (2026-10-20)
+
+The [post-beta full-FT plan](docs/v1_0/FULL_FT.md) starts from the native
+latent-memory path, with both writer and reader differentiable and the entire
+native vocabulary head trained. Its first implementation is
+[`NativeMemoryCausalLM`](src/latent_workspace/native_memory.py), separate from
+the beta's frozen two-candidate adapter. Small-model graph qualification is
+not a 7B training result: the production offload/checkpoint owner, resource
+canary, frozen training recipe and non-regression evaluation remain gates.
+
 ## Current public artifact: LTWS β (2026-10-18)
  
 **[mistral-7b-instruct-v0.3-LTWS β](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)**
