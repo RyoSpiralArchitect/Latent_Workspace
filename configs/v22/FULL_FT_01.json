@@ -1,0 +1,95 @@
+{
+  "schema": "ltws-v22-native-full-ft-01",
+  "reference_plan": "configs/v1_0/NATIVE_7B_CANARY_RECOVERY_01.json",
+  "reference_plan_sha256": "6f692b785185c60f294925a25fa22e3ee2774a86c85e0372240cc159a8657526",
+  "backbone": {
+    "repository": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+    "identity": {
+      "legacy_state_v1_sha256": "54d161755862ebf00d8acbca083d5f290a5de44d33af82ca885f3bd8f9c94312",
+      "state_tree_v1_sha256": "9db998af86c8105f0a2d774c10f777e190f86e54473b6b756bb51b225064a189"
+    },
+    "parameters": 7248023552,
+    "dtype": "bfloat16",
+    "attention": "eager",
+    "cut": 4
+  },
+  "seed": 47,
+  "optimizer": {
+    "learning_rate": 2e-7,
+    "weight_decay": 0,
+    "max_grad_norm": 1
+  },
+  "adafactor_step_sha256": "b30d8fbb89724cc185720895fade90f5b1c844b1c6804f68315cea76395e4cfc",
+  "objective": "query_only_token_weighted_causal_nll",
+  "data_bundle": "/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v22-data01-20261021/bank",
+  "data_manifest_sha256": "fe463daf2a349df824eacb9f33d345b5c235edf74f2aee6dc7252f238dadf71c",
+  "data_recipe": "configs/v22/DATA_01.json",
+  "data_recipe_sha256": "dd559362d8dfa5a84352a73648fce27d7411760dcfe7ff17aedb5157faabd726",
+  "planned_training_updates": 32,
+  "planned_training_rows": 723,
+  "planned_training_tokens": 20860,
+  "planned_canary_updates": 2,
+  "planned_replay_updates": 1,
+  "checkpoint_names": [
+    "canary_step1.pt",
+    "training_step16.pt",
+    "training_step32.pt"
+  ],
+  "checkpoint_max_bytes": 30064771072,
+  "storage_forecast_bytes": 90194313216,
+  "snapshot_host_extra_bytes": 34359738368,
+  "expected_runtime": {
+    "python": "3.12.14",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0",
+    "cuda": "13.2"
+  },
+  "resources": {
+    "admission_free_gib": 31,
+    "allocator_cap_gib": 30.5,
+    "abort_free_gib": 0.75,
+    "host_admission_available_gib": 100,
+    "host_abort_available_gib": 24,
+    "disk_free_gib": 50,
+    "max_elapsed_seconds": 14400,
+    "cpu_threads": 2
+  },
+  "qualification_devices": [
+    "cpu",
+    "cuda"
+  ],
+  "qualification_device_env": "LTWS_TEST_DEVICE",
+  "qualification_cpu_mkldnn_enabled": false,
+  "scratch_cpu_sdpa_backend": "math",
+  "qualification_gpu_limit_gib": 4,
+  "qualification_wall_seconds": 900,
+  "qualification_cases": 290,
+  "qualification_test_files": [
+    "tests/test_native_memory.py",
+    "tests/test_native_owner.py",
+    "tests/test_latent_workspace_stack.py",
+    "tests/test_latent_workspace_package.py",
+    "tests/test_latent_workspace_ladder.py",
+    "tests/test_latent_workspace_availability.py",
+    "tests/test_latent_workspace_execution.py",
+    "tests/test_architecture_rules.py",
+    "tests/test_v20_a5_stable_route.py",
+    "tests/test_native_7b_canary.py",
+    "tests/test_native_7b_identity_recovery.py",
+    "tests/test_v22_data.py",
+    "tests/test_v22_full_ft.py"
+  ],
+  "pass_status": "V22_NATIVE_TRAINING_32_STEPS_COMPLETE_NOT_QUALITY",
+  "no_retry": true,
+  "new_sequences": 0,
+  "judge_calls": 0,
+  "weight_deletions": 0,
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED",
+  "training_start": "Pinned original, not canary-updated weights; train_a steps 1-16, fresh train_b restore 16 and steps 17-32.",
+  "development": "Fixed 40 dev rows, teacher-forced NLL before training and after step 32; diagnostic only, no threshold or post-result selection.",
+  "rights": "Private research only under existing source claims. No raw-data/weight publication; jurisdiction and redistribution review remain pending.",
+  "scope": "English-only, one seed, native full-parameter BF16/CPU-FP32-Adafactor pilot. Engineering canary and exact fresh-process replay must pass before training. No old scientific gate promotion, benchmark claim, new generation, paid judge, deletion, beta replacement or Hub upload."
+}

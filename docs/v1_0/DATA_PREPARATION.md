@@ -151,3 +151,15 @@ occurred. This establishes a reproducible candidate substrate, not retention:
 - Actual role weights, original-base anchors/controls, benchmark versions and
   non-regression tolerances remain UNSET. No preservation loss is yet wired
   into the full-FT trainer by this preparation-only change.
+
+### Subsequent V22 admission (2026-10-21)
+
+Ryō then authorized excluding Japanese and proceeding through update/save/
+fresh-process-replay qualification to training. The additive
+[English projection](../../provenance/data/v22_english_mixture01_20261021/README.md)
+preserves the bank above and removes 38 Japanese rows. The
+[V22 execution contract](../v22/FULL_FT_01.md) freezes the actual 32-window,
+723-row, 20,860-target schedule, unchanged native optimizer, resource limits,
+and fixed diagnostic development panel. This supersedes `UNSET` only for that
+bounded private pilot's mixture and updates; broad non-regression, rights for
+redistribution, quality, and release gates remain unestablished.

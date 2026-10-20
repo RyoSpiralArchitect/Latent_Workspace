@@ -87,6 +87,20 @@ backward axis. These are not training approvals or a retention result:
 rights/admission review, mixed-recipe resource qualification, full-FT mixture
 and unseen non-regression gates remain before training.
 
+### V22 English-only native pilot (2026-10-21)
+
+Ryō authorized an additive English-only projection, mixed update/save/replay
+qualification, and then native full-parameter training. The
+[frozen V22 plan](docs/v22/FULL_FT_01.md) specifies 32 updates / 723 unique rows /
+20,860 supervised tokens, with token-balanced world/instruction/prose/code
+exposure. The [data projection](provenance/data/v22_english_mixture01_20261021/README.md)
+fully regenerates offline and leaves both original banks unchanged.
+Long 1,024-token mixed canary/replay and complete CPU/CUDA qualification gate
+the training roles; training starts from the original, not canary weights,
+and resumes in a fresh process at step 16. This entry records the **plan**,
+not completion or quality. No public benchmark/non-regression gate, beta
+replacement or release is implied.
+
 ## Current public artifact: LTWS β (2026-10-18)
  
 **[mistral-7b-instruct-v0.3-LTWS β](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)**
