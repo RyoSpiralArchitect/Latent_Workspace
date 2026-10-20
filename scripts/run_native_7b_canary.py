@@ -17,8 +17,8 @@ sys.path.insert(0, str(ROOT / "src"))
 from latent_workspace import execution as ex  # noqa: E402
 
 ENTRY = "scripts/run_native_7b_canary.py"
-PLAN = "configs/v1_0/NATIVE_7B_CANARY.json"
-PLAN_SHA256 = "ecb1058c32a4647cf4486710e4eec0fb0670a59139e34be63a7f4c8a9f206a71"
+PLAN = "configs/v1_0/NATIVE_7B_CANARY_RECOVERY_01.json"
+PLAN_SHA256 = "6f692b785185c60f294925a25fa22e3ee2774a86c85e0372240cc159a8657526"
 TINY_PASS = "TINY_NATIVE_CANARY_HARNESS_PASS_NOT_7B"
 ROLES = ("primary", "replay")
 STATUSES = {"primary": "TWO_NATIVE_UPDATES_SAVED", "replay": "EXACT_NATIVE_STEP2_REPLAY"}
@@ -36,6 +36,47 @@ def load(name):
 def validate(plan):
     ex.require(ex.plan_hash(plan) == PLAN_SHA256, "Frozen 7B canary plan changed")
     ex.require(plan["no_retry"] and plan["planned_backward_rows"] == 6, "Bounded no-retry scope")
+    reference = plan["identity_reference"]
+    path = ROOT / reference["path"]
+    ex.require(ex.digest(path) == reference["sha256"], "Historical identity reference changed")
+    contract = ex.read(path)["contract"]
+    ex.require(
+        plan["backbone"]["identity"]
+        == {
+            "legacy_state_v1_sha256": contract["original_legacy_identity_sha256"],
+            "state_tree_v1_sha256": contract["original_base_sha256"],
+        },
+        "Named identity schemes differ from historical reference",
+    )
+    recovery = plan["recovery_of"]
+    ex.require(
+        ex.digest(ROOT / recovery["terminal"]) == recovery["terminal_sha256"],
+        "Previous terminal changed",
+    )
+
+
+def original_identity(model, expected, output, *, legacy_hash):
+    """Persist both named measurements before failing; never compare across schemes."""
+    from latent_workspace.optimizer_state import tree_hash
+
+    keys = {"legacy_state_v1_sha256", "state_tree_v1_sha256"}
+    ex.require(set(expected) == keys, "Named identity scheme keys")
+    observed = {
+        "legacy_state_v1_sha256": legacy_hash(model),
+        "state_tree_v1_sha256": tree_hash(model.state_dict()),
+    }
+    matches = {key: observed[key] == expected[key] for key in sorted(keys)}
+    ex.write_new(
+        output / "ORIGINAL_IDENTITY.json",
+        dict(
+            schema="named-native-model-identity-v1",
+            expected=expected,
+            observed=observed,
+            matches=matches,
+        ),
+    )
+    ex.require(all(matches.values()), "Pinned original model identity differs (named schemes)")
+    return observed
 
 
 def encode_rows(tokenizer, plan):
@@ -179,7 +220,6 @@ def prepare(core, args, plan, seal):
 
     from latent_workspace.native_memory import NativeMemoryCausalLM
     from latent_workspace.native_owner import NativeOptimizerConfig
-    from latent_workspace.optimizer_state import tree_hash
 
     runtime = load("run_v16_adapter_full_recovery_02").runtime(core, plan)
     ex.qualification_backend_policy(torch, plan)
@@ -211,9 +251,8 @@ def prepare(core, args, plan, seal):
         attn_implementation=backbone["attention"],
     ).to("cuda")
     model.config.use_cache = False
-    ex.require(
-        core.legacy.old.prior.state_hash(model) == backbone["legacy_state_sha256"],
-        "Pinned original model differs",
+    identity = original_identity(
+        model, backbone["identity"], args.output, legacy_hash=core.legacy.old.prior.state_hash
     )
     model.requires_grad_(True).train()
     model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
@@ -224,7 +263,7 @@ def prepare(core, args, plan, seal):
     torch.manual_seed(plan["seed"])
     contract = dict(
         source_commit=seal["source_commit"],
-        original_base_sha256=tree_hash(model.state_dict()),
+        original_base_sha256=identity["state_tree_v1_sha256"],
         data_sha256=ex.plan_hash(rows),
         objective=plan["objective"],
     )

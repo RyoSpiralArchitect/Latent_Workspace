@@ -48,6 +48,9 @@ tree-hash digest with the legacy hash function. The failed source and raw
 receipts are retained, replay was not dispatched, and no automatic retry
 followed. Real-7B execution/restart equivalence, a frozen full-FT recipe and
 original-base non-regression evaluation remain gates.
+The separately authorized [identity recovery](docs/v1_0/NATIVE_7B_RECOVERY_01.md)
+adds named dual-hash checks and regressions before a fresh qualified attempt,
+without changing its training recipe or resource limits.
 
 ## Current public artifact: LTWS β (2026-10-18)
  

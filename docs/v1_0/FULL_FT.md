@@ -184,9 +184,10 @@ stopped on an incorrectly paired identity hash, not an observed OOM. No
 7B peak or checkpoint-size measurement was reached. At 10:12:30 UTC the
 checkpoint directory was empty and no compute process remained.
 
-**Next:** preserve the incomplete record, then seek a separate recovery
-decision for a scheme-explicit identity check and fresh CPU/CUDA qualification
-before another bounded 7B dispatch. Do not waive original-model identity or
+**Next:** Ryō authorized [identity recovery 01](NATIVE_7B_RECOVERY_01.md),
+with a scheme-explicit identity check and fresh CPU/CUDA qualification
+before a separate bounded 7B dispatch. Preserve the incomplete record;
+do not waive original-model identity or
 loosen the frozen resource limits. The two-update/replay gate remains unmet.
 This is not the full-FT pilot: training mixture, held-out population and
 quality gates still require step 4/5's prospective recipe.

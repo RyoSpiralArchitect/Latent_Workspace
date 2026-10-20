@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import subprocess
@@ -82,15 +83,77 @@ def verify_source(bundle, repo):
         )
         data = git("show", f"{sha}:{name}")
         require(hashlib.sha256(data).hexdigest() == expected, f"Source hash: {name}")
-        if name in (PLAN, ENTRY):
+        if name == ENTRY or name.startswith("configs/v1_0/NATIVE_7B_CANARY"):
             blobs[name] = data
-    plan = json.loads(blobs[PLAN])
+    # Read the literal plan path from the sealed source without executing it.
+    assignments = [
+        node.value.value
+        for node in ast.parse(blobs[ENTRY]).body
+        if isinstance(node, ast.Assign)
+        and any(isinstance(t, ast.Name) and t.id == "PLAN" for t in node.targets)
+        and isinstance(node.value, ast.Constant)
+    ]
+    require(len(assignments) == 1 and assignments[0] in blobs, "Sealed literal plan path")
+    plan = json.loads(blobs[assignments[0]])
     plan_sha = hashlib.sha256(canonical(plan).encode()).hexdigest()
     require(f'PLAN_SHA256 = "{plan_sha}"'.encode() in blobs[ENTRY], "Frozen plan hash")
     require(
-        plan["schema"] == "ltws-native-memory-7b-canary-v1" and plan["no_retry"], "Canary scope"
+        plan["schema"]
+        in (
+            "ltws-native-memory-7b-canary-v1",
+            "ltws-native-memory-7b-canary-identity-recovery-v1",
+        )
+        and plan["no_retry"],
+        "Canary scope",
     )
+    if "identity_reference" in plan:
+        ref = plan["identity_reference"]
+        raw = git("show", f"{sha}:{ref['path']}")
+        require(hashlib.sha256(raw).hexdigest() == ref["sha256"], "Historical identity reference")
+        contract = json.loads(raw)["contract"]
+        require(
+            plan["backbone"]["identity"]
+            == dict(
+                legacy_state_v1_sha256=contract["original_legacy_identity_sha256"],
+                state_tree_v1_sha256=contract["original_base_sha256"],
+            ),
+            "Identity schemes bound to history",
+        )
+        old = plan["recovery_of"]
+        raw = git("show", f"{sha}:{old['terminal']}")
+        require(hashlib.sha256(raw).hexdigest() == old["terminal_sha256"], "Previous terminal")
     return seal, plan
+
+
+def verify_identity(folder, plan, *, complete):
+    path = folder / "ORIGINAL_IDENTITY.json"
+    if not complete and not path.exists():
+        return
+    record = read(path)
+    expected = plan["backbone"]["identity"]
+    require(
+        record["schema"] == "named-native-model-identity-v1"
+        and record["expected"] == expected
+        and set(record["observed"]) == set(expected),
+        "Named identity receipt",
+    )
+    observed = record["observed"]
+    require(
+        all(
+            isinstance(v, str) and len(v) == 64 and all(c in "0123456789abcdef" for c in v)
+            for v in observed.values()
+        ),
+        "Observed identity digest",
+    )
+    matches = {key: observed[key] == expected[key] for key in expected}
+    require(record["matches"] == matches, "Measured identity matches")
+    if complete:
+        require(all(matches.values()), "Original model identity")
+        require(
+            read(folder / "CONTEXT.json")["contract"]["original_base_sha256"]
+            == observed["state_tree_v1_sha256"],
+            "Identity bound to run contract",
+        )
 
 
 def verify_qualification(bundle, seal, plan):
@@ -135,6 +198,11 @@ def verify_qualification(bundle, seal, plan):
 def verify_run(raw, seal, plan):
     start, end = terminal(raw)
     require(start["seal"] == seal and start["plan"] == plan, "Dispatch source/plan")
+    if "identity" in plan["backbone"]:
+        for role in ("primary", "replay"):
+            if (raw / role).exists():
+                terminal(raw / role)
+                verify_identity(raw / role, plan, complete=end["status"] == plan["pass_status"])
     if end["status"] != plan["pass_status"]:
         require(end["status"] == "INCOMPLETE_NO_RETRY", "Unknown terminal status")
         return dict(
