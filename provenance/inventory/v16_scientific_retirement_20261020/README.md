@@ -1,6 +1,6 @@
 # Retirement of the three closed V16 scientific conditions
 
-2026-10-20. **Prepared; no deletion receipt yet.**
+2026-10-20. **Inventory verified; no deletion receipt yet.**
 Ryō explicitly approved recording and retiring the previously listed V16
 candidates. This is a whole-condition retirement of `common`,
 `raw_matched_control`, and `slot_contrast`: exactly their `step1.pt` and
@@ -16,6 +16,19 @@ all-file hash check, visible-process/open-handle screening and protected-state
 metadata agreement. It journals each unlink separately. Failed/partial attempts
 are retained and never retried automatically. This is not an atomic filesystem
 transaction or proof of visibility into privileged services.
+
+The read-only inventory completed at **08:11:15 UTC**, from source
+`3cdce65a59da599d29c00de741abd7f851853e70`.
+All **6/6** current file SHA-256 values and sizes match the historical checkpoint
+receipts. [PLAN.json](PLAN.json) binds the fixed target paths, both source
+utilities, and **667** unchanged historical evidence files.
+[INVENTORY.json](INVENTORY.json) records current file identity, protected-state
+metadata, available disk space and visible-process checks. No target handle or
+target-referencing command was visible; five service processes had limited
+visibility, explicitly `UNKNOWN`. [FINISHED.json](FINISHED.json) is an
+inventory receipt, not evidence of deletion. The local guards passed
+[57/57 tests](TESTS.xml), with no failures/errors/skips; Ruff passed.
+Available space at inventory completion was **87,145,967,616 bytes**.
 
 ## Exact authorized scope
 
