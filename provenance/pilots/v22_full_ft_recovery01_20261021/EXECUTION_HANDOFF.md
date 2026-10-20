@@ -2,8 +2,10 @@
 
 Execution source: **`13c1192fc2727d8ca61ee215a927c0cd77f75b16`**, 724 sealed files.
 CPU and CUDA qualification each passed **318/318**, zero errors/failures/skips.
-The finite checks phase has been started once; inspect its receipts before any
-action. No heartbeat, recurring job or automatic retry was created.
+The finite checks phase completed successfully: exact fresh-process replay,
+including all losses/gradients/update state/RNG/payload. Its terminal status is
+`V22_RECOVERY_CHECKS_COMPLETE_NOT_TRAINING`. No training is yet claimed by this
+version. No heartbeat, recurring job or automatic retry was created.
 
 ## Exact scopes
 
