@@ -58,7 +58,7 @@ def qualification(tmp_path):
 def test_qualification_denominators(qualification):
     root, plan = qualification
     actual = v.verify_qualification(root, SEAL, plan)
-    assert actual["cpu"]["tests"] == actual["cuda"]["tests"] == 228
+    assert actual["cpu"]["tests"] == actual["cuda"]["tests"] == 229
 
 
 @pytest.mark.parametrize(

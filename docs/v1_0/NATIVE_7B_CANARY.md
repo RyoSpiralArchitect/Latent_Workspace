@@ -20,7 +20,11 @@ by the total supervised answer tokens in its complete window, including EOS;
 unequal-length answers are not averaged as equal-weight microbatch means.
 
 The pinned native user chat prefix receives separately encoded, space-prefixed
-answer tokens plus EOS. Prompt labels are ignored. Memory has no special tokens
+answer tokens plus EOS. Tokenization explicitly sets `return_dict=False` and
+validates integer IDs; Transformers 5.15 defaults to a mapping. The
+[first prelaunch](../../provenance/engineering/native_7b_canary_prelaunch01_20261020/README.md)
+was superseded before CUDA/7B dispatch when this API mismatch was found.
+Prompt labels are ignored. Memory has no special tokens
 and never contains the question/answer. Persist exact text, IDs, labels and
 counts before model loading; fail instead of truncating above 128 memory tokens,
 128 query-plus-answer tokens or 32 supervised tokens. Microbatch size is one.
@@ -34,7 +38,7 @@ benchmark or release is part of this trial. No adapter/route weights are added.
 
 ## Gates and receipts
 
-Run the existing 203 selected tiny checks plus the new harness checks on both
+Run the existing 203 selected tiny checks plus 26 new harness checks (229 total) on both
 CPU and CUDA from the same sealed source, with the existing 4-GiB per-process /
 900-second qualification limits. Every case must pass without skips before
 any 7B dispatch. The old qualified receipts remain historical, not replacements

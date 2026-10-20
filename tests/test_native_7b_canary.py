@@ -20,7 +20,7 @@ class Tokenizer:
     eos_token_id = 2
 
     def apply_chat_template(self, messages, **kwargs):
-        assert kwargs == dict(tokenize=True, add_generation_prompt=True)
+        assert kwargs == dict(tokenize=True, add_generation_prompt=True, return_dict=False)
         assert len(messages) == 1 and messages[0]["role"] == "user"
         return [1, 11, 12]
 
@@ -68,6 +68,28 @@ def test_native_chat_answer_labels_and_unequal_token_denominators():
     assert rows[0]["supervised_tokens"] != rows[1]["supervised_tokens"]
     mini = canary.batch(rows[1], "cpu")
     assert "memory_ids" not in mini and mini["labels"].dtype == torch.long
+
+
+def test_real_fast_tokenizer_api_returns_explicit_ids_not_batch_encoding_keys():
+    from tokenizers import Tokenizer as Backend
+    from tokenizers.models import WordLevel
+    from tokenizers.pre_tokenizers import Whitespace
+    from transformers import PreTrainedTokenizerFast
+
+    backend = Backend(
+        WordLevel({"[UNK]": 0, "[BOS]": 1, "[EOS]": 2, "Hello": 3}, unk_token="[UNK]")
+    )
+    backend.pre_tokenizer = Whitespace()
+    tokenizer = PreTrainedTokenizerFast(
+        tokenizer_object=backend,
+        unk_token="[UNK]",
+        bos_token="[BOS]",
+        eos_token="[EOS]",
+        chat_template="{{ bos_token }}{% for m in messages %}{{ m['content'] }}{% endfor %}",
+    )
+    rows = canary.encode_rows(tokenizer, plan())
+    assert all(type(token) is int for row in rows for token in row["input_ids"])
+    assert rows[0]["input_ids"][0] == 1
 
 
 @pytest.mark.parametrize(

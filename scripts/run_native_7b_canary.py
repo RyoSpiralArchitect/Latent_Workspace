@@ -18,7 +18,7 @@ from latent_workspace import execution as ex  # noqa: E402
 
 ENTRY = "scripts/run_native_7b_canary.py"
 PLAN = "configs/v1_0/NATIVE_7B_CANARY.json"
-PLAN_SHA256 = "6278fe663970cf978fd0e93a0587c3af1853d6059ee0b5c99a4a456bd77845a7"
+PLAN_SHA256 = "ecb1058c32a4647cf4486710e4eec0fb0670a59139e34be63a7f4c8a9f206a71"
 TINY_PASS = "TINY_NATIVE_CANARY_HARNESS_PASS_NOT_7B"
 ROLES = ("primary", "replay")
 STATUSES = {"primary": "TWO_NATIVE_UPDATES_SAVED", "replay": "EXACT_NATIVE_STEP2_REPLAY"}
@@ -47,10 +47,15 @@ def encode_rows(tokenizer, plan):
             [{"role": "user", "content": row["query"]}],
             tokenize=True,
             add_generation_prompt=True,
+            return_dict=False,
         )
         answer = tokenizer.encode(" " + row["answer"], add_special_tokens=False) + [2]
         memory = tokenizer.encode(row["memory"], add_special_tokens=False) if row["memory"] else []
         ids = list(prefix) + answer
+        ex.require(
+            all(type(t) is int and t >= 0 for t in [*ids, *memory]),
+            "Tokenizer must return integer IDs",
+        )
         limits = plan["bounds"]
         ex.require(
             0 < len(prefix) and 0 < len(answer) <= limits["answer_tokens_including_eos"],
