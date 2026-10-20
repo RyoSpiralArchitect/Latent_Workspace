@@ -46,11 +46,16 @@ passed 229/229 tiny checks on each device, then stopped at original-model
 identity before any training update: the new harness compared a historical
 tree-hash digest with the legacy hash function. The failed source and raw
 receipts are retained, replay was not dispatched, and no automatic retry
-followed. Real-7B execution/restart equivalence, a frozen full-FT recipe and
-original-base non-regression evaluation remain gates.
+followed.
 The separately authorized [identity recovery](docs/v1_0/NATIVE_7B_RECOVERY_01.md)
-adds named dual-hash checks and regressions before a fresh qualified attempt,
-without changing its training recipe or resource limits.
+then passed 244/244 CPU and CUDA checks and
+[completed two real-7B native updates, two saves and exact fresh-process
+step-2 replay](provenance/engineering/native_7b_identity_recovery01_20261020/README.md),
+with both original-model hashes matched and the recipe/limits unchanged.
+Peak CUDA allocation was 27.690 GiB and peak host RSS 86.809 GiB. This is a
+four-input engineering gate, not a quality gain: a finite full-FT recipe,
+longer-sequence resource qualification and original-base non-regression
+evaluation remain unmet.
 
 ## Current public artifact: LTWS β (2026-10-18)
  

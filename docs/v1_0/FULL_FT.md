@@ -125,7 +125,7 @@ non-regression after training.
    own source-sealed terminal receipt. [Attempt 03](../../provenance/engineering/native_owner_qualification_attempt03_20261020/README.md)
    now passes **203/203 on each device**, including fresh-process FP32/BF16
    owner replay; offline source/manifest/XML verification also passed.
-3. **Bounded 7B canary ([contract](NATIVE_7B_CANARY.md), incomplete):**
+3. **Bounded 7B canary ([contract](NATIVE_7B_CANARY.md), recovery passed):**
    pinned original Mistral, native BF16,
    CPU FP32 masters, activation checkpointing, one condition/two complete
    update windows plus fresh-process replay. Freeze source, lengths, memory
@@ -135,8 +135,12 @@ non-regression after training.
    passed 229/229 tiny checks on each device but stopped before the first
    update: its new harness compared the tree-hash expected digest with the
    legacy hash function. Replay was not dispatched. Preserve this source and
-   failure; a scheme-explicit identity repair and newly qualified separate
-   attempt are required. Present-cache identity and 7B fit remain unverified.
+   failure. The separately authorized
+   [identity recovery](../../provenance/engineering/native_7b_identity_recovery01_20261020/README.md)
+   now passes 244/244 checks on both devices, matches both historical model
+   hashes, completes two 7B native updates and saves, and exactly replays step
+   2 from step 1 in a fresh process. This verifies the short tested graph,
+   not the full configured length limits or a useful-learning endpoint.
 4. **Full-FT pilot (not launched):** freeze a finite training population and
    recipe only after canary success. Mix relevant-memory answer supervision
    with no-memory preservation examples and irrelevant-memory cases. Select
@@ -184,13 +188,19 @@ stopped on an incorrectly paired identity hash, not an observed OOM. No
 7B peak or checkpoint-size measurement was reached. At 10:12:30 UTC the
 checkpoint directory was empty and no compute process remained.
 
-**Next:** Ryō authorized [identity recovery 01](NATIVE_7B_RECOVERY_01.md),
-with a scheme-explicit identity check and fresh CPU/CUDA qualification
-before a separate bounded 7B dispatch. Preserve the incomplete record;
-do not waive original-model identity or
-loosen the frozen resource limits. The two-update/replay gate remains unmet.
-This is not the full-FT pilot: training mixture, held-out population and
-quality gates still require step 4/5's prospective recipe.
+**Completed recovery:** [identity recovery 01](NATIVE_7B_RECOVERY_01.md)
+passed both named identity checks and the two-update/fresh-process-replay gate.
+Peak CUDA allocation was 27.6903 GiB in both roles; peak host RSS was
+86.8090 / 86.7618 GiB. Two checkpoints occupy 54.0249 GiB, with final sampled
+free disk 186.389 GiB. No limit was loosened or additional weight deleted.
+The observed maximum combined memory/query length was only 48 tokens; do not
+infer that the configured bounds or longer full-FT sequences fit.
+
+**Next:** freeze step 4/5's finite population, mixture, original-base references
+and quality/non-regression criteria. Requalify resources for any longer
+sequence or larger accumulation window before dispatching that recipe.
+No full-FT pilot, benchmark or answer-generation batch is launched by this
+engineering pass. Preserve the old failed attempt as historical evidence.
 
 **Earlier check, 06:35:44 UTC:** GPU was idle and both tiny device qualifications
 had passed, but filesystem free space was ~82.22 GiB, ~21.95 GiB below the

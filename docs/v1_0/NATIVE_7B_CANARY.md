@@ -19,9 +19,10 @@ an authorized, separately qualified repair must explicitly bind the two
 identity schemes and record actual values before testing them. This failure
 does not establish present-cache identity, real-7B fit or replay equivalence.
 The fixed scope and gates below describe the incomplete trial, not results.
-Ryō subsequently authorized [identity recovery 01](NATIVE_7B_RECOVERY_01.md):
-a new plan/source, named dual identity checks and fresh qualification, with
-the experiment and resource limits unchanged.
+Ryō subsequently authorized [identity recovery 01](NATIVE_7B_RECOVERY_01.md),
+which now passes the short real-7B update/restart gate on a new plan/source,
+with named dual identity checks, fresh qualification and unchanged experiment
+and resource limits. The historical failure below is not relabeled a success.
 
 ## Fixed scope
 

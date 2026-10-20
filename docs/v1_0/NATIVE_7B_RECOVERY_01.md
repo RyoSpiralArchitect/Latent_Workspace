@@ -2,7 +2,11 @@
 
 2026-10-20. Ryō explicitly authorized this **separate** attempt after the
 [failed original-model identity check](../../provenance/engineering/native_7b_canary_20261020/README.md).
-Not yet dispatched. No full training population, generation, judge, further
+The [completed result](../../provenance/engineering/native_7b_identity_recovery01_20261020/README.md)
+passes the short 7B update/restart gate: two native updates, two checkpoints,
+exact step-1 restore and exact step-2 replay in a fresh process. CPU/CUDA each
+passed 244/244; both original-model hash schemes matched in both roles.
+No full training population, generation, judge, further
 deletion, automatic retry, PR merge or Hub publication is selected.
 
 The old plan, source commit `59188535516eb32d57a42fb23fa4a7cc91585511` and all
