@@ -1,6 +1,6 @@
 # Native-memory 7B canary: engineering before the training population
 
-2026-10-20. Prospective bounded engineering trial, **not yet launched**.
+2026-10-20. Bounded engineering trial, **INCOMPLETE_NO_RETRY**.
 Ryō approved proceeding after the
 [recorded V16 retirement](../../provenance/inventory/v16_scientific_retirement_20261020/README.md).
 The [plan](../../configs/v1_0/NATIVE_7B_CANARY.json) and
@@ -9,6 +9,16 @@ pinned original Mistral-7B-Instruct-v0.3, all native BF16 parameters trainable,
 FP32 CPU Adafactor masters, eager attention and non-reentrant activation
 checkpointing. The qualified graph and update arithmetic are not redesigned
 for this trial. CPU oneDNN is explicitly off, as in the tiny qualification.
+
+The [first real-model attempt](../../provenance/engineering/native_7b_canary_20261020/README.md)
+passed 229/229 tiny checks on CPU and CUDA, then stopped at original-model
+identity before any training update. Its frozen plan accidentally supplied
+the historical tree-hash value to the legacy hash comparison. No replay or
+automatic retry followed. Preserve the original source and raw evidence;
+an authorized, separately qualified repair must explicitly bind the two
+identity schemes and record actual values before testing them. This failure
+does not establish present-cache identity, real-7B fit or replay equivalence.
+The fixed scope and gates below describe the incomplete trial, not results.
 
 ## Fixed scope
 

@@ -41,9 +41,13 @@ BF16. After separate approval, the [six closed V16 checkpoints were recorded
 and retired](provenance/inventory/v16_scientific_retirement_20261020/README.md),
 recovering 162.46 GiB; 243.61 GiB was available afterward. V18 and the original
 Mistral remain. Git preserves evidence, not recoverable weight bytes.
-The new bounded 7B resource canary, frozen full-FT recipe and original-base
-non-regression evaluation remain gates. No 7B run follows from the tiny tests
-or capacity recovery alone.
+The [new bounded 7B canary](provenance/engineering/native_7b_canary_20261020/README.md)
+passed 229/229 tiny checks on each device, then stopped at original-model
+identity before any training update: the new harness compared a historical
+tree-hash digest with the legacy hash function. The failed source and raw
+receipts are retained, replay was not dispatched, and no automatic retry
+followed. Real-7B execution/restart equivalence, a frozen full-FT recipe and
+original-base non-regression evaluation remain gates.
 
 ## Current public artifact: LTWS β (2026-10-18)
  

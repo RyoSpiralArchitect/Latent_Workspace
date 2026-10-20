@@ -125,12 +125,18 @@ non-regression after training.
    own source-sealed terminal receipt. [Attempt 03](../../provenance/engineering/native_owner_qualification_attempt03_20261020/README.md)
    now passes **203/203 on each device**, including fresh-process FP32/BF16
    owner replay; offline source/manifest/XML verification also passed.
-3. **Bounded 7B canary ([prospective contract](NATIVE_7B_CANARY.md), not yet launched):**
+3. **Bounded 7B canary ([contract](NATIVE_7B_CANARY.md), incomplete):**
    pinned original Mistral, native BF16,
    CPU FP32 masters, activation checkpointing, one condition/two complete
    update windows plus fresh-process replay. Freeze source, lengths, memory
    bounds, token budget, runtime/resource caps and stop rules before dispatch.
    Measure this new graph; do not reuse V18's resource qualification as proof.
+   The [first real-model attempt](../../provenance/engineering/native_7b_canary_20261020/README.md)
+   passed 229/229 tiny checks on each device but stopped before the first
+   update: its new harness compared the tree-hash expected digest with the
+   legacy hash function. Replay was not dispatched. Preserve this source and
+   failure; a scheme-explicit identity repair and newly qualified separate
+   attempt are required. Present-cache identity and 7B fit remain unverified.
 4. **Full-FT pilot (not launched):** freeze a finite training population and
    recipe only after canary success. Mix relevant-memory answer supervision
    with no-memory preservation examples and irrelevant-memory cases. Select
@@ -156,7 +162,7 @@ retirement is recorded below.
 
 ## Resource decision, measured 2026-10-20
 
-**Latest check, 08:18:38 UTC:** after Ryō's explicit whole-condition retirement
+**Post-retirement check, 08:18:38 UTC:** after Ryō's explicit whole-condition retirement
 decision, the [six V16 checkpoint bodies were recorded and deleted](../../provenance/inventory/v16_scientific_retirement_20261020/README.md).
 All six hashes matched both at inventory and before deletion; the ledger was
 published first. The three retired conditions are `common`,
@@ -166,21 +172,24 @@ features and beta artifacts are excluded; the old per-condition retention
 rule remains for non-retired conditions. Git cannot reconstruct these deleted
 weight bodies.
 
-Available disk space is now **243.61 GiB**, RAM **119.61 GiB**; GPU is idle
+Available disk space at that check was **243.61 GiB**, RAM **119.61 GiB**; GPU was idle
 (10/32,607 MiB; no compute process). The unchanged two-old-checkpoint plus
 50-GiB-floor estimate is **104.17 GiB**, leaving **139.44 GiB** of planning
 headroom. The storage shortfall is resolved. These snapshots are not a
 reservation or proof that the new graph fits.
 
-**Next:** qualify and dispatch the [bounded 7B canary](NATIVE_7B_CANARY.md)
-in step 3: cut 4, BF16
-native weights/FP32 CPU masters, two complete token-weighted windows and
-fresh-process checkpoint replay. Retain the historical 30.5-GiB allocator cap,
-100-GiB host admission, 24-GiB host remaining floor and 50-GiB disk remaining
-floor as initial proposed limits; freeze actual sequence bounds and output
-forecast before dispatch. Preserve incomplete attempts without retry or
-loosening limits. This is not the full-FT pilot: training mixture, held-out
-population and quality gates still require step 4/5's prospective recipe.
+**Later bounded dispatch:** admission recorded 31.348 GiB free GPU, 118.832 GiB
+available host RAM and 241.481 GiB free disk. The [canary](NATIVE_7B_CANARY.md)
+stopped on an incorrectly paired identity hash, not an observed OOM. No
+7B peak or checkpoint-size measurement was reached. At 10:12:30 UTC the
+checkpoint directory was empty and no compute process remained.
+
+**Next:** preserve the incomplete record, then seek a separate recovery
+decision for a scheme-explicit identity check and fresh CPU/CUDA qualification
+before another bounded 7B dispatch. Do not waive original-model identity or
+loosen the frozen resource limits. The two-update/replay gate remains unmet.
+This is not the full-FT pilot: training mixture, held-out population and
+quality gates still require step 4/5's prospective recipe.
 
 **Earlier check, 06:35:44 UTC:** GPU was idle and both tiny device qualifications
 had passed, but filesystem free space was ~82.22 GiB, ~21.95 GiB below the
