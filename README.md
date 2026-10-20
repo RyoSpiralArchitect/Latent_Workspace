@@ -103,8 +103,12 @@ The [first execution](provenance/pilots/v22_full_ft01_20261021/README.md) now pa
 save/restore. Replay's first row has exact loss/gradient equality, but its
 post-spill free GPU memory falls to 440 MiB (768-MiB minimum) while 16.656 GiB
 remains reserved but unallocated. The run stops without retry; **full V22
-training remains undispatched**. Cache-boundary repair and storage recovery
-need a separate trial. No public benchmark/non-regression gate, beta
+training remained undispatched in that trial**. The separate
+[cache-boundary recovery](provenance/pilots/v22_full_ft_recovery01_20261021/README.md)
+now passes 318/318 CPU and CUDA checks, both real-7B updates and complete exact
+fresh-process replay. One explicitly approved old canary body was retired after
+the successful gate and published ledger; the new 32-update training phase is
+running, not yet complete. No public benchmark/non-regression gate, beta
 replacement or release is implied.
 
 ## Current public artifact: LTWS β (2026-10-18)

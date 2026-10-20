@@ -4,8 +4,10 @@ Execution source: **`13c1192fc2727d8ca61ee215a927c0cd77f75b16`**, 724 sealed fil
 CPU and CUDA qualification each passed **318/318**, zero errors/failures/skips.
 The finite checks phase completed successfully: exact fresh-process replay,
 including all losses/gradients/update state/RNG/payload. Its terminal status is
-`V22_RECOVERY_CHECKS_COMPLETE_NOT_TRAINING`. No training is yet claimed by this
-version. No heartbeat, recurring job or automatic retry was created.
+`V22_RECOVERY_CHECKS_COMPLETE_NOT_TRAINING`. The approved old-body retirement
+then completed; see [the ledger](../../inventory/v22_failed_canary_retirement_20261021/README.md).
+The finite training phase has now been started once. It is not yet a completed
+32-step result. No heartbeat, recurring job or automatic retry was created.
 
 ## Exact scopes
 
@@ -19,6 +21,7 @@ version. No heartbeat, recurring job or automatic retry was created.
 - Runtime, read-only:
   `/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/aether-cuda-pretrain-20260822/.venv/bin/python`
 - Checks tmux session: `ltws-v22-recovery01-checks-20261021`.
+- Training tmux session: `ltws-v22-recovery01-train-20261021`.
 - Same data bundle:
   `/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v22-data01-20261021/bank`.
 
@@ -49,6 +52,15 @@ Then invoke `dispatch-training` once, in the same new bundle/checkpoint root,
 with the same source seal and qualifications. No training is inherited from
 the canary: Train A starts from pinned original Mistral, saves at 16, and a fresh
 Train B restores 16 and continues through 32. Both save actual bodies.
+
+**Those storage and training-dispatch actions are now already done.** Do not
+delete or launch again. The deletion removed exactly the old 27.0124-GiB body,
+leaving 126,158,893,056 bytes free. New canary and original Mistral remain.
+Follow the existing training worker through its terminal receipts. While it
+runs, leave source and partial outputs unchanged. Once `raw/FINISHED.json`
+exists, pull the entire final raw/training trees, verify offline, publish the
+fixed before/after development diagnostics and exact train-B resume, then
+commit/push this branch. No PR, merge, extra model calls or further deletion.
 
 If any role, phase or transport fails, retain outputs and missingness and do not
 restart/retry/reissue anything automatically. A terminal failure ends the
