@@ -7,7 +7,8 @@ retired after an exact hash and published ledger. Neither original Mistral nor
 any other checkpoint is in that deletion authorization.
 
 The [old terminal failure](../../provenance/pilots/v22_full_ft01_20261021/README.md)
-and its 42 raw files remain byte-for-byte unchanged. The old execution source
+and its 42-file Furnace evidence bundle (35 raw files) remain byte-for-byte
+unchanged. The old execution source
 is `3c6da4218526cbaaf4690efe6910a2dc493d004b`; the new trial uses a new committed
 source seal and a separate worktree/output directory. No old run is resumed.
 
@@ -78,3 +79,23 @@ not be misreported as zero deletions across the whole recovery workflow.
 
 All existing **FAIL / winner:none / non_regression NOT_ESTABLISHED** ceilings
 remain. No new generation, paid judge, public benchmark or HF release occurs.
+
+## Observed terminal outcome (2026-10-21; added after execution)
+
+The [separate recovery completed](../../provenance/pilots/v22_full_ft_recovery01_20261021/README.md)
+at execution commit `13c1192fc2727d8ca61ee215a927c0cd77f75b16`: 318/318
+qualifications on each device, exact fresh step-2 replay, exact step-16 state
+restore, and all 32 training updates / 723 unique rows / 20,860 target tokens.
+The 40-row fixed development panel has lower NLL on every row; aggregate NLL
+is 1.267038 before and 1.058723 after. This does not establish public-benchmark
+non-regression, causal memory dependence or generation quality. No separate
+uninterrupted 32-step reference trajectory was run.
+
+All three new checkpoint bodies were rehashed successfully. Only the separately
+approved old failed canary body was retired after the successful replay and
+pre-published ledger. The original failed evidence is unchanged. The 42-file
+count is for the whole original Furnace evidence bundle, not just its raw
+subdirectory; the earlier wording incorrectly called all 42 files raw.
+No frozen JSON recipe, numerical criterion or resource floor was changed after
+launch. The next gates are unseen non-regression, counterfactual memory-use
+evaluation, and paired fixed-prompt/seed generation; none was launched here.

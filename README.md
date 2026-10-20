@@ -107,9 +107,18 @@ training remained undispatched in that trial**. The separate
 [cache-boundary recovery](provenance/pilots/v22_full_ft_recovery01_20261021/README.md)
 now passes 318/318 CPU and CUDA checks, both real-7B updates and complete exact
 fresh-process replay. One explicitly approved old canary body was retired after
-the successful gate and published ledger; the new 32-update training phase is
-running, not yet complete. No public benchmark/non-regression gate, beta
-replacement or release is implied.
+the successful gate and published ledger. The recovery then **completed all
+32 native full-parameter training updates / 723 rows / 20,860 supervised
+tokens**, including exact step-16 state restoration in a fresh process.
+On the same fixed 40-row development panel, all 40 teacher-forced NLLs fell;
+the token-weighted mean changed from **1.267038 to 1.058723 (−16.4411%)**.
+All seven panel means fell, including the small instruction/prose/code panels.
+This is the original versus updated model under the same native-memory graph,
+not a public benchmark or a free-generation comparison. Three checkpoint
+bodies and both source seals were verified; the old failed trial is unchanged.
+**FAIL / winner:none / non_regression NOT_ESTABLISHED** stays in force.
+Unseen non-regression, causal memory-use and paired generation evaluations
+remain separate next gates; no beta replacement or release is implied.
 
 ## Current public artifact: LTWS β (2026-10-18)
  

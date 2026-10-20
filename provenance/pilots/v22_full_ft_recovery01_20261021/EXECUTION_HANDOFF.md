@@ -1,85 +1,89 @@
-# V22 full-FT recovery 01 — execution handoff
+# V22 full-FT recovery 01 — terminal handoff
+
+**Complete, not a quality promotion.** Both `raw/FINISHED.json` and
+`training/FINISHED.json` report
+`V22_NATIVE_TRAINING_32_STEPS_COMPLETE_NOT_QUALITY`.
+All 32 training updates / 723 unique rows / 20,860 supervised tokens finished.
+The training workers exited. Do not re-run either phase or any role.
+No heartbeat, recurring job or automatic retry was created.
 
 Execution source: **`13c1192fc2727d8ca61ee215a927c0cd77f75b16`**, 724 sealed files.
-CPU and CUDA qualification each passed **318/318**, zero errors/failures/skips.
-The finite checks phase completed successfully: exact fresh-process replay,
-including all losses/gradients/update state/RNG/payload. Its terminal status is
-`V22_RECOVERY_CHECKS_COMPLETE_NOT_TRAINING`. The approved old-body retirement
-then completed; see [the ledger](../../inventory/v22_failed_canary_retirement_20261021/README.md).
-The finite training phase has now been started once. It is not yet a completed
-32-step result. No heartbeat, recurring job or automatic retry was created.
+CPU and CUDA each passed 318/318, with zero errors, failures or skips.
+The checks phase completed exact fresh step-2 replay; Train B separately
+restored the complete step-16 state exactly and continued to step 32.
+There was no uninterrupted 32-step reference comparison.
+See [the English results](README.md), [summary](SUMMARY.json),
+[verification](VERIFICATION.json), and [frozen design](../../../docs/v22/FULL_FT_RECOVERY_01.md).
 
 ## Exact scopes
 
 - Local checkout: `/Users/ryohiga/SpiralReality/worktrees/latent-workspace-full-ft-v1`
 - Branch: `SpiralReality/latent-memory-full-ft`
 - Origin: `https://github.com/RyoSpiralArchitect/Latent_Workspace.git`
-- Furnace worktree:
+- Furnace execution worktree:
   `/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v22-full-ft-recovery01-20261021`
 - Furnace run bundle:
   `/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v22-full-ft-recovery01-20261021`
 - Runtime, read-only:
   `/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/aether-cuda-pretrain-20260822/.venv/bin/python`
-- Checks tmux session: `ltws-v22-recovery01-checks-20261021`.
-- Training tmux session: `ltws-v22-recovery01-train-20261021`.
-- Same data bundle:
+- Same data:
   `/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v22-data01-20261021/bank`.
+- Completed checks/training session names:
+  `ltws-v22-recovery01-checks-20261021` /
+  `ltws-v22-recovery01-train-20261021`.
 
-Use `spiral`; never edit/pull the execution worktree. Source verification must
-refer to the execution commit, not a later documentation/ledger HEAD.
+Use `spiral` for read-only inspection. Never pull/update the execution worktree.
+Verify execution against its frozen commit, not later publication HEADs.
+Raw token banks and all retained weight bodies stay on Furnace, not Git.
 
-## Authority and gates
+## Authority already exercised
 
-Ryō approved a corrected, regression-tested, separate trial under unchanged
-numerical/resource limits, through exact fresh replay and 32 training updates.
-Ryō separately approved deletion of **only** the old failed run's
-`canary_step1.pt`, **after** the new replay passes and its hash/ledger are
-recorded. No other checkpoint, original model or raw bank is in scope.
-See [the frozen recovery design](../../../docs/v22/FULL_FT_RECOVERY_01.md).
+Ryō approved the cache-boundary fix, regressions and a new separate trial with
+unchanged numerics/resources, through replay and 32 updates. Both finite
+phases have executed once and are terminal. No further run is pending.
 
-`checks/FINISHED.json` is the first phase's terminal authority. Required status:
-`V22_RECOVERY_CHECKS_COMPLETE_NOT_TRAINING`, with both role manifests intact and
-`raw/replay/REPLAY.json` exact. A successful checks phase is intentionally not a
-terminal training result; no root `raw/FINISHED.json` exists until final training
-or an earlier failure. Do not launch the checks phase again.
+After the new exact replay passed, its evidence and the one-file retirement
+ledger were committed/pushed as
+`b6fdfc7ce7d10c7798a81f5426b2765dc9b3652b` before deletion. The separately
+approved old `latent-v22-full-ft01-20261021/checkpoints/canary_step1.pt`
+was then removed once: 29,004,378,380 bytes / 27.0124 GiB.
+The [retirement ledger](../../inventory/v22_failed_canary_retirement_20261021/README.md)
+records the hash and terminal receipt. Do not invoke deletion again.
+Git metadata is not a recoverable backup of that old body.
 
-After checks pass: pull the complete finished checks/raw artifacts, independently
-verify source/receipts and the actual checkpoint body, and publish those plus
-the old-body retirement ledger before removing exactly that approved file.
-Confirm disk availability again. The old 42-file terminal bundle must remain
-byte-for-byte unchanged; record retirement additively, never rewrite its history.
-Then invoke `dispatch-training` once, in the same new bundle/checkpoint root,
-with the same source seal and qualifications. No training is inherited from
-the canary: Train A starts from pinned original Mistral, saves at 16, and a fresh
-Train B restores 16 and continues through 32. Both save actual bodies.
+The original failure's **42-file Furnace bundle / 842,396 bytes** remains
+unchanged (its raw subdirectory contains 35 files). Original Mistral and all
+other previous weight bodies were untouched. This trial retains exactly the
+new canary, training-step-16 and training-step-32 checkpoints; all three full
+body hashes matched their receipts. Training roles themselves deleted zero
+files; the overall recovery workflow deleted one separately approved file.
 
-**Those storage and training-dispatch actions are now already done.** Do not
-delete or launch again. The deletion removed exactly the old 27.0124-GiB body,
-leaving 126,158,893,056 bytes free. New canary and original Mistral remain.
-Follow the existing training worker through its terminal receipts. While it
-runs, leave source and partial outputs unchanged. Once `raw/FINISHED.json`
-exists, pull the entire final raw/training trees, verify offline, publish the
-fixed before/after development diagnostics and exact train-B resume, then
-commit/push this branch. No PR, merge, extra model calls or further deletion.
+## Interpretation and next boundary
 
-If any role, phase or transport fails, retain outputs and missingness and do not
-restart/retry/reissue anything automatically. A terminal failure ends the
-authorized trial; report it and ask about a separate recovery when necessary.
+The same native-memory graph's fixed 40-row / 4,694-token development panel
+has lower NLL on all 40 rows. Token-weighted NLL changes 1.267038 → 1.058723.
+No generated replies, paid judge, public benchmark or further training was run.
+This is not 100% task accuracy or an unseen population-level non-regression
+result. **FAIL / winner:none / non_regression NOT_ESTABLISHED** remains.
 
-## Offline verification and publication
+Potential next work is a separately frozen original-base non-regression panel,
+counterfactual memory-use controls, and paired fixed-prompt/seed generation.
+No new experiment, threshold change, weight deletion, beta replacement,
+PR/merge or Hub publication is authorized merely by this handoff.
+
+## Offline reproduction
 
 ```bash
 python3 scripts/verify_v22_full_ft.py \
   --bundle provenance/pilots/v22_full_ft_recovery01_20261021/furnace \
   --repo . \
   --data provenance/data/v22_english_mixture01_20261021/furnace
+python3 provenance/pilots/v22_full_ft_recovery01_20261021/summarize.py \
+  --verify provenance/pilots/v22_full_ft_recovery01_20261021/SUMMARY.json
 ```
 
-Copy only finished immutable trees while another role is running. Raw training
-tokens and checkpoint bodies stay on Furnace. Source/data hashes, all actual
-updates and planned denominators, exact replay/resume, per-boundary cache/free
-memory, usage peaks, storage retirement and fixed-dev NLL belong in the final
-English README. Model quality is not established by engineering parity or dev
-NLL. Keep **FAIL / winner:none / non_regression NOT_ESTABLISHED** unchanged.
-No extra training, new generation, teacher, paid judge, benchmark, threshold
-change, PR merge or HF publication is authorized by this handoff.
+Both are offline, read-only and make no model calls. The publication helper is
+outside the sealed execution source and refuses partial artifacts as complete.
+Local verification does not claim to inspect weight bytes; the separate
+Furnace verification in VERIFICATION.json did inspect all three bodies.
+Preserve raw manifests/log bytes and the original failure.
