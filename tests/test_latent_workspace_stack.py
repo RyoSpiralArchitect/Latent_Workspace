@@ -96,6 +96,10 @@ def threads():
 def host_model(kind):
     import os
 
+    cpu_policy = os.environ.get("LTWS_CPU_MKLDNN_ENABLED")
+    if cpu_policy is not None:
+        assert cpu_policy in ("0", "1")
+        torch.backends.mkldnn.enabled = cpu_policy == "1"
     torch.manual_seed(3)
     if kind == "mistral":
         model, _, _ = tiny(torch.float32)

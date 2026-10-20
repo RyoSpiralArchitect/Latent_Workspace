@@ -94,6 +94,11 @@ def verify(bundle, repo):
             "Scope ceiling",
         )
         require(end["device"] == device, "Terminal device")
+        if "qualification_cpu_mkldnn_enabled" in plan:
+            require(
+                end["cpu_mkldnn_enabled"] == plan["qualification_cpu_mkldnn_enabled"],
+                "CPU backend policy",
+            )
         require(
             0 < end["elapsed_seconds"] <= plan["qualification_wall_seconds"],
             "Wall envelope",

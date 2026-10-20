@@ -84,6 +84,7 @@ def bundle(tmp_path):
                 elapsed_seconds=0.5,
                 imports={"entry": VERIFY.ENTRY},
                 peak_cuda_allocated_bytes=1024 if device == "cuda" else None,
+                cpu_mkldnn_enabled=plan.get("qualification_cpu_mkldnn_enabled"),
                 **VERIFY.CEILING,
             ),
         )
@@ -161,6 +162,7 @@ def test_plan_hash_matches_sealed_entry():
     encoded = json.dumps(plan, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
     digest = hashlib.sha256(encoded).hexdigest()
     assert f'PLAN_SHA256 = "{digest}"' in (ROOT / VERIFY.ENTRY).read_text()
-    assert plan["qualification_cases"] == 199
+    assert plan["qualification_cases"] == 203
     assert plan["scratch_cpu_sdpa_backend"] == "math"
+    assert plan["qualification_cpu_mkldnn_enabled"] is False
     assert plan["full_7b_dispatch"] is False and plan["retry"] is False

@@ -14,7 +14,7 @@ from latent_workspace import execution as ex  # noqa: E402
 
 ENTRY = "scripts/qualify_native_owner.py"
 PLAN = "configs/v1_0/NATIVE_OWNER_QUALIFICATION.json"
-PLAN_SHA256 = "3d91c6e01bcb7f053f667563c72fac15f8ede01c0f27c7e66bf910985a667b68"
+PLAN_SHA256 = "4ea6d2c795cb5205c690ee5215241617b541c56c51c48e691b54f71790c40a16"
 PASS = "TINY_NATIVE_OWNER_AND_REPLAY_PASS_NOT_7B"
 
 
@@ -31,6 +31,7 @@ def validate(plan):
     ex.require(ex.plan_hash(plan) == PLAN_SHA256, "Frozen native-owner qualification plan changed")
     ex.require(plan["full_7b_dispatch"] is False and plan["retry"] is False, "Tiny no-retry scope")
     ex.require(plan["scratch_cpu_sdpa_backend"] == "math", "Explicit scratch CPU backend")
+    ex.require(plan["qualification_cpu_mkldnn_enabled"] is False, "Explicit CPU oneDNN policy")
 
 
 RUN = ex.SealedRun(

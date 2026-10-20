@@ -113,6 +113,21 @@ def qualification_devices(plan):
     return devices
 
 
+def qualification_backend_policy(torch_module, plan):
+    """Optional explicit CPU backend policy, also inherited by tiny child tests.
+
+    No implicit fallback: old plans leave the runtime untouched. A policy is
+    a declared numerical condition, not a dtype conversion or a skipped test.
+    """
+    key = "qualification_cpu_mkldnn_enabled"
+    if key not in plan:
+        return {}
+    require(type(plan[key]) is bool, "CPU oneDNN policy must be boolean")
+    torch_module.backends.mkldnn.enabled = plan[key]
+    os.environ["LTWS_CPU_MKLDNN_ENABLED"] = "1" if plan[key] else "0"
+    return {"cpu_mkldnn_enabled": torch_module.backends.mkldnn.enabled}
+
+
 class SealedRun:
     """One sealed run: ``qualify``, ``run-role`` and ``dispatch`` over fixed roles.
 
@@ -160,6 +175,7 @@ class SealedRun:
                 os.environ[name] = args.device
             sys.path[:0] = [str(self.root / p) for p in ("", "src", "scripts", "tests")]
             core.load_runtime()
+            result.update(qualification_backend_policy(core.torch, plan))
             import pytest
 
             if args.device == "cuda":
@@ -204,6 +220,11 @@ class SealedRun:
             result.update(pytest_exit_code=code, counts=totals)
             expected = dict(tests=plan["qualification_cases"], failures=0, errors=0, skipped=0)
             require(code == 0 and totals == expected, "Tiny qualification failed")
+            if "cpu_mkldnn_enabled" in result:
+                require(
+                    core.torch.backends.mkldnn.enabled == result["cpu_mkldnn_enabled"],
+                    "CPU backend changed during qualification",
+                )
             result["imports"] = core.verify_imports(seal)
             source.verify(self.root, seal, self.entry)
             require(core.identity() == seal, "Source changed during qualification")

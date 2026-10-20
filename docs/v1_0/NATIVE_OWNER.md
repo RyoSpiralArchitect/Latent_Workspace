@@ -72,7 +72,7 @@ children, not a measured whole-machine memory bound.
 Run [`qualify_native_owner.py`](../../scripts/qualify_native_owner.py) only on a
 clean frozen source with a seal and fresh output directory. Its only exposed
 commands are `prepare-seal` and `qualify`; no training role exists. Each device
-must finish all 199 selected tests with no failures/errors/skips within 900
+must finish all 203 selected tests with no failures/errors/skips within 900
 seconds. CPU precedes CUDA. Preserve any incomplete attempt; do not silently
 rerun it. Fifteen additional local tests reject fabricated/altered evidence.
 [`verify_native_owner_qualification.py`](../../scripts/verify_native_owner_qualification.py)
@@ -91,6 +91,16 @@ cover dtype/policy selection, invalid descriptors, and live/restore backend
 drift without target/RNG writes. The old 189 cases are retained, not skipped.
 This is a different numerical backend, not a claim of auto/math bitwise
 equivalence; all matched comparisons use the same declared policy.
+
+The [second attempt](../../provenance/engineering/native_owner_qualification_attempt02_20261020/README.md)
+showed that math SDPA alone was insufficient (196/199 CPU passed; three
+scratch BF16 failures; CUDA unlaunched). The next declared condition also
+sets `qualification_cpu_mkldnn_enabled: false` in the engine's qualification
+descriptor. The setting is applied before tests, inherited by fresh-process
+fixtures and recorded/checked again at completion. Four more policy tests
+retain all previous cases. This disables oneDNN's CPU paths, not CUDA or
+BF16, and is not an assertion that the oneDNN and native CPU kernels are
+bitwise interchangeable. A device PASS still needs its own terminal receipt.
 
 The generic execution receipt's `native_weight_updates=0` and
 `real_model_updates=0` refer to **pretrained-model/experiment updates**: the tiny

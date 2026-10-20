@@ -75,6 +75,34 @@ def test_receipts_are_deterministic_and_never_overwrite(tmp_path):
     assert ex.plan_hash({"b": 1, "a": 2}) == ex.plan_hash({"a": 2, "b": 1})
 
 
+@pytest.mark.parametrize("enabled", [None, False, True])
+def test_explicit_cpu_backend_policy_is_receipted_and_inherited(monkeypatch, enabled):
+    import os
+
+    monkeypatch.setenv("LTWS_CPU_MKLDNN_ENABLED", "prior")
+    module = SimpleNamespace(backends=SimpleNamespace(mkldnn=SimpleNamespace(enabled=True)))
+    plan = {} if enabled is None else {"qualification_cpu_mkldnn_enabled": enabled}
+    result = ex.qualification_backend_policy(module, plan)
+    if enabled is None:
+        assert result == {} and module.backends.mkldnn.enabled is True
+        assert os.environ["LTWS_CPU_MKLDNN_ENABLED"] == "prior"
+    else:
+        assert result == {"cpu_mkldnn_enabled": enabled}
+        assert module.backends.mkldnn.enabled is enabled
+        assert os.environ["LTWS_CPU_MKLDNN_ENABLED"] == str(int(enabled))
+
+
+def test_invalid_cpu_backend_policy_rejected_before_mutation(monkeypatch):
+    import os
+
+    monkeypatch.setenv("LTWS_CPU_MKLDNN_ENABLED", "prior")
+    module = SimpleNamespace(backends=SimpleNamespace(mkldnn=SimpleNamespace(enabled=True)))
+    with pytest.raises(ValueError, match="boolean"):
+        ex.qualification_backend_policy(module, {"qualification_cpu_mkldnn_enabled": "false"})
+    assert module.backends.mkldnn.enabled is True
+    assert os.environ["LTWS_CPU_MKLDNN_ENABLED"] == "prior"
+
+
 def test_qualification_binds_both_devices_and_rejects_tampering(tmp_path):
     run = runner(tmp_path)
     bundles = qualification_bundles(tmp_path / "qualification")
