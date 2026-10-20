@@ -13,10 +13,45 @@ sys.path.insert(0, str(ROOT / "src"))
 from latent_workspace import execution as ex  # noqa: E402
 
 
+def select_rows(bank, teacher=None):
+    if teacher is None:
+        return (
+            ex.read_gz(bank / "world_rows.json.gz") + ex.read(bank / "instruction_seeds.json"),
+            {},
+        )
+    rows, statuses, excluded = [], Counter(), []
+    for i, item in enumerate(ex.read(teacher / "INPUTS.json")):
+        path = teacher / "run" / f"outcome_{i:03d}.json"
+        outcome = ex.read(path) if path.exists() else {"status": "NOT_ATTEMPTED"}
+        statuses[outcome["status"]] += 1
+        candidate = outcome.get("candidate")
+        if not isinstance(candidate, dict) or not all(
+            isinstance(candidate.get(k), str) and candidate[k] for k in ("question", "answer")
+        ):
+            excluded.append(i)
+            continue
+        rows.append(
+            {
+                **item["row"],
+                "query": candidate["question"],
+                "answer": candidate["answer"],
+            }
+        )
+    ex.require(rows, "No text candidates available for token counting")
+    return rows, dict(
+        teacher_request_statuses=dict(statuses),
+        teacher_indices_without_countable_text=excluded,
+        teacher_terminal_sha256=ex.digest(teacher / "run" / "FINISHED.json"),
+        includes_structure_fail_if_text_present=True,
+        semantic_equivalence="UNREVIEWED",
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--bank", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--teacher", type=Path)
     args = parser.parse_args()
     ex.offline_environment()
     from transformers import AutoTokenizer
@@ -28,9 +63,7 @@ def main():
         local_files_only=True,
         trust_remote_code=False,
     )
-    rows = ex.read_gz(args.bank / "world_rows.json.gz") + ex.read(
-        args.bank / "instruction_seeds.json"
-    )
+    rows, selection = select_rows(args.bank, args.teacher)
     counts, totals, overs = [], Counter(), Counter()
     for row in rows:
         prompt = tokenizer.apply_chat_template(
@@ -57,6 +90,7 @@ def main():
         if not value["within_tested_axes"]:
             overs[f"{row['split']}/{row['family']}"] += 1
     result = dict(
+        **selection,
         backbone=backbone,
         bank_manifest_sha256=ex.digest(args.bank / "MANIFEST.json"),
         rows=len(rows),
