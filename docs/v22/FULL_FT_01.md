@@ -5,6 +5,13 @@ Ryō requested Japanese exclusion, update/save/fresh-process-resume checks and
 then V22 training. This is a bounded first pilot, not an epoch over all data,
 a release candidate, or a replacement for the frozen-host beta.
 
+**Subsequent first execution:** [terminal record](../../provenance/pilots/v22_full_ft01_20261021/README.md).
+CPU/CUDA each pass 290/290. Two real-7B long updates and checkpoint save/restore
+pass; the replay matches its first backward row but then stops on the fixed
+GPU-free-memory floor. V22 training remains undispatched. The frozen plan and
+source are not amended retroactively; any cache-boundary repair needs a new
+trial and adequate storage.
+
 ## Fixed mechanism and data
 
 The native memory graph/optimizer owner are unchanged: Mistral-7B-Instruct-v0.3

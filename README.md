@@ -97,8 +97,14 @@ exposure. The [data projection](provenance/data/v22_english_mixture01_20261021/R
 fully regenerates offline and leaves both original banks unchanged.
 Long 1,024-token mixed canary/replay and complete CPU/CUDA qualification gate
 the training roles; training starts from the original, not canary weights,
-and resumes in a fresh process at step 16. This entry records the **plan**,
-not completion or quality. No public benchmark/non-regression gate, beta
+and resumes in a fresh process at step 16 if its prerequisite gates pass.
+The [first execution](provenance/pilots/v22_full_ft01_20261021/README.md) now passes
+290/290 checks on each device and two real-7B long updates plus checkpoint
+save/restore. Replay's first row has exact loss/gradient equality, but its
+post-spill free GPU memory falls to 440 MiB (768-MiB minimum) while 16.656 GiB
+remains reserved but unallocated. The run stops without retry; **full V22
+training remains undispatched**. Cache-boundary repair and storage recovery
+need a separate trial. No public benchmark/non-regression gate, beta
 replacement or release is implied.
 
 ## Current public artifact: LTWS β (2026-10-18)

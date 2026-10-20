@@ -1,0 +1,44 @@
+{
+  "elapsed_seconds": 166.64492646511644,
+  "error": "ResourceAbort: Insufficient free memory at step2:row0:spilled; stop own run only",
+  "files": {
+    "CONTEXT.json": {
+      "bytes": 12836,
+      "sha256": "17d0f11fb519e23dbf17818d4720d9b83c510bd35461a38fba83de2d7a0a4c63"
+    },
+    "HOST_RESOURCES.jsonl": {
+      "bytes": 627,
+      "sha256": "609bc5306c9672ab71d9c5bf198e9dd3100954bdd44e05f091dac428b10842ee"
+    },
+    "ORIGINAL_IDENTITY.json": {
+      "bytes": 566,
+      "sha256": "a19c34fc87196c1f8033bcf8850150d287e8e3f3294767f50fb70dfa6869e771"
+    },
+    "RESOURCES.jsonl": {
+      "bytes": 2597,
+      "sha256": "f791beffc97b3d09bd897bc6b06b09fd5c5595a3fc06f6f16d0724a8310055f4"
+    },
+    "RESTORE.json": {
+      "bytes": 407,
+      "sha256": "57ebb4fb8c1d3b96efa6f69c7f969baa6e67e662945423450076c21dfaa92927"
+    },
+    "STARTED.json": {
+      "bytes": 91257,
+      "sha256": "197957f877827b9f1cd9574bcd6d0733a20b49f238038bf395601be289cebe02"
+    },
+    "step2_row0.json": {
+      "bytes": 904,
+      "sha256": "8a14642a1f4f1ed461882bbc29aeb662b207fd072f9818f8a835722347c26c41"
+    }
+  },
+  "judge_calls": 0,
+  "native_weight_updates": null,
+  "new_sequences": 0,
+  "non_regression": "NOT_ESTABLISHED",
+  "old_expression_gate": "FAIL",
+  "role": "replay",
+  "status": "INCOMPLETE_NO_RETRY",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v22-full-ft01-20261021/src/latent_workspace/execution.py\", line 332, in run_role\n    result[\"outcome\"] = body(core, args, plan, seal)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v22-full-ft01-20261021/scripts/run_v22_full_ft.py\", line 261, in replay\n    actual = common.update(owner, rows, schedule[\"canary\"][1], guard, args.output, 2)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v22-full-ft01-20261021/scripts/run_native_7b_canary.py\", line 182, in update\n    guard(f\"step{step}:row{index}:spilled\")\n  File \"/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v22-full-ft01-20261021/scripts/run_v15_native_learner.py\", line 147, in __call__\n    row = self.gpu(phase, admission=admission)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v22-full-ft01-20261021/scripts/run_ft_beta_query_pool.py\", line 110, in __call__\n    raise ResourceAbort(f\"Insufficient free memory at {phase}; stop own run only\")\nrun_ft_beta_query_pool.ResourceAbort: Insufficient free memory at step2:row0:spilled; stop own run only\n",
+  "weight_deletions": 0,
+  "winner": "none"
+}
