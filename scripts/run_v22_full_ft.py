@@ -190,7 +190,9 @@ def checkpoint(owner, core, args, plan, guard, name):
     return receipt
 
 
-def restore(graph, config, contract, core, args, plan, guard, reference, name):
+def restore(
+    graph, config, contract, core, args, plan, guard, reference, name, *, after_restore=None
+):
     import torch
 
     from latent_workspace.native_owner import NativeFullUpdateOwner
@@ -220,10 +222,13 @@ def restore(graph, config, contract, core, args, plan, guard, reference, name):
     ex.write_new(
         args.output / "RESTORE.json", dict(exact=True, checkpoint=receipt, reference=str(reference))
     )
+    if after_restore is not None:
+        after_restore(owner, "restore", args.output / "CACHE_restore.json")
+        guard("restore:cache_released")
     return owner
 
 
-def canary(core, args, plan, seal):
+def canary(core, args, plan, seal, *, after_boundary=None):
     from latent_workspace.native_owner import NativeFullUpdateOwner
     from latent_workspace.optimizer_state import tree_hash
 
@@ -234,7 +239,7 @@ def canary(core, args, plan, seal):
     ex.write_new(args.output / "INITIAL.json", common.fingerprint(owner))
     for step, keys in enumerate(schedule["canary"], 1):
         print(f"canary: length-qualified update {step}/2", flush=True)
-        common.update(owner, rows, keys, guard, args.output, step)
+        common.update(owner, rows, keys, guard, args.output, step, after_spill=after_boundary)
         if step == 1:
             checkpoint(owner, core, args, plan, guard, "canary_step1.pt")
     core.snapshot_admission(plan, guard, True)
@@ -250,15 +255,28 @@ def canary(core, args, plan, seal):
     )
 
 
-def replay(core, args, plan, seal):
+def replay(core, args, plan, seal, *, after_boundary=None):
     from latent_workspace.optimizer_state import tree_hash
 
     reference = predecessor(args, "canary", seal)
     graph, rows, schedule, config, contract, guard = prepare(
         core, args, plan, seal, stream="canary", forecast=0
     )
-    owner = restore(graph, config, contract, core, args, plan, guard, reference, "canary_step1.pt")
-    actual = common.update(owner, rows, schedule["canary"][1], guard, args.output, 2)
+    owner = restore(
+        graph,
+        config,
+        contract,
+        core,
+        args,
+        plan,
+        guard,
+        reference,
+        "canary_step1.pt",
+        after_restore=after_boundary,
+    )
+    actual = common.update(
+        owner, rows, schedule["canary"][1], guard, args.output, 2, after_spill=after_boundary
+    )
     common.exact(
         actual,
         ex.read(reference / "step2.json"),
@@ -280,7 +298,7 @@ def replay(core, args, plan, seal):
     )
 
 
-def train_update(owner, rows, keys, guard, output, step):
+def train_update(owner, rows, keys, guard, output, step, *, after_spill=None):
     """Same owner arithmetic; omit full gradient hashes outside the parity canary."""
     lookup = {r["key"]: r for r in rows}
     owner.begin_window([(key, lookup[key]["supervised_tokens"]) for key in keys])
@@ -290,6 +308,8 @@ def train_update(owner, rows, keys, guard, output, step):
         result = owner.accumulate(
             key, common.batch(lookup[key], next(owner.model.parameters()).device)
         )
+        if after_spill is not None:
+            after_spill(owner, "spill", output / f"CACHE_step{step}_row{i}.json")
         receipts.append(result)
         ex.write_new(output / f"step{step}_row{i}.json", result)
         guard(f"step{step}:row{i}:spilled")
@@ -362,7 +382,7 @@ def evaluate_dev(graph, rows, keys, guard, output):
     return result
 
 
-def train(core, args, plan, seal):
+def train(core, args, plan, seal, *, after_boundary=None):
     from latent_workspace.native_owner import NativeFullUpdateOwner
 
     reference = predecessor(args, "replay", seal)
@@ -384,13 +404,30 @@ def train(core, args, plan, seal):
         evaluate_dev(graph, rows, schedule["development"], guard, args.output / "DEV_BASE.json")
     else:
         owner = restore(
-            graph, config, contract, core, args, plan, guard, reference, "training_step16.pt"
+            graph,
+            config,
+            contract,
+            core,
+            args,
+            plan,
+            guard,
+            reference,
+            "training_step16.pt",
+            after_restore=after_boundary,
         )
     start, end = (0, 16) if first else (16, 32)
     assert_cursor(owner, rows, schedule["training"], start)
     for step in range(start + 1, end + 1):
         print(f"{args.role}: training update {step}/32", flush=True)
-        train_update(owner, rows, schedule["training"][step - 1], guard, args.output, step)
+        train_update(
+            owner,
+            rows,
+            schedule["training"][step - 1],
+            guard,
+            args.output,
+            step,
+            after_spill=after_boundary,
+        )
     assert_cursor(owner, rows, schedule["training"], end)
     checkpoint(owner, core, args, plan, guard, f"training_step{end}.pt")
     if not first:

@@ -164,7 +164,7 @@ def fingerprint(owner):
     )
 
 
-def update(owner, rows, keys, guard, output, step):
+def update(owner, rows, keys, guard, output, step, *, after_spill=None):
     from latent_workspace.optimizer_state import tree_hash
 
     selected = {row["key"]: row for row in rows}
@@ -173,6 +173,8 @@ def update(owner, rows, keys, guard, output, step):
     for index, key in enumerate(keys):
         guard(f"step{step}:row{index}:before")
         values = owner.accumulate(key, batch(selected[key], next(owner.model.parameters()).device))
+        if after_spill is not None:
+            after_spill(owner, "spill", output / f"CACHE_step{step}_row{index}.json")
         # Read-only hash of the accumulated native-dtype CPU gradients.
         values["accumulated_gradient_sha256"] = tree_hash(
             {spec.name: owner.window._buffers[id(spec.parameter)] for spec in owner.window._specs}

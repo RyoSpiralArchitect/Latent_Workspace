@@ -72,7 +72,7 @@ def terminal(folder):
     return read(folder / "STARTED.json"), end
 
 
-def source(repo, seal):
+def source(repo, seal, *, recovery=False):
     sha = seal["source_commit"]
     require(len(sha) == 40 and all(c in "0123456789abcdef" for c in sha), "Commit ID")
 
@@ -90,9 +90,15 @@ def source(repo, seal):
             hashlib.sha256(git("show", f"{sha}:{name}")).hexdigest() == expected,
             f"Source hash: {name}",
         )
-    plan = json.loads(git("show", f"{sha}:configs/v22/FULL_FT_01.json"))
+    plan_path = (
+        "configs/v22/FULL_FT_RECOVERY_01.json" if recovery else "configs/v22/FULL_FT_01.json"
+    )
+    entry_path = (
+        "scripts/run_v22_full_ft_recovery01.py" if recovery else "scripts/run_v22_full_ft.py"
+    )
+    plan = json.loads(git("show", f"{sha}:{plan_path}"))
     frozen = hashlib.sha256(canonical(plan).encode()).hexdigest()
-    entry = git("show", f"{sha}:scripts/run_v22_full_ft.py").decode()
+    entry = git("show", f"{sha}:{entry_path}").decode()
     require(f'PLAN_SHA256 = "{frozen}"' in entry, "Frozen execution plan")
     require(plan["no_retry"] and plan["planned_training_updates"] == 32, "Bounded V22")
     return plan
@@ -164,7 +170,9 @@ def check_steps(folder, windows, first, last, index):
 
 def verify(bundle, repo, data, checkpoints=None):
     seal = read(bundle / "SOURCE_SEAL.json")
-    plan = source(repo, seal)
+    probe = read(bundle / "qualification/cpu/STARTED.json")
+    recovery = probe["plan"]["schema"] == "ltws-v22-native-full-ft-recovery-01"
+    plan = source(repo, seal, recovery=recovery)
     index, schedule = data_index(data, plan)
     qualification = {}
     for device in ("cpu", "cuda"):
@@ -300,6 +308,38 @@ def verify(bundle, repo, data, checkpoints=None):
                 and development["mean_nll_by_bucket"] == {k: losses[k] / counts[k] for k in counts},
                 "Dev aggregate replay",
             )
+        if recovery:
+            row_files = list(folder.glob("step*_row*.json"))
+            cache_files = list(folder.glob("CACHE_step*_row*.json"))
+            require(len(cache_files) == len(row_files), "Cache/row denominator")
+            for path in cache_files + list(folder.glob("CACHE_restore.json")):
+                item = read(path)
+                require(
+                    item["action"] == "SYNCHRONIZE_EMPTY_CACHE"
+                    and item["before"]["allocated_bytes"] == item["after"]["allocated_bytes"],
+                    "Cache-only live allocation invariant",
+                )
+            require(
+                (folder / "CACHE_restore.json").exists() == (role in ("replay", "train_b")),
+                "Cache restore boundary count",
+            )
+    if recovery:
+        for phase, roles, count in (("checks", ROLES[:2], 3), ("training", ROLES[2:], 32)):
+            folder = bundle / phase
+            if not (folder / "FINISHED.json").exists():
+                continue
+            start, end = terminal(folder)
+            require(start["seal"] == seal and start["plan"] == plan, "Recovery phase source")
+            if end["status"] != "INCOMPLETE_NO_RETRY":
+                require(
+                    end["native_weight_updates"] == count and end["completed_roles"] == list(roles),
+                    "Phase activity denominator",
+                )
+                for role in roles:
+                    actual = manifest(bundle / "raw" / role)
+                    path = bundle / "raw" / role / "FINISHED.json"
+                    actual["FINISHED.json"] = dict(bytes=path.stat().st_size, sha256=digest(path))
+                    require(end["role_manifests"][role] == actual, "Phase role binding")
     complete = [outcomes[r] for r in ROLES] == list(STATUSES)
     if (bundle / "raw/FINISHED.json").exists():
         start, end = terminal(bundle / "raw")
