@@ -106,7 +106,7 @@ non-regression after training.
    labels, BF16 finiteness, activation-checkpoint backward, and ordinary CPU
    AdamW update/replay. See the [local record](../../provenance/engineering/native_memory_full_ft_20261020/README.md).
    This is not production-owner or 7B qualification.
-2. **One engine-owned full-update owner (implemented; device qualification next):**
+2. **One engine-owned full-update owner (tiny CPU/CUDA qualified):**
    [`NativeFullUpdateOwner`](../../src/latent_workspace/native_owner.py) promotes
    the qualified CPU transport and checkpoint primitives, with verbatim and
    arithmetic parity tests. Its single native partition replaces historical
@@ -122,7 +122,9 @@ non-regression after training.
    added ten guards without dropping the original cases; [attempt 02](../../provenance/engineering/native_owner_qualification_attempt02_20261020/README.md)
    still stopped at 196/199 CPU passes. Explicit CPU oneDNN-off qualification
    adds four policy guards for the next source. A device PASS requires its
-   own source-sealed terminal receipt.
+   own source-sealed terminal receipt. [Attempt 03](../../provenance/engineering/native_owner_qualification_attempt03_20261020/README.md)
+   now passes **203/203 on each device**, including fresh-process FP32/BF16
+   owner replay; offline source/manifest/XML verification also passed.
 3. **Bounded 7B canary (not launched):** pinned original Mistral, native BF16,
    CPU FP32 masters, activation checkpointing, one condition/two complete
    update windows plus fresh-process replay. Freeze source, lengths, memory
@@ -151,6 +153,14 @@ change, weight deletion, automatic retry, PR merge or Hub publication in this
 change.
 
 ## Resource decision, measured 2026-10-20
+
+**Latest check, 06:35:44 UTC:** GPU idle again; both tiny device qualifications
+passed, but filesystem free space is now ~82.22 GiB. The unchanged planning
+estimate is 104.17 GiB, leaving ~21.95 GiB short. See the
+[qualified record and remaining gate](../../provenance/engineering/native_owner_qualification_attempt03_20261020/README.md#next-gate-storage-then-a-new-bounded-7b-canary)
+and [read-only retirement candidates](../../provenance/inventory/native_ft_candidates_20261020/README.md).
+No condition has been retired. Earlier observations below are historical,
+not the current GPU availability.
 
 Furnace was reachable but occupied: RTX 5090, **29,570 / 32,607 MiB** used;
 `VLLM::EngineCore` accounted for 29,552 MiB. That workload was left alone.

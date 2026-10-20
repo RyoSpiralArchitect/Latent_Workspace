@@ -102,6 +102,11 @@ retain all previous cases. This disables oneDNN's CPU paths, not CUDA or
 BF16, and is not an assertion that the oneDNN and native CPU kernels are
 bitwise interchangeable. A device PASS still needs its own terminal receipt.
 
+[Attempt 03](../../provenance/engineering/native_owner_qualification_attempt03_20261020/README.md)
+at `92d8066` now supplies those receipts: **203/203 CPU and 203/203 CUDA**, with
+no failures, errors or skips. Offline source/manifest/XML verification passed.
+The full-FT and 7B limits below remain unchanged.
+
 The generic execution receipt's `native_weight_updates=0` and
 `real_model_updates=0` refer to **pretrained-model/experiment updates**: the tiny
 tests deliberately update randomly initialized parameters. A tiny engineering

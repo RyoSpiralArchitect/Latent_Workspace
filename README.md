@@ -33,8 +33,14 @@ latent-memory path, with both writer and reader differentiable and the entire
 native vocabulary head trained. Its first implementation is
 [`NativeMemoryCausalLM`](src/latent_workspace/native_memory.py), separate from
 the beta's frozen two-candidate adapter. Small-model graph qualification is
-not a 7B training result: the production offload/checkpoint owner, resource
-canary, frozen training recipe and non-regression evaluation remain gates.
+not a 7B training result. The engine-owned CPU-master optimizer/checkpoint
+owner now passes [203/203 selected tests on both CPU and CUDA](provenance/engineering/native_owner_qualification_attempt03_20261020/README.md),
+including exact fresh-process replay. Two earlier CPU backend failures remain
+recorded; the qualified condition explicitly disables CPU oneDNN and retains
+BF16. A storage decision, new bounded 7B resource canary, frozen full-FT recipe
+and original-base non-regression evaluation remain gates. The
+[weight-retirement candidates](provenance/inventory/native_ft_candidates_20261020/README.md)
+are read-only: no weights were deleted during this qualification.
 
 ## Current public artifact: LTWS β (2026-10-18)
  

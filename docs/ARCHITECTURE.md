@@ -152,8 +152,8 @@ composition, not another per-version learner. It preserves the beta host-only
 memory computation while reconnecting both token encodings to autograd. Its
 no-memory bypass equals the current host, not the pre-FT reference after an
 update. `NativeFullUpdateOwner` now owns that graph's parameter partition;
-bounded CPU/CUDA owner qualification and a new graph-specific 7B resource
-canary still precede full training.
+bounded CPU/CUDA owner qualification now passes [203/203 on each device](../provenance/engineering/native_owner_qualification_attempt03_20261020/README.md).
+A new graph-specific 7B resource canary still precedes full training.
 
 [Parity tests](../tests/test_latent_workspace_stack.py) show bitwise-identical
 state, outputs and gradients against every original, and native logits through
