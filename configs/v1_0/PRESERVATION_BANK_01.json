@@ -1,0 +1,79 @@
+{
+  "format": "native_preservation_plan_v1",
+  "seed": "ltws-preservation-01-20261021",
+  "backbone": {
+    "repository": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71"
+  },
+  "aether_manifest_sha256": "4290534b2fefd5c173f84cf807abc2232f662c77e4149cc3e6aa9e585d2f3498",
+  "aether_eval_documents_sha256": "c461a0473f8e22f68b056e0550a7937113719f57a2cfdc8d25b48dbd87107b1e",
+  "aether_allowed_shards": [
+    "pg19_english_literature_v2",
+    "pg19_translated_literature_v2",
+    "pg19_essay_criticism_history_v2",
+    "pg19_explanatory_prose_v2",
+    "pg19_technical_natural_language_v2",
+    "replay-old-pg-v1"
+  ],
+  "aether_chunks_per_root": 1,
+  "aether_windows_per_chunk": 4,
+  "lm_sequence_tokens": 128,
+  "min_lm_body_tokens": 64,
+  "chat_max_tokens": 1024,
+  "dev_hash_modulus": 10,
+  "oasst": {
+    "repository": "OpenAssistant/oasst1",
+    "revision": "fdf72ae0827c1cda404aff25b6603abec9e3399b",
+    "declared_license": "apache-2.0",
+    "files": {
+      "data/train-00000-of-00001-b42a775f407cee45.parquet": {
+        "bytes": 39516251,
+        "sha256": "bbfadf5ed1278ba2208c837fdcad865adf65f5df55d80abadab2745db13fcb5e"
+      },
+      "data/validation-00000-of-00001-134b8fd0c89408b6.parquet": {
+        "bytes": 2080179,
+        "sha256": "24002597bb13a7edd42d92f773762f25e285f72c31a70449393d0ded1dc7b416"
+      }
+    },
+    "git_blobs": {
+      "README.md": "7973fcd39f6489029d0b5e7409f0ed9e6cee468a",
+      "LICENSE": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    "languages": ["en", "ja"],
+    "assistant_min_quality": 0.5,
+    "require_pii_annotation": true,
+    "quotas": {
+      "train/instruction/en": 512,
+      "train/code/en": 128,
+      "train/instruction/ja": 64,
+      "train/code/ja": 16,
+      "dev/instruction/en": 64,
+      "dev/code/en": 16,
+      "dev/instruction/ja": 8,
+      "dev/code/ja": 2
+    }
+  },
+  "qspace": {
+    "dataset": "google/code_x_glue_ct_code_to_text",
+    "source_split": "validation",
+    "artifact_sha256": "f4e5a63d9ba5c486c0f1239083e58bdcd58beb6000823dd043abf710ac15219d",
+    "rows": 6000,
+    "historical_prefix": "Read this code snippet and infer its structure and intent.\n\n",
+    "upstream_revision": null,
+    "role": "exclusion_only_not_training"
+  },
+  "overlap_normalization": "NFKC_casefold_word_tokens",
+  "overlap_span_words": 50,
+  "training_approved": false,
+  "full_ft_mixture": "UNSET",
+  "public_release": "NOT_AUTHORIZED",
+  "claim_ceiling": {
+    "new_sequences": 0,
+    "judge_calls": 0,
+    "native_weight_updates": 0,
+    "weight_deletions": 0,
+    "non_regression": "NOT_ESTABLISHED",
+    "old_expression_gate": "FAIL",
+    "winner": "none"
+  }
+}

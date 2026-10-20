@@ -76,9 +76,16 @@ The additive composer therefore retains canonical memory/query and takes
 teacher answer prose only; all 64 derivatives remain quarantined, not approved
 for training. The [full preparation notes](docs/v1_0/DATA_PREPARATION.md) keep
 source seals, original failures, raw outputs and exact token denominators.
-Ordinary instructions are only 4.05% of canonical training-candidate answer
-tokens under row-uniform sampling: full-FT mixture, base-preservation data and
-unseen non-regression gates still need to be frozen before training.
+In that original bank, ordinary instructions are only 4.05% of canonical
+training-candidate answer tokens under row-uniform sampling.
+The additive [preservation candidate bank](provenance/data/native_preservation_bank01_20261021/README.md)
+now provides 1,754 train / 184 development candidates, with 324,616 / 39,761
+supervised Mistral tokens, using existing human prose and a pinned 41.6 MB
+OpenAssistant acquisition. QSpace's CodeXGLUE validation is exclusion-only.
+Offline full regeneration passes; 635 rows exceed the tested 128-query-token
+backward axis. These are not training approvals or a retention result:
+rights/admission review, mixed-recipe resource qualification, full-FT mixture
+and unseen non-regression gates remain before training.
 
 ## Current public artifact: LTWS β (2026-10-18)
  

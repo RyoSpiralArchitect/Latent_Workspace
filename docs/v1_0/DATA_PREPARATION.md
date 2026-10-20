@@ -119,3 +119,35 @@ quality gate:
 
 No full FT, paid judge, additional learner generation, weight deletion, PR
 merge, beta replacement or Hub upload followed from this stage.
+
+## Additive preservation candidates (2026-10-21)
+
+Ryō subsequently authorized reusing existing Aether prose, inspecting
+Q_Space_Manifold code assets, and a small HF acquisition where needed.
+The [preservation bank](../../provenance/data/native_preservation_bank01_20261021/README.md)
+is now prepared: 1,754 train candidates / 324,616 supervised student tokens,
+and 184 development candidates / 39,761 tokens. These are separate from the
+original world bank and its 4.05% instruction-token observation.
+
+The bank keeps three **no-memory** roles: plain-text causal-LM prose,
+assistant-masked general instructions, and assistant-masked code answers.
+Existing Aether human prose supplies 1,184 short spans; pinned OpenAssistant
+train material supplies 754 complete first-turn pairs. Synthetic Aether prose
+and user-owned writing are excluded from this first bank. CodeXGLUE validation
+from QSpace and official OASST validation are exclusion-only, never training
+inputs. Their use for exclusion does not make them pristine final tests.
+
+The HF download was bounded to four files / 41,617,955 bytes. Source hashes,
+group splits, masks, exclusions, unfilled quotas and token counts are frozen in
+the plan/report. CPU full regeneration passed; no new model call or training
+occurred. This establishes a reproducible candidate substrate, not retention:
+
+- 635 rows exceed the tested 128-query-token backward axis; maximum length is
+  1,024. A mixed update/save/restart recipe has not been qualified.
+- There are only 33 Japanese train instructions and no Japanese code pairs.
+  Code correctness and broader capability coverage remain untested.
+- PG rights claims are jurisdiction-specific; review and training admission
+  remain pending. Raw text/token arrays are kept on Furnace, not published.
+- Actual role weights, original-base anchors/controls, benchmark versions and
+  non-regression tolerances remain UNSET. No preservation loss is yet wired
+  into the full-FT trainer by this preparation-only change.
