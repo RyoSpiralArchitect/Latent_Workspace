@@ -47,9 +47,23 @@ Official `Qwen/Qwen2.5-32B-Instruct-GGUF`, revision
 `a15e3cc10f8bbb2c0af6f8f1f34a32e3b060c09d`, Q5_K_M, Apache-2.0.
 The six split files total 23,262,157,568 bytes; verify each published SHA-256
 before inference. No merge/copy of the split weight files is required.
-`llama.cpp` source is pinned at
-`1ba568c5ad5c6c718984bd2bf4e7c71485b706f9`. Installation is task-local;
-there is no system package update or change to the existing FT environment.
+An initial `llama.cpp` source build at
+`1ba568c5ad5c6c718984bd2bf4e7c71485b706f9` passed CPU compilation, but its CUDA
+13.1 build failed at compiler identification: OS `rsqrt`/`rsqrtf` exception
+specifications conflict with the toolkit headers. No generation was dispatched.
+The failed build directory is preserved; system headers and FT dependencies
+were not changed. Before any request, the teacher runtime was selected as the
+official **b11756 CUDA 12.8** binary, source
+`d80619397c2ba5cf1366c29f7d43699ca3a159b9`. Both archive hashes and extracted
+runtime files are checked. This is a task-local install, not a system update.
+The CPU-only build is retained but is not the selected inference condition.
+
+The [teacher plan](../../configs/v1_0/TEACHER_INSPECTION_01.json) fixes 48
+world examples (four twin pairs per family) and 16 instruction examples (two
+per starter family), maximum 256 generated tokens each, temperature 0.2,
+per-request seeds, one server slot and no retries. Inputs are entirely training
+split material. All outputs remain candidates, including structurally valid
+ones. A separate source-sealed run freezes every exact request before dispatch.
 
 References:
 [model card](https://huggingface.co/Qwen/Qwen2.5-32B-Instruct-GGUF),
