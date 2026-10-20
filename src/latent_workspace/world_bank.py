@@ -476,3 +476,27 @@ def inspect_candidate(candidate, item):
         semantic_equivalence="UNREVIEWED",
         training_approved=False,
     )
+
+
+def compose_teacher_candidate(candidate, item):
+    """A new quarantined derivative: the teacher may supply answer prose only.
+
+    Never rewrite the original generation. Canonical memory/query are compiler
+    owned, so policy text and paired query equality cannot drift with the donor
+    answer. Semantic admission of prose remains a separate, unmet gate.
+    """
+    checks = inspect_candidate(candidate, item)
+    ex.require(checks["structural_pass"], "Cannot compose a structurally invalid candidate")
+    original = item["row"]
+    ex.require(original["split"] == "train", "No evaluation derivatives")
+    return {
+        **copy.deepcopy(original),
+        "answer": candidate["answer"],
+        "verification": "TEACHER_PROSE_SEMANTICS_UNREVIEWED",
+        "training_selection": "UNSET",
+        "training_approved": False,
+        "composition": "canonical_memory_and_query_teacher_answer_only_v1",
+        "teacher_question_used": False,
+        "source_teacher_candidate_sha256": ex.plan_hash(candidate),
+        "canonical_reference_answer": original["answer"],
+    }
