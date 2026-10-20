@@ -102,6 +102,17 @@ def _execution(graph):
             for n, m in graph.named_modules()
         ],
         checkpointing=checkpoint_policy(model),
+        runtime=dict(torch=str(torch.__version__), cuda=torch.version.cuda),
+        backends=dict(
+            mkldnn=torch.backends.mkldnn.enabled,
+            math_sdpa=torch.backends.cuda.math_sdp_enabled(),
+            flash_sdpa=torch.backends.cuda.flash_sdp_enabled(),
+            efficient_sdpa=torch.backends.cuda.mem_efficient_sdp_enabled(),
+            cudnn_sdpa=torch.backends.cuda.cudnn_sdp_enabled(),
+            bf16_reduced_precision=torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction,
+            matmul_tf32=torch.backends.cuda.matmul.allow_tf32,
+            cudnn_tf32=torch.backends.cudnn.allow_tf32,
+        ),
         deterministic=torch.are_deterministic_algorithms_enabled(),
         deterministic_warn_only=torch.is_deterministic_algorithms_warn_only_enabled(),
         matmul_precision=torch.get_float32_matmul_precision(),

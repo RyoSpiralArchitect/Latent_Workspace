@@ -366,3 +366,74 @@ def test_living_engine_imports_are_from_this_checkout():
     for name, module in list(sys.modules.items()):
         if name == "latent_workspace" or name.startswith("latent_workspace."):
             assert Path(module.__file__).resolve().is_relative_to(root), name
+
+
+@pytest.mark.parametrize("dtype", [torch.float32, torch.bfloat16])
+def test_scratch_explicit_cpu_math_keeps_dtype_and_cuda_policy(monkeypatch, dtype):
+    from torch.nn import functional as functional
+
+    def flags():
+        return (
+            torch.backends.cuda.math_sdp_enabled(),
+            torch.backends.cuda.flash_sdp_enabled(),
+            torch.backends.cuda.mem_efficient_sdp_enabled(),
+            torch.backends.cuda.cudnn_sdp_enabled(),
+        )
+
+    monkeypatch.setenv("LTWS_CPU_SDPA_BACKEND", "math")
+    owner, batch = setup("scratch", dtype)
+    before = flags()
+    original = functional.scaled_dot_product_attention
+    seen = []
+
+    def record(q, k, v, **kwargs):
+        assert q.dtype == k.dtype == v.dtype == dtype
+        seen.append((q.device.type, flags()))
+        result = original(q, k, v, **kwargs)
+        assert result.dtype == dtype
+        return result
+
+    monkeypatch.setattr(functional, "scaled_dot_product_attention", record)
+    update(owner, batch)
+    assert seen and flags() == before
+    assert all(f == ((True, False, False, False) if d == "cpu" else before) for d, f in seen)
+    assert all(p.dtype == dtype and torch.isfinite(p).all() for p in owner.model.parameters())
+    assert any("cpu_sdpa_backend='math'" in row[3] for row in owner.execution["modules"])
+
+
+@pytest.mark.parametrize("policy", ["fp32", "unknown"])
+def test_scratch_rejects_unknown_cpu_backend(policy):
+    from latent_workspace.scratch import ScratchDecoder
+
+    with pytest.raises(ValueError, match="cpu_sdpa_backend"):
+        ScratchDecoder(43, cpu_sdpa_backend=policy)
+
+
+@pytest.mark.parametrize("operation", ["begin", "restore"])
+@pytest.mark.parametrize("policy", ["module", "sdpa", "mkldnn"])
+def test_backend_policy_drift_rejected_without_model_or_rng_write(operation, policy, monkeypatch):
+    from contextlib import nullcontext
+
+    from torch.nn.attention import SDPBackend, sdpa_kernel
+
+    owner, _ = setup("scratch")
+    saved = owner.payload()
+    before, rng = tree_hash(owner.model.state_dict()), tree_hash(rng_state())
+    if policy == "module":
+        block = owner.model.blocks[0]
+        block.cpu_sdpa_backend = "math" if block.cpu_sdpa_backend == "auto" else "auto"
+    elif policy == "mkldnn":
+        monkeypatch.setattr(torch.backends.mkldnn, "enabled", not torch.backends.mkldnn.enabled)
+    context = sdpa_kernel(SDPBackend.MATH) if policy == "sdpa" else nullcontext()
+    with context, pytest.raises(ValueError, match="execution|Execution"):
+        if operation == "begin":
+            owner.begin_window([("a", 4)])
+        else:
+            NativeFullUpdateOwner.restore(
+                owner.graph,
+                saved,
+                config=owner.config,
+                expected_run_contract=owner.run_contract,
+                expected_state_sha256=tree_hash(saved),
+            )
+    assert tree_hash(owner.model.state_dict()) == before and tree_hash(rng_state()) == rng

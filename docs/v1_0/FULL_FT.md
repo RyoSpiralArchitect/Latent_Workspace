@@ -115,10 +115,12 @@ non-regression after training.
    FP32 CPU Adafactor masters, tied parameters, realized native cast changes,
    independent snapshots, pre-mutation restore validation and fresh-process
    replay. The [bounded qualification plan](../../configs/v1_0/NATIVE_OWNER_QUALIFICATION.json)
-   selects 189 tests per device, at most 4 GiB CUDA allocation and 900 seconds,
-   with no retry or 7B dispatch. Local development: 204 selected tests passed
-   (189 qualification cases plus 15 offline-verifier regressions). A device
-   PASS requires its own source-sealed terminal receipt.
+   now selects 199 tests per device, at most 4 GiB CUDA allocation and 900
+   seconds, with no retry or 7B dispatch. The [first attempt](../../provenance/engineering/native_owner_qualification_20261020/README.md)
+   retained 187/189 CPU passes and two scratch BF16 oneDNN failures; CUDA
+   remained undispatched. A separately authorized CPU math-SDPA correction
+   adds ten guards without dropping the original cases. A device PASS
+   requires its own source-sealed terminal receipt.
 3. **Bounded 7B canary (not launched):** pinned original Mistral, native BF16,
    CPU FP32 masters, activation checkpointing, one condition/two complete
    update windows plus fresh-process replay. Freeze source, lengths, memory

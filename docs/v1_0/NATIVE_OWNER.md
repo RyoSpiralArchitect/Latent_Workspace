@@ -37,6 +37,9 @@ commit, original-base content hash, frozen data hash, objective, cut/position/
 cache contract, model configuration and module modes, checkpointing policy,
 native schema/aliases, optimizer settings/state, ordered window history,
 completed step/token counts, CPU masters, buffers and Python/NumPy/Torch RNG.
+The corrected owner also binds Torch/CUDA versions and CPU/SDPA/TF32/reduction
+backend flags; the scratch block's explicit CPU backend appears in the bound
+module description. A backend policy cannot change silently across restore.
 The initialized target must match the pinned original base. A saved snapshot
 owns independent CPU tensors and metadata; it never aliases the live owner.
 File creation is exclusive and returns file and structured-state hashes.
@@ -69,12 +72,25 @@ children, not a measured whole-machine memory bound.
 Run [`qualify_native_owner.py`](../../scripts/qualify_native_owner.py) only on a
 clean frozen source with a seal and fresh output directory. Its only exposed
 commands are `prepare-seal` and `qualify`; no training role exists. Each device
-must finish all 189 selected tests with no failures/errors/skips within 900
+must finish all 199 selected tests with no failures/errors/skips within 900
 seconds. CPU precedes CUDA. Preserve any incomplete attempt; do not silently
 rerun it. Fifteen additional local tests reject fabricated/altered evidence.
 [`verify_native_owner_qualification.py`](../../scripts/verify_native_owner_qualification.py)
 replays Git source completeness/hashes, device manifests, literal XML counts,
 resource envelopes and claim ceilings offline, without model code.
+
+The [original 189-test attempt](../../provenance/engineering/native_owner_qualification_20261020/README.md)
+stopped at CPU: 187 passed and two scratch BF16 backward cases failed in
+oneDNN on this ISA. Its artifacts and unlaunched CUDA state are preserved.
+Ryō authorized a new source/new attempt. `ScratchDecoder(cpu_sdpa_backend="math")`
+now selects native math SDPA **only on CPU**; `auto` remains the default,
+HF eager attention and CUDA dispatch are unchanged, and BF16 input/output
+dtypes are retained. The qualification selects this explicit CPU policy,
+including graph-only CPU tests inside the CUDA suite. Ten additional tests
+cover dtype/policy selection, invalid descriptors, and live/restore backend
+drift without target/RNG writes. The old 189 cases are retained, not skipped.
+This is a different numerical backend, not a claim of auto/math bitwise
+equivalence; all matched comparisons use the same declared policy.
 
 The generic execution receipt's `native_weight_updates=0` and
 `real_model_updates=0` refer to **pretrained-model/experiment updates**: the tiny

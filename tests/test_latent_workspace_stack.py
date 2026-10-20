@@ -94,6 +94,8 @@ def threads():
 
 
 def host_model(kind):
+    import os
+
     torch.manual_seed(3)
     if kind == "mistral":
         model, _, _ = tiny(torch.float32)
@@ -116,7 +118,14 @@ def host_model(kind):
         config._attn_implementation = "eager"
         model = GPT2LMHeadModel(config)
     else:
-        model = lw.ScratchDecoder(43, width=16, layers=2, heads=4, max_length=64)
+        model = lw.ScratchDecoder(
+            43,
+            width=16,
+            layers=2,
+            heads=4,
+            max_length=64,
+            cpu_sdpa_backend=os.environ.get("LTWS_CPU_SDPA_BACKEND", "auto"),
+        )
     return model.eval().requires_grad_(False)
 
 
