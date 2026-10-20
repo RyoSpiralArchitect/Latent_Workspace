@@ -125,7 +125,8 @@ non-regression after training.
    own source-sealed terminal receipt. [Attempt 03](../../provenance/engineering/native_owner_qualification_attempt03_20261020/README.md)
    now passes **203/203 on each device**, including fresh-process FP32/BF16
    owner replay; offline source/manifest/XML verification also passed.
-3. **Bounded 7B canary (not launched):** pinned original Mistral, native BF16,
+3. **Bounded 7B canary ([prospective contract](NATIVE_7B_CANARY.md), not yet launched):**
+   pinned original Mistral, native BF16,
    CPU FP32 masters, activation checkpointing, one condition/two complete
    update windows plus fresh-process replay. Freeze source, lengths, memory
    bounds, token budget, runtime/resource caps and stop rules before dispatch.
@@ -171,7 +172,8 @@ Available disk space is now **243.61 GiB**, RAM **119.61 GiB**; GPU is idle
 headroom. The storage shortfall is resolved. These snapshots are not a
 reservation or proof that the new graph fits.
 
-**Next:** implement and freeze the bounded 7B canary in step 3: cut 4, BF16
+**Next:** qualify and dispatch the [bounded 7B canary](NATIVE_7B_CANARY.md)
+in step 3: cut 4, BF16
 native weights/FP32 CPU masters, two complete token-weighted windows and
 fresh-process checkpoint replay. Retain the historical 30.5-GiB allocator cap,
 100-GiB host admission, 24-GiB host remaining floor and 50-GiB disk remaining
