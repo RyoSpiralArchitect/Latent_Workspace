@@ -106,15 +106,19 @@ non-regression after training.
    labels, BF16 finiteness, activation-checkpoint backward, and ordinary CPU
    AdamW update/replay. See the [local record](../../provenance/engineering/native_memory_full_ft_20261020/README.md).
    This is not production-owner or 7B qualification.
-2. **One engine-owned full-update owner (not implemented here):** promote
-   the qualified CPU gradient transport/FP32-master arithmetic with explicit
-   parity tests, replacing historical bridge-specific ownership with a generic
-   native-parameter partition. Do not import the frozen package or copy an
-   owner per experiment. Validate tied weights, complete ordered windows,
-   token-weighted accumulation, finite gradients, actual native cast changes,
-   independent checkpoint snapshots and pre-mutation restore validation.
-   Bind model identity, cut/position/cache policy, source, optimizer, data
-   cursor and RNG in each checkpoint. Repeat in fresh CPU and CUDA processes.
+2. **One engine-owned full-update owner (implemented; device qualification next):**
+   [`NativeFullUpdateOwner`](../../src/latent_workspace/native_owner.py) promotes
+   the qualified CPU transport and checkpoint primitives, with verbatim and
+   arithmetic parity tests. Its single native partition replaces historical
+   bridge-specific ownership; it never imports the frozen package. See the
+   [owner contract](NATIVE_OWNER.md) for ordered token-weighted windows,
+   FP32 CPU Adafactor masters, tied parameters, realized native cast changes,
+   independent snapshots, pre-mutation restore validation and fresh-process
+   replay. The [bounded qualification plan](../../configs/v1_0/NATIVE_OWNER_QUALIFICATION.json)
+   selects 189 tests per device, at most 4 GiB CUDA allocation and 900 seconds,
+   with no retry or 7B dispatch. Local development: 204 selected tests passed
+   (189 qualification cases plus 15 offline-verifier regressions). A device
+   PASS requires its own source-sealed terminal receipt.
 3. **Bounded 7B canary (not launched):** pinned original Mistral, native BF16,
    CPU FP32 masters, activation checkpointing, one condition/two complete
    update windows plus fresh-process replay. Freeze source, lengths, memory

@@ -23,6 +23,68 @@ from latent_workspace_ft_v10 import (
 )
 
 
+def test_cpu_gradient_transport_is_historical():
+    import inspect
+    import os
+
+    from latent_workspace import offload
+    from latent_workspace_ft_v10 import v15_native_learner
+
+    device = os.environ.get("LTWS_TEST_DEVICE", "cpu")
+    for name in ("_CPUGradientAccumulatorSpec", "_CPUGradientAccumulator"):
+        assert inspect.getsource(getattr(offload, name)) == inspect.getsource(getattr(engine, name))
+    assert inspect.getsource(offload.CompleteCPUWindow) == inspect.getsource(
+        v15_native_learner.CompleteCPUWindow
+    )
+    for dtype in (torch.float32, torch.bfloat16):
+        values = []
+        for cls in (offload.CompleteCPUWindow, v15_native_learner.CompleteCPUWindow):
+            params = [
+                ("a", torch.nn.Parameter(torch.ones(3, 5, dtype=dtype, device=device))),
+                ("b", torch.nn.Parameter(torch.ones(2, dtype=dtype, device=device))),
+            ]
+            window = cls(params, merge_device="cpu")
+            receipts = []
+            for micro in range(3):
+                for _, param in params:
+                    param.grad = torch.full_like(param, (micro + 1) / 7)
+                receipts.append(window.spill())
+            gradients, receipt = window.take(3)
+            values.append((gradients, receipts, receipt))
+        assert values[0][1:] == values[1][1:]
+        assert all(torch.equal(values[0][0][key], values[1][0][key]) for key in values[0][0])
+
+
+def test_native_state_utilities_are_historical():
+    import inspect
+
+    from latent_workspace import optimizer_state
+    from latent_workspace_ft_v10 import (
+        adapter_native_learner_v2,
+        training_binding,
+        v15_native_learner,
+    )
+
+    for source, names in (
+        (v15_native_learner, ("require", "tree_hash", "finite_tree", "rng_state", "restore_rng")),
+        (
+            adapter_native_learner_v2,
+            ("snapshot", "tensor_schema", "validate_rng", "validate_optimizer"),
+        ),
+        (training_binding, ("checkpoint_policy",)),
+    ):
+        for name in names:
+            assert inspect.getsource(getattr(optimizer_state, name)) == inspect.getsource(
+                getattr(source, name)
+            )
+    state = optimizer_state.rng_state()
+    optimizer_state.validate_rng(state)
+    assert optimizer_state.tree_hash(state) == v15_native_learner.tree_hash(state)
+    copied = optimizer_state.snapshot(state)
+    copied["torch_cpu"].zero_()
+    assert not torch.equal(copied["torch_cpu"], state["torch_cpu"])
+
+
 @pytest.fixture(autouse=True)
 def threads():
     before = torch.get_num_threads()
