@@ -37,10 +37,13 @@ not a 7B training result. The engine-owned CPU-master optimizer/checkpoint
 owner now passes [203/203 selected tests on both CPU and CUDA](provenance/engineering/native_owner_qualification_attempt03_20261020/README.md),
 including exact fresh-process replay. Two earlier CPU backend failures remain
 recorded; the qualified condition explicitly disables CPU oneDNN and retains
-BF16. A storage decision, new bounded 7B resource canary, frozen full-FT recipe
-and original-base non-regression evaluation remain gates. The
-[weight-retirement candidates](provenance/inventory/native_ft_candidates_20261020/README.md)
-are read-only: no weights were deleted during this qualification.
+BF16. After separate approval, the [six closed V16 checkpoints were recorded
+and retired](provenance/inventory/v16_scientific_retirement_20261020/README.md),
+recovering 162.46 GiB; 243.61 GiB was available afterward. V18 and the original
+Mistral remain. Git preserves evidence, not recoverable weight bytes.
+The new bounded 7B resource canary, frozen full-FT recipe and original-base
+non-regression evaluation remain gates. No 7B run follows from the tiny tests
+or capacity recovery alone.
 
 ## Current public artifact: LTWS β (2026-10-18)
  

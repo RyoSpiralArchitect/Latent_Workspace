@@ -148,19 +148,45 @@ non-regression after training.
    an additional matched-capacity/step-dependence assay. No beta replacement
    or upload follows from an engineering pass alone.
 
-There is no new paid judge call, generation batch, model download, threshold
-change, weight deletion, automatic retry, PR merge or Hub publication in this
-change.
+The graph/owner implementation and qualification did not run a paid judge,
+generation batch, model download, threshold change, weight deletion, automatic
+retry, PR merge or Hub publication. The later, separately authorized V16
+retirement is recorded below.
 
 ## Resource decision, measured 2026-10-20
 
-**Latest check, 06:35:44 UTC:** GPU idle again; both tiny device qualifications
-passed, but filesystem free space is now ~82.22 GiB. The unchanged planning
-estimate is 104.17 GiB, leaving ~21.95 GiB short. See the
+**Latest check, 08:18:38 UTC:** after Ryō's explicit whole-condition retirement
+decision, the [six V16 checkpoint bodies were recorded and deleted](../../provenance/inventory/v16_scientific_retirement_20261020/README.md).
+All six hashes matched both at inventory and before deletion; the ledger was
+published first. The three retired conditions are `common`,
+`raw_matched_control`, and `slot_contrast`, steps 1 and 2. Their 667 historical
+evidence files remain unchanged. V18, original Mistral and all other weights,
+features and beta artifacts are excluded; the old per-condition retention
+rule remains for non-retired conditions. Git cannot reconstruct these deleted
+weight bodies.
+
+Available disk space is now **243.61 GiB**, RAM **119.61 GiB**; GPU is idle
+(10/32,607 MiB; no compute process). The unchanged two-old-checkpoint plus
+50-GiB-floor estimate is **104.17 GiB**, leaving **139.44 GiB** of planning
+headroom. The storage shortfall is resolved. These snapshots are not a
+reservation or proof that the new graph fits.
+
+**Next:** implement and freeze the bounded 7B canary in step 3: cut 4, BF16
+native weights/FP32 CPU masters, two complete token-weighted windows and
+fresh-process checkpoint replay. Retain the historical 30.5-GiB allocator cap,
+100-GiB host admission, 24-GiB host remaining floor and 50-GiB disk remaining
+floor as initial proposed limits; freeze actual sequence bounds and output
+forecast before dispatch. Preserve incomplete attempts without retry or
+loosening limits. This is not the full-FT pilot: training mixture, held-out
+population and quality gates still require step 4/5's prospective recipe.
+
+**Earlier check, 06:35:44 UTC:** GPU was idle and both tiny device qualifications
+had passed, but filesystem free space was ~82.22 GiB, ~21.95 GiB below the
+104.17-GiB planning estimate. See the
 [qualified record and remaining gate](../../provenance/engineering/native_owner_qualification_attempt03_20261020/README.md#next-gate-storage-then-a-new-bounded-7b-canary)
 and [read-only retirement candidates](../../provenance/inventory/native_ft_candidates_20261020/README.md).
-No condition has been retired. Earlier observations below are historical,
-not the current GPU availability.
+Those original records remain historical. The observations below likewise
+predate the authorized retirement and are not current availability.
 
 Furnace was reachable but occupied: RTX 5090, **29,570 / 32,607 MiB** used;
 `VLLM::EngineCore` accounted for 29,552 MiB. That workload was left alone.
@@ -176,9 +202,8 @@ branches and a full answer sequence. At 7,248,023,552 parameters, native BF16
 weights alone are ~13.5 GiB and CPU FP32 masters ~27.0 GiB, before gradients,
 activations, optimizer state, vocabulary logits or checkpoint copies.
 
-Using the old checkpoint size only for planning, two checkpoints plus the old
-50-GiB free-space floor require about **104.2 GiB**, already ~18.7 GiB above
-the observed free space, before new artifacts. A canary therefore needs both
-an idle GPU and a storage decision/recheck. No old checkpoint is deleted to
-make this estimate work; the per-condition latest-plus-previous retention
-policy remains in force.
+At that earlier observation, using the old checkpoint size only for planning,
+two checkpoints plus the old 50-GiB free-space floor required about **104.2 GiB**,
+~18.7 GiB above the observed free space, before new artifacts. That was the
+storage blocker before the separately recorded V16 retirement above, not a
+current shortfall. No limits were lowered.
