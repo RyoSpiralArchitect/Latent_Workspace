@@ -36,3 +36,23 @@ mandatory Furnace qualification. The gate remains
 **FAIL / winner:none / non_regression NOT_ESTABLISHED**.
 
 Status at creation: source preparation, no formal trial launched yet.
+
+## Terminal handoff
+
+Frozen execution source: `fd77ee4c84a99a99c22b28aa85d321e95caa843f` (739 files).
+Both qualifications passed 187/187. All three roles and dispatcher are terminal:
+`V22_CAUSALITY_COMPLETE_NOT_RELEASE`, 2,492 prefix positions, 928 sequences,
+7,653 generated tokens, 876 EOS / 52 caps. Fixed-extent future discrepancies:
+zero. Identity/twin historical generation replay disagreements: zero / 288.
+
+The [offline terminal witness](furnace/REMOTE_TERMINAL_CHECK.json) verifies the
+same step-32 checkpoint body after execution, all four source checkouts clean,
+all 928 literal decodes, no checkpoint writes and no surviving run/GPU workers.
+All 58 Furnace files are copied to [furnace/](furnace/). No retry, new training,
+judge, weight deletion, PR/merge or release was performed. No monitor was created.
+
+[README.md](README.md), [SUMMARY.json](SUMMARY.json), [ANSWER_BANK.md](ANSWER_BANK.md)
+and the additive [INTERPRETATION.json](INTERPRETATION.json) retain positive and
+negative outcomes and complete denominators. Run `summarize.py --verify` and
+`interpret.py --verify` offline. The next investigation is proposed in
+[docs/v23/ROADMAP_TO_1_0.md](../../../docs/v23/ROADMAP_TO_1_0.md), not dispatched.

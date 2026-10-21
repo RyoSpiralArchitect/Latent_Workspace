@@ -1,5 +1,11 @@
 # After V22 weight diagnostics: retain grounding, stabilize decisions
 
+**Follow-up completed:** the [memory-causality assay](../../provenance/pilots/v22_memory_causality01_20261021/README.md)
+now qualifies the fixed-extent future controls and executes memory ablations
+and a writer/reader factorial. Preserve the proposal below as its rationale;
+the evidence-updated next investigation is the [V23 roadmap](../v23/ROADMAP_TO_1_0.md).
+No V23 training or release has been dispatched.
+
 This is a **proposal**, not a training or generation dispatch. Its evidence is
 the [completed V22 diagnostic](../../provenance/pilots/v22_weight_diagnostics01_20261021/README.md).
 Keep the original native scores and all negative outcomes. The goal remains

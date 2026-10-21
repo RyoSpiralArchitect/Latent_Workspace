@@ -163,6 +163,29 @@ therefore qualifies that instrument before separate reader-decision, body
 preservation and normalization-visibility experiments. Historical scores and
 **FAIL / winner:none / non_regression NOT_ESTABLISHED** remain unchanged.
 
+### V22 memory-content causality and the V23 direction (2026-10-21)
+
+The [completed causal assay](provenance/pilots/v22_memory_causality01_20261021/README.md)
+passes all 187 selected CPU/CUDA checks, 2,492 fixed-prefix controls and 928
+bounded intervention/replay generations. Equal-extent changed/masked future
+tokens leave every observed vocabulary logit identical; cropping explains the
+remaining extent-sensitive discrepancy without evidence of answer-content leakage.
+
+For 20 reciprocal directions in 10 equal-length memory-twin groups, V22's
+donor margin increases in 20/20 and it correctly switches original→donor in
+14/20 (base 4/20). The writer×reader comparison on 80 nonempty rows is
+**36/80 base/base, 39/80 V22-writer/base-reader, 70/80 base-writer/V22-reader,
+69/80 V22/V22**. Most gain travels with the reader side (which includes query
+encoding). Base-written memory also repairs the `Nymszrcrff.`→`Nymszrcrk.`
+copy regression at the otherwise unchanged V22 reader. Unaffected-query
+misbinding remains in two OOD groups. No hybrid is promoted from this panel.
+
+The [V23-to-1.0 proposal](docs/v23/ROADMAP_TO_1_0.md) prioritizes query/fact
+binding, exact identity transport and ordinary-host preservation as separate
+factors. This is exposed-panel mechanism evidence, not a release pass: native
+MMLU remains 356→354/570 and free-generation quality remains unjudged.
+**FAIL / winner:none / non_regression NOT_ESTABLISHED** remains unchanged.
+
 ## Current public artifact: LTWS β (2026-10-18)
  
 **[mistral-7b-instruct-v0.3-LTWS β](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)**
