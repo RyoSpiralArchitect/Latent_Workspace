@@ -142,6 +142,27 @@ Offline input/decoding replay and both 138-test qualification invocations pass.
 No additional training, weight deletion, paid judge or release occurred;
 **FAIL / winner:none / non_regression NOT_ESTABLISHED** remains.
 
+### V22 weight and readout diagnosis (2026-10-21)
+
+The [additive read-only diagnosis](provenance/pilots/v22_weight_diagnostics01_20261021/README.md)
+passes 158/158 selected checks on CPU and CUDA, then reproduces all 1,140
+MMLU scores, 384 world conditions and 2,814 recorded next-token choices with
+zero trajectory disagreement. No new continuation or training was performed.
+Both original MMLU losses remain wrong with an FP32 head; matched head swapping
+changes no predictions on the 570-question panel, while changed hidden states
+change 11. Of the 13 remaining latent world failures, 12 first diverge within
+two tokens; their decisive token accounts for 94.8–99.6% of target-sequence NLL.
+FP32 head projection repairs none of those first forks.
+
+The 291-tensor census finds changed values in 98.42% of FP32 master elements
+but 11.15% of native BF16 elements; 52 native normalization tensors are unchanged.
+Full-teacher versus prefix-only arithmetic also changes gold-argmax correctness
+at two shared-prefix positions per arm; its numerical-versus-layout cause is
+not established. The [next proposal](docs/v22/POST_DIAGNOSTIC_NEXT_STEPS.md)
+therefore qualifies that instrument before separate reader-decision, body
+preservation and normalization-visibility experiments. Historical scores and
+**FAIL / winner:none / non_regression NOT_ESTABLISHED** remain unchanged.
+
 ## Current public artifact: LTWS β (2026-10-18)
  
 **[mistral-7b-instruct-v0.3-LTWS β](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)**
