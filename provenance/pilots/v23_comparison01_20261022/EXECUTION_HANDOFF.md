@@ -1,5 +1,22 @@
 # V23 base/off/on comparison 01 — execution handoff
 
+## Launch recorded
+
+**LAUNCHED once** at `2026-10-21T22:46:05Z` (2026-10-22 07:46 JST).
+Frozen source: `84073310cd7b2c56b5e3de046fb3bdc99e461bfb`, **774 files**.
+tmux: `ltws-v23-comparison01-20261022`; initial pane PID `3725244`.
+At `2026-10-21T22:46:25.780750Z`, CPU qualification PID `3725325` was
+active; CUDA and all real-model roles were not yet started. The source was
+a clean detached checkout and disk admission remained above 50 GiB after
+creation. This is a launch record, not a claim of passing qualification or
+completed generation. Check terminal receipts for newer state.
+
+At `2026-10-21T22:48:30.838389Z`, **223/223 CPU and 223/223 CUDA tests
+passed**, zero skips/failures/errors. Dispatcher PID `3726775` and base-role
+PID `3726855` were active; base had loaded the pinned original host. Off/on
+had not started. [Qualification evidence](README.md) is copied and replayed
+offline. Real-model evaluation is still in progress; do not re-run a role.
+
 ## Frozen before launch
 
 **NOT_DISPATCHED at creation.** Ryō requested reading the completed FT results
