@@ -254,6 +254,14 @@ judge or release is dispatched. The owner/checkpoint objective is unchanged.
 The finite job has failure-stop and four-hour-per-role limits, no retry and
 no recurring monitor. See the [handoff](provenance/engineering/v23_gradient_audit01_20261022/EXECUTION_HANDOFF.md).
 
+In parallel, [offline preservation-target binding](provenance/engineering/v23_preservation_binding01_20261022/README.md)
+now connects pinned target metadata to exact complete rows and causal logit
+positions. It does not consume target bodies or change the existing owner.
+The [next objective-owner contract](docs/v23/OBJECTIVE_OWNER_CONTRACT.md)
+separates P-off arithmetic parity, CE/KL normalization and new-objective
+save/restart from a V22 checkpoint transition. Coefficients and a training
+recipe remain unselected pending the complete audit; no extra GPU run starts.
+
 Separately, [three obsolete engineering canaries](provenance/inventory/v23_obsolete_canaries_20261022/README.md)
 were recorded and retired, freeing **81.0373 GiB**. Original Mistral, V22
 step16/step32, previous scientific branches, activation banks and datasets stay.

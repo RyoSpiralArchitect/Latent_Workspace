@@ -72,6 +72,15 @@ and V22 canaries. The panel-wide conflict audit is **running, not complete**.
 Owner objective integration and new-objective update/restart remain later gates;
 no loss weight or P/B/I winner is selected from the canaries.
 
+While that frozen audit runs, the additive [objective-owner contract](OBJECTIVE_OWNER_CONTRACT.md)
+now makes the next integration boundary concrete. The engine has an offline
+target-to-row metadata binder with causal-position and whole-context checks;
+the [preparation record](../../provenance/engineering/v23_preservation_binding01_20261022/README.md)
+does not claim target-body or owner qualification. Existing CE updates and v1
+checkpoint/restore remain unchanged. A new objective needs its own exact
+update/restart tests; changing the objective while loading V22 must never be
+presented as ordinary exact resume. No 7B coefficient or factor is selected.
+
 The additive bank freezes 512 new groups / 4,096 raw rows, with 2,016 unique
 train rows / 13,198 target tokens. The old two-hop family is explicitly promoted
 using new groups; all old groups are excluded, and a new three-hop structure

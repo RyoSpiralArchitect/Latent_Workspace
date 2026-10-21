@@ -69,3 +69,19 @@ Three obsolete engineering canaries were retired under ledger commit
 87,013,134,820 bytes removed. Base, V22 step16/32, scientific V18–V20 branches,
 activation banks and data remain. Git preserves fingerprints, not recoverable
 weight bodies. No further weight deletion is needed for this audit.
+
+## Additive handoff update — 2026-10-22 02:23 JST
+
+The [later read-only progress observation](../v23_preservation_binding01_20261022/AUDIT_PROGRESS_OBSERVATION.json)
+still finds the original V22 worker active, with the frozen remote worktree
+unchanged. Preservation CE and KL are 12/12 each and world total is 84/84;
+identity has 33/84 complete row records. Copy/format/mixed and the terminal
+receipts are pending. Do not confuse these counts with completion or quality.
+
+Independent [target-metadata preparation](../v23_preservation_binding01_20261022/README.md)
+adds a new engine module and tests, without editing any of this audit's 761
+sealed files. It does not change the owner or start a GPU job. Its
+[proposed objective-owner contract](../../../docs/v23/OBJECTIVE_OWNER_CONTRACT.md)
+leaves coefficient selection, owner wiring and new-objective restart after the
+complete audit. The old source can still be replayed; do not relaunch it from
+the newer local HEAD or reinterpret V22 restoration as a changed-objective resume.

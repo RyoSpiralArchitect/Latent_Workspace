@@ -147,6 +147,7 @@ test was shown to fail on a deliberate violation.
 | `offload`, `optimizer_state` | CPU gradient transport, complete-window accumulation and checkpoint primitives | verbatim promotions with pinned origins and parity tests |
 | `native_owner` | one all-native-parameter FP32 CPU-master owner, token-weighted windows, guarded snapshots and restore | new composition over promoted arithmetic; [contract](v1_0/NATIVE_OWNER.md), not 7B qualification |
 | `objective_audit` | oracle-token CE contributions, live cut-state gradients, tiny W/Q/R parameter-path reference and full-vocabulary KL primitive | new diagnostic; no additional learned parameters or owner objective; [V23 scope](v23/PREPARATION_01.md) |
+| `preservation_binding` | immutable full-context/causal-position binding of pinned teacher metadata to complete training rows | new offline preparation, not target-body validation or owner integration; [contract](v23/OBJECTIVE_OWNER_CONTRACT.md) |
 | `world_expansion` | additive, independently solved counterfactual worlds, controlled identifiers, group/split and historical exclusions | new data generator; the first `world_bank` and its OOD protocol remain unchanged |
 
 The [post-beta full-FT plan](v1_0/FULL_FT.md) adds `NativeMemoryCausalLM` to
