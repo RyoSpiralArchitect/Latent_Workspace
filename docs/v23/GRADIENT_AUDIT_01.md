@@ -90,3 +90,13 @@ Adafactor update. Larger norms are not evidence of better reasoning. Newly
 reserved confirmation/OOD groups and exposed benchmarks are not used here.
 No new training recipe, coefficient, release or winner follows automatically.
 Keep **FAIL / winner:none / non_regression NOT_ESTABLISHED**.
+
+## Interim execution
+
+The [published interim record](../../provenance/engineering/v23_gradient_audit01_20261022/README.md)
+passes all 338 tiny cases on each device and both 291-tensor real-7B path-sum
+canaries. Base targets are complete; V22 owner restore is exact. Base native
+weights remain unchanged and its peak GPU allocation is 17.7802 GiB.
+The fixed conflict panel is still running at the interim snapshot, with its
+final V22 hash and analysis pending. This is not an all-complete experiment,
+a new training objective or a reason to change acceptance thresholds.

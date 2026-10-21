@@ -55,11 +55,10 @@ Mistral-only hook or a private version-specific learner. First tiny-qualify:
 The [first implementation and additive world preparation](PREPARATION_01.md)
 now have [296/296 tiny tests on each device and replayed data](../../provenance/engineering/v23_preparation01_20261022/README.md).
 The outer dispatcher had a retained receipt-contract error after the successful
-data role; it was not rerun or relabeled. Live-state tracing, token contributions,
-W/Q/R gradient attribution and full-vocabulary KL are tiny-qualified only.
-The actual 7B gradient/conflict audit, reference-target generation and owner
-integration have **not** run. A tensorwise reference avoids several full gradient
-copies but is too replay-heavy to assume scalable; qualify a spill-based version.
+data role; it was not rerun or relabeled. That stage qualified live-state tracing,
+token contributions, W/Q/R attribution and full-vocabulary KL only on tiny hosts.
+Its tensorwise reference avoids several full gradient copies but is too
+replay-heavy to assume scalable at 7B.
 The audit must determine whether the problem is missing/conflicting gradients,
 margin, state compatibility or data distribution before choosing a loss weight.
 
@@ -67,16 +66,20 @@ The [scalable spill-based audit plan](GRADIENT_AUDIT_01.md) now implements
 one backward per objective/row, with CPU FP32 diagnostic accumulation and
 bounded tensorwise reductions. It keeps the prior 84-world/12-preservation
 selection and separates a 7B path-sum resource canary from the panel-wide
-conflict diagnosis. Implementation is not yet an executed 7B result; owner
-objective integration and new-objective update/restart remain later gates.
+conflict diagnosis. The [interim evidence](../../provenance/engineering/v23_gradient_audit01_20261022/README.md)
+passes 338/338 tests on each device and 291/291 path sums at both real base
+and V22 canaries. The panel-wide conflict audit is **running, not complete**.
+Owner objective integration and new-objective update/restart remain later gates;
+no loss weight or P/B/I winner is selected from the canaries.
 
 The additive bank freezes 512 new groups / 4,096 raw rows, with 2,016 unique
 train rows / 13,198 target tokens. The old two-hop family is explicitly promoted
 using new groups; all old groups are excluded, and a new three-hop structure
 is reserved as OOD. No model has evaluated the new confirmation/OOD groups.
 The next 84-world + 12-preservation-row training panel is fixed at up to
-105 memory / 128 query tokens. Its planned full-vocabulary base targets are
-116.5 MiB, **NOT_RUN**. The larger OOD maximum of 163 memory tokens needs a
+105 memory / 128 query tokens. Its full-vocabulary base targets are now generated:
+12 rows / 932 positions, 116.5 MiB FP32 tensor payload. The larger OOD maximum
+of 163 memory tokens needs a
 separate resource check. No mixture, optimizer or native training objective
 changed merely because more candidate data is available.
 

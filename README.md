@@ -229,11 +229,35 @@ The failed receipt is retained; offline replay verifies the child results,
 and the subsequent configuration/validation fix has three local regressions.
 No role was rerun. This is not an all-green 7B run or a new trained learner.
 
-The next train-only audit inputs are frozen at 84 world + 12 preservation rows;
-base-target generation remains **NOT_RUN**. A scalable gradient-spill assay and
-fresh resource check precede loss integration/full FT. See the
+Preparation froze the next train-only inputs at 84 world + 12 preservation rows;
+base-target generation was **NOT_RUN in that stage**. See the
 [updated next factors](docs/v23/NEXT_FACTORS.md). All historical quality/release
-ceilings remain unchanged; no weights were deleted.
+ceilings remain unchanged; no weights were deleted during preparation.
+
+### V23 scalable 7B gradient audit — panel running (2026-10-22)
+
+The [new spill-based audit](provenance/engineering/v23_gradient_audit01_20261022/README.md)
+passes **338/338 CPU and CUDA tests**, then the real-7B engineering canaries at
+both original base and frozen V22: **291/291 parameter-path sums per model**
+within the predeclared BF16 numeric bound. Trace/no-trace and detached-reader
+forward replay are bitwise exact. Base peak CUDA allocation is 17.780 GiB;
+this is a short diagnostic, not an optimizer-training memory estimate.
+All 12 base teacher distributions / 932 supervised positions are prepared
+with full-vocabulary FP32 log probabilities (116.5 MiB of tensor payload).
+V22's strict step32 restore passes before its canary.
+
+The fixed **84-world / 14-group + 12-preservation** conflict panel is still
+running in the [interim snapshot](provenance/engineering/v23_gradient_audit01_20261022/interim_furnace/INTERIM_MANIFEST.json),
+not a completed diagnosis. Do not select P/B/I, a loss coefficient or a winner
+from engineering success. No optimizer update, new generation, held-out test,
+judge or release is dispatched. The owner/checkpoint objective is unchanged.
+The finite job has failure-stop and four-hour-per-role limits, no retry and
+no recurring monitor. See the [handoff](provenance/engineering/v23_gradient_audit01_20261022/EXECUTION_HANDOFF.md).
+
+Separately, [three obsolete engineering canaries](provenance/inventory/v23_obsolete_canaries_20261022/README.md)
+were recorded and retired, freeing **81.0373 GiB**. Original Mistral, V22
+step16/step32, previous scientific branches, activation banks and datasets stay.
+Git retains metadata and hashes, not recoverable copies of the deleted weights.
 
 ## Current public artifact: LTWS β (2026-10-18)
  
