@@ -23,6 +23,16 @@ from .host import DecoderHost
 
 
 @dataclass
+class NativeCutTrace:
+    """Live, opt-in diagnostic references. No detach, cache, or retained gradients."""
+
+    query: torch.Tensor
+    memory: torch.Tensor
+    query_mask: torch.Tensor
+    memory_mask: torch.Tensor
+
+
+@dataclass
 class NativeMemoryOutput:
     """Query-position logits; labels never supervise the packed memory positions.
 
@@ -34,6 +44,7 @@ class NativeMemoryOutput:
     loss: torch.Tensor | None = None
     loss_sum: torch.Tensor | None = None
     supervised_tokens: int = 0
+    cut_trace: NativeCutTrace | None = None
 
 
 def _tokens(ids, mask, *, name, vocab, allow_empty=False):
@@ -102,7 +113,10 @@ class NativeMemoryCausalLM(nn.Module):
         memory_ids=None,
         memory_mask=None,
         labels=None,
+        capture_cut_trace=False,
     ):
+        if type(capture_cut_trace) is not bool:
+            raise ValueError("capture_cut_trace must be boolean")
         vocab = self.host.head.out_features
         mask, _ = _tokens(input_ids, attention_mask, name="query", vocab=vocab)
         memory_lengths = None
@@ -133,6 +147,7 @@ class NativeMemoryCausalLM(nn.Module):
             if count == 0:
                 raise ValueError("At least one supervised next token is required")
 
+        trace = None
         if memory_lengths is None or not memory_lengths.any():
             # Exact native bypass, including dropout RNG order in training mode.
             logits = self.host.logits(input_ids, mask)
@@ -145,6 +160,8 @@ class NativeMemoryCausalLM(nn.Module):
             memory = query.new_zeros(
                 input_ids.shape[0], memory_ids.shape[1], self.host.hidden_size
             ).index_copy(0, live, encoded)
+            if capture_cut_trace:
+                trace = NativeCutTrace(query, memory, mask, memory_mask)
             packed, packed_mask = pack_memory(memory, memory_mask, query, mask)
             final = self.host.from_cut_states(packed, packed_mask, self.cut)
             # Apply the full native head only to query positions, saving memory
@@ -156,7 +173,7 @@ class NativeMemoryCausalLM(nn.Module):
             rows = torch.arange(input_ids.shape[0], device=input_ids.device)[:, None]
             logits = self.host.head(final[rows, columns])
 
-        result = NativeMemoryOutput(logits=logits, supervised_tokens=count)
+        result = NativeMemoryOutput(logits=logits, supervised_tokens=count, cut_trace=trace)
         if labels is not None:
             result.loss_sum = F.cross_entropy(
                 logits[:, :-1].float().reshape(-1, vocab),
