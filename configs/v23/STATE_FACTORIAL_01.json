@@ -1,0 +1,44 @@
+{
+  "schema": "ltws-v23-state-factorial-01",
+  "seed": 20261021,
+  "comparison_plan": "configs/v22/BASE_COMPARISON_01.json",
+  "comparison_plan_sha256": "a515cf29439bbe37a6a5a920a5ffbc7e719e439cc17d364ac9ad3688b9204449",
+  "comparison_bundle": "/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v22-comparison01-20261021",
+  "historical_prefix_sha256": {
+    "base": "bf86f7ce4cc1b0191cebab7cc99c4cbebadd821cb7e97e216a18649e228236b8",
+    "v22": "e517a79451db14c6b3fd607640110a99cd45dcc5485e02edfc606ae71f057fa6"
+  },
+  "expected_runtime": {"python": "3.12.14", "torch": "2.13.0+cu132", "transformers": "5.15.0", "cuda": "13.2"},
+  "resources": {
+    "admission_free_gib": 31, "allocator_cap_gib": 30.5, "abort_free_gib": 0.75,
+    "host_admission_available_gib": 100, "host_abort_available_gib": 24,
+    "disk_free_gib": 50, "max_elapsed_seconds": 14400, "cpu_threads": 2
+  },
+  "qualification_devices": ["cpu", "cuda"],
+  "qualification_device_env": "LTWS_TEST_DEVICE",
+  "qualification_cpu_mkldnn_enabled": false,
+  "scratch_cpu_sdpa_backend": "math",
+  "qualification_gpu_limit_gib": 4,
+  "qualification_wall_seconds": 900,
+  "qualification_cases": 216,
+  "qualification_test_files": [
+    "tests/test_native_memory.py", "tests/test_native_owner.py",
+    "tests/test_native_evaluation.py", "tests/test_native_diagnostics.py",
+    "tests/test_native_causality.py", "tests/test_state_factorial.py"
+  ],
+  "prefix_policy": "cropped_identical_gold_prefix_no_future",
+  "planned": {
+    "world_rows": 96, "world_positions": 623, "nonempty_positions": 559,
+    "world_cells": 4728, "mmlu_rows": 570, "mmlu_cells": 2280,
+    "recorded_world_cells": 5351, "recorded_mmlu_cells": 2850,
+    "new_sequences": 0, "native_weight_updates": 0, "checkpoint_saves": 0,
+    "judge_calls": 0, "weight_deletions": 0
+  },
+  "pass_status": "V23_STATE_FACTORIAL_COMPLETE_NOT_TRAINING_OR_RELEASE",
+  "no_retry": true,
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED",
+  "backend": "Native PyTorch is required for exact query/memory cut-state exchange and full-owner restore. Managed TRT serving does not expose this graph; no managed runtime mutation or serving fallback.",
+  "claim_scope": "Post-result frozen V22 diagnosis only. W=memory writer; Q=all query/continuation encoding below cut 4; R=upper decoder plus final norm and head. Every world position is evaluated at the cropped identical oracle prefix. Empty-memory worlds and MMLU have no W factor. Full native/split self logits must be bitwise equal; original cropped world hashes and MMLU scores must replay exactly. Shared lower-layer weights are not independent parameter groups. All inputs already exposed. No generation, training, judges, deletion or release."
+}
