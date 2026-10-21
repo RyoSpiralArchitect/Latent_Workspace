@@ -1,0 +1,47 @@
+{
+  "schema": "ltws-v23-mmlu-pro-01",
+  "reference_comparison_plan": "configs/v23/COMPARISON_01.json",
+  "reference_comparison_plan_sha256": "3c4dfb569203d26dc5437d31e9cc275641e9e95d174d4ceb0b8c5f534e7ac542",
+  "predecessor_bundle": "/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v23-comparison01-20261022",
+  "predecessor_source": "84073310cd7b2c56b5e3de046fb3bdc99e461bfb",
+  "dataset": {
+    "id": "TIGER-Lab/MMLU-Pro",
+    "revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+    "license": "mit",
+    "test": {"file": "data/test-00000-of-00001.parquet", "rows": 12032, "bytes": 4144185, "sha256": "0e24a191921c2f453518a537a8b2117bd137e7714d4ef1565e9ba06c1ecb9ad8"},
+    "validation": {"file": "data/validation-00000-of-00001.parquet", "rows": 70, "bytes": 42857, "sha256": "139423c23722e480c807ac4a191409a710cfce4eba744c1d641cf88e730e2078"}
+  },
+  "panel": "configs/v23/mmlu_pro01_20261022/PANEL.json.gz",
+  "panel_manifest": "configs/v23/mmlu_pro01_20261022/MANIFEST.json",
+  "input_bundle": "/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v23-mmlu-pro01-20261022/inputs",
+  "selection_seed": "v23-mmlu-pro01-20261022",
+  "per_category": 20,
+  "generation_per_category": 2,
+  "shots": 5,
+  "max_prompt_tokens": 4096,
+  "generation": {"seed": 20261022, "temperature": 0, "top_p": 1, "max_new_tokens": 1024},
+  "resources": {
+    "admission_free_gib": 31, "allocator_cap_gib": 30.5, "abort_free_gib": 0.75,
+    "host_admission_available_gib": 100, "host_abort_available_gib": 24,
+    "disk_free_gib": 50, "max_elapsed_seconds": 14400, "cpu_threads": 2
+  },
+  "qualification_devices": ["cpu", "cuda"],
+  "qualification_device_env": "LTWS_TEST_DEVICE",
+  "qualification_cpu_mkldnn_enabled": false,
+  "scratch_cpu_sdpa_backend": "math",
+  "qualification_gpu_limit_gib": 4,
+  "qualification_wall_seconds": 900,
+  "qualification_cases": 245,
+  "qualification_test_files": [
+    "tests/test_native_memory.py", "tests/test_native_owner.py",
+    "tests/test_native_evaluation.py", "tests/test_preservation_owner.py",
+    "tests/test_v23_comparison.py", "tests/test_v23_mmlu_pro.py"
+  ],
+  "roles": ["base", "off", "on"],
+  "planned": {"arms": 3, "direct_scores": 840, "reasoning_sequences": 84, "native_weight_updates": 0, "checkpoint_saves": 0, "judge_calls": 0, "weight_deletions": 0},
+  "pass_status": "V23_MMLU_PRO_DIAGNOSTIC_COMPLETE_NOT_RELEASE",
+  "no_retry": true,
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED"
+}

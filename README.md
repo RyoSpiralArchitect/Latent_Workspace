@@ -25,6 +25,11 @@ KL-on gives slightly less CE gain, with retention **not yet established**.
 Off exactly reproduces V22's final state fingerprint and dev results.
 The [matched benchmark/generation diagnostic is now running](provenance/pilots/v23_comparison01_20261022/README.md)
 after 223/223 new CPU and CUDA tests, not a winner or release result.
+The separately authorized [blind judge and MMLU-Pro follow-up](docs/v23/ADDITIONAL_EVALUATION_01.md)
+preserves this run unchanged: fresh Mistral calibration is in progress, with
+all 72 free answers required before study judging. The prospective
+[MMLU-Pro plan](docs/v23/MMLU_PRO_01.md) fixes 280 direct-choice and 28 reasoning
+items per arm and requires fresh qualification before any model call.
 See the [design](docs/v23/PRESERVATION_FT_01.md) and
 [execution handoff](provenance/engineering/v23_preservation_ft01_20261022/EXECUTION_HANDOFF.md).
 
