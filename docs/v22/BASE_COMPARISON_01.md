@@ -68,3 +68,11 @@ checkpoint saves, deletion, provider calls or Hub publication.
 The historical expression gate remains **FAIL**, winner **none** and
 population-level non-regression **NOT_ESTABLISHED** regardless of a small
 descriptive win. This run measures current differences, not release readiness.
+
+Qualification interpretation: 138/138 is the test count in each device-configured
+invocation, not a claim that every test executes a CUDA kernel. The owner tests
+honor `LTWS_TEST_DEVICE`; the original graph fixtures and the new generation
+helper's small-model fixtures remain CPU fixtures. Actual 7B generation is
+measured on CUDA in the two roles. A separate GPU-parameterized generation
+helper regression is a future coverage improvement, not silently inserted
+into this already sealed run.

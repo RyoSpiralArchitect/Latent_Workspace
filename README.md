@@ -120,6 +120,28 @@ bodies and both source seals were verified; the old failed trial is unchanged.
 Unseen non-regression, causal memory-use and paired generation evaluations
 remain separate next gates; no beta replacement or release is implied.
 
+### V22 versus original base: first comparison (2026-10-21)
+
+The [fixed-checkpoint comparison](provenance/pilots/v22_base_comparison01_20261021/README.md)
+completed both arms, 1,140 MMLU scoring rows and 432 generated sequences.
+The reused 570-question MMLU panel changes **356→354 correct (−0.351 pp)**;
+both argmax regressions become BF16 B/D ties. Strict-tie scoring also loses
+two net answers. This is not established non-regression.
+
+On grouped held-out worlds, latent-route exact generation changes
+**32→64/72 test** and **15→19/24 OOD**. The test latent-versus-inline gap
+shrinks from 25 answers to one; the OOD gap remains three. Four of the
+12 affected test repairs are formatting-only; remaining abstention and
+exact-symbol-copy errors are retained. These are 16 twin groups, not
+independent evidence from hundreds of tasks.
+
+All [24 fixed-prompt/seed free-generation pairs](provenance/pilots/v22_base_comparison01_20261021/ANSWER_BANK.md)
+are published unblinded. Every pair differs, but reasoning inconsistencies
+and 10 base / 9 V22 length-capped free replies prevent a blanket quality claim.
+Offline input/decoding replay and both 138-test qualification invocations pass.
+No additional training, weight deletion, paid judge or release occurred;
+**FAIL / winner:none / non_regression NOT_ESTABLISHED** remains.
+
 ## Current public artifact: LTWS β (2026-10-18)
  
 **[mistral-7b-instruct-v0.3-LTWS β](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)**
