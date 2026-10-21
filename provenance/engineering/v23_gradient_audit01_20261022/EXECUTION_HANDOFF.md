@@ -1,5 +1,13 @@
 # Execution handoff — V23 gradient audit 01
 
+**Terminal supersession:** both roles are complete; [results](TERMINAL.md),
+`furnace/PUBLICATION_MANIFEST.json` and `ANALYSIS.json` are published. The
+original workers are absent. Do not restart or monitor this completed job.
+The earlier status entries below are historical. Offline replay passed before
+new owner work; after engine changes use the original frozen source checkout.
+Ryō subsequently authorized proceeding through gated comparative FT; that is
+a separate source/plan/run, never a continuation of this no-update audit.
+
 Source: `66467502064b08b1ea8e246edc6696bd9d35a60e`, 761 sealed files.
 Local checkout: `/Users/ryohiga/SpiralReality/worktrees/latent-workspace-full-ft-v1`.
 Branch: `SpiralReality/latent-memory-full-ft`.

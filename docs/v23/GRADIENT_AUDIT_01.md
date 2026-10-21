@@ -93,6 +93,10 @@ Keep **FAIL / winner:none / non_regression NOT_ESTABLISHED**.
 
 ## Interim execution
 
+The following is the historical interim state. The [terminal result](../../provenance/engineering/v23_gradient_audit01_20261022/TERMINAL.md)
+now completes every fixed term, retains the old interim snapshot and confirms
+both native hashes unchanged. No training or quality gate is implied.
+
 The [published interim record](../../provenance/engineering/v23_gradient_audit01_20261022/README.md)
 passes all 338 tiny cases on each device and both 291-tensor real-7B path-sum
 canaries. Base targets are complete; V22 owner restore is exact. Base native

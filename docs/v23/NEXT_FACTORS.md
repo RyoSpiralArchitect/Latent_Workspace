@@ -68,11 +68,17 @@ bounded tensorwise reductions. It keeps the prior 84-world/12-preservation
 selection and separates a 7B path-sum resource canary from the panel-wide
 conflict diagnosis. The [interim evidence](../../provenance/engineering/v23_gradient_audit01_20261022/README.md)
 passes 338/338 tests on each device and 291/291 path sums at both real base
-and V22 canaries. The panel-wide conflict audit is **running, not complete**.
+and V22 canaries. The [panel-wide audit is now complete](../../provenance/engineering/v23_gradient_audit01_20261022/TERMINAL.md).
+Remaining world CE is 99.018% identity contribution. Question/memory state RMS
+has a median per-row ratio of 1.235, not universally tiny Q delivery. Total
+world and preservation KL have a small negative cosine (-0.020744) across
+shared-lower and upper-reader blocks. This is unpreconditioned local geometry,
+not proof of harmful updates or of preservation success. Prioritize a matched
+P-only comparison, without bundling Q amplification or a new data mixture.
 Owner objective integration and new-objective update/restart remain later gates;
 no loss weight or P/B/I winner is selected from the canaries.
 
-While that frozen audit runs, the additive [objective-owner contract](OBJECTIVE_OWNER_CONTRACT.md)
+Alongside that audit, the additive [objective-owner contract](OBJECTIVE_OWNER_CONTRACT.md)
 now makes the next integration boundary concrete. The engine has an offline
 target-to-row metadata binder with causal-position and whole-context checks;
 the [preparation record](../../provenance/engineering/v23_preservation_binding01_20261022/README.md)

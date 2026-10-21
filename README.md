@@ -234,7 +234,7 @@ base-target generation was **NOT_RUN in that stage**. See the
 [updated next factors](docs/v23/NEXT_FACTORS.md). All historical quality/release
 ceilings remain unchanged; no weights were deleted during preparation.
 
-### V23 scalable 7B gradient audit — panel running (2026-10-22)
+### V23 scalable 7B gradient audit — complete (2026-10-22)
 
 The [new spill-based audit](provenance/engineering/v23_gradient_audit01_20261022/README.md)
 passes **338/338 CPU and CUDA tests**, then the real-7B engineering canaries at
@@ -246,13 +246,16 @@ All 12 base teacher distributions / 932 supervised positions are prepared
 with full-vocabulary FP32 log probabilities (116.5 MiB of tensor payload).
 V22's strict step32 restore passes before its canary.
 
-The fixed **84-world / 14-group + 12-preservation** conflict panel is still
-running in the [interim snapshot](provenance/engineering/v23_gradient_audit01_20261022/interim_furnace/INTERIM_MANIFEST.json),
-not a completed diagnosis. Do not select P/B/I, a loss coefficient or a winner
-from engineering success. No optimizer update, new generation, held-out test,
-judge or release is dispatched. The owner/checkpoint objective is unchanged.
-The finite job has failure-stop and four-hour-per-role limits, no retry and
-no recurring monitor. See the [handoff](provenance/engineering/v23_gradient_audit01_20261022/EXECUTION_HANDOFF.md).
+The fixed **84-world / 14-group + 12-preservation** panel is now
+[complete and replayed](provenance/engineering/v23_gradient_audit01_20261022/TERMINAL.md).
+Both native hashes remain unchanged. Identity contributes 99.018% of remaining
+world CE, while the median per-row question/memory state RMS ratio is 1.235.
+Total world and preservation-KL gradients have a small negative cosine
+(-0.020744); this is not an optimizer or quality result. The next factor is a
+matched preservation on/off comparison, not automatic Q amplification.
+No optimizer update, new generation, held-out test, judge or release occurred
+in the audit. Its [interim snapshot](provenance/engineering/v23_gradient_audit01_20261022/interim_furnace/INTERIM_MANIFEST.json)
+is preserved. See the [handoff](provenance/engineering/v23_gradient_audit01_20261022/EXECUTION_HANDOFF.md).
 
 In parallel, [offline preservation-target binding](provenance/engineering/v23_preservation_binding01_20261022/README.md)
 now connects pinned target metadata to exact complete rows and causal logit

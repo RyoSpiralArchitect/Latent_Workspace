@@ -1,5 +1,10 @@
 # V23 gradient audit 01 — execution record
 
+**Terminal update:** the [complete result](TERMINAL.md) now replays on Furnace
+and locally. Both roles passed; all components are complete and native weights
+are unchanged. The interim account below is retained as dated history, not the
+current completion state. No optimizer update or quality gate was performed.
+
 Protocol: [GRADIENT_AUDIT_01.md](../../../docs/v23/GRADIENT_AUDIT_01.md).
 This is a new no-update run, not a retry/relabeling of preparation 01.
 
