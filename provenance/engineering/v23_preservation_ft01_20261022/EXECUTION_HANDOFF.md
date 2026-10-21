@@ -1,9 +1,32 @@
 # V23 preservation comparison 01 — execution handoff
 
+## Launch recorded
+
+**LAUNCHED**, at `2026-10-21T19:23:04Z`
+(2026-10-22 04:23 JST, Furnace clock).
+Frozen source: `b46f04caefcfd596ccde3b0af8fd886d859f11b7`.
+tmux: `ltws-v23-preservation-ft01-20261022`; initial pane PID `3677962`.
+The exact-source launcher was called once. No model call preceded the tiny
+gates. This launch receipt does not establish qualification or FT completion.
+The remote source is a clean detached worktree; subsequent local publication
+commits must not change it. The initial Git fetch succeeded, but this checkout
+does not maintain the requested remote-tracking branch; a failed tracking-ref
+check created no output/worktree. The verified exact `FETCH_HEAD` was then used
+to create the isolated source. That setup correction was not a trial retry.
+
+At `2026-10-21T19:26:15.927189Z`, CPU and CUDA have each finished with
+472 tests, zero failures/errors/skips. Their raw receipts and independent
+offline replay are published in [README.md](README.md). Dispatcher PID
+3689226 and teacher PID 3689304 were active; the teacher is loading the pinned
+base. Real-model update/save/replay and off/on training remain pending.
+Check current on-disk receipts before making any newer progress claim.
+
+## Original pre-launch handoff
+
 Pre-launch handoff, 2026-10-22. **NOT_DISPATCHED** at this record's creation.
 Ryō requested comparative FT after the completed gradient audit.
-[Design](../../../../docs/v23/PRESERVATION_FT_01.md) and
-[plan](../../../../configs/v23/PRESERVATION_FT_01.json) define this new trial.
+[Design](../../../docs/v23/PRESERVATION_FT_01.md) and
+[plan](../../../configs/v23/PRESERVATION_FT_01.json) define this new trial.
 
 Local checkout: `/Users/ryohiga/SpiralReality/worktrees/latent-workspace-full-ft-v1`.
 Branch: `SpiralReality/latent-memory-full-ft`.

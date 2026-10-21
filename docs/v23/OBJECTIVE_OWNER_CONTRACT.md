@@ -1,7 +1,8 @@
 # V23 preservation objective: from diagnostic targets to an owned update
 
 **Current status: owner integration implemented for a new [matched P-off/on
-experiment](PRESERVATION_FT_01.md); real execution qualification is pending.**
+experiment](PRESERVATION_FT_01.md); all 472 tiny CPU/CUDA tests pass, and real
+execution qualification is pending in its new pipeline.**
 The [audit](GRADIENT_AUDIT_01.md) is complete and unchanged. Sections below
 preserve the earlier design contract and metadata-binding boundary; their
 "proposed/current gap" descriptions refer to that pre-integration stage.

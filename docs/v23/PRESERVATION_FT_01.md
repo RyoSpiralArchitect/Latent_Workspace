@@ -1,6 +1,7 @@
 # V23 matched preservation full-FT experiment 01
 
-**Frozen design; implementation added, real execution not yet qualified.**
+**Frozen design; [472/472 CPU and CUDA qualifications pass](../../provenance/engineering/v23_preservation_ft01_20261022/README.md).
+Real-model teacher/canary/replay/training is a separate in-progress pipeline.**
 The [completed gradient audit](../../provenance/engineering/v23_gradient_audit01_20261022/TERMINAL.md)
 is immutable. This is a new experiment, not its continuation or a V22 resume.
 See the [execution handoff](../../provenance/engineering/v23_preservation_ft01_20261022/EXECUTION_HANDOFF.md).
