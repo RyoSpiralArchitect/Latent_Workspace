@@ -1,15 +1,17 @@
 # V23 preservation objective: from diagnostic targets to an owned update
 
-**Status: additive metadata-binding implementation; objective/update integration
-is proposed, not implemented or dispatched.** This work does not depend on a
-favorable partial gradient result. The [existing audit](GRADIENT_AUDIT_01.md)
-continues from its unchanged frozen source. Its coefficient, acceptance gate,
-inputs and live process are untouched.
+**Current status: owner integration implemented for a new [matched P-off/on
+experiment](PRESERVATION_FT_01.md); real execution qualification is pending.**
+The [audit](GRADIENT_AUDIT_01.md) is complete and unchanged. Sections below
+preserve the earlier design contract and metadata-binding boundary; their
+"proposed/current gap" descriptions refer to that pre-integration stage.
+The new plan separately fixes coefficient 0/1 and supplies body validation,
+actual-batch checks, v2 checkpoints and new-objective replay gates.
 
 The next implementation must remain inside the model-independent engine and
 the existing native owner, not create another version-specific learner or a
 Mistral-only training wrapper. P (ordinary-host preservation) remains a
-candidate factor, not a winner selected before the audit completes.
+candidate factor, not a quality winner selected from the audit.
 
 ## What is implemented now
 

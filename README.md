@@ -17,6 +17,13 @@ dated evidence.
 
 ## Reading this repository
 
+Latest V23 step: the [gradient audit is complete](provenance/engineering/v23_gradient_audit01_20261022/TERMINAL.md),
+and the [matched preservation full-FT plan](docs/v23/PRESERVATION_FT_01.md)
+integrates full-vocabulary CE+KL into the same native owner, with a separate
+v2 replay gate. P-off/P-on use the same original base, data and 32-update budget;
+no quality or release success is implied. See the
+[execution handoff](provenance/engineering/v23_preservation_ft01_20261022/EXECUTION_HANDOFF.md).
+
 The README is an entrypoint, not the claim authority.
 
 For the public β package scope, read

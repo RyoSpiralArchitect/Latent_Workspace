@@ -38,8 +38,10 @@ from .optimizer_state import (
     validate_optimizer,
     validate_rng,
 )
+from .preservation_objective import PreservationTargets, validate_objective
 
 FORMAT = "ltws-native-owner-v1"
+PRESERVATION_FORMAT = "ltws-native-owner-preservation-v2"
 
 
 @dataclass(frozen=True)
@@ -138,7 +140,24 @@ def _validate_contract(contract):
             isinstance(contract[key], str) and re.fullmatch(f"[0-9a-f]{{{length}}}", contract[key]),
             f"Invalid {key}",
         )
-    require(contract["objective"] == "query_only_token_weighted_causal_nll", "Unknown objective")
+    validate_objective(contract["objective"])
+
+
+def _validate_targets(contract, targets, *, full=False):
+    enabled = validate_objective(contract["objective"])
+    if not enabled:
+        require(targets is None, "Legacy CE must not own preservation targets")
+        return False
+    require(type(targets) is PreservationTargets, "Owned preservation targets required")
+    targets.validate(full=full)
+    manifest = targets.manifest()
+    require(manifest == contract["objective"]["bank"], "Preservation bank identity mismatch")
+    require(
+        manifest["source_commit"] == contract["source_commit"]
+        and manifest["original_base_sha256"] == contract["original_base_sha256"],
+        "Teacher source/original host mismatch",
+    )
+    return True
 
 
 class _ProjectedState(dict):
@@ -164,11 +183,16 @@ class NativeFullUpdateOwner:
     completes. Only clean window boundaries can be checkpointed.
     """
 
-    def __init__(self, graph, *, config, run_contract, _master_state=None):
+    def __init__(self, graph, *, config, run_contract, preservation=None, _master_state=None):
         require(type(graph) is NativeMemoryCausalLM, "Native memory graph required")
         require(type(config) is NativeOptimizerConfig, "Explicit native optimizer config")
         config.validate()
         _validate_contract(run_contract)
+        self._has_preservation = _validate_targets(run_contract, preservation, full=True)
+        self.preservation = preservation
+        self._preservation_id = id(preservation)
+        self.preservation_tokens_seen, self.preservation_history = 0, []
+        self._preservation_plan = ()
         require(
             tree_hash(graph.model.state_dict()) == run_contract["original_base_sha256"],
             "Initialize/restore into the pinned original host",
@@ -210,15 +234,31 @@ class NativeFullUpdateOwner:
     def _record_versions(self):
         self._versions = {n: p._version for n, p in self.named}
         self._master_versions = {n: p._version for n, p in self.masters.items()}
-        self._cursor_hash = tree_hash((self.completed_steps, self.tokens_seen, self.history))
+        self._cursor_hash = tree_hash(self._cursor_state())
+
+    def _cursor_state(self):
+        value = (self.completed_steps, self.tokens_seen, self.history)
+        if self._has_preservation:
+            value += (self.preservation_tokens_seen, self.preservation_history)
+        return value
 
     def _validate(self):
         require(not self.failed, "Failed owner requires fresh restore")
         require(
-            tree_hash((self.completed_steps, self.tokens_seen, self.history)) == self._cursor_hash,
+            tree_hash(self._cursor_state()) == self._cursor_hash,
             "Completed cursor/history changed",
         )
         require(self.execution == _execution(self.graph), "Recorded execution changed")
+        require(id(self.preservation) == self._preservation_id, "Target ownership changed")
+        require(
+            _validate_targets(self.run_contract, self.preservation) == self._has_preservation,
+            "Objective mode changed",
+        )
+        if self._has_preservation and self.window is not None:
+            require(
+                tuple(self.preservation.window(self.plan)) == self._preservation_plan,
+                "Preservation window denominator changed",
+            )
         require(tree_hash(self.buffers) == self._buffer_hash, "Recorded buffers changed")
         require(
             self.graph.model is self.model
@@ -277,6 +317,8 @@ class NativeFullUpdateOwner:
             "Nonempty keys and positive integer token counts",
         )
         require(len({k for k, _ in rows}) == len(rows), "Duplicate window key")
+        if self._has_preservation:
+            self._preservation_plan = tuple(self.preservation.window(rows))
         self.plan, self.cursor = tuple((k, n) for k, n in rows), 0
         self.window = CompleteCPUWindow(self.named, merge_device="cpu")
 
@@ -293,6 +335,8 @@ class NativeFullUpdateOwner:
         require(key == self.plan[self.cursor][0], "Row ordering/duplication mismatch")
         require(all(p.grad is None for _, p in self.named), "Unspilled native gradient")
         try:
+            if self._has_preservation:
+                self.preservation.require_batch(key, batch)
             result = self.graph(**batch)
             require(result.supervised_tokens == self.plan[self.cursor][1], "Token count mismatch")
             require(
@@ -302,6 +346,22 @@ class NativeFullUpdateOwner:
                 "Finite live summed NLL required",
             )
             loss = result.loss_sum / sum(n for _, n in self.plan)
+            preservation_receipt = {}
+            if self._has_preservation:
+                kl = self.preservation.kl_sum(key, result.logits)
+                np = sum(n for _, n in self._preservation_plan)
+                scaled_kl = None
+                if kl is not None:
+                    scaled_kl = self.run_contract["objective"]["coefficient"] * kl / np
+                    loss = loss + scaled_kl
+                preservation_receipt = dict(
+                    ce_denominator=sum(n for _, n in self.plan),
+                    preservation_denominator=np,
+                    preservation_tokens=result.supervised_tokens if kl is not None else 0,
+                    kl_sum=float(kl.detach()) if kl is not None else None,
+                    scaled_kl=float(scaled_kl.detach()) if scaled_kl is not None else None,
+                    scaled_ce=float((result.loss_sum / sum(n for _, n in self.plan)).detach()),
+                )
             loss.backward()
             require(
                 all(
@@ -317,6 +377,7 @@ class NativeFullUpdateOwner:
                 loss_sum=float(result.loss_sum.detach()),
                 scaled_loss=float(loss.detach()),
                 transfer=transfer,
+                **preservation_receipt,
             )
         except Exception:
             self._poison()
@@ -359,21 +420,30 @@ class NativeFullUpdateOwner:
             self.completed_steps += 1
             self.tokens_seen += sum(n for _, n in self.plan)
             self.history.append(list(self.plan))
+            if self._has_preservation:
+                self.preservation_tokens_seen += sum(n for _, n in self._preservation_plan)
+                self.preservation_history.append(list(self._preservation_plan))
+                self._preservation_plan = ()
             self.window, self.plan, self.cursor = None, (), 0
             self._record_versions()
-            return dict(
+            result = dict(
                 completed_steps=self.completed_steps,
                 tokens_seen=self.tokens_seen,
                 preclip_native_l2=float(norm),
                 changes=changes,
                 transfer=transfer,
             )
+            if self._has_preservation:
+                result["preservation_tokens_seen"] = self.preservation_tokens_seen
+            return result
         except Exception:
             self._poison()
             raise
 
     def payload(self):
         self._clean_boundary()
+        if self._has_preservation:
+            self.preservation.validate(full=True)
         require(
             all(
                 torch.equal(p.detach().cpu(), self.masters[n].detach().to(p.dtype))
@@ -381,9 +451,17 @@ class NativeFullUpdateOwner:
             ),
             "Native/master cast identity at checkpoint",
         )
+        extra = (
+            dict(
+                preservation_tokens_seen=self.preservation_tokens_seen,
+                preservation_history=self.preservation_history,
+            )
+            if self._has_preservation
+            else {}
+        )
         return snapshot(
             dict(
-                format=FORMAT,
+                format=PRESERVATION_FORMAT if self._has_preservation else FORMAT,
                 run_contract=self.run_contract,
                 config=asdict(self.config),
                 execution=self.execution,
@@ -397,6 +475,7 @@ class NativeFullUpdateOwner:
                 optimizer=self.optimizer.state_dict(),
                 rng=rng_state(),
                 native_sha256=tree_hash(self.model.state_dict()),
+                **extra,
             )
         )
 
@@ -417,7 +496,16 @@ class NativeFullUpdateOwner:
         )
 
     @classmethod
-    def restore(cls, graph, payload, *, config, expected_run_contract, expected_state_sha256):
+    def restore(
+        cls,
+        graph,
+        payload,
+        *,
+        config,
+        expected_run_contract,
+        expected_state_sha256,
+        preservation=None,
+    ):
         """Validate everything on private CPU state, then publish native casts and RNG."""
         require(tree_hash(payload) == expected_state_sha256, "Checkpoint content receipt mismatch")
         keys = {
@@ -436,9 +524,16 @@ class NativeFullUpdateOwner:
             "rng",
             "native_sha256",
         }
-        require(set(payload) == keys and payload["format"] == FORMAT, "Checkpoint schema")
         config.validate()
         _validate_contract(expected_run_contract)
+        enabled = _validate_targets(expected_run_contract, preservation, full=True)
+        if enabled:
+            keys |= {"preservation_tokens_seen", "preservation_history"}
+        require(
+            set(payload) == keys
+            and payload["format"] == (PRESERVATION_FORMAT if enabled else FORMAT),
+            "Checkpoint schema",
+        )
         require(
             payload["run_contract"] == expected_run_contract
             and payload["config"] == asdict(config),
@@ -488,6 +583,18 @@ class NativeFullUpdateOwner:
             )
             require(len({k for k, _ in rows}) == len(rows), "Duplicate history key")
         require(tokens == sum(n for rows in history for _, n in rows), "Token cursor mismatch")
+        if enabled:
+            ph = payload["preservation_history"]
+            pn = payload["preservation_tokens_seen"]
+            expected = [preservation.window(rows) for rows in history]
+            require(
+                type(ph) is list and tree_hash(ph) == tree_hash(expected),
+                "Preservation history/denominator mismatch",
+            )
+            require(
+                type(pn) is int and pn == sum(n for rows in expected for _, n in rows),
+                "Preservation token cursor mismatch",
+            )
         require(
             tree_hash(_ProjectedState(graph.model, payload["masters"], aliases))
             == payload["native_sha256"],
@@ -500,6 +607,7 @@ class NativeFullUpdateOwner:
             graph,
             config=config,
             run_contract=expected_run_contract,
+            preservation=preservation,
             _master_state=payload["masters"],
         )
         validate_optimizer(payload["optimizer"], owner.optimizer, steps, base=True)
@@ -513,5 +621,8 @@ class NativeFullUpdateOwner:
             tokens,
             copy.deepcopy(history),
         )
+        if enabled:
+            owner.preservation_tokens_seen = pn
+            owner.preservation_history = copy.deepcopy(ph)
         owner._record_versions()
         return owner

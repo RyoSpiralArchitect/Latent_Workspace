@@ -120,11 +120,12 @@ def partitioned_ce(logits, labels, parts, *, denominator=None):
 
 
 def full_vocab_kl_sum(student, teacher_log_probs, active):
-    """Diagnostic primitive only: forward KL(teacher || student), all vocab rows.
+    """Forward KL(teacher || student), all vocab rows; no policy in this primitive.
 
     Caller owns causal alignment, train-only provenance and frozen target hashes.
     Targets must be detached FP32 full-vocabulary normalized log probabilities;
-    top-k and BF16-compressed targets are not this objective. No trainer wiring.
+    top-k and BF16-compressed targets are not this objective. The native owner's
+    preservation target bank supplies the admission and causal-layout checks.
     """
     ex.require(student.shape == teacher_log_probs.shape and student.ndim == 3, "Full vocabulary")
     ex.require(

@@ -1,6 +1,9 @@
 # V23 next learner factors after separating W/Q/R
 
-**Proposed engineering sequence, not a training dispatch.** Evidence is the
+**Evidence-backed engineering sequence.** The [matched P-off/on FT plan](PRESERVATION_FT_01.md)
+now implements the objective owner and freezes coefficient 0/1, same original
+base/data/32-update budget. Its gates and [execution handoff](../../provenance/engineering/v23_preservation_ft01_20261022/EXECUTION_HANDOFF.md)
+remain separate from a quality result. Earlier evidence is the
 [completed frozen-V22 factorial](../../provenance/pilots/v23_state_factorial01_20261021/README.md).
 No acceptance threshold or release gate changes. The objective is native full
 FT that preserves ordinary ability and improves useful workspace computation,
@@ -75,8 +78,9 @@ world and preservation KL have a small negative cosine (-0.020744) across
 shared-lower and upper-reader blocks. This is unpreconditioned local geometry,
 not proof of harmful updates or of preservation success. Prioritize a matched
 P-only comparison, without bundling Q amplification or a new data mixture.
-Owner objective integration and new-objective update/restart remain later gates;
-no loss weight or P/B/I winner is selected from the canaries.
+Owner integration is implemented in the same engine; new-objective real
+update/restart remains a dispatch gate. Coefficient one is predeclared, not
+fitted to these gradient norms. No P/B/I winner is selected.
 
 Alongside that audit, the additive [objective-owner contract](OBJECTIVE_OWNER_CONTRACT.md)
 now makes the next integration boundary concrete. The engine has an offline
@@ -85,7 +89,8 @@ the [preparation record](../../provenance/engineering/v23_preservation_binding01
 does not claim target-body or owner qualification. Existing CE updates and v1
 checkpoint/restore remain unchanged. A new objective needs its own exact
 update/restart tests; changing the objective while loading V22 must never be
-presented as ordinary exact resume. No 7B coefficient or factor is selected.
+presented as ordinary exact resume. That earlier metadata-only preparation did
+not select a 7B coefficient; the subsequent matched plan does so explicitly.
 
 The additive bank freezes 512 new groups / 4,096 raw rows, with 2,016 unique
 train rows / 13,198 target tokens. The old two-hop family is explicitly promoted
