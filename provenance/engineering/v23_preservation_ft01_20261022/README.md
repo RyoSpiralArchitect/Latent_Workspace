@@ -1,5 +1,9 @@
 # V23 preservation comparison 01 — qualification and live handoff
 
+**Terminal update:** both 32-update arms and exact v2 restart are now
+[complete and replayed](TERMINAL.md). The text below preserves the earlier
+qualification/teacher publication snapshot; it is not the latest run status.
+
 **472/472 CPU and 472/472 CUDA tests pass**, zero failures/errors/skips.
 The 89-row real-model teacher role is complete; canary/replay and the two
 comparative FT arms are not completed at this publication snapshot.

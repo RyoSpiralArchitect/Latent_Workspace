@@ -17,12 +17,14 @@ dated evidence.
 
 ## Reading this repository
 
-Latest V23 step: the [gradient audit is complete](provenance/engineering/v23_gradient_audit01_20261022/TERMINAL.md),
-and the [matched preservation full-FT plan](docs/v23/PRESERVATION_FT_01.md)
-integrates full-vocabulary CE+KL into the same native owner, with a separate
-v2 replay gate. [472/472 tiny tests pass on CPU and CUDA](provenance/engineering/v23_preservation_ft01_20261022/README.md).
-P-off/P-on use the same original base, data and 32-update budget;
-no quality or release success is implied. See the
+Latest V23 step: [matched P-off/P-on native full FT is complete and replayed](provenance/engineering/v23_preservation_ft01_20261022/TERMINAL.md):
+32 updates / 723 rows / 20,860 targets per arm, after 472/472 CPU and CUDA
+tests and exact real-model v2 restart. On the same exposed 40-row dev panel,
+base/off/on NLL is 1.267038 / 1.058723 / 1.069616. Both improve this loss;
+KL-on gives slightly less CE gain, with retention **not yet established**.
+Off exactly reproduces V22's final state fingerprint and dev results.
+Next is a matched benchmark/generation diagnostic, not a winner or release.
+See the [design](docs/v23/PRESERVATION_FT_01.md) and
 [execution handoff](provenance/engineering/v23_preservation_ft01_20261022/EXECUTION_HANDOFF.md).
 
 The README is an entrypoint, not the claim authority.

@@ -1,5 +1,21 @@
 # V23 preservation comparison 01 — execution handoff
 
+## Terminal handoff — 2026-10-22
+
+**COMPLETE, verified; do not relaunch.** All five terminal receipts are present;
+67 total native updates = 2 canary + 1 replay + 32 off + 32 on. The dispatcher
+finished after 10,970.213 seconds. No remaining process or tmux session for
+this trial was found. [Terminal analysis](TERMINAL.md) and [structured replay](ANALYSIS.json)
+preserve the execution/quality distinction. All 3,049 public raw files verify;
+four private bodies were byte-checked on Furnace against their original
+receipts without loading a model. The 769-file remote source remains sealed
+and clean. No weights or private targets were copied locally or deleted.
+
+Off exactly matches prior V22's final fingerprint and dev outputs; on is a
+distinct final state. The next benchmark/generation diagnostic must have its
+own source, outputs and receipt; never reuse this output identity. No monitor
+was created. Old FAIL, no winner and unestablished non-regression remain.
+
 ## Launch recorded
 
 **LAUNCHED**, at `2026-10-21T19:23:04Z`

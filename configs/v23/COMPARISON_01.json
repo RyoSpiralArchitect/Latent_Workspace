@@ -1,0 +1,59 @@
+{
+  "schema": "ltws-v23-base-off-on-comparison-01",
+  "seed": 20261022,
+  "roles": ["base", "off", "on"],
+  "reference_evaluation_plan": "configs/v22/BASE_COMPARISON_01.json",
+  "reference_evaluation_plan_sha256": "c4ed3658c7e45b1c1c23dd5509c08cc460ce9bc2d986c417f475fd76186714b0",
+  "training_plan": "configs/v22/FULL_FT_RECOVERY_01.json",
+  "training_source": "b46f04caefcfd596ccde3b0af8fd886d859f11b7",
+  "training_bundle": "/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v23-preservation-ft01-20261022",
+  "checkpoints": {
+    "off": {
+      "bytes": 29004418636,
+      "completed_steps": 32,
+      "path": "off_step32.pt",
+      "sha256": "cda148aa85193e9509575e16687e97e8a55ce8e45e71f73a620c26c7257ec5a1",
+      "state_sha256": "a37076fc3dd4973a4f76134d3545a9ab40d678a668c506bf6865b651b69b995a"
+    },
+    "on": {
+      "bytes": 29004428108,
+      "completed_steps": 32,
+      "path": "on_step32.pt",
+      "sha256": "7a8993fa274a546dc5882b736fbd27dc9f5955217b0b94318119d45382261f78",
+      "state_sha256": "53e17d8327aae62cdcbcccb86d17d67cfb11a18197fed151564db90ccbd2e4a9"
+    }
+  },
+  "expected_runtime": {
+    "python": "3.12.14", "torch": "2.13.0+cu132",
+    "transformers": "5.15.0", "cuda": "13.2"
+  },
+  "resources": {
+    "admission_free_gib": 31, "allocator_cap_gib": 30.5, "abort_free_gib": 0.75,
+    "host_admission_available_gib": 100, "host_abort_available_gib": 24,
+    "disk_free_gib": 50, "max_elapsed_seconds": 14400, "cpu_threads": 2
+  },
+  "qualification_devices": ["cpu", "cuda"],
+  "qualification_device_env": "LTWS_TEST_DEVICE",
+  "qualification_cpu_mkldnn_enabled": false,
+  "scratch_cpu_sdpa_backend": "math",
+  "qualification_gpu_limit_gib": 4,
+  "qualification_wall_seconds": 900,
+  "qualification_cases": 223,
+  "qualification_test_files": [
+    "tests/test_native_memory.py", "tests/test_native_owner.py",
+    "tests/test_native_evaluation.py", "tests/test_preservation_owner.py",
+    "tests/test_v23_comparison.py"
+  ],
+  "pass_status": "V23_BASE_OFF_ON_COMPARISON_COMPLETE_NOT_RELEASE",
+  "no_retry": true,
+  "planned": {
+    "arms": 3, "mmlu_scores": 1710, "world_teacher_forced_rows": 576,
+    "world_generations": 576, "free_generations": 72, "total_new_sequences": 648,
+    "native_weight_updates": 0, "checkpoint_saves": 0, "judge_calls": 0, "weight_deletions": 0
+  },
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED",
+  "backend": "Shared native PyTorch BF16/eager evaluator; managed serving does not implement the cut-4 memory graph or strict v1/v2 owner restore. No runtime/backend conversion.",
+  "claim_scope": "New post-training diagnostic on previously exposed fixed V22 inputs, not fresh confirmation. Same 570 MMLU items, 96 world rows on latent/inline, 12 free prompts x 2 seeds per arm. Caps, prompts, tokenization, routes and sampling are inherited unchanged; truncation remains visible. All three arms run anew in separate processes. No new data, training, teacher targets, paid judges, deletions, exports or release. No final-model KL or causal state intervention is claimed by this panel."
+}

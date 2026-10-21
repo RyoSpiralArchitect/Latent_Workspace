@@ -69,7 +69,7 @@ def append(stream, record):
     os.fsync(stream.fileno())
 
 
-def prepare(core, args, plan):
+def prepare(core, args, plan, *, restore=None):
     core.load_runtime()
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -112,7 +112,12 @@ def prepare(core, args, plan):
     model.requires_grad_(True).train()
     model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
     graph = NativeMemoryCausalLM(model, cut=b["cut"])
-    if args.role == "v22":
+    if restore is not None:
+        # Later objective versions supply their strict owner restore, before
+        # the same explicit inference transition below. The V22 default stays
+        # unchanged; this is not a bypass around its historical contract.
+        restore(graph, args, plan)
+    elif args.role == "v22":
         bundle = Path(plan["training_bundle"])
         reference = bundle / "raw/train_b"
         historical = ROOT / "provenance/pilots/v22_full_ft_recovery01_20261021/furnace/raw/train_b"
@@ -196,13 +201,13 @@ def prepare(core, args, plan):
     return graph, tokenizer, guard, state
 
 
-def run(core, args, plan, seal):
+def run(core, args, plan, seal, *, inputs_fn=None, prepare_fn=None, sequences_per_arm=None):
     from latent_workspace import native_evaluation as ev
     from latent_workspace.optimizer_state import tree_hash
 
-    data, input_receipt = inputs(plan)
+    data, input_receipt = (inputs_fn or inputs)(plan)
     ex.write_new(args.output / "INPUT_MANIFEST.json", input_receipt)
-    graph, tokenizer, guard, before = prepare(core, args, plan)
+    graph, tokenizer, guard, before = (prepare_fn or prepare)(core, args, plan)
     import torch
 
     device = next(graph.parameters()).device
@@ -312,7 +317,12 @@ def run(core, args, plan, seal):
                 sequences += 1
                 generated += result["generated_tokens"]
             print(f"{args.role}: free {row['id']}", flush=True)
-    ex.require(sequences == plan["planned"]["total_new_sequences"] // 2, "Generation count")
+    expected_sequences = (
+        plan["planned"]["total_new_sequences"] // 2
+        if sequences_per_arm is None
+        else sequences_per_arm
+    )
+    ex.require(sequences == expected_sequences, "Generation count")
     after = tree_hash(graph.model.state_dict())
     ex.require(before == after, "Inference mutated native weights")
     ex.write_new(args.output / "WEIGHT_IDENTITY.json", dict(before=before, after=after, equal=True))

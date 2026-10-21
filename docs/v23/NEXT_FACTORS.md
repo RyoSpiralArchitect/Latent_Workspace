@@ -9,6 +9,23 @@ No acceptance threshold or release gate changes. The objective is native full
 FT that preserves ordinary ability and improves useful workspace computation,
 not an optimized frozen-host hybrid or another task-specific output adapter.
 
+**2026-10-22 terminal update:** the [P-only comparison completed](../../provenance/engineering/v23_preservation_ft01_20261022/TERMINAL.md)
+32 updates per arm with exact positive-P restart. Off reproduces V22's final
+fingerprint and dev results. Base/off/on fixed dev NLL is 1.267038 / 1.058723 /
+1.069616 (40 rows, 4,694 targets). Both improve all 40 rows versus base; on
+is lower than off on 17 and higher on 23. This modest CE trade-off does not
+yet demonstrate retention or better generation. Preserve both final arms;
+next compare the same base/off/on benchmark and prompt/seed panel, keeping
+identity/copying, stopping, causal memory use and ordinary ability separate.
+Off has no post-training KL measurement; on's online KL is not a matched
+final-state drift assay. Do not select P or bundle B/I/data expansion from
+these loss curves. No new threshold, judge request or training follows
+automatically from execution completion.
+The [next fixed base/off/on readout panel](COMPARISON_01.md) reuses the exposed
+benchmark/world/prompt inputs with no new training or paid judging. Retain
+the first-window zero-scalar-KL/non-identical-gradient observation in the
+terminal report; a derivative-level numerical-null audit remains separate.
+
 ## What the evidence rules out as a default
 
 - Do not equate a small question-side gradient with the principal bottleneck.
