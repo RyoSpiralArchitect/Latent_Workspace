@@ -1,0 +1,43 @@
+{
+  "schema": "ltws-v22-weight-diagnostics-01",
+  "seed": 20261021,
+  "comparison_plan": "configs/v22/BASE_COMPARISON_01.json",
+  "comparison_plan_sha256": "a515cf29439bbe37a6a5a920a5ffbc7e719e439cc17d364ac9ad3688b9204449",
+  "comparison_bundle": "/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v22-comparison01-20261021",
+  "original_snapshot": "/home/ryospiralarchitect/.cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.3/snapshots/c170c708c41dac9275d15a8fff4eca08d52bab71",
+  "expected_runtime": {"python": "3.12.14", "torch": "2.13.0+cu132", "transformers": "5.15.0", "cuda": "13.2"},
+  "resources": {
+    "admission_free_gib": 31,
+    "allocator_cap_gib": 30.5,
+    "abort_free_gib": 0.75,
+    "host_admission_available_gib": 100,
+    "host_abort_available_gib": 24,
+    "disk_free_gib": 50,
+    "max_elapsed_seconds": 7200,
+    "cpu_threads": 2
+  },
+  "qualification_devices": ["cpu", "cuda"],
+  "qualification_device_env": "LTWS_TEST_DEVICE",
+  "qualification_cpu_mkldnn_enabled": false,
+  "scratch_cpu_sdpa_backend": "math",
+  "qualification_gpu_limit_gib": 4,
+  "qualification_wall_seconds": 900,
+  "qualification_cases": 158,
+  "qualification_test_files": [
+    "tests/test_native_memory.py", "tests/test_native_owner.py",
+    "tests/test_native_evaluation.py", "tests/test_native_diagnostics.py"
+  ],
+  "pass_status": "V22_DIAGNOSTICS_COMPLETE_NOT_RELEASE",
+  "no_retry": true,
+  "planned": {
+    "arms": 2, "mmlu_rows": 1140, "world_rows": 384,
+    "tensor_census": 291, "head_factorial_rows": 570,
+    "new_sequences": 0, "native_weight_updates": 0, "checkpoint_saves": 0,
+    "judge_calls": 0, "weight_deletions": 0
+  },
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED",
+  "backend": "Native PyTorch is required for cut-4 intermediate-state composition, exact owner restore, head-input observation and fixed-prefix replay. Managed TRT doctor passed; no managed runtime change or vLLM fallback.",
+  "claim_scope": "Post-result diagnostics on all previously exposed comparison rows, not fresh evaluation. FP32 head uses rounded BF16 states and weights, not an FP32 backbone. Factorial cells are selected-four-choice FP32 readouts, never model replacements. Replay any recorded path exactly, never generate a new continuation. Preserve original BF16 scores, exact-match failures, caps and old FAIL gate."
+}
