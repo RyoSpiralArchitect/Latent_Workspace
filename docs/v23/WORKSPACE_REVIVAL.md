@@ -4,6 +4,12 @@ Ryō requested a revival of the earliest Latent Workspace intent while separatin
 question encoding, reading, exact copying and preservation of ordinary host
 ability. This is a design synthesis; it does not dispatch training or claim 1.0.
 
+The [completed W/Q/R diagnosis](../../provenance/pilots/v23_state_factorial01_20261021/README.md)
+now grounds the [next engineering sequence](NEXT_FACTORS.md). It distinguishes
+query-sensitive early identity errors from a writer–upper-reader late-copy
+interaction, and also exposes how much exact-token gain is output formatting.
+These findings strengthen the need for four distinct endpoints below.
+
 ## Four distinct promises
 
 The repository's [historical reconstruction](../v20/SCOPE.md) and live promoted

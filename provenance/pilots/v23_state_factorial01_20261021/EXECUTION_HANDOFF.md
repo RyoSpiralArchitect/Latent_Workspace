@@ -13,7 +13,7 @@ Remote: `https://github.com/RyoSpiralArchitect/Latent_Workspace.git`.
 Starting head: `07922f832905227260985f51856aba3b6cc53af9`.
 
 The exact execution source will be the commit containing the initial frozen
-[plan](../../../../configs/v23/STATE_FACTORIAL_01.json), runner and tests;
+[plan](../../../configs/v23/STATE_FACTORIAL_01.json), runner and tests;
 the remote `SOURCE_SEAL.json` is authoritative. No source patch in place after
 launch. Outputs are exclusive and all old bundles/checkpoints stay unchanged.
 
@@ -48,3 +48,27 @@ retry or change a gate without a separate recovery decision.
 
 No recurring automation is created. **FAIL / winner:none / non_regression
 NOT_ESTABLISHED** remain unchanged.
+
+## Terminal handoff — 2026-10-21
+
+Completed from source `6064c69ab722330f3d51574768a1c52e887d6866` (744 files).
+Both qualifications passed 216/216; all three roles reached their success
+receipts. There are 7,008 unique cells and 1,193 repeated controls, zero invalid
+or missing cells and zero retries. Full self logits match at 2,386 prefixes;
+all repeated and historical endpoints replay. No training/new sequences or
+checkpoint operations occurred. All three worker processes ended.
+
+The [terminal witness](furnace/REMOTE_TERMINAL_CHECK.json), recorded at
+2026-10-21T14:48:07Z, rehashes the unchanged step-32 checkpoint and both complete
+cut-state bodies, verifies all 744 source files and five clean worktrees, and
+finds no GPU clients. Its only model-related utility is offline token decoding;
+there are no model forwards. The two activation banks remain remote-only,
+6.295908 GiB combined; [publication manifest](furnace/PUBLICATION_MANIFEST.json)
+identifies the exact omissions. The other 55 files are copied and verified.
+
+[Results](README.md), [all-world literal panel](FACTORIAL_PANEL.md),
+[primary summary](SUMMARY.json) and additive interpretation are complete.
+The original comparison/weight-diagnostic/causality artifacts replay unchanged.
+The next proposed stage is the [train-only objective/gradient audit](../../../docs/v23/NEXT_FACTORS.md),
+not a stronger Q loss selected from these exposed errors. No automation or
+continuing job remains, and this completed diagnostic must not be rerun.

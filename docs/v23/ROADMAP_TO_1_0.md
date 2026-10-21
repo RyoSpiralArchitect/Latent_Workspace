@@ -8,6 +8,18 @@ Keep **FAIL / winner:none / non_regression NOT_ESTABLISHED** until a separately
 frozen acceptance protocol is actually passed. Do not rename the existing beta
 or increment a release merely because this investigation completed.
 
+**Update, 2026-10-21:** step 1 of the finite diagnosis below is now
+[complete](../../provenance/pilots/v23_state_factorial01_20261021/README.md),
+separating W/Q/R at 623 world positions and all 570 exposed MMLU questions.
+Most measured gain travels with upper R; much of the exact-token gain is
+format/stopping alignment. Q adaptation is reader-dependent, and late copy
+failure involves jointly changed W/R. Neither lower-only nor upper-only
+hybrids recover the two original MMLU losses. The concrete next stage is the
+[train-only gradient/objective audit](NEXT_FACTORS.md), before choosing a new
+full-FT factor. [Original workspace intent](WORKSPACE_REVIVAL.md) is restored
+as four separate promises, not an assertion that this factorial proved latent
+deliberation. No training or new generation occurred in this follow-up.
+
 ## What to preserve
 
 - Differentiable, adapter-free native-memory graph; native full-vocabulary

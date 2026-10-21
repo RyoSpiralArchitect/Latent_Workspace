@@ -186,6 +186,32 @@ factors. This is exposed-panel mechanism evidence, not a release pass: native
 MMLU remains 356→354/570 and free-generation quality remains unjudged.
 **FAIL / winner:none / non_regression NOT_ESTABLISHED** remains unchanged.
 
+### V23 preparation: question encoding versus the upper reader (2026-10-21)
+
+The [completed frozen-V22 state factorial](provenance/pilots/v23_state_factorial01_20261021/README.md)
+separates memory writer W, query/continuation encoder Q and upper reader/head R.
+It passes 216/216 selected tests on each of CPU/CUDA, 2,386 full-logit self-parity
+checks and 1,193 repeated endpoints, with **7,008 unique diagnostic cells** and
+zero training or new generations. All 96 exposed worlds and 570 reused MMLU
+questions remain diagnostics, not fresh release confirmation.
+
+With base W/Q, changing only R improves gold-prefix next-token agreement from
+442 to 550/559, but 87/108 repaired positions are period/EOS decisions: useful
+output alignment, not an equivalent reasoning gain. Updated Q helps base R but
+adds one nonempty and two absent-prefix errors with V22 R. The late `ff`→`k`
+copy error requires jointly updated W/R under either Q, isolating a different
+compatibility failure. Original MMLU losses survive both lower-only and upper-
+only hybrids; the four Q/R counts are 356, 354, 355 and 354/570.
+
+[Next learner factors](docs/v23/NEXT_FACTORS.md) therefore start with train-only
+gradient/conflict analysis, ordinary-host protection and joint identity
+transport—not simply stronger question-side loss. The
+[workspace revival](docs/v23/WORKSPACE_REVIVAL.md) restores availability,
+occupancy, deliberation and consequence as distinct goals. No hybrid is
+promoted, no V23 weights are trained, and the old FAIL/non-regression ceiling
+is unchanged. Full row-level examples are in the
+[fixed-prefix panel](provenance/pilots/v23_state_factorial01_20261021/FACTORIAL_PANEL.md).
+
 ## Current public artifact: LTWS β (2026-10-18)
  
 **[mistral-7b-instruct-v0.3-LTWS β](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)**
