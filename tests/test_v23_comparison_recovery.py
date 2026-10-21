@@ -16,7 +16,22 @@ def test_actual_entry_masks_before_transitive_torch_import():
         "import qualification_isolation as q; "
         "assert q._MASKED_PID == os.getpid(); "
         "assert os.environ['CUDA_VISIBLE_DEVICES'] == ''; "
+        "assert torch.cuda.device_count() == 0 and not torch.cuda.is_initialized(); "
+        "import importlib; importlib.reload(r); "
+        "assert q._MASKED_PID == os.getpid(); "
         "assert torch.cuda.device_count() == 0 and not torch.cuda.is_initialized()"
+    )
+    subprocess.run([sys.executable, "-B", "-c", code], cwd=recovery.ROOT, check=True)
+
+
+def test_collection_under_qualify_argv_reenters_registered_process():
+    code = (
+        "import sys; sys.path[:0]=['src','scripts']; "
+        "sys.argv=['entry','qualify','--device','cpu']; "
+        "import qualification_isolation as q; q.isolate_cli_before_imports(); "
+        "import torch,pytest; "
+        "raise SystemExit(pytest.main(['--collect-only','-q','-p','no:cacheprovider',"
+        "'tests/test_v23_comparison_recovery.py']))"
     )
     subprocess.run([sys.executable, "-B", "-c", code], cwd=recovery.ROOT, check=True)
 

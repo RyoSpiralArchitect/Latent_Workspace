@@ -30,6 +30,12 @@ def isolate_cli_before_imports(argv=None):
         require(index + 1 < len(argv), "Missing qualification device")
         if argv[index + 1] == "cpu":
             global _MASKED_PID
+            if _MASKED_PID == os.getpid():
+                # Pytest can import the active __main__ script by its module
+                # name. Only the registration made before the first imports
+                # permits that reentry; an environment variable alone cannot.
+                require(os.environ.get("CUDA_VISIBLE_DEVICES") == "", "CPU mask changed")
+                return
             mask_before_import()
             _MASKED_PID = os.getpid()
 

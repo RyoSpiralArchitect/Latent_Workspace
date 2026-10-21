@@ -34,7 +34,14 @@ but its 174 study calls remain undispatched because 24 P-on answers are missing.
 The [MMLU-Pro panel is prepared](provenance/pilots/v23_mmlu_pro01_20261022/README.md)
 (280 direct-choice + 28 reasoning items per arm). Its CPU suite passed 245/245,
 but GPU isolation failed; CUDA qualification and all benchmark calls are
-undispatched. Recovery requires a separate source/attempt and decision.
+undispatched. The authorized [whole-P-on recovery](docs/v23/COMPARISON_RECOVERY_01.md)
+then [passed CPU GPU-isolation but stopped at test collection](provenance/pilots/v23_comparison_recovery01_20261022/README.md):
+the same-process entry reload was wrongly treated as late masking. No CUDA
+qualification or 7B call followed. The reentry repair and a distinct recovery-02
+plan are prepared, with 64/64 local boundary/judge/panel regressions passing;
+the new 248/248 CPU and CUDA gates and P-on evaluation remain undispatched,
+pending the separate recovery decision. Neither stopped attempt is resumed
+or relabeled as successful.
 See the [design](docs/v23/PRESERVATION_FT_01.md) and
 [execution handoff](provenance/engineering/v23_preservation_ft01_20261022/EXECUTION_HANDOFF.md).
 

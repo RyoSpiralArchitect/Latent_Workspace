@@ -1,0 +1,55 @@
+{
+  "schema": "ltws-v23-pon-whole-arm-recovery-01",
+  "reference_plan": "configs/v23/COMPARISON_01.json",
+  "original_source": "84073310cd7b2c56b5e3de046fb3bdc99e461bfb",
+  "original_bundle": "/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v23-comparison01-20261022",
+  "roles": [
+    "on"
+  ],
+  "qualification_devices": [
+    "cpu",
+    "cuda"
+  ],
+  "qualification_device_env": "LTWS_TEST_DEVICE",
+  "qualification_cpu_mkldnn_enabled": false,
+  "qualification_gpu_limit_gib": 4,
+  "qualification_wall_seconds": 900,
+  "qualification_cases": 248,
+  "qualification_test_files": [
+    "tests/test_native_memory.py",
+    "tests/test_native_owner.py",
+    "tests/test_native_evaluation.py",
+    "tests/test_preservation_owner.py",
+    "tests/test_v23_comparison.py",
+    "tests/test_qualification_isolation.py",
+    "tests/test_v23_comparison_recovery.py"
+  ],
+  "resources": {
+    "admission_free_gib": 31,
+    "allocator_cap_gib": 30.5,
+    "abort_free_gib": 0.75,
+    "host_admission_available_gib": 100,
+    "host_abort_available_gib": 24,
+    "disk_free_gib": 50,
+    "max_elapsed_seconds": 14400,
+    "cpu_threads": 2
+  },
+  "pass_status": "V23_PON_RECOVERY_COMPLETE_NOT_RELEASE",
+  "no_retry": true,
+  "planned": {
+    "arms": 1,
+    "mmlu_scores": 570,
+    "world_teacher_forced_rows": 192,
+    "world_generations": 192,
+    "free_generations": 24,
+    "total_new_sequences": 216,
+    "native_weight_updates": 0,
+    "checkpoint_saves": 0,
+    "judge_calls": 0,
+    "weight_deletions": 0
+  },
+  "claim_scope": "Authorized fresh whole P-on arm only. Original failed 79 rows remain diagnostic and are never spliced. Original completed base/off keep their own source. Original evaluation/model/input/seed/cap/restore/numerical conditions are unchanged. CPU qualification is GPU-invisible before torch import, audited including a masked child CUDA-init rejection. CPU then CUDA then P-on execute sequentially. No training, saved weights, deletions or release. Recovery 02 additionally allows only the same pre-import-registered PID to reenter the CLI during pytest collection. Recovery 01's isolation PASS and CPU collection failure stay unchanged.",
+  "attempt_id": "v23-comparison-recovery02-20261022",
+  "prior_attempt_source": "106e12314d72a16a0515a5961989ed49a193a4f8",
+  "prior_attempt_status": "CPU_COLLECTION_ERROR_NO_CUDA_OR_MODEL_DISPATCH"
+}

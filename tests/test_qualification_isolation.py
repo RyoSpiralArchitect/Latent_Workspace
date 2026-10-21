@@ -95,3 +95,19 @@ def test_cuda_qualification_does_not_change_visibility(monkeypatch):
     monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "0")
     assert Runner().qualify(SimpleNamespace(device="cuda")) == 7
     assert os.environ["CUDA_VISIBLE_DEVICES"] == "0"
+
+
+def test_registered_same_process_reentry_is_safe_after_torch_import(monkeypatch):
+    monkeypatch.setattr(isolation, "_MASKED_PID", os.getpid())
+    monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "")
+    monkeypatch.setitem(sys.modules, "torch", object())
+    isolation.isolate_cli_before_imports(["qualify", "--device", "cpu"])
+
+
+@pytest.mark.parametrize("changed", ["mask", "pid"])
+def test_reentry_does_not_authorize_late_or_unmasked_entry(monkeypatch, changed):
+    monkeypatch.setattr(isolation, "_MASKED_PID", os.getpid() + (changed == "pid"))
+    monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "0" if changed == "mask" else "")
+    monkeypatch.setitem(sys.modules, "torch", object())
+    with pytest.raises(ValueError):
+        isolation.isolate_cli_before_imports(["qualify", "--device", "cpu"])
