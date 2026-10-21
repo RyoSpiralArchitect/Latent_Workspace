@@ -1,0 +1,39 @@
+{
+  "attention": "eager",
+  "dtype": "bfloat16",
+  "gradient_checkpointing": false,
+  "graph": {
+    "boundary": {
+      "attention_implementation": "eager",
+      "backend": "torch",
+      "binding_kind": "mistral",
+      "boundary_layer": 4,
+      "cache_policy": "disabled_no_cache",
+      "layer_count": 32,
+      "limitations": [
+        "No past-key-value cache or incremental cached decoding.",
+        "No caller-supplied position IDs or attention-output interface.",
+        "Layer calls preserve native checkpointing hooks; parity is run-specific."
+      ],
+      "model_class": "transformers.models.mistral.modeling_mistral.MistralForCausalLM",
+      "model_type": "mistral",
+      "phase": "pre_decoder_block",
+      "position_policy": "sequential_zero_based",
+      "schema_version": "latent_workspace.boundary.v1",
+      "support_status": "supported_layout",
+      "torch_version": "2.13.0+cu132",
+      "transformers_version": "5.15.0"
+    },
+    "cache": "disabled",
+    "labels": "query_only_next_token",
+    "memory_policy": "reencode_from_tokens_every_forward",
+    "route": "native_full_vocabulary",
+    "schema": "ltws-native-memory-graph-v1"
+  },
+  "memory_reencoded_every_token": true,
+  "native_sha256": "d2a6e4f2a9861a211289f3300b98fa9e2877b23a79f254661dd2305912bf2f70",
+  "requires_grad": false,
+  "sampling": "fresh per-answer CPU FP32 full-vocabulary generator",
+  "training": false,
+  "use_cache": false
+}

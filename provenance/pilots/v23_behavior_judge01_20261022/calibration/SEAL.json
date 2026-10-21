@@ -1,0 +1,84 @@
+{
+  "created_at": "2026-10-21T23:00:22.998599+00:00",
+  "files": {
+    "BLIND_PACKET.json": {
+      "bytes": 14418,
+      "sha256": "b5cd61c3c9ef7e7be3ff735c104017af37e052723977d0cc14f7d2fbf324d477"
+    },
+    "CASES_OPERATOR.json": {
+      "bytes": 2204,
+      "sha256": "2b80341da1bb992bbe45ea463d9050e5c2fd3d3730b14cfb00d556fafbd33998"
+    },
+    "REQUESTS_OPERATOR.json": {
+      "bytes": 124439,
+      "sha256": "31956155a6613714155334ac8bc690c04544855c40af733d03f41e0d240a49af"
+    }
+  },
+  "origins": {},
+  "phase": "calibration",
+  "plan": {
+    "accepted_response_models": [
+      "mistral-large-4"
+    ],
+    "calibration_requests": 32,
+    "calibration_required_expected": 32,
+    "endpoint": "https://api.mistral.ai/v1/chat/completions",
+    "env_key": "MISTRAL_API_KEY",
+    "generation_plan": "configs/v23/COMPARISON_01.json",
+    "generation_source": "84073310cd7b2c56b5e3de046fb3bdc99e461bfb",
+    "generation_status": "V23_BASE_OFF_ON_COMPARISON_COMPLETE_NOT_RELEASE",
+    "identical_control_prompts": [
+      "reasoning-01",
+      "writing-01",
+      "code-01"
+    ],
+    "max_tokens": 16384,
+    "metadata_endpoint": "https://api.mistral.ai/v1/models/mistral-large-4",
+    "model": "mistral-large-4",
+    "no_retry": true,
+    "non_regression": "NOT_ESTABLISHED",
+    "old_expression_gate": "FAIL",
+    "pairs": [
+      [
+        "base",
+        "off"
+      ],
+      [
+        "base",
+        "on"
+      ],
+      [
+        "off",
+        "on"
+      ]
+    ],
+    "provider": "mistral",
+    "repeat_prompts": [
+      "reasoning-01",
+      "reasoning-02",
+      "writing-01",
+      "code-01"
+    ],
+    "repeat_seed": 2026102101,
+    "schema": "ltws-v23-blind-behavior-judge-01",
+    "seed": 2026102201,
+    "study_requests": 174,
+    "temperature": 0.2,
+    "timeout_seconds": 1200,
+    "winner": "none"
+  },
+  "requests": 32,
+  "source": {
+    "configs/v22/BASE_COMPARISON_01.json": "a515cf29439bbe37a6a5a920a5ffbc7e719e439cc17d364ac9ad3688b9204449",
+    "configs/v23/BEHAVIOR_JUDGE_01.json": "5aacf5b7afdf7735e042f3429a8f348bc18549ed363301ef7be590e9e60a6b63",
+    "configs/v23/COMPARISON_01.json": "1b2f4e4a2ff18e1a09bf16a033df51b3fd71bb006007b033938a4b99c64f118f",
+    "docs/v23/ADDITIONAL_EVALUATION_01.md": "447ceec667b67da7231ba2b1c1634c820b8c80eddfef2a5671061e3a7b5afe3d",
+    "scripts/judge_v14_answer_bank.py": "af785da1787f28abaaa53f68127628bd4fab9290625710d6e6c8bf1701c8c331",
+    "scripts/run_v14_judge_panel.py": "4907147317cb6303ea9fa49db5f2f63d35ea7991d7339451d446afa9455eaa36",
+    "scripts/run_v14_mistral_extension.py": "41ecacddc6b154134e29aa0b442c46d63243b39f49845dced02a3d30c344fb6c",
+    "scripts/v23_behavior_judge.py": "e73776112ed488e7a25cb43e8169813d63662fbcfa43d2c5a78d9575d97ca353",
+    "src/latent_workspace/execution.py": "103320ee7bcc5c86e5c724d631d77b872c4910d355829e841c26c4b48a811f01",
+    "tests/test_v23_behavior_judge.py": "f70a26bf43b02b5c590a5af622f808d4cb88526f121e6ef877f86cf35eadd285"
+  },
+  "source_commit": "62834104f4e3ced2bc61375b66561045c675e101"
+}

@@ -23,13 +23,18 @@ tests and exact real-model v2 restart. On the same exposed 40-row dev panel,
 base/off/on NLL is 1.267038 / 1.058723 / 1.069616. Both improve this loss;
 KL-on gives slightly less CE gain, with retention **not yet established**.
 Off exactly reproduces V22's final state fingerprint and dev results.
-The [matched benchmark/generation diagnostic is now running](provenance/pilots/v23_comparison01_20261022/README.md)
-after 223/223 new CPU and CUDA tests, not a winner or release result.
+The [matched benchmark/generation diagnostic is incomplete](provenance/pilots/v23_comparison01_20261022/README.md):
+base/off finished, but P-on stopped after 79/570 MMLU items when our parallel
+CPU qualification became a GPU client. This is an operator isolation error;
+all receipts remain sealed, no automatic retry. Available base/off MMLU is
+356/570 vs 354/570, not a retention pass; the full P-on score is unknown.
 The separately authorized [blind judge and MMLU-Pro follow-up](docs/v23/ADDITIONAL_EVALUATION_01.md)
-preserves this run unchanged: fresh Mistral calibration is in progress, with
-all 72 free answers required before study judging. The prospective
-[MMLU-Pro plan](docs/v23/MMLU_PRO_01.md) fixes 280 direct-choice and 28 reasoning
-items per arm and requires fresh qualification before any model call.
+preserves this run unchanged: [Mistral calibration passed 32/32](provenance/pilots/v23_behavior_judge01_20261022/README.md),
+but its 174 study calls remain undispatched because 24 P-on answers are missing.
+The [MMLU-Pro panel is prepared](provenance/pilots/v23_mmlu_pro01_20261022/README.md)
+(280 direct-choice + 28 reasoning items per arm). Its CPU suite passed 245/245,
+but GPU isolation failed; CUDA qualification and all benchmark calls are
+undispatched. Recovery requires a separate source/attempt and decision.
 See the [design](docs/v23/PRESERVATION_FT_01.md) and
 [execution handoff](provenance/engineering/v23_preservation_ft01_20261022/EXECUTION_HANDOFF.md).
 

@@ -1,5 +1,25 @@
 # V23 base/off/on comparison 01 — execution handoff
 
+## Terminal stop — do not resume
+
+The dispatcher has ended **INCOMPLETE_NO_RETRY**, with only base/off complete.
+P-on stopped at `mmlu:79` because our parallel MMLU-Pro CPU qualification
+PID `3785302` created a CUDA client. Its PID is recorded in P-on's final
+`RESOURCES.jsonl` row and exactly matches that qualification's `STARTED.json`.
+This is an operator GPU-isolation error. All original files are preserved;
+the [terminal replay and bounded results](README.md) explain the counts.
+No new judge study or MMLU-Pro model call followed. A recovery decision was
+requested; **no retry is authorized by this handoff**. Keep all source seals,
+original 79-row partial output and terminal receipts unchanged.
+
+For a later approved recovery: CPU means GPU-invisible **before runtime
+imports**, with an explicit no-CUDA-context check. Do not weaken the GPU
+exclusivity guard. Recollect only P-on as a distinct whole-arm attempt under
+the same model/input/seed/numerical conditions; never splice its old 79 rows
+into the new arm. Separate manifests must name original base/off and new P-on
+attempts. Adapt downstream input provenance through a new plan, not by forging
+a complete original dispatcher receipt or mutating a prior source seal.
+
 ## Launch recorded
 
 **LAUNCHED once** at `2026-10-21T22:46:05Z` (2026-10-22 07:46 JST).
