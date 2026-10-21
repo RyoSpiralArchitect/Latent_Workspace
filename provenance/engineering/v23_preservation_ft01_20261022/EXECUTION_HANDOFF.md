@@ -21,6 +21,12 @@ offline replay are published in [README.md](README.md). Dispatcher PID
 base. Real-model update/save/replay and off/on training remain pending.
 Check current on-disk receipts before making any newer progress claim.
 
+At `2026-10-21T19:27:19.841440Z`, teacher role finished successfully: 89 rows,
+18,727 positions, all 89 same-weight eval/train log-probability sentinels
+bitwise equal (zero initial KL). Public teacher metadata are preserved locally;
+the private 2.286-GiB target body remains remote. Canary PID 3690246 had started.
+No comparative training completion is implied. Do not relaunch the teacher.
+
 ## Original pre-launch handoff
 
 Pre-launch handoff, 2026-10-22. **NOT_DISPATCHED** at this record's creation.

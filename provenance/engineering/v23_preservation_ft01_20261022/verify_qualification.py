@@ -79,9 +79,54 @@ def verify(root, repo):
     )
 
 
+def verify_public_teacher(root):
+    """Verify published metadata; the private 2.286-GiB body is not local evidence."""
+    folder = root / "raw/teacher"
+    seal = read(root / "SOURCE_SEAL.json")
+    start, end = read(folder / "STARTED.json"), read(folder / "FINISHED.json")
+    assert start["seal"] == seal and end["status"] == "V23_PRESERVATION_TEACHER_COMPLETE"
+    assert end["native_weight_updates"] == 0
+    actual = manifest(folder)
+    actual.pop("FINISHED.json")
+    missing = "PRIVATE_TEACHER_TARGETS.safetensors"
+    assert actual == {k: v for k, v in end["files"].items() if k != missing}
+    receipt = read(folder / "TEACHER_TARGETS.json")
+    assert end["files"][missing] == dict(bytes=receipt["bytes"], sha256=receipt["sha256"])
+    assert receipt["source_commit"] == SOURCE
+    assert (
+        receipt["native_sha256"]
+        == "9db998af86c8105f0a2d774c10f777e190f86e54473b6b756bb51b225064a189"
+    )
+    assert receipt["vocabulary"] == 32768 and receipt["target_dtype"] == "float32"
+    assert receipt["temperature"] == 1 and len(receipt["rows"]) == 89
+    assert sum(r["supervised_tokens"] for r in receipt["rows"]) == 18727
+    assert receipt["tensor_bytes"] == 2454585344 and receipt["bytes"] == 2454592344
+    assert [r["index"] for r in receipt["rows"]] == [str(i) for i in range(89)]
+    assert all(r["shape"] == [r["supervised_tokens"], 32768] for r in receipt["rows"])
+    sentinels = read(folder / "SAME_WEIGHT_SENTINELS.json")
+    assert [r["key"] for r in sentinels] == [r["key"] for r in receipt["rows"]]
+    assert all(
+        r["bitwise_log_probabilities"]
+        and r["mean_kl"] == 0
+        and r["max_abs_log_probability_difference"] == 0
+        for r in sentinels
+    )
+    return dict(
+        status="PUBLIC_TEACHER_METADATA_PASS_PRIVATE_BODY_OMITTED",
+        rows=89,
+        positions=18727,
+        bitwise_same_weight_rows=89,
+        target_body_sha256=receipt["sha256"],
+        private_body_verified_locally=False,
+    )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--repo", type=Path, required=True)
     args = parser.parse_args()
-    print(json.dumps(verify(args.root, args.repo), indent=2))
+    result = verify(args.root, args.repo)
+    if (args.root / "raw/teacher").exists():
+        result["teacher"] = verify_public_teacher(args.root)
+    print(json.dumps(result, indent=2))

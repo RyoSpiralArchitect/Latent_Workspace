@@ -1,8 +1,8 @@
 # V23 preservation comparison 01 — qualification and live handoff
 
 **472/472 CPU and 472/472 CUDA tests pass**, zero failures/errors/skips.
-The new real-model pipeline has started its teacher role; canary/replay and
-the two comparative FT arms are not completed at this publication snapshot.
+The 89-row real-model teacher role is complete; canary/replay and the two
+comparative FT arms are not completed at this publication snapshot.
 This is not a training-completion or quality report.
 
 Frozen execution source: `b46f04caefcfd596ccde3b0af8fd886d859f11b7`;
@@ -41,6 +41,26 @@ After its gate, positive-P two-update/save/fresh-replay must pass before off/on
 32-update training. Native Mistral and V22 scientific weights remain untouched.
 No further weight deletion, provider/judge calls, new generated sequences,
 PR/merge or Hub publication is performed by this pipeline.
+
+## Original-host teacher result
+
+At `2026-10-21T19:27:19.841440Z`, teacher completion was verified and the
+positive-P canary had started (PID 3690246). The teacher completed 89 rows /
+18,727 supervised positions in 57.795876 seconds, without a weight update.
+All 89 same-weight eval/train log-probability rows are bitwise equal: maximum
+absolute difference and per-row initial mean KL are zero. This is only an
+initial-execution sentinel, not evidence of preservation after training.
+
+The private target file is 2,454,592,344 bytes, of which 2,454,585,344 are
+tensor payload. SHA256:
+`70db3a724404406604c4da62adad8fdb1189f2f3b305f9b53d5d8340d8336eaa`.
+Its body is intentionally **not published or locally reverified**. The source-
+sealed teacher terminal and owner admission on Furnace bind/validate it; local
+offline replay verifies every published teacher file against the terminal
+manifest, the omitted-file receipt, source, denominators and sentinel outputs.
+The complete public [teacher metadata](furnace/raw/teacher/) contain no source
+token arrays. Teacher peak allocation 14,922,329,088 bytes also does not qualify
+the subsequent 7B update/save/replay envelope.
 
 Preserve **FAIL / winner:none / non_regression NOT_ESTABLISHED**.
 Source/owner engineering qualification is not evidence that P improves
