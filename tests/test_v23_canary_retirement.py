@@ -1,3 +1,4 @@
+import hashlib
 import importlib.util
 import json
 import sys
@@ -10,6 +11,9 @@ def fixture(tmp_path, monkeypatch):
     path = Path(__file__).resolve().parents[1] / (
         "provenance/inventory/v23_obsolete_canaries_20261022/retire.py"
     )
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == (
+        "1549118e0870ba849b3517f90a74f4f48031638538019af43e6c2a771b74e6ed"
+    )  # The source-sealed test pins this immutable, evidence-bundle helper.
     spec = importlib.util.spec_from_file_location("v23_retire", path)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)

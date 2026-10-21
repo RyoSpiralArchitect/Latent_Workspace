@@ -19,4 +19,8 @@ three regular files. No recursive directory removal or retry is supported.
 
 **No weight backup exists here. Git records hashes and metadata, not
 reconstructable tensor bytes. Deleted bodies cannot be recovered from Git.**
-Execution is not claimed until a separate `DELETE_FINISHED.json` is recorded.
+The [terminal receipt](DELETE_FINISHED.json) confirms all three exact files were
+deleted after ledger commit `a682a83ee115da2d5ed69ece4ec51dedadbd6381` was pushed.
+Free disk rose from 65.7509 to 146.7882 GiB (filesystem snapshots, not a quota).
+The deletion script hash matches the published script. Five local tests cover
+exact scope/no-repeat and fail-closed body, symlink, evidence and ledger changes.

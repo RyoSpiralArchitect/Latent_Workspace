@@ -63,6 +63,13 @@ copies but is too replay-heavy to assume scalable; qualify a spill-based version
 The audit must determine whether the problem is missing/conflicting gradients,
 margin, state compatibility or data distribution before choosing a loss weight.
 
+The [scalable spill-based audit plan](GRADIENT_AUDIT_01.md) now implements
+one backward per objective/row, with CPU FP32 diagnostic accumulation and
+bounded tensorwise reductions. It keeps the prior 84-world/12-preservation
+selection and separates a 7B path-sum resource canary from the panel-wide
+conflict diagnosis. Implementation is not yet an executed 7B result; owner
+objective integration and new-objective update/restart remain later gates.
+
 The additive bank freezes 512 new groups / 4,096 raw rows, with 2,016 unique
 train rows / 13,198 target tokens. The old two-hop family is explicitly promoted
 using new groups; all old groups are excluded, and a new three-hop structure
@@ -124,6 +131,9 @@ all its losses or promoting its old readout results. Availability, occupancy,
 deliberation and consequence each keep their own endpoint. See
 [WORKSPACE_REVIVAL.md](WORKSPACE_REVIVAL.md) and [the full roadmap](ROADMAP_TO_1_0.md).
 
-Before another checkpoint-writing run, refresh storage admission: the diagnosis
-retained 6.30 GiB of activation bodies, and the remaining disk margin is not
-authorization to delete a checkpoint. No weights were retired in this work.
+Before another checkpoint-writing run, refresh storage admission. Ryō separately
+authorized obsolete-weight cleanup on 2026-10-22: three completed engineering
+canaries were [recorded and retired](../../provenance/inventory/v23_obsolete_canaries_20261022/README.md),
+freeing 81.0373 GiB. The current V22 step16/32, original Mistral, previous
+scientific weights and 6.30 GiB of diagnostic activation bodies remain. This
+does not authorize deletion of every old experiment or any unrelated data.
