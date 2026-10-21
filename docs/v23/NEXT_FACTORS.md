@@ -52,10 +52,26 @@ Mistral-only hook or a private version-specific learner. First tiny-qualify:
    hashes for the teacher targets/objective contract before a real-model trial.
    Any reference-target storage and resource costs need a new bounded canary.
 
-This audit has not yet been implemented or run. It determines whether the next
-learner problem is missing gradients, conflicting gradients, decision margin,
-state compatibility or an insufficient training distribution. It must precede
-choosing a loss weight merely because the assay made a hybrid look favorable.
+The [first implementation and additive world preparation](PREPARATION_01.md)
+now have [296/296 tiny tests on each device and replayed data](../../provenance/engineering/v23_preparation01_20261022/README.md).
+The outer dispatcher had a retained receipt-contract error after the successful
+data role; it was not rerun or relabeled. Live-state tracing, token contributions,
+W/Q/R gradient attribution and full-vocabulary KL are tiny-qualified only.
+The actual 7B gradient/conflict audit, reference-target generation and owner
+integration have **not** run. A tensorwise reference avoids several full gradient
+copies but is too replay-heavy to assume scalable; qualify a spill-based version.
+The audit must determine whether the problem is missing/conflicting gradients,
+margin, state compatibility or data distribution before choosing a loss weight.
+
+The additive bank freezes 512 new groups / 4,096 raw rows, with 2,016 unique
+train rows / 13,198 target tokens. The old two-hop family is explicitly promoted
+using new groups; all old groups are excluded, and a new three-hop structure
+is reserved as OOD. No model has evaluated the new confirmation/OOD groups.
+The next 84-world + 12-preservation-row training panel is fixed at up to
+105 memory / 128 query tokens. Its planned full-vocabulary base targets are
+116.5 MiB, **NOT_RUN**. The larger OOD maximum of 163 memory tokens needs a
+separate resource check. No mixture, optimizer or native training objective
+changed merely because more candidate data is available.
 
 ## Independent learner factors, in order
 

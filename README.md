@@ -212,6 +212,29 @@ promoted, no V23 weights are trained, and the old FAIL/non-regression ceiling
 is unchanged. Full row-level examples are in the
 [fixed-prefix panel](provenance/pilots/v23_state_factorial01_20261021/FACTORIAL_PANEL.md).
 
+### V23 oracle expansion and objective instruments (2026-10-22)
+
+The [additive preparation](provenance/engineering/v23_preparation01_20261022/README.md)
+adds **512 groups / 4,096 raw world rows**, disjoint from all prior groups and
+identifiers. After duplicate controls, the new train pool has 2,016 rows /
+13,198 supervised tokens. Fresh naming/binding controls and a reserved 3-hop
+structure accompany the explicit promotion of the former 2-hop OOD family.
+No new confirmation/OOD model scores or training updates were produced.
+
+Tiny CPU/CUDA suites each pass **296/296**, including no-op trace parity,
+oracle-defined identity/copy/format contributions, shared W/Q/R gradient
+attribution and full-vocabulary preservation-KL primitives. The outer dispatcher
+failed on a missing completion-status key **after** the data role passed.
+The failed receipt is retained; offline replay verifies the child results,
+and the subsequent configuration/validation fix has three local regressions.
+No role was rerun. This is not an all-green 7B run or a new trained learner.
+
+The next train-only audit inputs are frozen at 84 world + 12 preservation rows;
+base-target generation remains **NOT_RUN**. A scalable gradient-spill assay and
+fresh resource check precede loss integration/full FT. See the
+[updated next factors](docs/v23/NEXT_FACTORS.md). All historical quality/release
+ceilings remain unchanged; no weights were deleted.
+
 ## Current public artifact: LTWS β (2026-10-18)
  
 **[mistral-7b-instruct-v0.3-LTWS β](https://huggingface.co/RyoSpiralArchitect/mistral-7b-instruct-v0.3-LTWS-beta)**

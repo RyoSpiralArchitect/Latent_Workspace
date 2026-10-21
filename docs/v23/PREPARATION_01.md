@@ -116,3 +116,13 @@ both tests remain mandatory in the sealed Furnace suites.
 The old **FAIL / winner:none / non_regression NOT_ESTABLISHED** remains. A real
 gradient-conflict diagnosis, P on/off update comparison, exact new-objective
 save/restart, unseen base floor and useful extra latent computation remain open.
+
+## Execution outcome
+
+The [published child results](../../provenance/engineering/v23_preparation01_20261022/README.md)
+pass 296/296 CPU and CUDA checks and the data-role replay. The original outer
+dispatcher nevertheless failed at its final status assignment because this
+plan omitted `pass_status`. Its original sealed source and failed receipt are
+retained; no role was rerun. The current plan includes the key and runner
+validation rejects missing/mismatched values before work (three local regression
+cases). This post-run orchestration fix is not a new GPU qualification.

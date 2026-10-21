@@ -21,6 +21,7 @@ PASS = "V23_PREPARATION_COMPLETE_NOT_7B_OR_TRAINING"
 
 
 def validate(plan):
+    ex.require(plan.get("pass_status") == PASS, "Explicit dispatch pass_status before any work")
     ex.require(plan["schema"] == "ltws-v23-preparation-01" and plan["no_retry"], "Plan")
     ex.require(
         not plan["full_7b_dispatch"] and plan["checkpoint_saves"] == plan["teacher_calls"] == 0,
