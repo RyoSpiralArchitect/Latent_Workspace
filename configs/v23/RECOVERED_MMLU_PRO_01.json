@@ -1,0 +1,56 @@
+{
+  "schema": "ltws-v23-recovered-mmlu-pro-01",
+  "reference_plan": "configs/v23/MMLU_PRO_01.json",
+  "reference_plan_sha256": "76764815918f2f7e7c31bea71e57ac6c49fb5583443e3b5207665410ddf13c1a",
+  "bank_plan": "configs/v23/RECOVERED_FOLLOWUP_01.json",
+  "roles": [
+    "base",
+    "off",
+    "on"
+  ],
+  "planned": {
+    "arms": 3,
+    "direct_scores": 840,
+    "reasoning_sequences": 84,
+    "native_weight_updates": 0,
+    "checkpoint_saves": 0,
+    "judge_calls": 0,
+    "weight_deletions": 0
+  },
+  "resources": {
+    "admission_free_gib": 31,
+    "allocator_cap_gib": 30.5,
+    "abort_free_gib": 0.75,
+    "host_admission_available_gib": 100,
+    "host_abort_available_gib": 24,
+    "disk_free_gib": 50,
+    "max_elapsed_seconds": 14400,
+    "cpu_threads": 2
+  },
+  "qualification_devices": [
+    "cpu",
+    "cuda"
+  ],
+  "qualification_device_env": "LTWS_TEST_DEVICE",
+  "qualification_cpu_mkldnn_enabled": false,
+  "qualification_gpu_limit_gib": 4,
+  "qualification_wall_seconds": 900,
+  "qualification_cases": 301,
+  "qualification_test_files": [
+    "tests/test_native_memory.py",
+    "tests/test_native_owner.py",
+    "tests/test_native_evaluation.py",
+    "tests/test_preservation_owner.py",
+    "tests/test_v23_comparison.py",
+    "tests/test_v23_mmlu_pro.py",
+    "tests/test_qualification_isolation.py",
+    "tests/test_v23_comparison_recovery.py",
+    "tests/test_v23_behavior_judge.py",
+    "tests/test_v23_recovered_followup.py"
+  ],
+  "pass_status": "V23_RECOVERED_MMLU_PRO_COMPLETE_NOT_RELEASE",
+  "no_retry": true,
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED"
+}

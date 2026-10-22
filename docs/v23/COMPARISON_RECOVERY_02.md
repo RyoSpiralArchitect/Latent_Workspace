@@ -1,4 +1,9 @@
-# V23 whole-P-on recovery 02 — prepared, not dispatched
+# V23 whole-P-on recovery 02
+
+Update: separately authorized and launched at **2026-10-22T00:09:15Z**.
+Both 248-test suites and CPU isolation passed; P-on is executing. See the
+[dated execution handoff](../../provenance/pilots/v23_comparison_recovery02_20261022/EXECUTION_HANDOFF.md).
+The pre-launch design below is retained; qualification is not a quality result.
 
 This is the same finite P-on-only evaluation as recovery 01, under a distinct
 plan, source seal, execution directory and decision. Recovery 01's 789-file

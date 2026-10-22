@@ -97,11 +97,14 @@ def predecessor(plan):
     )
 
 
-def run(core, args, plan, seal):
+def run(core, args, plan, seal, *, predecessor_fn=None):
     from latent_workspace.optimizer_state import tree_hash
 
     parent = runtime_plan(plan)
-    ex.write_new(args.output / "PREDECESSOR.json", predecessor(plan))
+    # The original default still requires the original successful dispatcher.
+    # A separately sealed follow-up may supply an explicit dual-origin receipt.
+    receipt_fn = predecessor if predecessor_fn is None else predecessor_fn
+    ex.write_new(args.output / "PREDECESSOR.json", receipt_fn(plan))
     data, receipt = inputs(plan)
     ex.write_new(args.output / "INPUT_MANIFEST.json", receipt)
     graph, tokenizer, guard, before = previous.prepare(core, args, parent)

@@ -39,9 +39,13 @@ then [passed CPU GPU-isolation but stopped at test collection](provenance/pilots
 the same-process entry reload was wrongly treated as late masking. No CUDA
 qualification or 7B call followed. The reentry repair and a distinct recovery-02
 plan are prepared, with 64/64 local boundary/judge/panel regressions passing;
-the new 248/248 CPU and CUDA gates and P-on evaluation remain undispatched,
-pending the separate recovery decision. Neither stopped attempt is resumed
-or relabeled as successful.
+after separate approval, [recovery 02 passed 248/248 CPU and CUDA checks plus
+the CPU isolation audit and started P-on](provenance/pilots/v23_comparison_recovery02_20261022/EXECUTION_HANDOFF.md).
+Neither stopped attempt is resumed or relabeled as successful. The
+[explicit combined-bank follow-up](docs/v23/RECOVERED_FOLLOWUP_01.md) keeps
+original base/off and whole recovered P-on under separate source seals, with
+unchanged calibrated judge and prepared benchmark policies. Its dispatch
+requires a verified terminal P-on arm, not just passing tiny tests.
 See the [design](docs/v23/PRESERVATION_FT_01.md) and
 [execution handoff](provenance/engineering/v23_preservation_ft01_20261022/EXECUTION_HANDOFF.md).
 
