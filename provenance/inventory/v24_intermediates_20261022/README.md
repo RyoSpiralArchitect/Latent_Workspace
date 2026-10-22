@@ -9,7 +9,7 @@ after the V24 storage inventory. This is **not** a version-wide purge.
   continuation is recorded in `raw/train_b/RESTORE.json`; the step32 final is
   retained. This intermediate is not used by current comparisons.
 
-Allowlist total: **58,008,782,872 bytes (54.0245 GiB)**. Original Mistral,
+Allowlist total: **58,008,782,872 bytes (54.0249 GiB)**. Original Mistral,
 V22 step32, V23 P-off/P-on step32, all other scientific branches, activations,
 datasets, source seals, raw trial records and other projects are protected.
 
@@ -32,6 +32,28 @@ in `tmp/latent-v24-retirement-tools02-20261022` under the Furnace project root.
 It records both full-body hashes, original receipts, protected final-file
 identities and evidence hashes. This publication alone does **not** establish
 that deletion completed; a separate `DELETE_FINISHED.json` must record that.
+
+## Completed retirement
+
+The ledger and exact helper were pushed in commit
+`a7943b107a2e437c82e8d8f56d3663f8b2830334` **before** deletion. The published
+ledger SHA256 is `f2cd97d5d00194e799928809e35f9c6c8870ded19972ead7ca2bc88afec9dc1d`.
+After rechecking both full hashes, unused-file status, source evidence and
+protected identities, the helper removed exactly the two files at
+**2026-10-22T04:38:22.739811+00:00**. The final protected identities still matched.
+
+[DELETE_FINISHED.json](DELETE_FINISHED.json) records **58,008,782,872 bytes**
+retired, with available space rising from **55,557,410,816** to
+**113,566,195,712 bytes (105.7668 GiB)**. See also
+[start receipt](DELETE_STARTED.json), [first unlink](DELETED_0.json) and
+[second unlink](DELETED_1.json). The available-space delta need not equal the
+file-size sum exactly on a shared filesystem.
+
+This remains **0.2332 GiB below** the earlier conservative 106-GiB forecast for
+two concurrent 28-GiB saves plus a 50-GiB floor. No Full-FT admission is claimed
+and no additional file is deleted. A separately frozen sequential save/retire
+lifecycle can avoid retaining a spent engineering canary beside the final save;
+the 50-GiB floor must remain unchanged and be checked live.
 
 **Git stores receipts and hashes, not a tensor backup. Deleted bodies cannot
 be recovered from Git.** This operation does not waive the next run's disk

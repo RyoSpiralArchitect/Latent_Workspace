@@ -72,6 +72,46 @@ prove broad capability. Any new learner factor must be an engine option with
 zero-effect parity and exact update/save/fresh-process restart, not a private
 runner-side adapter or a Mistral-specific normalization workaround.
 
+### Decision after the first 7B probe
+
+The [completed probe](../../provenance/engineering/v24_readout_probe01_20261022/README.md)
+now provides bounded evidence, without training a new fix:
+
+- All three arms bind four of four exact supplied correct option contents;
+  only two of four unassisted label anchors win. This argues against a universal
+  absence of the label readout, not against every generated-history binding
+  failure. Chemistry's assisted margins remain small. Exact option text is an
+  unusually strong cue; do not treat it as independent reasoning.
+- In four world groups, all eight reference directions remain content-sensitive
+  in base and both FT arms. Three group means have lower content selectivity
+  after FT. The largest intact-reference logprob improvement is format, mostly
+  the period: about 79 nats over 10 format tokens versus 1.3 over 14 content
+  tokens. The old scorer ignores a final period, so this decomposition does not
+  explain the entire exactness gain or recode the old results.
+- EOS is negligible at the initial reasoning anchor but often much more likely
+  after a supplied complete answer. Global EOS suppression/length reward is
+  not the next factor. Actual generated-history stopping remains unmeasured.
+
+The next design priority is therefore **useful content/derivation recruitment
+and answer use**, retaining the response-shaping gains as separate endpoints.
+Do not simply add a second answer-format loss or increase P. Before a new full
+update, freeze train-only solved tasks and an untouched group-held-out panel;
+keep exact copy, content correctness, answer binding and completion as separate
+measurements. None of the four exposed MMLU-Pro items or world references may
+be used as training targets or future confirmation.
+
+A concrete next factor can vary whether independently checked intermediate
+results are available to the query-conditioned workspace, with identical
+information inline as a control. First establish that the native M interface
+uses those results; if testing newly computed S, add the model-independent
+engine mechanism and bypass/matched-compute controls explicitly. Do not rename
+extra supplied facts as new latent computation. Ordinary no-memory capability
+and the model × route interaction are both required, not a world-bank-only win.
+
+This is a development decision, **not a frozen training recipe**. Native
+update/save/fresh-process replay and a new resource forecast precede dispatch.
+P-on is not selected as the default; keep P a predeclared controlled factor.
+
 ## Storage gate before Full FT
 
 Read-only Furnace inventory on 2026-10-22 found 56,976,289,792 bytes available
@@ -79,19 +119,32 @@ Read-only Furnace inventory on 2026-10-22 found 56,976,289,792 bytes available
 weights; it can be admitted separately. Another checkpoint-writing run cannot
 be admitted with this headroom.
 
-Current exact observed bodies:
+Observed bodies and their subsequent disposition:
 
 | Body | Bytes | Disposition |
 | --- | ---: | --- |
-| V23 `canary_step1.pt` | 29,004,386,444 | Engineering replay candidate for a future explicitly approved retirement |
+| V23 `canary_step1.pt` | 29,004,386,444 | Retired after explicit approval; exact replay and full hash retained |
 | V23 `off_step32.pt` | 29,004,418,636 | Keep: scientific comparison arm |
 | V23 `on_step32.pt` | 29,004,428,108 | Keep: scientific comparison arm |
-| V22 `training_step16.pt` | 29,004,396,428 | Keep: earlier checkpoint; no new deletion authorization |
+| V22 `training_step16.pt` | 29,004,396,428 | Retired after explicit approval; exact step32 continuation retained |
 | V22 `training_step32.pt` | 29,004,418,636 | Keep: historical reference; equal size is not byte identity |
 
 One conservative 28-GiB canary plus one 28-GiB final save and the 50-GiB floor
 needs **106 GiB**, before optional new teacher/target bodies. A fresh two-arm
 comparison with three retained saves needs **134 GiB**. Retiring only the V23
 engineering canary would reach about 80.08 GiB, still insufficient for either.
-An alternate volume or an explicit further retention decision is necessary;
-no floor is lowered and no old/scientific weight is deleted by this plan.
+The subsequent [two-file retirement](../../provenance/inventory/v24_intermediates_20261022/README.md)
+reclaimed **54.0249 GiB** and left **105.7668 GiB** available, still **0.2332 GiB**
+below that conservative concurrent-save forecast. This live snapshot supersedes
+the earlier estimate; no floor is lowered and no further weight is deleted.
+
+For the next protocol, consider an explicit **sequential retention lifecycle**:
+save canary -> complete exact fresh-process replay -> publish its receipt and
+retirement ledger -> retire that now-unused canary -> run/save the final model.
+Only one new 28-GiB body then needs to coexist with the 50-GiB floor (**78 GiB**,
+plus any other declared payloads), instead of treating a spent engineering
+canary as a scientific final. This is a proposed separately tested lifecycle,
+not a deletion already performed or permission for a runner to auto-delete.
+Live shared-disk checks, original/previous scientific references and immutable
+failure/replay receipts remain mandatory. A two-arm study needs its own peak
+storage accounting; this one-body forecast cannot be reused for two finals.

@@ -4,10 +4,13 @@ Execution source: `bb1ecc8b3b3b98f9b63a67da1dbdd76033c76c79` (814 sealed
 source paths). Launched once on 2026-10-22 at 04:26:14 UTC in tmux
 `ltws-v24-readout-probe01-20261022`; initial pane PID 3964874.
 
-At the 04:35 UTC read-only check, CPU **350/350** and CUDA **350/350** passed
-(zero failures/errors/skips), CPU isolation passed, and base/P-off each had
-their complete **44-case / 197-forward** terminal receipt. P-on and the overall
-dispatch receipt were still pending. This snapshot is not overall completion.
+Terminal status: **V24_READOUT_COMPLETE_NOT_FT_OR_QUALITY**. CPU **350/350** and
+CUDA **350/350** passed (zero failures/errors/skips), CPU isolation passed, and
+all three arms have complete **44-case / 197-forward** terminal receipts.
+The overall dispatch completed in 542.132339 seconds. The complete bundle was
+pulled locally and replayed: **132 traces / 591 forwards**, all 814 source paths,
+qualification/role/dispatch manifests, frozen cases and before/after identities.
+The [result and claim ceilings](README.md) supersede the earlier live snapshot.
 
 Local repo: `/Users/ryohiga/SpiralReality/worktrees/latent-workspace-full-ft-v1`.
 Branch: `SpiralReality/v24-readout-improvement`.
@@ -32,9 +35,10 @@ processor, learned head or trainable parameter exists.
 On any failure preserve the exact run, publish missingness and request the next
 recovery decision. Process absence alone is not completion. No heartbeat is
 created. Local/pinned-runtime test success and scientific quality are separate.
-Full FT additionally needs a frozen factor/data protocol and storage admission;
-the current 53.06-GiB free space cannot hold another canary/final plus the
-50-GiB floor. No deletion is authorized by this diagnostic.
+Full FT additionally needs a frozen factor/data protocol and storage admission.
+The pre-retirement 53.06-GiB inventory and later 105.7668-GiB post-retirement
+receipt are different snapshots; even the latter is below the conservative
+106-GiB two-save forecast. No deletion is authorized by this diagnostic itself.
 
 Local prerequisite record: 346/350 tests passed; four isolated-child imports
 failed with `ModuleNotFoundError: typing_extensions`. The raw XML is retained
@@ -50,5 +54,10 @@ The separate [intermediate retirement ledger](../../inventory/v24_intermediates_
 selects only V23 canary step1 and V22 training step16. Its first inventory
 stopped before deletion on a `fuser --` syntax error; the original attempt
 remains intact. The corrected, separately named inventory passed complete
-body hashes and replay/continuation checks. Publish its ledger before removal;
-do not modify the running source worktree or its source seal.
+body hashes and replay/continuation checks. Its ledger was pushed at `a7943b1`
+before the exact two bodies were removed, reclaiming 54.0249 GiB. All final
+comparison weights remain protected. Neither execution source nor seal changed.
+
+No restart, new run, training, generation, judge call, PR, merge or release is
+pending in this diagnostic launcher. No heartbeat was created. Next work is
+the separately scoped native learner/data design, not a resume of this run.

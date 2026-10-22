@@ -17,14 +17,22 @@ dated evidence.
 
 ## Reading this repository
 
-**V24 next step:** [portable readout diagnosis and workspace capability improvement](docs/v24/README.md).
+**V24 readout complete:** [portable diagnosis and workspace capability improvement](docs/v24/README.md),
+with [all 132 traces / 591 forwards replayed](provenance/engineering/v24_readout_probe01_20261022/README.md)
+after 350/350 CPU and CUDA tests. Four assisted-content probes bind the correct
+option in all three arms; on four world groups, reference-format likelihood
+gain dominates content gain. This is exposed conditional evidence, not a new
+benchmark or a universal bottleneck diagnosis. No new Full FT has run.
 New engine-owned observational instruments separate fixed-token content/copying,
 option binding and EOS; original/candidate × no-memory/inline/workspace contrasts
-keep missingness and group-level denominators. The bounded next 7B diagnostic
+keep missingness and group-level denominators. This bounded 7B diagnostic
 is not new FT or evidence of general intelligence. Preservation remains a floor;
 useful workspace-dependent improvement is the target. See the
 [execution handoff](provenance/engineering/v24_readout_probe01_20261022/EXECUTION_HANDOFF.md)
 for live receipt status and the separate Full-FT/storage gates.
+Two superseded engineering/intermediate checkpoints were
+[recorded before deletion and retired](provenance/inventory/v24_intermediates_20261022/README.md),
+freeing 54.02 GiB; scientific final comparison weights remain intact.
 
 **2026-10-22 readout complete:** [integrated V23 evaluation](docs/v23/EVALUATION_SYNTHESIS.md)
 and [full-FT PR review map](docs/v23/FULL_FT_REVIEW_GUIDE.md).

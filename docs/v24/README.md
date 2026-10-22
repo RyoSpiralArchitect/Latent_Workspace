@@ -73,6 +73,20 @@ computation. No test was excluded or relabeled. The pinned Furnace CPU and CUDA
 suites must each pass all 350; local Torch/Transformers versions are not silently
 treated as Furnace qualification.
 
+**Terminal update:** the pinned Furnace CPU and CUDA selections each passed
+**350/350**, with CPU isolation PASS. Base/off/on each completed **44/44 cases
+and 197/197 forwards**, and all **132 traces / 591 forwards** replay locally.
+Read the [source-backed result](../../provenance/engineering/v24_readout_probe01_20261022/README.md):
+assisted correct content yields four strict label wins per arm, while the
+world references show a much larger format than content likelihood gain.
+Content-sensitive memory use exists even in base; semantic selectivity did not
+uniformly increase after FT. Immediate-EOS probabilities remain tiny. These
+facts narrow the next question without proving a general readout fix.
+
+The offline verifier and retirement helper passed **19/19** new local tests.
+The earlier four local import failures remain unchanged; these new tests do
+not replace or relabel the actual Furnace qualification.
+
 ## Next native Full FT
 
 See [the capability and FT direction](FULL_FT_DIRECTION.md). Diagnosis chooses
