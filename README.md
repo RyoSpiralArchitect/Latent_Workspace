@@ -37,13 +37,15 @@ and [failed collection recovery](provenance/pilots/v23_comparison_recovery01_202
 remain unchanged. Their partial rows are never spliced into the completed bank.
 The [explicit follow-up](docs/v23/RECOVERED_FOLLOWUP_01.md) retains the
 [32/32 passed Mistral calibration](provenance/pilots/v23_behavior_judge01_20261022/README.md)
-for a separately frozen 174-request study. No preference is inferred from text
-differences alone. The [first recovered MMLU-Pro attempt](provenance/pilots/v23_recovered_mmlu_pro01_20261022/README.md)
+for the [174-request study launched once](provenance/pilots/v23_recovered_behavior_judge01_20261022/EXECUTION_HANDOFF.md).
+It is running, not a completed preference result. No preference is inferred from
+text differences alone. The [first recovered MMLU-Pro attempt](provenance/pilots/v23_recovered_mmlu_pro01_20261022/README.md)
 passed 301/301 CPU and CUDA plus isolation, but stopped on inactive CUDA
 reservation growth after base's 280 direct scores (92 correct), before any
 complete reasoning row. Off/on were undispatched. A separately authorized
-[cache-only repair and new attempt](docs/v23/RECOVERED_MMLU_PRO_02.md) preserves
-all inputs, decoding conditions and resource floors; no stopped run is resumed.
+[cache-only repair](docs/v23/RECOVERED_MMLU_PRO_02.md) preserves all inputs,
+decoding conditions and resource floors. Its [new attempt is launched](provenance/pilots/v23_recovered_mmlu_pro02_20261022/EXECUTION_HANDOFF.md),
+with sequential CPU/CUDA gates before model calls; no stopped run is resumed.
 See the [design](docs/v23/PRESERVATION_FT_01.md) and
 [execution handoff](provenance/engineering/v23_preservation_ft01_20261022/EXECUTION_HANDOFF.md).
 

@@ -21,8 +21,9 @@ historically null, not relabeled zero. Recovery 01's CPU collection error also
 remains preserved separately.
 
 The selected bank has **1,710 MMLU rows and 648 sequences** across three arms,
-with 18,382 generated tokens. The 96 world rows represent 16 grouped worlds
-and two routes, not 96 independent worlds. Free generation has 12 prompts ×
+with 18,382 generated tokens. Each route's 96 world rows represents 16 grouped
+worlds; the two routes give 192 outputs per arm, not 192 independent worlds.
+Free generation has 12 prompts ×
 two seeds, not 24 independent prompts. These are previously exposed inputs,
 not a new confirmation bank.
 
@@ -71,6 +72,9 @@ mechanical comparison; no preference is assigned here.
 Run `python3 -B provenance/pilots/v23_comparison_recovery02_20261022/analyze.py verify`
 to replay the combined source/manifest/ID/analysis/literal-bank checks.
 `verify_qualification.py` additionally replays the XML counts and CPU audit.
+`verify_rows.py` recomputes all **1,710 MMLU** choice/tie decisions and checks
+all **576 world + 72 free** outputs against the frozen input targets, policies,
+seeds and EOS/cap rules; [all passed](ROW_REPLAY.json).
 `verify_decoding.py --tokenizer /path/to/pinned/tokenizer` checks every literal
 sequence with the pinned local tokenizer, with zero model calls. All **648/648**
 literal decodes passed; the [receipt](OFFLINE_DECODING.json) records all four
