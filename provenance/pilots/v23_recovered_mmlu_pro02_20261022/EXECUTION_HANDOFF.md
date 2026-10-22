@@ -31,3 +31,16 @@ ties, unparsed/capped answers and complete/planned denominators. Do not splice
 the 280 retained base rows from attempt 01. Planned scope: 840 direct scores
 and 84 reasoning sequences. No training, model weight save/deletion, judge
 calls from this job, export or release. No heartbeat monitor was created.
+
+## Nonterminal observation, 2026-10-22T00:44:29Z
+
+Base has 280 direct rows and one complete reasoning sequence (119 tokens, EOS).
+Its direct journal SHA-256 is
+`c629c3563a105b22ebd56fbc8e73d94a8f3b97af21f1d3225512eae8ff7d580e`,
+byte-identical to all 280 direct rows retained in stopped attempt 01. The
+previous generation:107 stopping point was passed, and a later sequence
+reached generation:168. Across 288 cache-audit rows every live before/after
+allocation was equal. The last observed reservation was 14,665,383,936 bytes,
+with 18,308,136,960 free GPU bytes. These are a progress snapshot, not peak
+resource guarantees or proof that all 84 sequences will finish. No terminal
+dispatcher receipt existed; continue the existing process only.

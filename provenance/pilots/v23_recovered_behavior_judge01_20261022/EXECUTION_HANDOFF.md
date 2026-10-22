@@ -36,3 +36,9 @@ turn calibration PASS or different answer text into a preference result.
 Save all raw response/receipt bytes and exact illustrative answer/judge text.
 The complete 72-answer bank already exists; no new learner generation is needed.
 No PR, merge, training, saved weights, deletion, export or release.
+
+At the 00:44 UTC inspection, four returned outcomes replayed VALID, one
+request was in flight (reserved with no outcome yet), and 169 were not
+dispatched. The live replay labels that unresolved reservation
+`UNKNOWN_REMOTE_EXECUTION`; it is not an observed timeout/error. PID 40812
+remained alive. This snapshot is not a final denominator or preference result.
