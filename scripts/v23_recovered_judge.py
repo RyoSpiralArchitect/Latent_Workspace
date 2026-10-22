@@ -16,6 +16,13 @@ SOURCES = [
     "scripts/v23_recovered_judge.py",
     "tests/test_v23_recovered_followup.py",
     "docs/v23/RECOVERED_FOLLOWUP_01.md",
+    "scripts/qualification_isolation.py",
+    "scripts/run_v23_comparison_recovery.py",
+    "scripts/run_v23_comparison_recovery02.py",
+    "scripts/run_v23_comparison.py",
+    "scripts/run_v22_comparison.py",
+    "scripts/run_native_7b_canary.py",
+    "configs/v23/COMPARISON_RECOVERY_02.json",
 ]
 
 
@@ -35,7 +42,7 @@ def requests_for(cases):
 def freeze(output, original, recovered, calibration):
     ex.require(judge.replay(calibration)["calibration_gate"] == "PASS", "Unchanged calibration")
     ex.require((calibration / "run/FINISHED.json").is_file(), "Terminal calibration")
-    arms, origins = bank.verify(original, recovered)
+    arms, origins = bank.verify(original, recovered, published_copy=True)
     cases = bank.cases_from_arms(arms, judge.plan())
     requests = requests_for(cases)
     ex.require(len(requests) == 174, "Original study denominator")
@@ -96,7 +103,7 @@ def verify(output, original, recovered, calibration):
         and judge.replay(calibration)["calibration_gate"] == "PASS",
         "Exact passed calibration",
     )
-    arms, origins = bank.verify(original, recovered)
+    arms, origins = bank.verify(original, recovered, published_copy=True)
     ex.require(origins == seal["origins"] == binding["origins"], "Explicit generation origins")
     ex.require(cases == bank.cases_from_arms(arms, judge.plan()), "Every literal answer retained")
     ex.require(requests == requests_for(cases) and len(requests) == 174, "Unchanged request recipe")

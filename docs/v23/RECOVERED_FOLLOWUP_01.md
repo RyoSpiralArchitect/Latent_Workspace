@@ -17,6 +17,9 @@ Both source seals are replayed against their exact Git trees. Every originally
 sealed source file must be unchanged in recovery; added orchestration/isolation
 files are recorded separately. Recovery's CPU/CUDA qualification and CPU
 visibility audit are mandatory. No complete bank means no new judge/model call.
+For published Git copies only, a missing empty checkpoint directory is allowed
+(Git does not track empty directories); any actual file is rejected. Live
+Furnace predecessor verification still requires that directory to exist empty.
 
 ## Blind judge
 

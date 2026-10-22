@@ -1,5 +1,27 @@
 # V23 P-on recovery 02 — authorized and launched once
 
+## Terminal update
+
+P-on and the recovery dispatcher completed successfully. All 570/192/24
+journals, 216 sequences and native weight identity replay; see the
+[bounded complete comparison](README.md). All original attempts remain
+unchanged. Do not rerun this now-completed recovery. The earlier active-run
+paragraph below is retained as launch history, not current status.
+
+The separately authorized MMLU-Pro follow-up was launched once at
+**2026-10-22T00:24:08Z**, source `cda0a8ae8c3648c41fae2be45b3208c9a5f1a9b6`,
+tmux `ltws-v23-recovered-mmlu-pro01-20261022`, initial pane PID `3823420`.
+Its output is `/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v23-recovered-mmlu-pro01-20261022`.
+It requires 301/301 CPU and CUDA plus the visibility audit before model roles.
+Both 301-test suites and isolation passed, but base stopped at generation:107
+after 280 direct scores; no complete reasoning row or later arm followed.
+See the [fixed terminal record](../v23_recovered_mmlu_pro01_20261022/README.md).
+Ryō subsequently authorized a separate cache-reclamation repair and trial.
+No resume or retry of the stopped bundle. The judge study must be frozen from
+the verified complete bank and its adapter dependencies committed before dispatch.
+
+## Launch history
+
 Ryō explicitly approved the corrected separate CPU→CUDA→P-on attempt.
 Launch: **2026-10-22T00:09:15Z** / 09:09:15 JST.
 Source: **`af9cd1a727d98d942df1845c35a14628f8f7481b`**, **792 sealed files**.

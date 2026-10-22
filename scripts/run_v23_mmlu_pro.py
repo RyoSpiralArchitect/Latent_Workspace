@@ -97,7 +97,7 @@ def predecessor(plan):
     )
 
 
-def run(core, args, plan, seal, *, predecessor_fn=None):
+def run(core, args, plan, seal, *, predecessor_fn=None, generation_fn=None):
     from latent_workspace.optimizer_state import tree_hash
 
     parent = runtime_plan(plan)
@@ -145,7 +145,7 @@ def run(core, args, plan, seal, *, predecessor_fn=None):
         for row in data["rows"]:
             if row["id"] not in data["generation_ids"]:
                 continue
-            result = ev.generate(
+            result = (ev.generate if generation_fn is None else generation_fn)(
                 graph,
                 row["reasoning_ids"],
                 [],

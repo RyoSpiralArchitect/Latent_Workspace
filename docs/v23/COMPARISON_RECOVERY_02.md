@@ -1,8 +1,10 @@
 # V23 whole-P-on recovery 02
 
 Update: separately authorized and launched at **2026-10-22T00:09:15Z**.
-Both 248-test suites and CPU isolation passed; P-on is executing. See the
-[dated execution handoff](../../provenance/pilots/v23_comparison_recovery02_20261022/EXECUTION_HANDOFF.md).
+Both 248-test suites and CPU isolation passed; P-on subsequently completed
+570 MMLU scores and 216 sequences with unchanged native weights. See the
+[complete diagnostic](../../provenance/pilots/v23_comparison_recovery02_20261022/README.md)
+and [dated handoff](../../provenance/pilots/v23_comparison_recovery02_20261022/EXECUTION_HANDOFF.md).
 The pre-launch design below is retained; qualification is not a quality result.
 
 This is the same finite P-on-only evaluation as recovery 01, under a distinct

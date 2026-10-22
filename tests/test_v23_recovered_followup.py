@@ -153,3 +153,18 @@ def test_original_source_still_verifies_from_git_without_loading_model():
     folder = bank.ROOT / "provenance/pilots/v23_comparison01_20261022/furnace"
     seal = bank.source_seal(folder, bank.plan()["original_source"])
     assert len(seal["source_hashes"]) == 774
+
+
+@pytest.mark.parametrize("published", [False, True])
+def test_checkpoint_inventory_never_allows_saved_files(tmp_path, published):
+    (tmp_path / "checkpoints").mkdir()
+    bank.no_saved_checkpoints(tmp_path, published_copy=published)
+    (tmp_path / "checkpoints/forbidden.pt").write_bytes(b"not a model")
+    with pytest.raises(ValueError, match="No saved"):
+        bank.no_saved_checkpoints(tmp_path, published_copy=published)
+
+
+def test_missing_empty_directory_only_allowed_for_published_copy(tmp_path):
+    with pytest.raises(ValueError, match="No saved"):
+        bank.no_saved_checkpoints(tmp_path)
+    bank.no_saved_checkpoints(tmp_path, published_copy=True)

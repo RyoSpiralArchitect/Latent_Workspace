@@ -23,29 +23,27 @@ tests and exact real-model v2 restart. On the same exposed 40-row dev panel,
 base/off/on NLL is 1.267038 / 1.058723 / 1.069616. Both improve this loss;
 KL-on gives slightly less CE gain, with retention **not yet established**.
 Off exactly reproduces V22's final state fingerprint and dev results.
-The [matched benchmark/generation diagnostic is incomplete](provenance/pilots/v23_comparison01_20261022/README.md):
-base/off finished, but P-on stopped after 79/570 MMLU items when our parallel
-CPU qualification became a GPU client. This is an operator isolation error;
-all receipts remain sealed, no automatic retry. Available base/off MMLU is
-356/570 vs 354/570, not a retention pass; the full P-on score is unknown.
-The separately authorized [blind judge and MMLU-Pro follow-up](docs/v23/ADDITIONAL_EVALUATION_01.md)
-preserves this run unchanged: [Mistral calibration passed 32/32](provenance/pilots/v23_behavior_judge01_20261022/README.md),
-but its 174 study calls remain undispatched because 24 P-on answers are missing.
-The [MMLU-Pro panel is prepared](provenance/pilots/v23_mmlu_pro01_20261022/README.md)
-(280 direct-choice + 28 reasoning items per arm). Its CPU suite passed 245/245,
-but GPU isolation failed; CUDA qualification and all benchmark calls are
-undispatched. The authorized [whole-P-on recovery](docs/v23/COMPARISON_RECOVERY_01.md)
-then [passed CPU GPU-isolation but stopped at test collection](provenance/pilots/v23_comparison_recovery01_20261022/README.md):
-the same-process entry reload was wrongly treated as late masking. No CUDA
-qualification or 7B call followed. The reentry repair and a distinct recovery-02
-plan are prepared, with 64/64 local boundary/judge/panel regressions passing;
-after separate approval, [recovery 02 passed 248/248 CPU and CUDA checks plus
-the CPU isolation audit and started P-on](provenance/pilots/v23_comparison_recovery02_20261022/EXECUTION_HANDOFF.md).
-Neither stopped attempt is resumed or relabeled as successful. The
-[explicit combined-bank follow-up](docs/v23/RECOVERED_FOLLOWUP_01.md) keeps
-original base/off and whole recovered P-on under separate source seals, with
-unchanged calibrated judge and prepared benchmark policies. Its dispatch
-requires a verified terminal P-on arm, not just passing tiny tests.
+The [complete recovered benchmark/generation diagnostic](provenance/pilots/v23_comparison_recovery02_20261022/README.md)
+now combines original base/off with whole recovered P-on under separate source
+seals. MMLU base/off/on is **356/354/355 out of 570** (tie-free **351/349/349**);
+latent-world exactness is **47/83/83 out of 96**, inline **75/87/86**. No trained
+arm gains a base-wrong MMLU item on this selected panel. This is not a general
+retention pass or proof of causal workspace use. The [literal answer bank](provenance/pilots/v23_comparison_recovery02_20261022/analysis/ANSWER_BANK.md)
+contains all 72 free answers, including capped/unchanged ones; all 648 world/free
+literal sequences replay. P-on passed both 248-test suites and CPU isolation.
+
+The [original incomplete comparison](provenance/pilots/v23_comparison01_20261022/README.md)
+and [failed collection recovery](provenance/pilots/v23_comparison_recovery01_20261022/README.md)
+remain unchanged. Their partial rows are never spliced into the completed bank.
+The [explicit follow-up](docs/v23/RECOVERED_FOLLOWUP_01.md) retains the
+[32/32 passed Mistral calibration](provenance/pilots/v23_behavior_judge01_20261022/README.md)
+for a separately frozen 174-request study. No preference is inferred from text
+differences alone. The [first recovered MMLU-Pro attempt](provenance/pilots/v23_recovered_mmlu_pro01_20261022/README.md)
+passed 301/301 CPU and CUDA plus isolation, but stopped on inactive CUDA
+reservation growth after base's 280 direct scores (92 correct), before any
+complete reasoning row. Off/on were undispatched. A separately authorized
+[cache-only repair and new attempt](docs/v23/RECOVERED_MMLU_PRO_02.md) preserves
+all inputs, decoding conditions and resource floors; no stopped run is resumed.
 See the [design](docs/v23/PRESERVATION_FT_01.md) and
 [execution handoff](provenance/engineering/v23_preservation_ft01_20261022/EXECUTION_HANDOFF.md).
 

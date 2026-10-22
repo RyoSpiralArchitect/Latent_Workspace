@@ -91,7 +91,15 @@ def role(folder, seal, expected_plan):
     return rows
 
 
-def verify(original=None, recovered=None):
+def no_saved_checkpoints(folder, *, published_copy=False):
+    """Git omits empty directories; live execution still requires the directory."""
+    path = folder / "checkpoints"
+    if published_copy and not path.exists():
+        return
+    ex.require(path.is_dir() and not list(path.iterdir()), "No saved model bodies")
+
+
+def verify(original=None, recovered=None, *, published_copy=False):
     p = plan()
     original = Path(p["original_bundle"]) if original is None else Path(original)
     recovered = Path(p["recovery_bundle"]) if recovered is None else Path(recovered)
@@ -116,7 +124,7 @@ def verify(original=None, recovered=None):
         and start["qualification"] == qualified,
         "Recovery dispatch qualification",
     )
-    ex.require(not list((recovered / "checkpoints").iterdir()), "No saved model bodies")
+    no_saved_checkpoints(recovered, published_copy=published_copy)
     arms = {
         "base": role(original / "raw/base", old_seal, old_plan),
         "off": role(original / "raw/off", old_seal, old_plan),
