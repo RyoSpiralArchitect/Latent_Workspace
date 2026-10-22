@@ -1,12 +1,18 @@
 # V24 readout probe 01 — execution handoff
 
-Pre-launch record: **NOT_DISPATCHED**. Remote source/launch/terminal receipts
-will be recorded after the exact committed source has passed admission.
+Execution source: `bb1ecc8b3b3b98f9b63a67da1dbdd76033c76c79` (814 sealed
+source paths). Launched once on 2026-10-22 at 04:26:14 UTC in tmux
+`ltws-v24-readout-probe01-20261022`; initial pane PID 3964874.
+
+At the 04:35 UTC read-only check, CPU **350/350** and CUDA **350/350** passed
+(zero failures/errors/skips), CPU isolation passed, and base/P-off each had
+their complete **44-case / 197-forward** terminal receipt. P-on and the overall
+dispatch receipt were still pending. This snapshot is not overall completion.
 
 Local repo: `/Users/ryohiga/SpiralReality/worktrees/latent-workspace-full-ft-v1`.
 Branch: `SpiralReality/v24-readout-improvement`.
 Remote: `https://github.com/RyoSpiralArchitect/Latent_Workspace.git`.
-Proposed Furnace isolated source:
+Furnace isolated source (detached at the execution commit):
 `/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v24-readout-probe01-20261022`.
 Exclusive output:
 `/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v24-readout-probe01-20261022`.
@@ -39,3 +45,10 @@ Ryō subsequently authorized retirement of no-longer-needed intermediate weights
 That is a separate inventoried operation, not permission for this launcher to
 delete anything. Exact eligible targets and receipts must be checked first;
 scientific final comparison arms remain protected.
+
+The separate [intermediate retirement ledger](../../inventory/v24_intermediates_20261022/README.md)
+selects only V23 canary step1 and V22 training step16. Its first inventory
+stopped before deletion on a `fuser --` syntax error; the original attempt
+remains intact. The corrected, separately named inventory passed complete
+body hashes and replay/continuation checks. Publish its ledger before removal;
+do not modify the running source worktree or its source seal.
