@@ -1,5 +1,19 @@
 # V23 recovered MMLU-Pro 02 — authorized separate launch
 
+## Terminal handoff, 2026-10-22
+
+**Complete; do not relaunch.** The dispatcher and all three arms terminated
+successfully: 840 direct rows, 84 reasoning sequences, 17,005 generated tokens.
+The full bundle was pulled and replayed locally; [results](README.md) and
+[all literal reasoning outputs](analysis/REASONING_BANK.md) are published.
+Base/off/on direct correctness is 92/101/100 of 280; strict parsed reasoning
+correctness is 11/9/8 of 28. Missingness, ties and format failures remain visible.
+The current human request authorizes a PR for this accumulated branch, not a
+merge, release, fresh run, training or deletion. Aether was not disturbed.
+No monitor is active. The launch/progress observations below are historical.
+
+## Original launch record
+
 Launched once **2026-10-22T00:39:17Z** (09:39 JST).
 Committed source: **`b2f569740636e2cffb80e4091323d551ea7de4c2`**.
 Furnace source:

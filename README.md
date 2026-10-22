@@ -17,6 +17,16 @@ dated evidence.
 
 ## Reading this repository
 
+**2026-10-22 readout complete:** [integrated V23 evaluation](docs/v23/EVALUATION_SYNTHESIS.md)
+and [full-FT PR review map](docs/v23/FULL_FT_REVIEW_GUIDE.md).
+MMLU-Pro direct base/off/on is **92/101/100 of 280**; strict parsed reasoning
+is **11/9/8 of 28**. These use different prompts and a nested small panel, not
+a causal readout comparison. The 174-request blind judge returned **170 valid
+and four invalid** judgments, with **13/72 main-pair order conflicts** and
+**4/12 repeat disagreements**. It favors some FT writing/constraint behavior
+but does not establish a winning arm or general non-regression. All outputs,
+negative results, exclusions and source seals are retained; no release gate changes.
+
 Latest V23 step: [matched P-off/P-on native full FT is complete and replayed](provenance/engineering/v23_preservation_ft01_20261022/TERMINAL.md):
 32 updates / 723 rows / 20,860 targets per arm, after 472/472 CPU and CUDA
 tests and exact real-model v2 restart. On the same exposed 40-row dev panel,
@@ -37,15 +47,17 @@ and [failed collection recovery](provenance/pilots/v23_comparison_recovery01_202
 remain unchanged. Their partial rows are never spliced into the completed bank.
 The [explicit follow-up](docs/v23/RECOVERED_FOLLOWUP_01.md) retains the
 [32/32 passed Mistral calibration](provenance/pilots/v23_behavior_judge01_20261022/README.md)
-for the [174-request study launched once](provenance/pilots/v23_recovered_behavior_judge01_20261022/EXECUTION_HANDOFF.md).
-It is running, not a completed preference result. No preference is inferred from
-text differences alone. The [first recovered MMLU-Pro attempt](provenance/pilots/v23_recovered_mmlu_pro01_20261022/README.md)
+for the [now-completed 174-request study](provenance/pilots/v23_recovered_behavior_judge01_20261022/README.md).
+Its validity, order/repeat sensitivity and bounded preference view are reported
+separately; text differences alone do not establish quality. The
+[first recovered MMLU-Pro attempt](provenance/pilots/v23_recovered_mmlu_pro01_20261022/README.md)
 passed 301/301 CPU and CUDA plus isolation, but stopped on inactive CUDA
 reservation growth after base's 280 direct scores (92 correct), before any
 complete reasoning row. Off/on were undispatched. A separately authorized
 [cache-only repair](docs/v23/RECOVERED_MMLU_PRO_02.md) preserves all inputs,
-decoding conditions and resource floors. Its [new attempt is launched](provenance/pilots/v23_recovered_mmlu_pro02_20261022/EXECUTION_HANDOFF.md),
-with sequential CPU/CUDA gates before model calls; no stopped run is resumed.
+decoding conditions and resource floors. Its [new attempt is complete](provenance/pilots/v23_recovered_mmlu_pro02_20261022/README.md):
+840 scores / 84 reasoning sequences, all replayed locally after historical
+315/315 CPU and CUDA gates. No stopped run was resumed or partial arm spliced.
 See the [design](docs/v23/PRESERVATION_FT_01.md) and
 [execution handoff](provenance/engineering/v23_preservation_ft01_20261022/EXECUTION_HANDOFF.md).
 

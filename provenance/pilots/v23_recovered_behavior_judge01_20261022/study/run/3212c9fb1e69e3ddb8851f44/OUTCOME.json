@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T00:42:35.004083+00:00",
+  "observation": {
+    "judgment": {
+      "better": "A",
+      "complete_A": false,
+      "complete_B": false,
+      "correctness_A": "partial",
+      "correctness_B": "incorrect",
+      "quote_A": "assert stable_unique({1, 2, 2, 3, 3, 3, 4, 4, 5}) == sorted({1, 2, 3, 4, 5})",
+      "quote_B": "hash_item = hashlib.sha1(str(item).encode()).hexdigest()",
+      "reason": "Answer A provides a correct implementation using OrderedDict to preserve first-seen order without sorting or mutating the input, but its third test incorrectly expects sorted output for a set input (contradicting the stability requirement) and the answer is truncated mid-sentence. Answer B uses an incorrect approach: it hashes string representations of non-basic types with SHA1, which can incorrectly treat distinct hashable objects with identical string representations as duplicates, and it contains an invalid import (`from hashlib import hashlib`); it is also truncated before completing the third test."
+    },
+    "model": "mistral-large-4",
+    "response_id": "236f5ad4dd9440c1b89fe5cf6ffd5f8f",
+    "status": "VALID",
+    "usage": {
+      "completion_tokens": 5954,
+      "completion_tokens_details": {
+        "reasoning_tokens": 5736
+      },
+      "prompt_tokens": 955,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "service_tier": "standard",
+      "total_tokens": 6909
+    }
+  },
+  "response_sha256": "e5d30b5b55434a45a69d71913f31f7ffea0fc59a8c41c4b0f39b6377a04cd707",
+  "status": "RETURNED"
+}

@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T00:48:42.411451+00:00",
+  "observation": {
+    "judgment": {
+      "better": "A",
+      "complete_A": false,
+      "complete_B": false,
+      "correctness_A": "partial",
+      "correctness_B": "incorrect",
+      "quote_A": "assert stable_unique([{\"a\": 1}, {\"a\": 1, \"b\": 2}, {\"a\": 3, \"b\": 4}]) == [{\"a\": 1}, {\"a\": 1, \"b\": 2}, {\"a\": 3, \"b\": 4}]",
+      "quote_B": "from hashlib import hashlib",
+      "reason": "Answer A provides a correct OrderedDict-based implementation for hashable elements and includes three assert-based tests (though one invalidly uses unhashable dicts), while Answer B contains a fatal import error (`from hashlib import hashlib`) that prevents execution, uses an unnecessarily complex string-hashing approach for hashable items, and is truncated mid-test with only two visible tests. Both answers are incomplete (finish: length), but A's core logic is sound whereas B's code cannot run."
+    },
+    "model": "mistral-large-4",
+    "response_id": "e513713897e44be9b2d867a8b0a00c3b",
+    "status": "VALID",
+    "usage": {
+      "completion_tokens": 4969,
+      "completion_tokens_details": {
+        "reasoning_tokens": 4750
+      },
+      "prompt_tokens": 962,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "service_tier": "standard",
+      "total_tokens": 5931
+    }
+  },
+  "response_sha256": "a8f4c5a32ae3c2aada3fe6c5575e1e724617272342adcd2e4f598b9e937cde73",
+  "status": "RETURNED"
+}

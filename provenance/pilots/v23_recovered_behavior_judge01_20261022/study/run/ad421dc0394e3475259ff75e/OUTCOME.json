@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T00:43:26.922881+00:00",
+  "observation": {
+    "judgment": {
+      "better": "A",
+      "complete_A": false,
+      "complete_B": false,
+      "correctness_A": "partial",
+      "correctness_B": "incorrect",
+      "quote_A": "assert stable_unique([]) == []",
+      "quote_B": "from hashlib import hashlib",
+      "reason": "Answer A correctly implements stable_unique using OrderedDict to preserve first-seen order for hashable items without mutation, and includes three assert tests (though the set-input test incorrectly expects sorted output rather than iteration order). Answer B unnecessarily hashes non-primitive items via SHA1, which risks incorrect deduplication for distinct hashable objects with identical string representations and fails to handle hashable types like tuples directly; it also omits the third test in the visible portion. Both answers are truncated."
+    },
+    "model": "mistral-large-4",
+    "response_id": "099f0e2b700a443cb8b6401a67c909e1",
+    "status": "VALID",
+    "usage": {
+      "completion_tokens": 4493,
+      "completion_tokens_details": {
+        "reasoning_tokens": 4338
+      },
+      "prompt_tokens": 955,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "service_tier": "standard",
+      "total_tokens": 5448
+    }
+  },
+  "response_sha256": "7b0e53a17cbde3a3fbaf42cb9e96350b60b0159da68cf12c80db529740f0c2b2",
+  "status": "RETURNED"
+}

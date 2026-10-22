@@ -9,6 +9,27 @@ No acceptance threshold or release gate changes. The objective is native full
 FT that preserves ordinary ability and improves useful workspace computation,
 not an optimized frozen-host hybrid or another task-specific output adapter.
 
+## Post-evaluation update, 2026-10-22
+
+The [integrated readout is now terminal](EVALUATION_SYNTHESIS.md). MMLU-Pro
+direct improves from 92/280 to 101/100 (off/on), but strict reasoning is
+11/9/8 of 28; on those same 28 IDs even direct scoring is 12/10/11. Do not
+infer a causal transport failure from differently selected/prompted endpoints.
+The recorded failures distinguish missing required markers, explanation-to-label
+errors and arithmetic/termination breakdown. The blind judge favors some FT
+writing/constraint behavior but has 13/72 order-conflicting main pairs and
+4/12 repeat disagreements. P-on is not a demonstrated winner or retention cure.
+
+Carry these into the existing P/B/I sequence as **proposed factors only**:
+retain writing/world gains; inspect identity-to-option binding and EOS separately;
+protect truthful code explanations as well as code form; use matched-prefix
+readout diagnostics before amplifying Q or adding a same-purpose loss. Preserve
+the original task-score/parser/judge gates and use new train-only oracles and a
+fresh untouched confirmation split. Exposed benchmark/answer-bank rows are not
+training targets. No training or fresh model/judge calls are started by this plan.
+
+The following training/audit notes retain their historical sequence.
+
 **2026-10-22 terminal update:** the [P-only comparison completed](../../provenance/engineering/v23_preservation_ft01_20261022/TERMINAL.md)
 32 updates per arm with exact positive-P restart. Off reproduces V22's final
 fingerprint and dev results. Base/off/on fixed dev NLL is 1.267038 / 1.058723 /

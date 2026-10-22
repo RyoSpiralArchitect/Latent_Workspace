@@ -1,5 +1,19 @@
 # V23 recovered blind judge — existing process only
 
+## Terminal handoff, 2026-10-22
+
+**Complete; do not dispatch again.** Terminal at 02:41:47 UTC / 11:41 JST:
+174 returned, 170 valid, four invalid exact-quote failures, zero undispatched
+or unknown. Offline replay matches all response bytes and terminal analysis.
+[Results](README.md) retain 13/72 main-pair order conflicts, two unjudged pairs,
+four repeat disagreements out of 12, all six identical-control judgments,
+usage and every final judgment. No extra API calls were made for publication.
+Ryō's current request authorizes a PR for the accumulated branch; it supersedes
+the launch-era no-PR restriction below, **not** the prohibitions on new runs,
+training, deletion, merge or release. No heartbeat monitor is active.
+
+## Historical launch and progress record
+
 Launched once **2026-10-22T00:38:46.077221+00:00** (09:38 JST).
 Local PID **40812**, executor session **92242**.
 Source **`b2f569740636e2cffb80e4091323d551ea7de4c2`**.
