@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T00:47:31.898499+00:00",
+  "observation": {
+    "judgment": {
+      "better": "A",
+      "complete_A": false,
+      "complete_B": false,
+      "correctness_A": "incorrect",
+      "correctness_B": "incorrect",
+      "quote_A": "assert stable_unique([{\"a\": 1}, {\"a\": 1, \"b\": 2}, {\"a\": 3, \"b\": 4}]) == [{\"a\": 1}, {\"a\": 1, \"b\": 2}, {\"a\": 3, \"b\": 4}]",
+      "quote_B": "from hashlib import hashlib",
+      "reason": "Answer A implements the correct OrderedDict-based algorithm for hashable items but includes a test using unhashable dictionaries, which would raise TypeError. Answer B contains an invalid import ('from hashlib import hashlib') and uses an incorrect approach of hashing string representations, which can falsely deduplicate distinct hashable objects with identical string forms. Both answers are truncated, but A's core logic is correct while B's is fundamentally flawed."
+    },
+    "model": "mistral-large-4",
+    "response_id": "2ff3326c1adc4595a4fa50181dd2141c",
+    "status": "VALID",
+    "usage": {
+      "completion_tokens": 5698,
+      "completion_tokens_details": {
+        "reasoning_tokens": 5490
+      },
+      "prompt_tokens": 962,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "service_tier": "standard",
+      "total_tokens": 6660
+    }
+  },
+  "response_sha256": "65870013c99f4f94d45e2f750aee7f2bfb82f39edbb44477742cc334c0d9c97c",
+  "status": "RETURNED"
+}

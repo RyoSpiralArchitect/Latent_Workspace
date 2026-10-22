@@ -1,0 +1,145 @@
+{
+  "created_at": "2026-10-22T00:38:21.618411+00:00",
+  "files": {
+    "ADAPTER_BINDING.json": {
+      "bytes": 4315,
+      "sha256": "4267f48b38e07f4030fc825a73b82947a9155c4df8dc6aa2fa69185869940e19"
+    },
+    "BLIND_PACKET.json": {
+      "bytes": 357900,
+      "sha256": "bd45b93701d61c7069c97f18dbc45467d7a1c673740f54258c94258f074fc479"
+    },
+    "CASES_OPERATOR.json": {
+      "bytes": 651342,
+      "sha256": "a07c2f6814604b8ab5bc78ad17003387375138fe420825fdb30fe1ec18e70020"
+    },
+    "REQUESTS_OPERATOR.json": {
+      "bytes": 1263159,
+      "sha256": "5d765c5e8dfbe2fe4eb67541d2006d697f3e9690d985014903c0cd27e27c5e88"
+    }
+  },
+  "origins": {
+    "arms": {
+      "base": {
+        "attempt": "original",
+        "terminal_sha256": "c9c1c1fcf7811a2f970b6278b99b303306997643927e0b88e9a180032a4719ec"
+      },
+      "off": {
+        "attempt": "original",
+        "terminal_sha256": "df3f73424beb79784b3026824290dc25eb9e80375bbaddcfacd6301de374388b"
+      },
+      "on": {
+        "attempt": "recovery",
+        "terminal_sha256": "ad63390dcf5c4f99de1a27f1359c03f58bd95ecd186cc2b0afa5af23ed76ddc4"
+      }
+    },
+    "excluded_original_on_rows": 79,
+    "non_regression": "NOT_ESTABLISHED",
+    "old_expression_gate": "FAIL",
+    "original": {
+      "excluded_partial_arm": "on",
+      "retained_completed_arms": [
+        "base",
+        "off"
+      ],
+      "source": "84073310cd7b2c56b5e3de046fb3bdc99e461bfb",
+      "source_seal_sha256": "a2cf33e3b486bcbb1f2838103749a6ea2e5e2cbdf636f755990cb6efde93b362",
+      "terminal_sha256": "03ad7df6cc75c8fa9cb060493b86c7a156c2d0d639cc180a772c7529c0a94d8e"
+    },
+    "plan": {
+      "arm_origins": {
+        "base": "original",
+        "off": "original",
+        "on": "recovery"
+      },
+      "claim_scope": "Input-provenance amendment only. Original dispatcher stays incomplete. Reuse whole original base/off and whole successful recovery-02 P-on, never the original 79 P-on scores. Judge rubric/model/body builder/parser/calibration and MMLU-Pro inputs/scorer/decoding are unchanged. No training, save, deletion, promotion or release.",
+      "excluded": [
+        "original/raw/on",
+        "comparison-recovery01"
+      ],
+      "non_regression": "NOT_ESTABLISHED",
+      "old_expression_gate": "FAIL",
+      "original_bundle": "/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v23-comparison01-20261022",
+      "original_source": "84073310cd7b2c56b5e3de046fb3bdc99e461bfb",
+      "recovery_bundle": "/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v23-comparison-recovery02-20261022",
+      "recovery_source": "af9cd1a727d98d942df1845c35a14628f8f7481b",
+      "reference_judge_plan": "configs/v23/BEHAVIOR_JUDGE_01.json",
+      "reference_mmlu_pro_plan": "configs/v23/MMLU_PRO_01.json",
+      "schema": "ltws-v23-explicit-recovered-bank-01",
+      "winner": "none"
+    },
+    "recovery": {
+      "source": "af9cd1a727d98d942df1845c35a14628f8f7481b",
+      "source_seal_sha256": "4744883aa545b8843450401ebc929250c87cccb3d4a302dad2bebc37e91c60e8",
+      "terminal_sha256": "3b37000434ee6df2966c77d7241b60d4ba5c46e58b261b3a0e5e63cc96f8b6bd"
+    },
+    "schema": "explicit-combined-bank-not-an-original-success",
+    "winner": "none"
+  },
+  "phase": "study",
+  "plan": {
+    "accepted_response_models": [
+      "mistral-large-4"
+    ],
+    "calibration_requests": 32,
+    "calibration_required_expected": 32,
+    "endpoint": "https://api.mistral.ai/v1/chat/completions",
+    "env_key": "MISTRAL_API_KEY",
+    "generation_plan": "configs/v23/COMPARISON_01.json",
+    "generation_source": "84073310cd7b2c56b5e3de046fb3bdc99e461bfb",
+    "generation_status": "V23_BASE_OFF_ON_COMPARISON_COMPLETE_NOT_RELEASE",
+    "identical_control_prompts": [
+      "reasoning-01",
+      "writing-01",
+      "code-01"
+    ],
+    "max_tokens": 16384,
+    "metadata_endpoint": "https://api.mistral.ai/v1/models/mistral-large-4",
+    "model": "mistral-large-4",
+    "no_retry": true,
+    "non_regression": "NOT_ESTABLISHED",
+    "old_expression_gate": "FAIL",
+    "pairs": [
+      [
+        "base",
+        "off"
+      ],
+      [
+        "base",
+        "on"
+      ],
+      [
+        "off",
+        "on"
+      ]
+    ],
+    "provider": "mistral",
+    "repeat_prompts": [
+      "reasoning-01",
+      "reasoning-02",
+      "writing-01",
+      "code-01"
+    ],
+    "repeat_seed": 2026102101,
+    "schema": "ltws-v23-blind-behavior-judge-01",
+    "seed": 2026102201,
+    "study_requests": 174,
+    "temperature": 0.2,
+    "timeout_seconds": 1200,
+    "winner": "none"
+  },
+  "requests": 174,
+  "source": {
+    "configs/v22/BASE_COMPARISON_01.json": "a515cf29439bbe37a6a5a920a5ffbc7e719e439cc17d364ac9ad3688b9204449",
+    "configs/v23/BEHAVIOR_JUDGE_01.json": "5aacf5b7afdf7735e042f3429a8f348bc18549ed363301ef7be590e9e60a6b63",
+    "configs/v23/COMPARISON_01.json": "1b2f4e4a2ff18e1a09bf16a033df51b3fd71bb006007b033938a4b99c64f118f",
+    "docs/v23/ADDITIONAL_EVALUATION_01.md": "447ceec667b67da7231ba2b1c1634c820b8c80eddfef2a5671061e3a7b5afe3d",
+    "scripts/judge_v14_answer_bank.py": "af785da1787f28abaaa53f68127628bd4fab9290625710d6e6c8bf1701c8c331",
+    "scripts/run_v14_judge_panel.py": "4907147317cb6303ea9fa49db5f2f63d35ea7991d7339451d446afa9455eaa36",
+    "scripts/run_v14_mistral_extension.py": "41ecacddc6b154134e29aa0b442c46d63243b39f49845dced02a3d30c344fb6c",
+    "scripts/v23_behavior_judge.py": "e73776112ed488e7a25cb43e8169813d63662fbcfa43d2c5a78d9575d97ca353",
+    "src/latent_workspace/execution.py": "103320ee7bcc5c86e5c724d631d77b872c4910d355829e841c26c4b48a811f01",
+    "tests/test_v23_behavior_judge.py": "f70a26bf43b02b5c590a5af622f808d4cb88526f121e6ef877f86cf35eadd285"
+  },
+  "source_commit": "b2f569740636e2cffb80e4091323d551ea7de4c2"
+}

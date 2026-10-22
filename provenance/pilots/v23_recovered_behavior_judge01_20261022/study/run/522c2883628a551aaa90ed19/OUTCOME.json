@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T00:46:23.981519+00:00",
+  "observation": {
+    "judgment": {
+      "better": "A",
+      "complete_A": false,
+      "complete_B": true,
+      "correctness_A": "partial",
+      "correctness_B": "incorrect",
+      "quote_A": "assert stable_unique([1, 2, 2, 3, 4, 4, 5]) == [1, 2, 3, 4",
+      "quote_B": "assert stable_unique([{\"a\": 1}, {\"a\": 1, \"b\": 2}, {\"a\": 3, \"b\": 4}]) == [{\"a\": 1}, {\"a\": 1, \"b\": 2}, {\"a\": 3, \"b\": 4}]",
+      "reason": "A is incomplete (truncated mid-test, missing the third test) and uses SHA1 of string representations for non-primitives, which can incorrectly deduplicate unequal objects with identical string representations. B is incorrect because its third test uses unhashable dictionaries, causing a TypeError when the function attempts to use them as keys in OrderedDict."
+    },
+    "model": "mistral-large-4",
+    "response_id": "bd5cddd94b62454f9aaa80a335d8ef01",
+    "status": "VALID",
+    "usage": {
+      "completion_tokens": 8446,
+      "completion_tokens_details": {
+        "reasoning_tokens": 8228
+      },
+      "prompt_tokens": 962,
+      "prompt_tokens_details": {
+        "cached_tokens": 492
+      },
+      "service_tier": "standard",
+      "total_tokens": 9408
+    }
+  },
+  "response_sha256": "4a47af4ff926d51821d21f4153f0cde8a39fddd5f179a550a1996acec4446432",
+  "status": "RETURNED"
+}

@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T00:52:01.637513+00:00",
+  "observation": {
+    "judgment": {
+      "better": "B",
+      "complete_A": false,
+      "complete_B": false,
+      "correctness_A": "incorrect",
+      "correctness_B": "incorrect",
+      "quote_A": "assert stable_unique([{\"a\": 1}, {\"a\": 1, \"b\": 2}, {\"a\": 3, \"b\": 4}]) == [{\"a\": 1}, {\"a\": 1, \"b\": 2}, {\"a\": 3, \"b\": 4}]",
+      "quote_B": "assert stable_unique({1, 2, 2, 3, 3, 3, 4, 4, 5}) == sorted({1, 2, 3, 4, 5})",
+      "reason": "Both answers provide the correct function implementation using OrderedDict to preserve first-seen order without mutating the input, but both include an invalid third test. Answer A tests with dictionaries, which are unhashable and will raise a TypeError when used as OrderedDict keys, directly violating the task's 'hashable elements' requirement. Answer B tests with a set (which has no defined first-seen order) and expects sorted output, contradicting the 'do not sort' and 'first-seen order' requirements. However, Answer B is less incorrect because it uses hashable elements (integers) and the test will execute without crashing, whereas Answer A's test is guaranteed to fail with an exception. Both answers are incomplete, ending mid-sentence due to length limits."
+    },
+    "model": "mistral-large-4",
+    "response_id": "d3ff2b41baf844bca43b04ef9f59c0de",
+    "status": "VALID",
+    "usage": {
+      "completion_tokens": 5702,
+      "completion_tokens_details": {
+        "reasoning_tokens": 5385
+      },
+      "prompt_tokens": 972,
+      "prompt_tokens_details": {
+        "cached_tokens": 492
+      },
+      "service_tier": "standard",
+      "total_tokens": 6674
+    }
+  },
+  "response_sha256": "a3c713026b3ebbb7e0a5c732aca5e0a3965b4a60e5b53490cfd45c00caa5967c",
+  "status": "RETURNED"
+}

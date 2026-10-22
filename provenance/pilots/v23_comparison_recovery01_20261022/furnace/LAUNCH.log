@@ -1,0 +1,21 @@
+{"entry": "scripts/run_v23_comparison_recovery.py", "fresh_bytecode_cache": true, "isolated_python": true, "schema": "pre-import-source-check-v1", "source_commit": "106e12314d72a16a0515a5961989ed49a193a4f8", "source_files": 789, "untracked_check": "all"}
+
+==================================== ERRORS ====================================
+____________ ERROR collecting tests/test_v23_comparison_recovery.py ____________
+tests/test_v23_comparison_recovery.py:8: in <module>
+    import run_v23_comparison_recovery as recovery
+scripts/run_v23_comparison_recovery.py:17: in <module>
+    isolate_cli_before_imports()
+scripts/qualification_isolation.py:33: in isolate_cli_before_imports
+    mask_before_import()
+scripts/qualification_isolation.py:40: in mask_before_import
+    require("torch" not in modules, "CPU visibility must be set before importing torch")
+scripts/qualification_isolation.py:22: in require
+    raise ValueError(message)
+E   ValueError: CPU visibility must be set before importing torch
+=========================== short test summary info ============================
+ERROR tests/test_v23_comparison_recovery.py - ValueError: CPU visibility must...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.38s
+{"status": "INCOMPLETE_NO_RETRY", "device": "cpu", "real_model_updates": 0, "new_sequences": 0, "judge_calls": 0, "weight_deletions": 0, "native_weight_updates": 0, "old_expression_gate": "FAIL", "winner": "none", "non_regression": "NOT_ESTABLISHED", "cpu_mkldnn_enabled": false, "pytest_exit_code": 2, "counts": {"tests": 1, "failures": 0, "errors": 1, "skipped": 0}, "error": "ValueError: Tiny qualification failed", "traceback": "Traceback (most recent call last):\n  File \"/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v23-comparison-recovery01-20261022/src/latent_workspace/execution.py\", line 249, in qualify\n    require(code == 0 and totals == expected, \"Tiny qualification failed\")\n  File \"/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v23-comparison-recovery01-20261022/src/latent_workspace/execution.py\", line 54, in require\n    raise ValueError(message)\nValueError: Tiny qualification failed\n", "elapsed_seconds": 3.4321717498824}
+{"child_probe":{"cuda_init_rejected":"RuntimeError","initialized":false,"pid":3789579,"visible_devices":0},"elapsed_seconds":4.360494486056268,"final_initialized":false,"final_visible_devices":0,"mask_before_runtime_import":true,"monitor_errors":[],"pid":3789547,"scope":"CUDA visibility plus sampled parent/descendant nvidia-smi audit; not OS sandbox","status":"CPU_GPU_ISOLATION_PASS","terminal_sha256":"840327c3bd405058b5f975b79193343712a07fa7f5e41fa19f7c615703e8959f"}

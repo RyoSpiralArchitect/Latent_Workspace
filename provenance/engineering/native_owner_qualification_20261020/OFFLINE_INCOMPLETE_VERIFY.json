@@ -1,0 +1,34 @@
+{
+  "status": "OFFLINE_INCOMPLETE_RECEIPT_VERIFIED_NOT_QUALIFIED",
+  "source_commit": "238df7aaf28b6cfd5bcab4e1dd4113ba0c0259fe",
+  "source_files": 681,
+  "cpu": {
+    "counts": {
+      "tests": 189,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "passed": 187,
+    "elapsed_seconds": 48.683628301136196,
+    "failed": [
+      {
+        "name": "test_bfloat16_full_graph_has_finite_loss_and_gradients[scratch]",
+        "classname": "tests.test_native_memory",
+        "message": "RuntimeError: DNNL does not support bf16/f16 backward on the platform with avx2_vnni_2"
+      },
+      {
+        "name": "test_native_owner_updates_every_partition_with_cpu_state[dtype1-scratch]",
+        "classname": "tests.test_native_owner",
+        "message": "RuntimeError: DNNL does not support bf16/f16 backward on the platform with avx2_vnni_2"
+      }
+    ]
+  },
+  "cuda": "UNDISPATCHED_AFTER_CPU_FAILURE",
+  "source_hashes_verified": true,
+  "artifact_manifest_verified": true,
+  "weight_deletions": 0,
+  "real_model_updates": 0,
+  "old_expression_gate": "FAIL",
+  "non_regression": "NOT_ESTABLISHED"
+}

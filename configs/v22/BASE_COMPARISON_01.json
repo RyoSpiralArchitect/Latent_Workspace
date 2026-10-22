@@ -1,0 +1,198 @@
+{
+  "schema": "ltws-v22-base-comparison-01",
+  "seed": 20261021,
+  "training_plan": "configs/v22/FULL_FT_RECOVERY_01.json",
+  "training_source": "13c1192fc2727d8ca61ee215a927c0cd77f75b16",
+  "training_bundle": "/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v22-full-ft-recovery01-20261021",
+  "checkpoint": {
+    "name": "training_step32.pt",
+    "bytes": 29004418636,
+    "sha256": "cdf605b8740a45d16d03f8e375497ad0dabd45e8548bae2733057eee83675c68",
+    "state_sha256": "9978e08dbfccd68305e046bd3c29a3be7fb6c121705ef3c9b41abf140fa011a3"
+  },
+  "input_bundle": "/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v22-comparison01-20261021/inputs",
+  "world_bundle": "/home/ryospiralarchitect/spiralreality/SpiralReality/tmp/latent-worldbank-teacher01-20261021/bank",
+  "world_rows_sha256": "8f9ac67f16d0c3b5f6c988b8e9ee078b226095a769948b9fcafa2ccaff73669c",
+  "world_selection": {
+    "seed": "v22-eval01-20261021",
+    "strata": [
+      [
+        "test",
+        "location",
+        2
+      ],
+      [
+        "test",
+        "ownership",
+        2
+      ],
+      [
+        "test",
+        "order",
+        2
+      ],
+      [
+        "test",
+        "event_order",
+        2
+      ],
+      [
+        "test",
+        "inventory",
+        2
+      ],
+      [
+        "test",
+        "revision",
+        2
+      ],
+      [
+        "ood",
+        "linked_location",
+        4
+      ]
+    ],
+    "groups": 16,
+    "unique_rows": 96,
+    "raw_rows": 128
+  },
+  "world_routes": [
+    "latent",
+    "inline"
+  ],
+  "world_generation": {
+    "temperature": 0,
+    "top_p": 1,
+    "max_new_tokens": 24,
+    "seed": 20261021
+  },
+  "world_suffix": " Reply with just the answer, without an explanation.",
+  "mmlu": {
+    "path": "configs/v16/population_20261015/mmlu.json",
+    "sha256": "e4a12c6749e8c691b63a6e2ddc2f097ff9346694145c1e884433751046254ce9",
+    "n": 570,
+    "max_prompt_tokens": 4096,
+    "exposure": "Previously evaluated V16 panel; not a fresh confirmatory holdout. No V22 training admission."
+  },
+  "generation": {
+    "seeds": [
+      2026102101,
+      2026102102
+    ],
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_new_tokens": 256
+  },
+  "free_prompts": [
+    {
+      "id": "reasoning-01",
+      "category": "reasoning",
+      "prompt": "A box contains 3 red balls and 2 blue balls. Two balls are drawn without replacement. What is the probability that both have the same color? Give an exact fraction and explain briefly."
+    },
+    {
+      "id": "reasoning-02",
+      "category": "reasoning",
+      "prompt": "Every glimmer is a dax. No dax is a wug. Some wugs are loms. Does it follow that no glimmer is a lom? Explain with either a proof or a counterexample; do not assume any other facts."
+    },
+    {
+      "id": "reasoning-03",
+      "category": "reasoning",
+      "prompt": "A worker fills 3 identical boxes in 12 minutes. Another fills 2 in 12 minutes. At these constant rates, how long will they take together to fill 25 boxes? Show the units in your calculation."
+    },
+    {
+      "id": "reasoning-04",
+      "category": "reasoning",
+      "prompt": "A report says ice-cream sales and swimming accidents increase together. Explain in at most 100 words why that does not establish causation, give a plausible confounder, and suggest one useful additional observation."
+    },
+    {
+      "id": "writing-01",
+      "category": "writing",
+      "prompt": "Write a scene of 100 to 140 words in which a lighthouse keeper realizes a familiar light is missing. Convey the discovery through concrete details, without using the words afraid, fear, or mysterious."
+    },
+    {
+      "id": "writing-02",
+      "category": "writing",
+      "prompt": "Rewrite this note as a courteous email of no more than 80 words. Preserve the deadline and request; do not invent reasons or promises: 'The draft is late. Send the revised table by Thursday at 3 pm. Tell me today if that is impossible.'"
+    },
+    {
+      "id": "writing-03",
+      "category": "writing",
+      "prompt": "Give exactly three bullet points summarizing this fictional incident. Do not add causes: At 09:10 the library catalog stopped responding. Staff switched to paper loans at 09:25. Service returned at 10:40. No records were lost. The cause remains under investigation."
+    },
+    {
+      "id": "writing-04",
+      "category": "writing",
+      "prompt": "A neighborhood wants to replace a quiet vacant lot with a small public garden. In 100 to 140 words, write a balanced proposal that includes one benefit, one practical concern, and a concrete next step, without inventing survey results."
+    },
+    {
+      "id": "code-01",
+      "category": "code",
+      "prompt": "Write a Python function stable_unique(items) that returns unique hashable elements in first-seen order. Do not sort or mutate the input. Include three small assert-based tests, including an empty input."
+    },
+    {
+      "id": "code-02",
+      "category": "code",
+      "prompt": "Why does this Python function lose updates across calls, and how would you fix it?\ndef record(item, bucket=[]):\n    bucket.append(item)\n    return bucket\nExplain the actual behavior accurately, then provide a version with a fresh list by default that still accepts an explicit list."
+    },
+    {
+      "id": "code-03",
+      "category": "code",
+      "prompt": "Write a Python function balanced_parens(text) that returns whether parentheses are balanced, ignoring other characters. Include tests for 'a(b)c', ')(', and '(()'. Briefly give time and extra-space complexity."
+    },
+    {
+      "id": "code-04",
+      "category": "code",
+      "prompt": "Review this SQL query: SELECT department, name, MAX(salary) FROM employees GROUP BY department; Explain why it may fail or return a misleading name. Give a standard SQL solution that returns every employee tied for the highest salary in each department."
+    }
+  ],
+  "expected_runtime": {
+    "python": "3.12.14",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0",
+    "cuda": "13.2"
+  },
+  "resources": {
+    "admission_free_gib": 31,
+    "allocator_cap_gib": 30.5,
+    "abort_free_gib": 0.75,
+    "host_admission_available_gib": 100,
+    "host_abort_available_gib": 24,
+    "disk_free_gib": 50,
+    "max_elapsed_seconds": 14400,
+    "cpu_threads": 2
+  },
+  "qualification_devices": [
+    "cpu",
+    "cuda"
+  ],
+  "qualification_device_env": "LTWS_TEST_DEVICE",
+  "qualification_cpu_mkldnn_enabled": false,
+  "scratch_cpu_sdpa_backend": "math",
+  "qualification_gpu_limit_gib": 4,
+  "qualification_wall_seconds": 900,
+  "qualification_cases": 138,
+  "qualification_test_files": [
+    "tests/test_native_memory.py",
+    "tests/test_native_owner.py",
+    "tests/test_native_evaluation.py"
+  ],
+  "pass_status": "V22_BASE_COMPARISON_COMPLETE_NOT_RELEASE",
+  "no_retry": true,
+  "planned": {
+    "arms": 2,
+    "mmlu_scores": 1140,
+    "world_teacher_forced_rows": 384,
+    "world_generations": 384,
+    "free_generations": 48,
+    "total_new_sequences": 432,
+    "native_weight_updates": 0,
+    "checkpoint_saves": 0,
+    "judge_calls": 0,
+    "weight_deletions": 0
+  },
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED",
+  "backend": "Qualified native PyTorch BF16/eager for both arms. Managed TRT-LLM doctor passed, but generic served inference does not implement this cut-4 native-memory graph or owner checkpoint. No backend conversion, runtime modification or vLLM fallback.",
+  "claim_scope": "Descriptive post-training fixed-checkpoint comparison, not a pre-training preregistration or release gate. World test is grouped held-out within six trained families; linked_location is a held-out family. MMLU panel is previously exposed. Token NLL, constrained-choice accuracy and free generation are separate endpoints. No additional training, paid judging, weight deletion or Hub upload."
+}

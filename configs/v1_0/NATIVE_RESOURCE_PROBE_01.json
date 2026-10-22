@@ -1,0 +1,40 @@
+{
+  "schema": "ltws-native-resource-probe-v1",
+  "reference_plan": "configs/v1_0/NATIVE_7B_CANARY_RECOVERY_01.json",
+  "reference_plan_sha256": "6f692b785185c60f294925a25fa22e3ee2774a86c85e0372240cc159a8657526",
+  "profiles": [
+    {"key": "direct_128", "memory_tokens": 0, "query_tokens": 128, "answer_tokens": 16},
+    {"key": "memory_64_query_128", "memory_tokens": 64, "query_tokens": 128, "answer_tokens": 16},
+    {"key": "memory_128_query_128", "memory_tokens": 128, "query_tokens": 128, "answer_tokens": 16}
+  ],
+  "resources": {"admission_free_gib": 31, "allocator_cap_gib": 30.5, "abort_free_gib": 0.75, "host_admission_available_gib": 100, "host_abort_available_gib": 24, "disk_free_gib": 50, "max_elapsed_seconds": 1800, "cpu_threads": 2},
+  "qualification_devices": ["cpu", "cuda"],
+  "qualification_device_env": "LTWS_TEST_DEVICE",
+  "qualification_cpu_mkldnn_enabled": false,
+  "scratch_cpu_sdpa_backend": "math",
+  "qualification_gpu_limit_gib": 4,
+  "qualification_wall_seconds": 900,
+  "qualification_cases": 253,
+  "qualification_test_files": [
+    "tests/test_native_memory.py",
+    "tests/test_native_owner.py",
+    "tests/test_latent_workspace_stack.py",
+    "tests/test_latent_workspace_package.py",
+    "tests/test_latent_workspace_ladder.py",
+    "tests/test_latent_workspace_availability.py",
+    "tests/test_latent_workspace_execution.py",
+    "tests/test_architecture_rules.py",
+    "tests/test_v20_a5_stable_route.py",
+    "tests/test_native_7b_canary.py",
+    "tests/test_native_7b_identity_recovery.py",
+    "tests/test_native_resource_probe.py"
+  ],
+  "pass_status": "NATIVE_256_TOKEN_BACKWARD_RESOURCE_PASS_NOT_UPDATE_OR_QUALITY",
+  "no_retry": true,
+  "native_weight_updates": 0,
+  "checkpoint_writes": 0,
+  "new_sequences": 0,
+  "judge_calls": 0,
+  "weight_deletions": 0,
+  "scope": "Three synthetic length-controlled forward/backward rows in one complete CPU-spill accumulation window. FP32 masters are present, but no optimizer step or checkpoint is executed. This measures the declared lengths, not training quality, optimizer-step peaks at these lengths, or longer contexts."
+}

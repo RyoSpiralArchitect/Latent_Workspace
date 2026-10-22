@@ -1,0 +1,18 @@
+{"entry": "scripts/run_v23_recovered_mmlu_pro.py", "fresh_bytecode_cache": true, "isolated_python": true, "schema": "pre-import-source-check-v1", "source_commit": "cda0a8ae8c3648c41fae2be45b3208c9a5f1a9b6", "source_files": 799, "untracked_check": "all"}
+base: load original BF16/eager host
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 11570.88it/s]
+base: MMLU-Pro direct 20/280
+base: MMLU-Pro direct 40/280
+base: MMLU-Pro direct 60/280
+base: MMLU-Pro direct 80/280
+base: MMLU-Pro direct 100/280
+base: MMLU-Pro direct 120/280
+base: MMLU-Pro direct 140/280
+base: MMLU-Pro direct 160/280
+base: MMLU-Pro direct 180/280
+base: MMLU-Pro direct 200/280
+base: MMLU-Pro direct 220/280
+base: MMLU-Pro direct 240/280
+base: MMLU-Pro direct 260/280
+base: MMLU-Pro direct 280/280
+{"status": "INCOMPLETE_NO_RETRY", "role": "base", "new_sequences": null, "judge_calls": 0, "weight_deletions": 0, "native_weight_updates": 0, "old_expression_gate": "FAIL", "winner": "none", "non_regression": "NOT_ESTABLISHED", "error": "ResourceAbort: Insufficient free memory at generation:107; stop own run only", "traceback": "Traceback (most recent call last):\n  File \"/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v23-recovered-mmlu-pro01-20261022/src/latent_workspace/execution.py\", line 332, in run_role\n    result[\"outcome\"] = body(core, args, plan, seal)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v23-recovered-mmlu-pro01-20261022/scripts/run_v23_recovered_mmlu_pro.py\", line 45, in run\n    return original.run(\n           ^^^^^^^^^^^^^\n  File \"/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v23-recovered-mmlu-pro01-20261022/scripts/run_v23_mmlu_pro.py\", line 148, in run\n    result = ev.generate(\n             ^^^^^^^^^^^^\n  File \"/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v23-recovered-mmlu-pro01-20261022/src/latent_workspace/native_evaluation.py\", line 124, in generate\n    guard(f\"generation:{step}\")\n  File \"/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v23-recovered-mmlu-pro01-20261022/scripts/run_v15_native_learner.py\", line 147, in __call__\n    row = self.gpu(phase, admission=admission)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v23-recovered-mmlu-pro01-20261022/scripts/run_ft_beta_query_pool.py\", line 110, in __call__\n    raise ResourceAbort(f\"Insufficient free memory at {phase}; stop own run only\")\nrun_ft_beta_query_pool.ResourceAbort: Insufficient free memory at generation:107; stop own run only\n", "elapsed_seconds": 83.08314099628478}

@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T00:41:29.509713+00:00",
+  "observation": {
+    "judgment": {
+      "better": "B",
+      "complete_A": false,
+      "complete_B": false,
+      "correctness_A": "incorrect",
+      "correctness_B": "correct",
+      "quote_A": "hashlib.sha1(str(item).encode()).hexdigest()",
+      "quote_B": "if item not in unique_items:",
+      "reason": "B correctly uses the hashable items directly as OrderedDict keys, preserving first-seen order without sorting or mutating the input. A incorrectly applies SHA-1 hashing to the string representation of non-primitive items, which can falsely deduplicate distinct objects that share the same string representation (e.g., custom objects with identical __str__ output). B also includes three complete assert-based tests including the required empty input case, whereas A is truncated mid-test and only shows two tests."
+    },
+    "model": "mistral-large-4",
+    "response_id": "844b2b700c4e4d55b4077cb2d7b5b557",
+    "status": "VALID",
+    "usage": {
+      "completion_tokens": 6232,
+      "completion_tokens_details": {
+        "reasoning_tokens": 6072
+      },
+      "prompt_tokens": 955,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "service_tier": "standard",
+      "total_tokens": 7187
+    }
+  },
+  "response_sha256": "53bbdcc45fe8481debabf06f51514357997e95f5367f4a644cd765b4fd3f0601",
+  "status": "RETURNED"
+}

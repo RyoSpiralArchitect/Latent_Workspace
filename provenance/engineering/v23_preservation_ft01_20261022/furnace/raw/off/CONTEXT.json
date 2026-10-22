@@ -1,0 +1,504 @@
+{
+  "contract": {
+    "data_sha256": "ea11e739271b37c16f1acd29be74cc9d3df4716b85a5bc044ed65df4fc8d3e3c",
+    "objective": "query_only_token_weighted_causal_nll",
+    "original_base_sha256": "9db998af86c8105f0a2d774c10f777e190f86e54473b6b756bb51b225064a189",
+    "source_commit": "b46f04caefcfd596ccde3b0af8fd886d859f11b7"
+  },
+  "data_manifest": {
+    "files": {
+      "PLAN.json": {
+        "bytes": 1742,
+        "sha256": "47e95ebc01d1b7beddceb94cd37107ace05ac0c2d10dad52b3038bdb7aaac3f0"
+      },
+      "SCHEDULE.json": {
+        "bytes": 37225,
+        "sha256": "ead6b4eca42a798825f98a0943a80679a29a370d930a2e3192ca18f324f024b0"
+      },
+      "SUMMARY.json": {
+        "bytes": 7975,
+        "sha256": "85a010f82ba66b04990da9b80a41ad6cfb68c1008fe42fd2197097a276e35ecf"
+      },
+      "index.json.gz": {
+        "bytes": 688466,
+        "sha256": "5a327b5cfda0f89f22b98512d92d36ba1258ef2fc65c1a07db8ec8e5e690b974"
+      },
+      "rows.json.gz": {
+        "bytes": 1280118,
+        "sha256": "9d521ccc2ac9dffa1e4423c65d0bfcb020020ef0d2d08c7f5f884214c2e8d2c1"
+      }
+    },
+    "schema": "ltws-v22-data-v1",
+    "source": {
+      "configs/v22/DATA_01.json": "dd559362d8dfa5a84352a73648fce27d7411760dcfe7ff17aedb5157faabd726",
+      "scripts/build_v22_data.py": "1130befde66098c7ceae115e8d142e5af47562cc58eaf92de6796abf12ac4ca3",
+      "src/latent_workspace/v22_data.py": "2cc1a2330b35e44f93e9cd560b1a456e094c20413aa3e28cb3ce81929fb3f484"
+    }
+  },
+  "data_summary": {
+    "canary_max_memory_tokens": 78,
+    "canary_max_query_tokens": 1024,
+    "canary_replay_rows": 5,
+    "canary_rows": 9,
+    "counts": {
+      "dev/code": 15,
+      "dev/instruction": 64,
+      "dev/prose": 100,
+      "dev/world": 576,
+      "train/code": 125,
+      "train/instruction": 512,
+      "train/prose": 1084,
+      "train/world": 4608
+    },
+    "development_rows": 40,
+    "development_tokens": 4694,
+    "duplicate_sequences": 0,
+    "excluded": {
+      "preservation/ja/dev": 5,
+      "preservation/ja/train": 33,
+      "world/duplicate/dev": 192,
+      "world/duplicate/train": 1536,
+      "world/ood": 512,
+      "world/test": 768
+    },
+    "language": "en",
+    "mean_window_objective_shares": {
+      "code": 0.12866459286600232,
+      "instruction": 0.4167583938901282,
+      "prose": 0.2551078648857188,
+      "world": 0.1994691483581507
+    },
+    "no_memory_preservation": true,
+    "old_expression_gate": "FAIL",
+    "original_banks_mutated": false,
+    "quality_claim": "NOT_ESTABLISHED",
+    "realized_supervised_token_shares": {
+      "code": 0.15057526366251198,
+      "instruction": 0.4034036433365292,
+      "prose": 0.2496164908916587,
+      "world": 0.1964046021093001
+    },
+    "rights_scope": "Existing source claims only; private research admission by Ry\u014d. Redistribution and jurisdiction-specific rights review remain pending.",
+    "rows": 7084,
+    "schema": "ltws-v22-data-summary-v1",
+    "supervised_tokens": {
+      "dev/code": 5898,
+      "dev/instruction": 18995,
+      "dev/prose": 12647,
+      "dev/world": 3715,
+      "train/code": 46278,
+      "train/instruction": 134979,
+      "train/prose": 137356,
+      "train/world": 29948
+    },
+    "target_supervised_token_shares": {
+      "code": 0.15,
+      "instruction": 0.4,
+      "prose": 0.25,
+      "world": 0.2
+    },
+    "teacher_candidates_used": 0,
+    "test_and_ood_used": 0,
+    "train_dev_group_overlap": 0,
+    "training_rows": 723,
+    "training_rows_by_role": {
+      "code": 9,
+      "instruction": 37,
+      "prose": 41,
+      "world": 636
+    },
+    "training_tokens": 20860,
+    "training_tokens_by_role": {
+      "code": 3141,
+      "instruction": 8415,
+      "prose": 5207,
+      "world": 4097
+    },
+    "training_unique_rows": 723,
+    "truncations": 0,
+    "windows": [
+      {
+        "rows": 13,
+        "step": 1,
+        "supervised_tokens": 661,
+        "tokens_by_role": {
+          "code": 148,
+          "instruction": 327,
+          "prose": 127,
+          "world": 59
+        }
+      },
+      {
+        "rows": 18,
+        "step": 2,
+        "supervised_tokens": 543,
+        "tokens_by_role": {
+          "instruction": 311,
+          "prose": 127,
+          "world": 105
+        }
+      },
+      {
+        "rows": 25,
+        "step": 3,
+        "supervised_tokens": 589,
+        "tokens_by_role": {
+          "code": 189,
+          "prose": 254,
+          "world": 146
+        }
+      },
+      {
+        "rows": 18,
+        "step": 4,
+        "supervised_tokens": 607,
+        "tokens_by_role": {
+          "instruction": 377,
+          "prose": 127,
+          "world": 103
+        }
+      },
+      {
+        "rows": 20,
+        "step": 5,
+        "supervised_tokens": 615,
+        "tokens_by_role": {
+          "code": 253,
+          "instruction": 135,
+          "prose": 127,
+          "world": 100
+        }
+      },
+      {
+        "rows": 27,
+        "step": 6,
+        "supervised_tokens": 632,
+        "tokens_by_role": {
+          "instruction": 368,
+          "prose": 127,
+          "world": 137
+        }
+      },
+      {
+        "rows": 25,
+        "step": 7,
+        "supervised_tokens": 626,
+        "tokens_by_role": {
+          "code": 296,
+          "instruction": 60,
+          "prose": 127,
+          "world": 143
+        }
+      },
+      {
+        "rows": 5,
+        "step": 8,
+        "supervised_tokens": 519,
+        "tokens_by_role": {
+          "instruction": 493,
+          "world": 26
+        }
+      },
+      {
+        "rows": 33,
+        "step": 9,
+        "supervised_tokens": 580,
+        "tokens_by_role": {
+          "prose": 381,
+          "world": 199
+        }
+      },
+      {
+        "rows": 20,
+        "step": 10,
+        "supervised_tokens": 601,
+        "tokens_by_role": {
+          "instruction": 368,
+          "prose": 127,
+          "world": 106
+        }
+      },
+      {
+        "rows": 18,
+        "step": 11,
+        "supervised_tokens": 614,
+        "tokens_by_role": {
+          "code": 388,
+          "prose": 127,
+          "world": 99
+        }
+      },
+      {
+        "rows": 15,
+        "step": 12,
+        "supervised_tokens": 525,
+        "tokens_by_role": {
+          "instruction": 430,
+          "world": 95
+        }
+      },
+      {
+        "rows": 25,
+        "step": 13,
+        "supervised_tokens": 682,
+        "tokens_by_role": {
+          "instruction": 283,
+          "prose": 254,
+          "world": 145
+        }
+      },
+      {
+        "rows": 17,
+        "step": 14,
+        "supervised_tokens": 560,
+        "tokens_by_role": {
+          "instruction": 314,
+          "prose": 127,
+          "world": 119
+        }
+      },
+      {
+        "rows": 22,
+        "step": 15,
+        "supervised_tokens": 1003,
+        "tokens_by_role": {
+          "code": 757,
+          "prose": 127,
+          "world": 119
+        }
+      },
+      {
+        "rows": 24,
+        "step": 16,
+        "supervised_tokens": 616,
+        "tokens_by_role": {
+          "instruction": 233,
+          "prose": 254,
+          "world": 129
+        }
+      },
+      {
+        "rows": 4,
+        "step": 17,
+        "supervised_tokens": 516,
+        "tokens_by_role": {
+          "instruction": 496,
+          "world": 20
+        }
+      },
+      {
+        "rows": 41,
+        "step": 18,
+        "supervised_tokens": 735,
+        "tokens_by_role": {
+          "instruction": 230,
+          "prose": 254,
+          "world": 251
+        }
+      },
+      {
+        "rows": 20,
+        "step": 19,
+        "supervised_tokens": 728,
+        "tokens_by_role": {
+          "instruction": 489,
+          "prose": 127,
+          "world": 112
+        }
+      },
+      {
+        "rows": 39,
+        "step": 20,
+        "supervised_tokens": 614,
+        "tokens_by_role": {
+          "prose": 381,
+          "world": 233
+        }
+      },
+      {
+        "rows": 11,
+        "step": 21,
+        "supervised_tokens": 612,
+        "tokens_by_role": {
+          "instruction": 556,
+          "world": 56
+        }
+      },
+      {
+        "rows": 37,
+        "step": 22,
+        "supervised_tokens": 885,
+        "tokens_by_role": {
+          "code": 424,
+          "prose": 254,
+          "world": 207
+        }
+      },
+      {
+        "rows": 22,
+        "step": 23,
+        "supervised_tokens": 889,
+        "tokens_by_role": {
+          "instruction": 649,
+          "prose": 127,
+          "world": 113
+        }
+      },
+      {
+        "rows": 38,
+        "step": 24,
+        "supervised_tokens": 610,
+        "tokens_by_role": {
+          "prose": 381,
+          "world": 229
+        }
+      },
+      {
+        "rows": 21,
+        "step": 25,
+        "supervised_tokens": 750,
+        "tokens_by_role": {
+          "instruction": 502,
+          "prose": 127,
+          "world": 121
+        }
+      },
+      {
+        "rows": 25,
+        "step": 26,
+        "supervised_tokens": 660,
+        "tokens_by_role": {
+          "code": 189,
+          "instruction": 201,
+          "prose": 127,
+          "world": 143
+        }
+      },
+      {
+        "rows": 25,
+        "step": 27,
+        "supervised_tokens": 614,
+        "tokens_by_role": {
+          "instruction": 216,
+          "prose": 254,
+          "world": 144
+        }
+      },
+      {
+        "rows": 15,
+        "step": 28,
+        "supervised_tokens": 927,
+        "tokens_by_role": {
+          "code": 497,
+          "instruction": 356,
+          "world": 74
+        }
+      },
+      {
+        "rows": 28,
+        "step": 29,
+        "supervised_tokens": 800,
+        "tokens_by_role": {
+          "instruction": 375,
+          "prose": 254,
+          "world": 171
+        }
+      },
+      {
+        "rows": 37,
+        "step": 30,
+        "supervised_tokens": 515,
+        "tokens_by_role": {
+          "instruction": 55,
+          "prose": 254,
+          "world": 206
+        }
+      },
+      {
+        "rows": 17,
+        "step": 31,
+        "supervised_tokens": 519,
+        "tokens_by_role": {
+          "instruction": 301,
+          "prose": 127,
+          "world": 91
+        }
+      },
+      {
+        "rows": 18,
+        "step": 32,
+        "supervised_tokens": 513,
+        "tokens_by_role": {
+          "instruction": 290,
+          "prose": 127,
+          "world": 96
+        }
+      }
+    ],
+    "winner": "none"
+  },
+  "graph": {
+    "boundary": {
+      "attention_implementation": "eager",
+      "backend": "torch",
+      "binding_kind": "mistral",
+      "boundary_layer": 4,
+      "cache_policy": "disabled_no_cache",
+      "layer_count": 32,
+      "limitations": [
+        "No past-key-value cache or incremental cached decoding.",
+        "No caller-supplied position IDs or attention-output interface.",
+        "Layer calls preserve native checkpointing hooks; parity is run-specific."
+      ],
+      "model_class": "transformers.models.mistral.modeling_mistral.MistralForCausalLM",
+      "model_type": "mistral",
+      "phase": "pre_decoder_block",
+      "position_policy": "sequential_zero_based",
+      "schema_version": "latent_workspace.boundary.v1",
+      "support_status": "supported_layout",
+      "torch_version": "2.13.0+cu132",
+      "transformers_version": "5.15.0"
+    },
+    "cache": "disabled",
+    "labels": "query_only_next_token",
+    "memory_policy": "reencode_from_tokens_every_forward",
+    "route": "native_full_vocabulary",
+    "schema": "ltws-native-memory-graph-v1"
+  },
+  "imports": {
+    "latent_workspace": "src/latent_workspace/__init__.py",
+    "latent_workspace.composition": "src/latent_workspace/composition.py",
+    "latent_workspace.cuts": "src/latent_workspace/cuts.py",
+    "latent_workspace.execution": "src/latent_workspace/execution.py",
+    "latent_workspace.host": "src/latent_workspace/host.py",
+    "latent_workspace.lattice": "src/latent_workspace/lattice.py",
+    "latent_workspace.losses": "src/latent_workspace/losses.py",
+    "latent_workspace.native_memory": "src/latent_workspace/native_memory.py",
+    "latent_workspace.native_owner": "src/latent_workspace/native_owner.py",
+    "latent_workspace.objective_audit": "src/latent_workspace/objective_audit.py",
+    "latent_workspace.offload": "src/latent_workspace/offload.py",
+    "latent_workspace.operators": "src/latent_workspace/operators.py",
+    "latent_workspace.optimizer_state": "src/latent_workspace/optimizer_state.py",
+    "latent_workspace.preservation_binding": "src/latent_workspace/preservation_binding.py",
+    "latent_workspace.preservation_objective": "src/latent_workspace/preservation_objective.py",
+    "latent_workspace.readout": "src/latent_workspace/readout.py",
+    "latent_workspace.routes": "src/latent_workspace/routes.py",
+    "latent_workspace.scratch": "src/latent_workspace/scratch.py",
+    "latent_workspace.training": "src/latent_workspace/training.py",
+    "latent_workspace.v22_data": "src/latent_workspace/v22_data.py"
+  },
+  "optimizer": {
+    "learning_rate": 2e-07,
+    "max_grad_norm": 1,
+    "weight_decay": 0
+  },
+  "parameter_elements": 7248023552,
+  "physical_parameters": 291,
+  "runtime": {
+    "cuda": "13.2",
+    "python": "3.12.14",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0"
+  },
+  "stream": "training"
+}

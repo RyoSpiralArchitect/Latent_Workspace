@@ -143,6 +143,20 @@ test was shown to fail on a deliberate violation.
 | `availability` | lane A's flip endpoint: choices, contrasts, V19's diagnosis, V16's random-memory control | new; reproduces V19's recorded diagnosis from its saved scores |
 | `execution` | sealed-run skeleton: receipts, qualification (CPU alone for a CPU-only run), roles, no-retry dispatch | new; replaces per-run copies from A1 on |
 | `package` | the LTWS inference package: export/load of trained routes with a descriptor and manifest, V15's prompt contract, the latent-memory API (`LatentMemory.write` / `.read`) | new; canonical facts reproduce V15's, and the package check reproduces A5's sealed scores |
+| `native_memory` | differentiable memory/query composition through the native full-vocabulary head; query-only causal labels and token-weighted loss | new, post-beta; small-model graph qualification, not the production offload/checkpoint owner |
+| `offload`, `optimizer_state` | CPU gradient transport, complete-window accumulation and checkpoint primitives | verbatim promotions with pinned origins and parity tests |
+| `native_owner` | one all-native-parameter FP32 CPU-master owner, token-weighted windows, guarded snapshots and restore | new composition over promoted arithmetic; [contract](v1_0/NATIVE_OWNER.md), not 7B qualification |
+| `objective_audit` | oracle-token CE contributions, live cut-state gradients, tiny W/Q/R parameter-path reference and full-vocabulary KL primitive | new diagnostic; no additional learned parameters or owner objective; [V23 scope](v23/PREPARATION_01.md) |
+| `preservation_binding` | immutable full-context/causal-position binding of pinned teacher metadata to complete training rows | new offline preparation, not target-body validation or owner integration; [contract](v23/OBJECTIVE_OWNER_CONTRACT.md) |
+| `world_expansion` | additive, independently solved counterfactual worlds, controlled identifiers, group/split and historical exclusions | new data generator; the first `world_bank` and its OOD protocol remain unchanged |
+
+The [post-beta full-FT plan](v1_0/FULL_FT.md) adds `NativeMemoryCausalLM` to
+composition, not another per-version learner. It preserves the beta host-only
+memory computation while reconnecting both token encodings to autograd. Its
+no-memory bypass equals the current host, not the pre-FT reference after an
+update. `NativeFullUpdateOwner` now owns that graph's parameter partition;
+bounded CPU/CUDA owner qualification now passes [203/203 on each device](../provenance/engineering/native_owner_qualification_attempt03_20261020/README.md).
+A new graph-specific 7B resource canary still precedes full training.
 
 [Parity tests](../tests/test_latent_workspace_stack.py) show bitwise-identical
 state, outputs and gradients against every original, and native logits through

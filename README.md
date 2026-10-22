@@ -17,6 +17,50 @@ dated evidence.
 
 ## Reading this repository
 
+**2026-10-22 readout complete:** [integrated V23 evaluation](docs/v23/EVALUATION_SYNTHESIS.md)
+and [full-FT PR review map](docs/v23/FULL_FT_REVIEW_GUIDE.md).
+MMLU-Pro direct base/off/on is **92/101/100 of 280**; strict parsed reasoning
+is **11/9/8 of 28**. These use different prompts and a nested small panel, not
+a causal readout comparison. The 174-request blind judge returned **170 valid
+and four invalid** judgments, with **13/72 main-pair order conflicts** and
+**4/12 repeat disagreements**. It favors some FT writing/constraint behavior
+but does not establish a winning arm or general non-regression. All outputs,
+negative results, exclusions and source seals are retained; no release gate changes.
+
+Latest V23 step: [matched P-off/P-on native full FT is complete and replayed](provenance/engineering/v23_preservation_ft01_20261022/TERMINAL.md):
+32 updates / 723 rows / 20,860 targets per arm, after 472/472 CPU and CUDA
+tests and exact real-model v2 restart. On the same exposed 40-row dev panel,
+base/off/on NLL is 1.267038 / 1.058723 / 1.069616. Both improve this loss;
+KL-on gives slightly less CE gain, with retention **not yet established**.
+Off exactly reproduces V22's final state fingerprint and dev results.
+The [complete recovered benchmark/generation diagnostic](provenance/pilots/v23_comparison_recovery02_20261022/README.md)
+now combines original base/off with whole recovered P-on under separate source
+seals. MMLU base/off/on is **356/354/355 out of 570** (tie-free **351/349/349**);
+latent-world exactness is **47/83/83 out of 96**, inline **75/87/86**. No trained
+arm gains a base-wrong MMLU item on this selected panel. This is not a general
+retention pass or proof of causal workspace use. The [literal answer bank](provenance/pilots/v23_comparison_recovery02_20261022/analysis/ANSWER_BANK.md)
+contains all 72 free answers, including capped/unchanged ones; all 648 world/free
+literal sequences replay. P-on passed both 248-test suites and CPU isolation.
+
+The [original incomplete comparison](provenance/pilots/v23_comparison01_20261022/README.md)
+and [failed collection recovery](provenance/pilots/v23_comparison_recovery01_20261022/README.md)
+remain unchanged. Their partial rows are never spliced into the completed bank.
+The [explicit follow-up](docs/v23/RECOVERED_FOLLOWUP_01.md) retains the
+[32/32 passed Mistral calibration](provenance/pilots/v23_behavior_judge01_20261022/README.md)
+for the [now-completed 174-request study](provenance/pilots/v23_recovered_behavior_judge01_20261022/README.md).
+Its validity, order/repeat sensitivity and bounded preference view are reported
+separately; text differences alone do not establish quality. The
+[first recovered MMLU-Pro attempt](provenance/pilots/v23_recovered_mmlu_pro01_20261022/README.md)
+passed 301/301 CPU and CUDA plus isolation, but stopped on inactive CUDA
+reservation growth after base's 280 direct scores (92 correct), before any
+complete reasoning row. Off/on were undispatched. A separately authorized
+[cache-only repair](docs/v23/RECOVERED_MMLU_PRO_02.md) preserves all inputs,
+decoding conditions and resource floors. Its [new attempt is complete](provenance/pilots/v23_recovered_mmlu_pro02_20261022/README.md):
+840 scores / 84 reasoning sequences, all replayed locally after historical
+315/315 CPU and CUDA gates. No stopped run was resumed or partial arm spliced.
+See the [design](docs/v23/PRESERVATION_FT_01.md) and
+[execution handoff](provenance/engineering/v23_preservation_ft01_20261022/EXECUTION_HANDOFF.md).
+
 The README is an entrypoint, not the claim authority.
 
 For the public β package scope, read
@@ -25,6 +69,250 @@ For the architecture and portability target, read
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 For run evidence, read the linked provenance records.
 For historical status, keep the dated claim ceilings attached to each run.
+
+## Toward native full fine-tuning (2026-10-20)
+
+The [post-beta full-FT plan](docs/v1_0/FULL_FT.md) starts from the native
+latent-memory path, with both writer and reader differentiable and the entire
+native vocabulary head trained. Its first implementation is
+[`NativeMemoryCausalLM`](src/latent_workspace/native_memory.py), separate from
+the beta's frozen two-candidate adapter. Small-model graph qualification is
+not a 7B training result. The engine-owned CPU-master optimizer/checkpoint
+owner now passes [203/203 selected tests on both CPU and CUDA](provenance/engineering/native_owner_qualification_attempt03_20261020/README.md),
+including exact fresh-process replay. Two earlier CPU backend failures remain
+recorded; the qualified condition explicitly disables CPU oneDNN and retains
+BF16. After separate approval, the [six closed V16 checkpoints were recorded
+and retired](provenance/inventory/v16_scientific_retirement_20261020/README.md),
+recovering 162.46 GiB; 243.61 GiB was available afterward. V18 and the original
+Mistral remain. Git preserves evidence, not recoverable weight bytes.
+The [new bounded 7B canary](provenance/engineering/native_7b_canary_20261020/README.md)
+passed 229/229 tiny checks on each device, then stopped at original-model
+identity before any training update: the new harness compared a historical
+tree-hash digest with the legacy hash function. The failed source and raw
+receipts are retained, replay was not dispatched, and no automatic retry
+followed.
+The separately authorized [identity recovery](docs/v1_0/NATIVE_7B_RECOVERY_01.md)
+then passed 244/244 CPU and CUDA checks and
+[completed two real-7B native updates, two saves and exact fresh-process
+step-2 replay](provenance/engineering/native_7b_identity_recovery01_20261020/README.md),
+with both original-model hashes matched and the recipe/limits unchanged.
+Peak CUDA allocation was 27.690 GiB and peak host RSS 86.809 GiB. This is a
+four-input engineering gate, not a quality gain: a finite full-FT recipe,
+longer-sequence resource qualification and original-base non-regression
+evaluation remain unmet.
+
+### Data and longer-backward preparation (2026-10-21)
+
+The separately authorized
+[resource recovery](provenance/engineering/native_resource_probe_recovery01_20261021/README.md)
+passes 254/254 CPU and CUDA checks and all three no-update backward rows up
+to 128 memory + 128 query tokens. Peak CUDA allocation/reservation is
+27.696/28.365 GiB; both native and CPU master weights remain unchanged.
+This does not extend the short optimizer-step/restart proof to those lengths.
+
+The [deterministic world bank](provenance/data/native_world_bank01_20261021/README.md)
+now contains 1,024 grouped worlds / 8,192 rows plus 128 small instruction seeds,
+with executable answer checks and disjoint groups; 2,048 control duplicates
+are explicitly counted. A [local 32B teacher inspection](provenance/data/native_teacher_inspection01_20261021/README.md)
+completed 64/64 fixed requests. All pass structural checks, but 48/48 world
+questions drop the memory-use policy and 9/24 twin pairs change question text.
+The additive composer therefore retains canonical memory/query and takes
+teacher answer prose only; all 64 derivatives remain quarantined, not approved
+for training. The [full preparation notes](docs/v1_0/DATA_PREPARATION.md) keep
+source seals, original failures, raw outputs and exact token denominators.
+In that original bank, ordinary instructions are only 4.05% of canonical
+training-candidate answer tokens under row-uniform sampling.
+The additive [preservation candidate bank](provenance/data/native_preservation_bank01_20261021/README.md)
+now provides 1,754 train / 184 development candidates, with 324,616 / 39,761
+supervised Mistral tokens, using existing human prose and a pinned 41.6 MB
+OpenAssistant acquisition. QSpace's CodeXGLUE validation is exclusion-only.
+Offline full regeneration passes; 635 rows exceed the tested 128-query-token
+backward axis. These are not training approvals or a retention result:
+rights/admission review, mixed-recipe resource qualification, full-FT mixture
+and unseen non-regression gates remain before training.
+
+### V22 English-only native pilot (2026-10-21)
+
+Ryō authorized an additive English-only projection, mixed update/save/replay
+qualification, and then native full-parameter training. The
+[frozen V22 plan](docs/v22/FULL_FT_01.md) specifies 32 updates / 723 unique rows /
+20,860 supervised tokens, with token-balanced world/instruction/prose/code
+exposure. The [data projection](provenance/data/v22_english_mixture01_20261021/README.md)
+fully regenerates offline and leaves both original banks unchanged.
+Long 1,024-token mixed canary/replay and complete CPU/CUDA qualification gate
+the training roles; training starts from the original, not canary weights,
+and resumes in a fresh process at step 16 if its prerequisite gates pass.
+The [first execution](provenance/pilots/v22_full_ft01_20261021/README.md) now passes
+290/290 checks on each device and two real-7B long updates plus checkpoint
+save/restore. Replay's first row has exact loss/gradient equality, but its
+post-spill free GPU memory falls to 440 MiB (768-MiB minimum) while 16.656 GiB
+remains reserved but unallocated. The run stops without retry; **full V22
+training remained undispatched in that trial**. The separate
+[cache-boundary recovery](provenance/pilots/v22_full_ft_recovery01_20261021/README.md)
+now passes 318/318 CPU and CUDA checks, both real-7B updates and complete exact
+fresh-process replay. One explicitly approved old canary body was retired after
+the successful gate and published ledger. The recovery then **completed all
+32 native full-parameter training updates / 723 rows / 20,860 supervised
+tokens**, including exact step-16 state restoration in a fresh process.
+On the same fixed 40-row development panel, all 40 teacher-forced NLLs fell;
+the token-weighted mean changed from **1.267038 to 1.058723 (−16.4411%)**.
+All seven panel means fell, including the small instruction/prose/code panels.
+This is the original versus updated model under the same native-memory graph,
+not a public benchmark or a free-generation comparison. Three checkpoint
+bodies and both source seals were verified; the old failed trial is unchanged.
+**FAIL / winner:none / non_regression NOT_ESTABLISHED** stays in force.
+Unseen non-regression, causal memory-use and paired generation evaluations
+remain separate next gates; no beta replacement or release is implied.
+
+### V22 versus original base: first comparison (2026-10-21)
+
+The [fixed-checkpoint comparison](provenance/pilots/v22_base_comparison01_20261021/README.md)
+completed both arms, 1,140 MMLU scoring rows and 432 generated sequences.
+The reused 570-question MMLU panel changes **356→354 correct (−0.351 pp)**;
+both argmax regressions become BF16 B/D ties. Strict-tie scoring also loses
+two net answers. This is not established non-regression.
+
+On grouped held-out worlds, latent-route exact generation changes
+**32→64/72 test** and **15→19/24 OOD**. The test latent-versus-inline gap
+shrinks from 25 answers to one; the OOD gap remains three. Four of the
+12 affected test repairs are formatting-only; remaining abstention and
+exact-symbol-copy errors are retained. These are 16 twin groups, not
+independent evidence from hundreds of tasks.
+
+All [24 fixed-prompt/seed free-generation pairs](provenance/pilots/v22_base_comparison01_20261021/ANSWER_BANK.md)
+are published unblinded. Every pair differs, but reasoning inconsistencies
+and 10 base / 9 V22 length-capped free replies prevent a blanket quality claim.
+Offline input/decoding replay and both 138-test qualification invocations pass.
+No additional training, weight deletion, paid judge or release occurred;
+**FAIL / winner:none / non_regression NOT_ESTABLISHED** remains.
+
+### V22 weight and readout diagnosis (2026-10-21)
+
+The [additive read-only diagnosis](provenance/pilots/v22_weight_diagnostics01_20261021/README.md)
+passes 158/158 selected checks on CPU and CUDA, then reproduces all 1,140
+MMLU scores, 384 world conditions and 2,814 recorded next-token choices with
+zero trajectory disagreement. No new continuation or training was performed.
+Both original MMLU losses remain wrong with an FP32 head; matched head swapping
+changes no predictions on the 570-question panel, while changed hidden states
+change 11. Of the 13 remaining latent world failures, 12 first diverge within
+two tokens; their decisive token accounts for 94.8–99.6% of target-sequence NLL.
+FP32 head projection repairs none of those first forks.
+
+The 291-tensor census finds changed values in 98.42% of FP32 master elements
+but 11.15% of native BF16 elements; 52 native normalization tensors are unchanged.
+Full-teacher versus prefix-only arithmetic also changes gold-argmax correctness
+at two shared-prefix positions per arm; its numerical-versus-layout cause is
+not established. The [next proposal](docs/v22/POST_DIAGNOSTIC_NEXT_STEPS.md)
+therefore qualifies that instrument before separate reader-decision, body
+preservation and normalization-visibility experiments. Historical scores and
+**FAIL / winner:none / non_regression NOT_ESTABLISHED** remain unchanged.
+
+### V22 memory-content causality and the V23 direction (2026-10-21)
+
+The [completed causal assay](provenance/pilots/v22_memory_causality01_20261021/README.md)
+passes all 187 selected CPU/CUDA checks, 2,492 fixed-prefix controls and 928
+bounded intervention/replay generations. Equal-extent changed/masked future
+tokens leave every observed vocabulary logit identical; cropping explains the
+remaining extent-sensitive discrepancy without evidence of answer-content leakage.
+
+For 20 reciprocal directions in 10 equal-length memory-twin groups, V22's
+donor margin increases in 20/20 and it correctly switches original→donor in
+14/20 (base 4/20). The writer×reader comparison on 80 nonempty rows is
+**36/80 base/base, 39/80 V22-writer/base-reader, 70/80 base-writer/V22-reader,
+69/80 V22/V22**. Most gain travels with the reader side (which includes query
+encoding). Base-written memory also repairs the `Nymszrcrff.`→`Nymszrcrk.`
+copy regression at the otherwise unchanged V22 reader. Unaffected-query
+misbinding remains in two OOD groups. No hybrid is promoted from this panel.
+
+The [V23-to-1.0 proposal](docs/v23/ROADMAP_TO_1_0.md) prioritizes query/fact
+binding, exact identity transport and ordinary-host preservation as separate
+factors. This is exposed-panel mechanism evidence, not a release pass: native
+MMLU remains 356→354/570 and free-generation quality remains unjudged.
+**FAIL / winner:none / non_regression NOT_ESTABLISHED** remains unchanged.
+
+### V23 preparation: question encoding versus the upper reader (2026-10-21)
+
+The [completed frozen-V22 state factorial](provenance/pilots/v23_state_factorial01_20261021/README.md)
+separates memory writer W, query/continuation encoder Q and upper reader/head R.
+It passes 216/216 selected tests on each of CPU/CUDA, 2,386 full-logit self-parity
+checks and 1,193 repeated endpoints, with **7,008 unique diagnostic cells** and
+zero training or new generations. All 96 exposed worlds and 570 reused MMLU
+questions remain diagnostics, not fresh release confirmation.
+
+With base W/Q, changing only R improves gold-prefix next-token agreement from
+442 to 550/559, but 87/108 repaired positions are period/EOS decisions: useful
+output alignment, not an equivalent reasoning gain. Updated Q helps base R but
+adds one nonempty and two absent-prefix errors with V22 R. The late `ff`→`k`
+copy error requires jointly updated W/R under either Q, isolating a different
+compatibility failure. Original MMLU losses survive both lower-only and upper-
+only hybrids; the four Q/R counts are 356, 354, 355 and 354/570.
+
+[Next learner factors](docs/v23/NEXT_FACTORS.md) therefore start with train-only
+gradient/conflict analysis, ordinary-host protection and joint identity
+transport—not simply stronger question-side loss. The
+[workspace revival](docs/v23/WORKSPACE_REVIVAL.md) restores availability,
+occupancy, deliberation and consequence as distinct goals. No hybrid is
+promoted, no V23 weights are trained, and the old FAIL/non-regression ceiling
+is unchanged. Full row-level examples are in the
+[fixed-prefix panel](provenance/pilots/v23_state_factorial01_20261021/FACTORIAL_PANEL.md).
+
+### V23 oracle expansion and objective instruments (2026-10-22)
+
+The [additive preparation](provenance/engineering/v23_preparation01_20261022/README.md)
+adds **512 groups / 4,096 raw world rows**, disjoint from all prior groups and
+identifiers. After duplicate controls, the new train pool has 2,016 rows /
+13,198 supervised tokens. Fresh naming/binding controls and a reserved 3-hop
+structure accompany the explicit promotion of the former 2-hop OOD family.
+No new confirmation/OOD model scores or training updates were produced.
+
+Tiny CPU/CUDA suites each pass **296/296**, including no-op trace parity,
+oracle-defined identity/copy/format contributions, shared W/Q/R gradient
+attribution and full-vocabulary preservation-KL primitives. The outer dispatcher
+failed on a missing completion-status key **after** the data role passed.
+The failed receipt is retained; offline replay verifies the child results,
+and the subsequent configuration/validation fix has three local regressions.
+No role was rerun. This is not an all-green 7B run or a new trained learner.
+
+Preparation froze the next train-only inputs at 84 world + 12 preservation rows;
+base-target generation was **NOT_RUN in that stage**. See the
+[updated next factors](docs/v23/NEXT_FACTORS.md). All historical quality/release
+ceilings remain unchanged; no weights were deleted during preparation.
+
+### V23 scalable 7B gradient audit — complete (2026-10-22)
+
+The [new spill-based audit](provenance/engineering/v23_gradient_audit01_20261022/README.md)
+passes **338/338 CPU and CUDA tests**, then the real-7B engineering canaries at
+both original base and frozen V22: **291/291 parameter-path sums per model**
+within the predeclared BF16 numeric bound. Trace/no-trace and detached-reader
+forward replay are bitwise exact. Base peak CUDA allocation is 17.780 GiB;
+this is a short diagnostic, not an optimizer-training memory estimate.
+All 12 base teacher distributions / 932 supervised positions are prepared
+with full-vocabulary FP32 log probabilities (116.5 MiB of tensor payload).
+V22's strict step32 restore passes before its canary.
+
+The fixed **84-world / 14-group + 12-preservation** panel is now
+[complete and replayed](provenance/engineering/v23_gradient_audit01_20261022/TERMINAL.md).
+Both native hashes remain unchanged. Identity contributes 99.018% of remaining
+world CE, while the median per-row question/memory state RMS ratio is 1.235.
+Total world and preservation-KL gradients have a small negative cosine
+(-0.020744); this is not an optimizer or quality result. The next factor is a
+matched preservation on/off comparison, not automatic Q amplification.
+No optimizer update, new generation, held-out test, judge or release occurred
+in the audit. Its [interim snapshot](provenance/engineering/v23_gradient_audit01_20261022/interim_furnace/INTERIM_MANIFEST.json)
+is preserved. See the [handoff](provenance/engineering/v23_gradient_audit01_20261022/EXECUTION_HANDOFF.md).
+
+In parallel, [offline preservation-target binding](provenance/engineering/v23_preservation_binding01_20261022/README.md)
+now connects pinned target metadata to exact complete rows and causal logit
+positions. It does not consume target bodies or change the existing owner.
+The [next objective-owner contract](docs/v23/OBJECTIVE_OWNER_CONTRACT.md)
+separates P-off arithmetic parity, CE/KL normalization and new-objective
+save/restart from a V22 checkpoint transition. Coefficients and a training
+recipe remain unselected pending the complete audit; no extra GPU run starts.
+
+Separately, [three obsolete engineering canaries](provenance/inventory/v23_obsolete_canaries_20261022/README.md)
+were recorded and retired, freeing **81.0373 GiB**. Original Mistral, V22
+step16/step32, previous scientific branches, activation banks and datasets stay.
+Git retains metadata and hashes, not recoverable copies of the deleted weights.
 
 ## Current public artifact: LTWS β (2026-10-18)
  

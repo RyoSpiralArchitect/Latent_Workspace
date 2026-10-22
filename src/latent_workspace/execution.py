@@ -113,6 +113,21 @@ def qualification_devices(plan):
     return devices
 
 
+def qualification_backend_policy(torch_module, plan):
+    """Optional explicit CPU backend policy, also inherited by tiny child tests.
+
+    No implicit fallback: old plans leave the runtime untouched. A policy is
+    a declared numerical condition, not a dtype conversion or a skipped test.
+    """
+    key = "qualification_cpu_mkldnn_enabled"
+    if key not in plan:
+        return {}
+    require(type(plan[key]) is bool, "CPU oneDNN policy must be boolean")
+    torch_module.backends.mkldnn.enabled = plan[key]
+    os.environ["LTWS_CPU_MKLDNN_ENABLED"] = "1" if plan[key] else "0"
+    return {"cpu_mkldnn_enabled": torch_module.backends.mkldnn.enabled}
+
+
 class SealedRun:
     """One sealed run: ``qualify``, ``run-role`` and ``dispatch`` over fixed roles.
 
@@ -121,10 +136,37 @@ class SealedRun:
     ``root/scripts`` by name (the source launcher and ``core``).
     """
 
-    def __init__(self, *, root, entry, plan_path, tiny_pass, roles, role_status, validate, load):
+    def __init__(
+        self,
+        *,
+        root,
+        entry,
+        plan_path,
+        tiny_pass,
+        roles,
+        role_status,
+        validate,
+        load,
+        updates_native=False,
+    ):
         self.root, self.entry, self.plan_path = Path(root), entry, plan_path
         self.tiny_pass, self.roles, self.role_status = tiny_pass, tuple(roles), dict(role_status)
         self.validate, self.load = validate, load
+        require(type(updates_native) is bool, "Explicit native-update activity policy")
+        self.updates_native = updates_native
+
+    def activity(self, result, outcome=None):
+        """Real-model update receipts must not inherit the frozen-host zero.
+
+        An interrupted role/dispatch has UNKNOWN activity (null), not zero.
+        Success requires an explicit measured nonnegative count; qualifications
+        remain tiny tests and retain their existing zero-real-model ceiling.
+        """
+        if self.updates_native:
+            count = None if outcome is None else outcome.get("native_weight_updates")
+            if outcome is not None:
+                require(type(count) is int and count >= 0, "Measured native update count")
+            result["native_weight_updates"] = count
 
     # -- preflight and qualification ------------------------------------------------
 
@@ -160,6 +202,7 @@ class SealedRun:
                 os.environ[name] = args.device
             sys.path[:0] = [str(self.root / p) for p in ("", "src", "scripts", "tests")]
             core.load_runtime()
+            result.update(qualification_backend_policy(core.torch, plan))
             import pytest
 
             if args.device == "cuda":
@@ -204,6 +247,11 @@ class SealedRun:
             result.update(pytest_exit_code=code, counts=totals)
             expected = dict(tests=plan["qualification_cases"], failures=0, errors=0, skipped=0)
             require(code == 0 and totals == expected, "Tiny qualification failed")
+            if "cpu_mkldnn_enabled" in result:
+                require(
+                    core.torch.backends.mkldnn.enabled == result["cpu_mkldnn_enabled"],
+                    "CPU backend changed during qualification",
+                )
             result["imports"] = core.verify_imports(seal)
             source.verify(self.root, seal, self.entry)
             require(core.identity() == seal, "Source changed during qualification")
@@ -271,6 +319,7 @@ class SealedRun:
         )
         started = time.monotonic()
         result = dict(status=INCOMPLETE, role=args.role, **CEILING)
+        self.activity(result)
 
         def deadline(_signal, _frame):
             raise KeyboardInterrupt("Role wall limit")
@@ -281,6 +330,7 @@ class SealedRun:
             offline_environment()
             args.output, args.checkpoints = out, ckpt
             result["outcome"] = body(core, args, plan, seal)
+            self.activity(result, result["outcome"])
             source.verify(self.root, seal, self.entry)
             require(core.identity() == seal, "Source changed")
             require(self.qualification(args.qualification, seal, plan) == qualified, "Qualified")
@@ -341,6 +391,7 @@ class SealedRun:
         )
         started = time.monotonic()
         result = dict(status=INCOMPLETE, completed_roles=[], **CEILING)
+        self.activity(result)
         try:
             args.output, args.checkpoints = out, ckpt
             for role in self.roles:
@@ -356,6 +407,7 @@ class SealedRun:
                 require(status == self.role_status[role], f"{role} receipt status {status}")
                 result["completed_roles"].append(role)
             result["summary"] = summary(out, plan)
+            self.activity(result, result["summary"])
             source.verify(self.root, seal, self.entry)
             result["status"] = plan["pass_status"]
         except BaseException as exc:

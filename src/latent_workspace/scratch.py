@@ -9,15 +9,19 @@ architecture choice.
 
 from __future__ import annotations
 
+from contextlib import nullcontext
+
 import torch
 from torch import nn
 from torch.nn import functional as F
+from torch.nn.attention import SDPBackend, sdpa_kernel
 
 
 class _Block(nn.Module):
-    def __init__(self, width, heads):
+    def __init__(self, width, heads, cpu_sdpa_backend="auto"):
         super().__init__()
         self.heads = heads
+        self.cpu_sdpa_backend = cpu_sdpa_backend
         self.attention_norm = nn.LayerNorm(width)
         self.qkv = nn.Linear(width, 3 * width)
         self.out = nn.Linear(width, width)
@@ -26,6 +30,9 @@ class _Block(nn.Module):
             nn.Linear(width, 4 * width), nn.GELU(), nn.Linear(4 * width, width)
         )
 
+    def extra_repr(self):
+        return f"heads={self.heads}, cpu_sdpa_backend={self.cpu_sdpa_backend!r}"
+
     def forward(self, hidden, attention_mask):
         batch, length, width = hidden.shape
         q, k, v = self.qkv(self.attention_norm(hidden)).split(width, dim=-1)
@@ -33,17 +40,30 @@ class _Block(nn.Module):
         q, k, v = (t.view(shape).transpose(1, 2) for t in (q, k, v))
         causal = torch.ones(length, length, dtype=torch.bool, device=hidden.device).tril()
         allowed = causal[None, None] & attention_mask.bool()[:, None, None, :]
-        attended = F.scaled_dot_product_attention(q, k, v, attn_mask=allowed)
+        # Some CPU oneDNN/ISA combinations accept BF16 SDPA forward but cannot
+        # backpropagate it. Select the portable native math kernel explicitly;
+        # do not catch errors, change tensor dtype or affect CUDA dispatch.
+        policy = (
+            sdpa_kernel(SDPBackend.MATH)
+            if hidden.device.type == "cpu" and self.cpu_sdpa_backend == "math"
+            else nullcontext()
+        )
+        with policy:
+            attended = F.scaled_dot_product_attention(q, k, v, attn_mask=allowed)
         hidden = hidden + self.out(attended.transpose(1, 2).reshape(batch, length, width))
         return hidden + self.mlp(self.mlp_norm(hidden))
 
 
 class ScratchDecoder(nn.Module):
-    def __init__(self, vocab_size, width=64, layers=4, heads=4, max_length=256):
+    def __init__(
+        self, vocab_size, width=64, layers=4, heads=4, max_length=256, cpu_sdpa_backend="auto"
+    ):
         super().__init__()
+        if cpu_sdpa_backend not in ("auto", "math"):
+            raise ValueError("cpu_sdpa_backend must be auto or math")
         self.embed = nn.Embedding(vocab_size, width)
         self.positions = nn.Embedding(max_length, width)
-        self.blocks = nn.ModuleList(_Block(width, heads) for _ in range(layers))
+        self.blocks = nn.ModuleList(_Block(width, heads, cpu_sdpa_backend) for _ in range(layers))
         self.norm = nn.LayerNorm(width)
         self.lm_head = nn.Linear(width, vocab_size, bias=False)
 

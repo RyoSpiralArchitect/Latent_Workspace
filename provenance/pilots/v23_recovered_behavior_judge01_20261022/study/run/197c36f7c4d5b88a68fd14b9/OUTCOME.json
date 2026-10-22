@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T00:50:56.478505+00:00",
+  "observation": {
+    "judgment": {
+      "better": "A",
+      "complete_A": false,
+      "complete_B": false,
+      "correctness_A": "partial",
+      "correctness_B": "incorrect",
+      "quote_A": "assert stable_unique({1, 2, 2, 3, 3, 3, 4, 4, 5}) == sorted({1, 2, 3, 4, 5})",
+      "quote_B": "assert stable_unique([{\"a\": 1}, {\"a\": 1, \"b\": 2}, {\"a\": 3, \"b\": 4}]) == [{\"a\": 1}, {\"a\": 1, \"b\": 2}, {\"a\": 3, \"b\": 4}]",
+      "reason": "Both answers provide the same correct OrderedDict-based implementation and are truncated mid-sentence (finish reason 'length'). Answer B's third test uses dictionaries, which are unhashable, violating the task's 'hashable elements' constraint and causing a TypeError when used as OrderedDict keys. Answer A's third test uses a set with a sorted() comparison, which is logically inconsistent with preserving first-seen order (since set iteration order is arbitrary) but uses valid hashable inputs. Thus A is better."
+    },
+    "model": "mistral-large-4",
+    "response_id": "90a67a487f83480c91cbc403af633fb5",
+    "status": "VALID",
+    "usage": {
+      "completion_tokens": 6192,
+      "completion_tokens_details": {
+        "reasoning_tokens": 5930
+      },
+      "prompt_tokens": 972,
+      "prompt_tokens_details": {
+        "cached_tokens": 492
+      },
+      "service_tier": "standard",
+      "total_tokens": 7164
+    }
+  },
+  "response_sha256": "2d2e07a98ad13833aec2a093a71bfe3b98209aac4ed8ca168adba3c08c18e997",
+  "status": "RETURNED"
+}

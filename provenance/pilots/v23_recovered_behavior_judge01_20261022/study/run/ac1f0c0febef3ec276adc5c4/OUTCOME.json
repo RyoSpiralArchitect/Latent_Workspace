@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T00:44:45.621541+00:00",
+  "observation": {
+    "judgment": {
+      "better": "B",
+      "complete_A": false,
+      "complete_B": false,
+      "correctness_A": "incorrect",
+      "correctness_B": "partial",
+      "quote_A": "hash_item = hashlib.sha1(str(item).encode()).hexdigest()",
+      "quote_B": "assert stable_unique([{\"a\": 1}, {\"a\": 1, \"b\": 2}, {\"a\": 3, \"b\": 4}]) == [{\"a\": 1}, {\"a\": 1, \"b\": 2}, {\"a\": 3, \"b\": 4}]",
+      "reason": "Answer B provides the correct standard implementation by using hashable items directly as OrderedDict keys, preserving first-seen order without mutation. Answer A incorrectly applies SHA1 hashing to string representations of non-primitive items, which fails for custom hashable objects (e.g., two equal objects with default string representations containing memory addresses would not be deduplicated). However, Answer B includes an invalid third test using unhashable dictionaries that will raise TypeError, violating the task's 'hashable elements' constraint. Both answers are truncated (finish: length), but B displays all three required assert tests while A is missing the third test and cuts off mid-second-test."
+    },
+    "model": "mistral-large-4",
+    "response_id": "46d4fcb1d3d94c11b268807ffb5232c0",
+    "status": "VALID",
+    "usage": {
+      "completion_tokens": 5455,
+      "completion_tokens_details": {
+        "reasoning_tokens": 5193
+      },
+      "prompt_tokens": 962,
+      "prompt_tokens_details": {
+        "cached_tokens": 492
+      },
+      "service_tier": "standard",
+      "total_tokens": 6417
+    }
+  },
+  "response_sha256": "2af5df302ce5cc6afd4bc29e3d1d947303310385cecdb0d217f6e4a29e49f707",
+  "status": "RETURNED"
+}

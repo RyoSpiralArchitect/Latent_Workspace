@@ -1,0 +1,175 @@
+{
+  "schema": "v22-recovery01-postrun-verification-v1",
+  "observed_utc": "2026-10-20T22:41:17Z",
+  "provenance": "Agent-recorded outputs of read-only post-run checks; not a third-party attestation.",
+  "publication_parent_commit": "e719422194cfd0f150e9ee3282aaf21dd7940483",
+  "execution_source": "13c1192fc2727d8ca61ee215a927c0cd77f75b16",
+  "source_checks": [
+    {
+      "entry": "scripts/run_v22_full_ft_recovery01.py",
+      "fresh_bytecode_cache": true,
+      "isolated_python": true,
+      "schema": "pre-import-source-check-v1",
+      "source_commit": "13c1192fc2727d8ca61ee215a927c0cd77f75b16",
+      "source_files": 724,
+      "untracked_check": "all"
+    },
+    {
+      "entry": "scripts/run_v22_full_ft.py",
+      "fresh_bytecode_cache": true,
+      "isolated_python": true,
+      "schema": "pre-import-source-check-v1",
+      "source_commit": "3c6da4218526cbaaf4690efe6910a2dc493d004b",
+      "source_files": 717,
+      "untracked_check": "all"
+    }
+  ],
+  "local_offline_verification": {
+    "checkpoint_bodies_checked": false,
+    "model_calls": 0,
+    "non_regression": "NOT_ESTABLISHED",
+    "old_expression_gate": "FAIL",
+    "qualification": {
+      "cpu": "TINY_V22_MIXED_TRAINING_HARNESS_PASS_NOT_7B",
+      "cuda": "TINY_V22_MIXED_TRAINING_HARNESS_PASS_NOT_7B"
+    },
+    "roles": {
+      "canary": "V22_TWO_LENGTH_UPDATES_ONE_SAVE",
+      "replay": "V22_EXACT_LENGTH_STEP2_REPLAY",
+      "train_a": "V22_TRAINING_STEP16_SAVED",
+      "train_b": "V22_TRAINING_STEP32_SAVED"
+    },
+    "source_commit": "13c1192fc2727d8ca61ee215a927c0cd77f75b16",
+    "status": "OFFLINE_V22_COMPLETE_NOT_QUALITY",
+    "winner": "none"
+  },
+  "furnace_checkpoint_and_data_verification": {
+    "command": "spiral run -- /home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/aether-cuda-pretrain-20260822/.venv/bin/python -I /home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v22-full-ft-recovery01-20261021/scripts/verify_v22_full_ft.py --bundle /home/ryospiralarchitect/spiralreality/SpiralReality/latent-v22-full-ft-recovery01-20261021 --repo /home/ryospiralarchitect/spiralreality/SpiralReality/worktrees/latent-v22-full-ft-recovery01-20261021 --data /home/ryospiralarchitect/spiralreality/SpiralReality/latent-v22-data01-20261021/bank --checkpoints /home/ryospiralarchitect/spiralreality/SpiralReality/latent-v22-full-ft-recovery01-20261021/checkpoints",
+    "exit_code": 0,
+    "result": {
+      "checkpoint_bodies_checked": true,
+      "model_calls": 0,
+      "non_regression": "NOT_ESTABLISHED",
+      "old_expression_gate": "FAIL",
+      "qualification": {
+        "cpu": "TINY_V22_MIXED_TRAINING_HARNESS_PASS_NOT_7B",
+        "cuda": "TINY_V22_MIXED_TRAINING_HARNESS_PASS_NOT_7B"
+      },
+      "roles": {
+        "canary": "V22_TWO_LENGTH_UPDATES_ONE_SAVE",
+        "replay": "V22_EXACT_LENGTH_STEP2_REPLAY",
+        "train_a": "V22_TRAINING_STEP16_SAVED",
+        "train_b": "V22_TRAINING_STEP32_SAVED"
+      },
+      "source_commit": "13c1192fc2727d8ca61ee215a927c0cd77f75b16",
+      "status": "OFFLINE_V22_COMPLETE_NOT_QUALITY",
+      "winner": "none"
+    },
+    "checked_checkpoint_receipts": [
+      {
+        "bytes": 29004378380,
+        "completed_steps": 1,
+        "path": "canary_step1.pt",
+        "sha256": "795b96b53811f5b886f071f72203d01db4afe79489b724e481c10549d88d86e6",
+        "state_sha256": "e16665d7321d8d0ad1edeb2037d3ffa72eb7b46d87b62c19f93c6434bbc5fa53"
+      },
+      {
+        "bytes": 29004396428,
+        "completed_steps": 16,
+        "path": "training_step16.pt",
+        "sha256": "49a5e6721963c3581a5c471556d1196f329c12868d496148066d65aa21386de2",
+        "state_sha256": "55572e149697f00925ff3e5d8acefa9645fd1d01b5bf3e275870817956946ad5"
+      },
+      {
+        "bytes": 29004418636,
+        "completed_steps": 32,
+        "path": "training_step32.pt",
+        "sha256": "cdf605b8740a45d16d03f8e375497ad0dabd45e8548bae2733057eee83675c68",
+        "state_sha256": "9978e08dbfccd68305e046bd3c29a3be7fb6c121705ef3c9b41abf140fa011a3"
+      }
+    ],
+    "checkpoint_body_bytes_checked": 87013193444
+  },
+  "original_failure": {
+    "source_commit": "3c6da4218526cbaaf4690efe6910a2dc493d004b",
+    "verifier_status": "OFFLINE_V22_PARTIAL_OR_FAILED",
+    "verifier_roles": {
+      "canary": "V22_TWO_LENGTH_UPDATES_ONE_SAVE",
+      "replay": "INCOMPLETE_NO_RETRY",
+      "train_a": "NO_TERMINAL",
+      "train_b": "NO_TERMINAL"
+    },
+    "whole_furnace_bundle_files": 42,
+    "whole_furnace_bundle_bytes": 842396,
+    "raw_files": 35,
+    "raw_bytes": 460595,
+    "unchanged_from_publication_commit": "8fffe7b05e08def6a89711d9af66188581d54a18",
+    "deleted_checkpoint_body_not_checked_by_old_receipt_verifier": true
+  },
+  "local_regression": {
+    "environment": {
+      "LTWS_CPU_MKLDNN_ENABLED": "0",
+      "LTWS_CPU_SDPA_BACKEND": "math"
+    },
+    "test_files": [
+      "tests/test_native_cuda_cache.py",
+      "tests/test_v22_recovery01.py",
+      "tests/test_v22_full_ft.py",
+      "tests/test_v22_receipts.py",
+      "tests/test_native_preservation_artifacts.py"
+    ],
+    "passed": 67,
+    "failed": 0,
+    "skipped": 0,
+    "wall_seconds": 6.5
+  },
+  "ruff": {
+    "status": "PASS",
+    "paths": [
+      "src/latent_workspace/cuda_cache.py",
+      "scripts/run_native_7b_canary.py",
+      "scripts/run_v22_full_ft.py",
+      "scripts/run_v22_full_ft_recovery01.py",
+      "scripts/verify_v22_full_ft.py",
+      "tests/test_native_cuda_cache.py",
+      "tests/test_v22_recovery01.py",
+      "provenance/pilots/v22_full_ft_recovery01_20261021/summarize.py"
+    ]
+  },
+  "publication_summary_replay": "PUBLICATION_SUMMARY_REPLAY_MATCH",
+  "partial_summary_claim_test": "PARTIAL_COMPLETION_CLAIM_REFUSED_AS_EXPECTED",
+  "code_scopes_unchanged_since_execution_source": true,
+  "scopes_checked": [
+    "src",
+    "scripts",
+    "tests",
+    "configs",
+    "data/v10",
+    "pyproject.toml"
+  ],
+  "claim_ceiling": {
+    "independent_unseen_benchmark": false,
+    "judge_calls": 0,
+    "new_sequences": 0,
+    "non_regression": "NOT_ESTABLISHED",
+    "old_expression_gate": "FAIL",
+    "separately_authorized_workflow_weight_deletions": 1,
+    "training_role_weight_deletions": 0,
+    "winner": "none"
+  },
+  "publication_audit": {
+    "recorded_utc": "2026-10-20 22:43:38 UTC",
+    "staged_paths": 1513,
+    "all_staged_paths_in_scope": true,
+    "weight_bodies_staged": 0,
+    "furnace_artifact_files": 1570,
+    "furnace_artifact_bytes": 7272777,
+    "furnace_artifacts_index_byte_exact": true,
+    "relative_links_checked": 153,
+    "missing_relative_links": 0,
+    "dev_table_rows_verified": 8,
+    "checkpoint_hash_size_report_pairs_verified": 3,
+    "original_failure_staged_changes": 0,
+    "diff_check": "PASS"
+  }
+}

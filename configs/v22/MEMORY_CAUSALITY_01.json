@@ -1,0 +1,39 @@
+{
+  "schema": "ltws-v22-memory-causality-01",
+  "seed": 20261021,
+  "comparison_plan": "configs/v22/BASE_COMPARISON_01.json",
+  "comparison_plan_sha256": "a515cf29439bbe37a6a5a920a5ffbc7e719e439cc17d364ac9ad3688b9204449",
+  "comparison_bundle": "/home/ryospiralarchitect/spiralreality/SpiralReality/latent-v22-comparison01-20261021",
+  "expected_runtime": {"python": "3.12.14", "torch": "2.13.0+cu132", "transformers": "5.15.0", "cuda": "13.2"},
+  "resources": {
+    "admission_free_gib": 31, "allocator_cap_gib": 30.5, "abort_free_gib": 0.75,
+    "host_admission_available_gib": 100, "host_abort_available_gib": 24,
+    "disk_free_gib": 50, "max_elapsed_seconds": 14400, "cpu_threads": 2
+  },
+  "qualification_devices": ["cpu", "cuda"],
+  "qualification_device_env": "LTWS_TEST_DEVICE",
+  "qualification_cpu_mkldnn_enabled": false,
+  "scratch_cpu_sdpa_backend": "math",
+  "qualification_gpu_limit_gib": 4,
+  "qualification_wall_seconds": 900,
+  "qualification_cases": 187,
+  "qualification_test_files": [
+    "tests/test_native_memory.py", "tests/test_native_owner.py",
+    "tests/test_native_evaluation.py", "tests/test_native_diagnostics.py",
+    "tests/test_native_causality.py"
+  ],
+  "conditions": ["identity", "empty", "zero", "reverse", "twin"],
+  "generation": {"seed": 20261021, "max_new_tokens": 24, "temperature": 0, "top_p": 1},
+  "planned": {
+    "original_world_rows": 96, "nonempty_rows": 80, "twin_directed_rows": 64,
+    "prefix_positions": 2492, "new_sequences": 928, "native_weight_updates": 0,
+    "checkpoint_saves": 0, "judge_calls": 0, "weight_deletions": 0
+  },
+  "pass_status": "V22_CAUSALITY_COMPLETE_NOT_RELEASE",
+  "no_retry": true,
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED",
+  "backend": "Native PyTorch required for model-independent cut-state interventions and strict owner restoration. No managed environment changes, KV cache or serving fallback.",
+  "claim_scope": "Post-result mechanism analysis of all 96 exposed rows in 16 groups, not a fresh holdout. Zero/reverse are off-manifold controls; empty also changes positions. Natural twin direction is stratified by equal token length (10/16 groups). Writer factorial replaces only cut-4 memory, not query encoder, reader layers or head. Prefix exact fixed-extent future invariance is a dispatch gate; extent differences are recorded, not silently corrected. Full-vocabulary deterministic bounded generation only. No training, paid judge, deletion or release."
+}

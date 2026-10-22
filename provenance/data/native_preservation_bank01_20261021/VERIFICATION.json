@@ -1,0 +1,50 @@
+{
+  "format": "native_preservation_observed_verification_v1",
+  "record_kind": "agent_record_of_completed_tool_commands_not_an_independent_signature",
+  "build": {
+    "machine": "Furnace",
+    "command": "scripts/build_native_preservation_bank.py build",
+    "exit_code": 0,
+    "observed_status": "BUILT",
+    "rows": 1938,
+    "groups": 1050
+  },
+  "offline_full_replay": {
+    "machine": "Furnace",
+    "command": "scripts/build_native_preservation_bank.py verify",
+    "exit_code": 0,
+    "observed_status": "OFFLINE_REPLAY_PASS",
+    "matched_payloads": [
+      "rows.json.gz",
+      "index.json.gz",
+      "SUMMARY.json",
+      "PLAN.json"
+    ],
+    "rows_sha256": "cdd69db1a30021bb9fc38b8ab07ad70ef28306cdb9128b60df59f011af19a615"
+  },
+  "tests": {
+    "prebuild_local_focused": {"passed": 24, "failed": 0},
+    "prebuild_furnace_focused": {"passed": 24, "failed": 0, "junit": "furnace/tests.xml"},
+    "postbuild_local_selected": {
+      "passed": 56,
+      "failed": 0,
+      "files": [
+        "tests/test_native_preservation_bank.py",
+        "tests/test_native_preservation_artifacts.py",
+        "tests/test_native_world_bank.py",
+        "tests/test_native_data_reporting.py"
+      ]
+    }
+  },
+  "ruff": "PASS",
+  "tracked_diff_whitespace": "PASS",
+  "activity": {
+    "model_forwards": 0,
+    "generations": 0,
+    "judge_requests": 0,
+    "native_weight_updates": 0,
+    "weight_deletions": 0,
+    "hf_uploaded_files": 0
+  },
+  "status": "CANDIDATE_BANK_READY_NOT_TRAINING_APPROVED"
+}

@@ -1,0 +1,68 @@
+{
+  "contract": {
+    "data_sha256": "99d519c3dc06274901a4147dcfb3a741943e1a3ac3608310ed8ee17ab65dc6a1",
+    "objective": "query_only_token_weighted_causal_nll",
+    "original_base_sha256": "9db998af86c8105f0a2d774c10f777e190f86e54473b6b756bb51b225064a189",
+    "source_commit": "d6188f17d5130f39b7480de1637904307fa7a0dd"
+  },
+  "graph": {
+    "boundary": {
+      "attention_implementation": "eager",
+      "backend": "torch",
+      "binding_kind": "mistral",
+      "boundary_layer": 4,
+      "cache_policy": "disabled_no_cache",
+      "layer_count": 32,
+      "limitations": [
+        "No past-key-value cache or incremental cached decoding.",
+        "No caller-supplied position IDs or attention-output interface.",
+        "Layer calls preserve native checkpointing hooks; parity is run-specific."
+      ],
+      "model_class": "transformers.models.mistral.modeling_mistral.MistralForCausalLM",
+      "model_type": "mistral",
+      "phase": "pre_decoder_block",
+      "position_policy": "sequential_zero_based",
+      "schema_version": "latent_workspace.boundary.v1",
+      "support_status": "supported_layout",
+      "torch_version": "2.13.0+cu132",
+      "transformers_version": "5.15.0"
+    },
+    "cache": "disabled",
+    "labels": "query_only_next_token",
+    "memory_policy": "reencode_from_tokens_every_forward",
+    "route": "native_full_vocabulary",
+    "schema": "ltws-native-memory-graph-v1"
+  },
+  "imports": {
+    "latent_workspace": "src/latent_workspace/__init__.py",
+    "latent_workspace.composition": "src/latent_workspace/composition.py",
+    "latent_workspace.cuts": "src/latent_workspace/cuts.py",
+    "latent_workspace.execution": "src/latent_workspace/execution.py",
+    "latent_workspace.host": "src/latent_workspace/host.py",
+    "latent_workspace.lattice": "src/latent_workspace/lattice.py",
+    "latent_workspace.losses": "src/latent_workspace/losses.py",
+    "latent_workspace.native_memory": "src/latent_workspace/native_memory.py",
+    "latent_workspace.native_owner": "src/latent_workspace/native_owner.py",
+    "latent_workspace.offload": "src/latent_workspace/offload.py",
+    "latent_workspace.operators": "src/latent_workspace/operators.py",
+    "latent_workspace.optimizer_state": "src/latent_workspace/optimizer_state.py",
+    "latent_workspace.readout": "src/latent_workspace/readout.py",
+    "latent_workspace.routes": "src/latent_workspace/routes.py",
+    "latent_workspace.scratch": "src/latent_workspace/scratch.py",
+    "latent_workspace.training": "src/latent_workspace/training.py"
+  },
+  "optimizer": {
+    "learning_rate": 2e-07,
+    "max_grad_norm": 1.0,
+    "weight_decay": 0.0
+  },
+  "parameter_elements": 7248023552,
+  "physical_parameters": 291,
+  "plan_sha256": "97c5a25c9b909537d01543af2013cf2e7a2236884b564aa066fe0816d0527161",
+  "runtime": {
+    "cuda": "13.2",
+    "python": "3.12.14",
+    "torch": "2.13.0+cu132",
+    "transformers": "5.15.0"
+  }
+}

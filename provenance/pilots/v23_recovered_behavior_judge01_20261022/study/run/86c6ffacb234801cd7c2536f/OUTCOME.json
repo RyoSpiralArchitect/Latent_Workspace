@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T00:56:56.437051+00:00",
+  "observation": {
+    "judgment": {
+      "better": "A",
+      "complete_A": true,
+      "complete_B": false,
+      "correctness_A": "correct",
+      "correctness_B": "incorrect",
+      "quote_A": "return list(OrderedDict.fromkeys(items))",
+      "quote_B": "if isinstance(item, (int, float, str)) and item not in seen:",
+      "reason": "Answer A correctly implements stable_unique using OrderedDict.fromkeys, which handles all hashable types (not just int/float/str), preserves first-seen order, does not sort or mutate the input, and includes three complete assert-based tests including an empty input. Answer B incorrectly restricts elements to int/float/str via an isinstance check, excluding other hashable types like tuples, and is incomplete with the third test cut off mid-expression."
+    },
+    "model": "mistral-large-4",
+    "response_id": "71dd8b06e3f1426d8107492ec68c451b",
+    "status": "VALID",
+    "usage": {
+      "completion_tokens": 1308,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1150
+      },
+      "prompt_tokens": 905,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "service_tier": "standard",
+      "total_tokens": 2213
+    }
+  },
+  "response_sha256": "dd7723619d25ca2b70fbc7bb338797eea4ebe8acc3aabfba2395f4aa7432e349",
+  "status": "RETURNED"
+}

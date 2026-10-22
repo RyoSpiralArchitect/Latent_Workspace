@@ -1,0 +1,254 @@
+{
+  "euclidean_change_norms": {
+    "cast_error_sq": 0.10879401803141873,
+    "master_delta_sq": 0.12117591275721717,
+    "native_delta_sq": 0.07414328383722402
+  },
+  "head_factorial_contrasts": {
+    "both": {
+      "base_correct": 355,
+      "base_only": 4,
+      "both_correct": 351,
+      "both_wrong": 211,
+      "changed_predictions": 11,
+      "n": 570,
+      "v22_correct": 355,
+      "v22_only": 4
+    },
+    "head_only_at_base_hidden": {
+      "base_correct": 355,
+      "base_only": 0,
+      "both_correct": 355,
+      "both_wrong": 215,
+      "changed_predictions": 0,
+      "n": 570,
+      "v22_correct": 355,
+      "v22_only": 0
+    },
+    "head_only_at_v22_hidden": {
+      "base_correct": 355,
+      "base_only": 0,
+      "both_correct": 355,
+      "both_wrong": 215,
+      "changed_predictions": 0,
+      "n": 570,
+      "v22_correct": 355,
+      "v22_only": 0
+    },
+    "hidden_only_at_base_head": {
+      "base_correct": 355,
+      "base_only": 4,
+      "both_correct": 351,
+      "both_wrong": 211,
+      "changed_predictions": 11,
+      "n": 570,
+      "v22_correct": 355,
+      "v22_only": 4
+    }
+  },
+  "regression_margin_decomposition": [
+    {
+      "head_effect": -0.00244140625,
+      "hidden_effect": -0.1584930419921875,
+      "hidden_share_of_total": 0.984899845916795,
+      "id": "mmlu:all:test:9596",
+      "interaction": 1.1444091796875e-05
+    },
+    {
+      "head_effect": -0.0025424957275390625,
+      "hidden_effect": -0.1614208221435547,
+      "hidden_share_of_total": 0.9846538685282141,
+      "id": "mmlu:all:test:13900",
+      "interaction": 2.6702880859375e-05
+    }
+  ],
+  "resources_gib": {
+    "base": {
+      "peak_cuda_allocated_bytes": 17.454921,
+      "peak_cuda_reserved_bytes": 26.378906,
+      "peak_host_rss_bytes": 5.541756
+    },
+    "v22": {
+      "peak_cuda_allocated_bytes": 17.955074,
+      "peak_cuda_reserved_bytes": 26.878906,
+      "peak_host_rss_bytes": 55.760685
+    }
+  },
+  "scope": "Post-result offline interpretation; no new model calls or confirmatory claim",
+  "teacher_vs_prefix_at_identical_token_history": {
+    "base": {
+      "correctness_disagreements": [
+        {
+          "fixed_prefix": {
+            "correct": false,
+            "gold_logit": 19.125,
+            "gold_logprob": -0.7576633095741272,
+            "gold_margin": -0.125,
+            "gold_rank": 2,
+            "target": 29508,
+            "top1": 29518,
+            "top_logit": 19.25,
+            "top_ties": 1
+          },
+          "id": "wb01-inventory-test-0009/s0/unaffected",
+          "index": 1,
+          "recorded_text": "21",
+          "route": "inline",
+          "target": "19.",
+          "teacher": {
+            "correct": true,
+            "gold_logit": 19.25,
+            "gold_logprob": -0.6932079792022705,
+            "gold_margin": 0.0,
+            "gold_rank": 1,
+            "target": 29508,
+            "top1": 29508,
+            "top_logit": 19.25,
+            "top_ties": 2
+          }
+        },
+        {
+          "fixed_prefix": {
+            "correct": true,
+            "gold_logit": 23.0,
+            "gold_logprob": -0.6933972239494324,
+            "gold_margin": 0.0,
+            "gold_rank": 1,
+            "target": 1186,
+            "top1": 1186,
+            "top_logit": 23.0,
+            "top_ties": 2
+          },
+          "id": "wb01-order-test-0007/s1/affected",
+          "index": 0,
+          "recorded_text": "Nwpkirypuq is ranked higher.",
+          "route": "latent",
+          "target": "Nwpkirypuq.",
+          "teacher": {
+            "correct": false,
+            "gold_logit": 23.125,
+            "gold_logprob": -0.7577980160713196,
+            "gold_margin": -0.125,
+            "gold_rank": 2,
+            "target": 1186,
+            "top1": 3048,
+            "top_logit": 23.25,
+            "top_ties": 1
+          }
+        }
+      ],
+      "max_gold_logit_abs_difference": 0.75,
+      "same_gold_argmax_correctness": 865,
+      "tokens": 867
+    },
+    "v22": {
+      "correctness_disagreements": [
+        {
+          "fixed_prefix": {
+            "correct": false,
+            "gold_logit": 20.5,
+            "gold_logprob": -0.8450387120246887,
+            "gold_margin": -0.25,
+            "gold_rank": 2,
+            "target": 1031,
+            "top1": 29497,
+            "top_logit": 20.75,
+            "top_ties": 1
+          },
+          "id": "wb01-linked_location-ood-0023/s1/unaffected",
+          "index": 1,
+          "recorded_text": "Nkxfboiobj.",
+          "route": "latent",
+          "target": "Neruhfebov.",
+          "teacher": {
+            "correct": true,
+            "gold_logit": 20.5,
+            "gold_logprob": -0.7157543897628784,
+            "gold_margin": 0.0,
+            "gold_rank": 1,
+            "target": 1031,
+            "top1": 1031,
+            "top_logit": 20.5,
+            "top_ties": 2
+          }
+        },
+        {
+          "fixed_prefix": {
+            "correct": false,
+            "gold_logit": 21.25,
+            "gold_logprob": -0.6939482092857361,
+            "gold_margin": 0.0,
+            "gold_rank": 1,
+            "target": 29491,
+            "top1": 2,
+            "top_logit": 21.25,
+            "top_ties": 2
+          },
+          "id": "wb01-linked_location-ood-0058/s1/affected",
+          "index": 6,
+          "recorded_text": "Nymszrcrff",
+          "route": "inline",
+          "target": "Nymszrcrff.",
+          "teacher": {
+            "correct": true,
+            "gold_logit": 21.375,
+            "gold_logprob": -0.6333971619606018,
+            "gold_margin": 0.125,
+            "gold_rank": 1,
+            "target": 29491,
+            "top1": 29491,
+            "top_logit": 21.375,
+            "top_ties": 1
+          }
+        }
+      ],
+      "max_gold_logit_abs_difference": 0.375,
+      "same_gold_argmax_correctness": 1109,
+      "tokens": 1111
+    }
+  },
+  "v22_latent": {
+    "exact_correct": 83,
+    "failures": 13,
+    "first_fork_positions": {
+      "0": 7,
+      "1": 5,
+      "5": 1
+    },
+    "first_two_token_forks": 12,
+    "fp32_gold_top1_at_failed_fork": 0,
+    "gold_tokens": 623,
+    "rows": 96,
+    "teacher_fork_nll_fraction_max": 0.9964519899120379,
+    "teacher_fork_nll_fraction_min": 0.9480573081281837,
+    "teacher_gold_argmax": 611,
+    "teacher_vs_prefix_gold_argmax_disagreements": [
+      {
+        "id": "wb01-linked_location-ood-0023/s1/unaffected",
+        "index": 1,
+        "prefix": {
+          "correct": false,
+          "gold_logit": 20.5,
+          "gold_logprob": -0.8450387120246887,
+          "gold_margin": -0.25,
+          "gold_rank": 2,
+          "target": 1031,
+          "top1": 29497,
+          "top_logit": 20.75,
+          "top_ties": 1
+        },
+        "teacher": {
+          "correct": true,
+          "gold_logit": 20.5,
+          "gold_logprob": -0.7157543897628784,
+          "gold_margin": 0.0,
+          "gold_rank": 1,
+          "target": 1031,
+          "top1": 1031,
+          "top_logit": 20.5,
+          "top_ties": 2
+        }
+      }
+    ]
+  }
+}
