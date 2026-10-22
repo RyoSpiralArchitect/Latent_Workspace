@@ -17,6 +17,15 @@ dated evidence.
 
 ## Reading this repository
 
+**V24 next step:** [portable readout diagnosis and workspace capability improvement](docs/v24/README.md).
+New engine-owned observational instruments separate fixed-token content/copying,
+option binding and EOS; original/candidate × no-memory/inline/workspace contrasts
+keep missingness and group-level denominators. The bounded next 7B diagnostic
+is not new FT or evidence of general intelligence. Preservation remains a floor;
+useful workspace-dependent improvement is the target. See the
+[execution handoff](provenance/engineering/v24_readout_probe01_20261022/EXECUTION_HANDOFF.md)
+for live receipt status and the separate Full-FT/storage gates.
+
 **2026-10-22 readout complete:** [integrated V23 evaluation](docs/v23/EVALUATION_SYNTHESIS.md)
 and [full-FT PR review map](docs/v23/FULL_FT_REVIEW_GUIDE.md).
 MMLU-Pro direct base/off/on is **92/101/100 of 280**; strict parsed reasoning

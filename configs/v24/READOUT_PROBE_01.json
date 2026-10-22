@@ -1,0 +1,41 @@
+{
+  "schema": "ltws-v24-readout-probe-01",
+  "roles": ["base", "off", "on"],
+  "mmlu_ids": ["biology:3462", "chemistry:4250", "math:9037", "other:5622"],
+  "world_families": ["location", "inventory", "order", "revision"],
+  "cases_sha256": "de63093e476a992cc9a7fab537aa3a996615e787f466955753c18e8a514d0344",
+  "cases_per_arm": 44,
+  "forwards_per_arm": 197,
+  "resources": {
+    "admission_free_gib": 31, "allocator_cap_gib": 30.5, "abort_free_gib": 0.75,
+    "host_admission_available_gib": 100, "host_abort_available_gib": 24,
+    "disk_free_gib": 50, "max_elapsed_seconds": 14400, "cpu_threads": 2
+  },
+  "qualification_devices": ["cpu", "cuda"],
+  "qualification_device_env": "LTWS_TEST_DEVICE",
+  "qualification_cpu_mkldnn_enabled": false,
+  "scratch_cpu_sdpa_backend": "math",
+  "qualification_gpu_limit_gib": 4,
+  "qualification_wall_seconds": 900,
+  "qualification_cases": 350,
+  "qualification_test_files": [
+    "tests/test_native_memory.py", "tests/test_native_owner.py",
+    "tests/test_native_evaluation.py", "tests/test_preservation_owner.py",
+    "tests/test_v23_comparison.py", "tests/test_readout_audit.py",
+    "tests/test_workspace_improvement.py", "tests/test_architecture_rules.py",
+    "tests/test_qualification_isolation.py", "tests/test_v23_generation_cache.py",
+    "tests/test_v24_readout_probe.py"
+  ],
+  "pass_status": "V24_READOUT_COMPLETE_NOT_FT_OR_QUALITY",
+  "no_retry": true,
+  "native_weight_updates": 0,
+  "new_sequences": 0,
+  "checkpoint_saves": 0,
+  "judge_calls": 0,
+  "weight_deletions": 0,
+  "full_ft_dispatch": false,
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED",
+  "claim": "Exposed failure diagnosis. Oracle content is explicitly supplied to distinguish option binding from derivation, not to report benchmark accuracy. Fixed-token twin contrasts do not establish recurrence or general capability improvement."
+}
