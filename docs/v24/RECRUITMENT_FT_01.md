@@ -51,6 +51,16 @@ mixture remains 80% by requested target share; JSON format receives no new
 auxiliary loss or intrinsic reward. It may still learn formatting: content,
 intermediate steps, exact copying and complete output must be scored separately.
 
+The frozen schedule actually selects 538 distinct rows from 403 source groups.
+Of these, 457 synthetic rows come from 324 world/reasoning groups. Only **9 of
+324** selected synthetic groups include both affected twin sides; **zero** have
+all six distinct cells selected. These counts follow directly from the public
+synthetic rows and fixed schedule in the [prepared bank](../../provenance/engineering/v24_recruitment_preparation01_20261023/furnace/raw/data/bank/MANIFEST.json).
+The generator's full control structure is not equivalent to balanced exposure
+to every control in 32 updates. R1 tests matched input-route learning with a
+sparse row-level curriculum, not a complete pairwise contrastive-training
+experiment. This post-freeze audit does not resample or change the schedule.
+
 ## Qualification and storage lifecycle
 
 First run the [data-only preparation](../../scripts/prepare_v24_recruitment.py)
@@ -87,6 +97,9 @@ confirmation claim, broad non-regression or release follows from training loss.
 Writing/judge qualification and public-benchmark comparison remain separate
 protocols. Old gate `FAIL`, winner `none`, non-regression `NOT_ESTABLISHED` remain.
 
-**Current status:** implementation and offline preparation; FT dispatch depends
-on the exact new data receipt and update/save/replay qualification. No new
-scientific checkpoint or quality result is claimed here.
+**Current status (2026-10-23):** data frozen; 570/570 CPU and 570/570 CUDA
+qualification PASS. The [first 7B canary attempt](../../provenance/engineering/v24_recruitment_ft01_20261023/README.md)
+completed one update and saved before detecting a separate GPU client. It is
+sealed as `INCOMPLETE_NO_RETRY`; exact replay and both scientific arms are
+unrun. No new scientific checkpoint or quality result is claimed here. The
+canary body is retained, and the successful-replay retirement gate is not met.

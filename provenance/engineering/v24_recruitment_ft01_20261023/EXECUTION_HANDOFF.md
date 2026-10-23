@@ -13,8 +13,23 @@ source seal, data body, target, threshold, coefficient or resource floor.
 Furnace source directory: `worktrees/latent-v24-recruitment-ft01-20261023`.
 Output: `latent-v24-recruitment-ft01-20261023`, both under
 `/home/ryospiralarchitect/spiralreality/SpiralReality`.
-The source commit must be read from its future `SOURCE_SEAL.json`; no launch or
-qualification PASS is claimed by this pre-dispatch handoff.
+Execution source: `d43382833f6dc85787720bda80aec511c66f58be`, 831 sealed files.
+**Terminal: INCOMPLETE_NO_RETRY.** [Results and exact receipts](README.md)
+record CPU 570/570 and CUDA 570/570 PASS, followed by one completed canary
+update (four rows, 1,171 tokens) and one 29,004,378,444-byte save. The post-save
+guard detected a distinct GPU client (PID 4140617, 1.2617 GiB) and stopped only
+our job. Canary update 2, fresh replay and both scientific arms never ran.
+The source and all historical receipts remain unchanged.
+
+The checkpoint remains present; a post-stop full-body SHA256 matches its
+save receipt, but it has not passed restore/replay. The prepared spent-canary
+helper correctly refuses this bundle. Do not delete it under a successful
+replay claim, rerun either launcher in place, or weaken the contention guard.
+Ryō has been asked for a separate same-conditions attempt in an exclusive GPU
+window. No retry, new training or additional cleanup is currently dispatched.
+
+The lifecycle below is the **unfulfilled frozen plan**, not a continuation
+command for this terminal output tree:
 
 1. [Checks launcher](../../../scripts/launch_v24_recruitment_checks.sh) runs the
    full 570-test selection on CPU, then CUDA (each 4-GiB/900-second tiny bound;

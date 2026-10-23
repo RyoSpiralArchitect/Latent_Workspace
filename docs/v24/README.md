@@ -100,9 +100,14 @@ The next controlled factor is [R1 input-route learning](RECRUITMENT_FT_01.md):
 same independently checked records, answers and training windows, supplied
 inline versus through native M. New arithmetic/register/transform groups join
 the unused V23 world expansion; preservation remains 80% of requested target
-token exposure. The new bank/harness passed **60/60 local CPU tests**. Actual
-offline tokenizer counts, tiny-device/7B replay qualification and the final FT
-source seal still precede dispatch; no candidate result is claimed.
+token exposure. The new bank/harness passed **60/60 CPU tests**; pinned offline
+tokenization froze 538 rows / 21,112 targets across 32 windows per arm. The
+[sealed FT qualification](../../provenance/engineering/v24_recruitment_ft01_20261023/README.md)
+then passed **570/570 CPU and 570/570 CUDA tests**. The 7B canary completed one
+update and saved, then stopped on an actual separate GPU client. Exact replay
+and both scientific arms are unrun; no candidate result is claimed. Preserve
+the failed trial and its checkpoint; a new exclusive-window attempt requires
+a separate recovery decision, without changing the scientific conditions.
 
 The [obsolete V15 engineering pair retirement](../../provenance/inventory/v24_v15_engineering_20261023/README.md)
 then reclaimed **54.1187 GiB**, leaving about **119.98 GiB**. V18 and V22/V23

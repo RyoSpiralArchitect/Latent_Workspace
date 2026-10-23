@@ -23,8 +23,12 @@ is frozen after 60/60 isolated Furnace CPU tests: **32 updates / 538 rows /
 versus through workspace. Arithmetic/register/transform tasks broaden the
 unused world expansion; preservation stays a floor. [Scope and controls](docs/v24/RECRUITMENT_FT_01.md)
 and [execution handoff](provenance/engineering/v24_recruitment_ft01_20261023/EXECUTION_HANDOFF.md)
-separate preparation, upcoming 570-test CPU/CUDA qualification, real-model
-restart and training. No new candidate result yet. A separately recorded
+separate preparation, real-model restart and training. [CPU and CUDA each passed
+570/570 tests](provenance/engineering/v24_recruitment_ft01_20261023/README.md),
+but the 7B canary stopped after **one of two updates and its first save** when
+another GPU client appeared. Replay and both scientific arms remain unrun;
+the failed trial and its checkpoint are preserved. No new candidate result
+yet. A separately recorded
 [V15 engineering-pair retirement](provenance/inventory/v24_v15_engineering_20261023/README.md)
 reclaimed 54.12 GiB; original and V18/V22/V23 comparison weights remain.
 
@@ -33,7 +37,7 @@ with [all 132 traces / 591 forwards replayed](provenance/engineering/v24_readout
 after 350/350 CPU and CUDA tests. Four assisted-content probes bind the correct
 option in all three arms; on four world groups, reference-format likelihood
 gain dominates content gain. This is exposed conditional evidence, not a new
-benchmark or a universal bottleneck diagnosis. No new Full FT has run.
+benchmark or a universal bottleneck diagnosis. No new scientific FT arm has run.
 New engine-owned observational instruments separate fixed-token content/copying,
 option binding and EOS; original/candidate × no-memory/inline/workspace contrasts
 keep missingness and group-level denominators. This bounded 7B diagnostic
