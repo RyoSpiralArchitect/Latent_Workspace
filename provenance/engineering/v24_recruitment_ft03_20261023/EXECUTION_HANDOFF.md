@@ -4,7 +4,7 @@
 in a **new source and separate trial**, with the same numerical conditions and
 safety floors. [FT01](../v24_recruitment_ft01_20261023/README.md) and
 [FT02](../v24_recruitment_ft02_20261023/README.md) remain immutable stopped trials.
-This document starts at pre-dispatch status; actual observations are added below.
+The run was dispatched once; actual observations are recorded below.
 
 ## Audit-only source change
 
@@ -71,3 +71,31 @@ Original Mistral, V22 step32, both V23 finals and private data remain protected.
 No automatic retry, recurring monitor, judge, new generation, PR, HF export
 or release is included. Old FAIL / winner:none / non-regression NOT_ESTABLISHED.
 On any new failure, retain evidence and request a recovery decision.
+
+## Live handoff: qualification complete, 7B checks running
+
+Execution source: **09addc856ba6f10da31054f1674c7547b1ab91ad**, 845 sealed files.
+The clean Furnace worktree remains detached at this commit; later publication
+commits must not be checked out there during execution. Tmux session:
+`ltws-v24-recruitment-checks03-20261023`.
+
+Both closed qualifications were copied back without rewriting their bytes:
+CPU **608/608** (72.308 s), CUDA **608/608** (80.340 s), all zero
+failures/errors/skips. Independent observer PID 4182415, CPU PID 4182388:
+**137 successful samples, zero monitor errors**, clean requested-stop terminal,
+child CUDA initialization rejected and final visible-device count zero.
+The external observer is no longer running; the 7B canary has its own resource
+guard. [Offline qualification replay](OFFLINE_QUALIFICATION_VERIFICATION.json)
+passes; [raw qualification](furnace/qualification/) includes the bound JSONL.
+
+7B canary PID 4194166 has completed update 1 and begun its single save. Update 2,
+fresh-process exact replay and the two scientific arms are not yet complete.
+Do not restart the launcher or invoke training early. Read the existing
+`checks/FINISHED.json` when it appears and verify with
+`scripts/verify_v24_recruitment_ft03.py --phase checks` after copying only
+metadata/logs, never checkpoint bodies or private data.
+
+The post-publication verifier and scoped-retirement tests add **48 passing
+offline cases** (including their historical regressions); they are not silently
+added to the frozen 608-per-device execution count. The two-body retirement
+helper is preparation only: no FT03/FT01 canary was deleted at this handoff.
