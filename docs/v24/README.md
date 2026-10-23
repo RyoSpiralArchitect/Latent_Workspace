@@ -118,8 +118,13 @@ FT03 then passed **608/608 on both devices and 137 clean observer samples**, but
 the inherited in-memory payload check forecast another 32-GiB disk write despite
 not writing a tensor file. Free space was 71.55 GiB, above the 50-GiB floor but
 below the forecast gate. Save/restore replay and both scientific arms remain
-unrun. Preserve both canaries and the negative terminal; the proposed next
-repair separates memory-only admission from real-file write forecasts.
+unrun in FT03. Its negative terminal and newer canary remain protected.
+The authorized [FT04 repair](../../provenance/engineering/v24_recruitment_ft04_20261023/EXECUTION_HANDOFF.md)
+separates memory-only admission from real-file writes, retaining all safeguards.
+It keeps 608 tests and adds 35 (643/device); real saves retain the 32-GiB
+reserve and paired-final admission is conservatively 110 GiB including the
+50-GiB floor. The [FT01-only retirement](../../provenance/inventory/v24_ft01_superseded_20261023/README.md)
+is separately authorized with replay explicitly NOT_RUN, not a training gate.
 
 The [obsolete V15 engineering pair retirement](../../provenance/inventory/v24_v15_engineering_20261023/README.md)
 then reclaimed **54.1187 GiB**, leaving about **119.98 GiB at that time**.

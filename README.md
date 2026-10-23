@@ -57,6 +57,12 @@ passed 608 tests per device and its independent observer, then
 [stopped after two recorded canary updates](provenance/engineering/v24_recruitment_ft03_20261023/README.md)
 on an inherited disk forecast at a memory-only payload check. Replay and both
 scientific arms remain unrun; no quality success is claimed. Historical failures remain.
+The authorized [FT04 recovery](provenance/engineering/v24_recruitment_ft04_20261023/EXECUTION_HANDOFF.md)
+separates memory-only snapshots from actual writes while preserving host/GPU
+criteria, the 32-GiB real-write reserve and 50-GiB free-space floor. It adds
+35 tests (643/device planned). The separately authorized
+[old FT01-only retirement](provenance/inventory/v24_ft01_superseded_20261023/README.md)
+does not claim successful replay or relax the paired-FT storage gate.
 
 **2026-10-22 readout complete:** [integrated V23 evaluation](docs/v23/EVALUATION_SYNTHESIS.md)
 and [full-FT PR review map](docs/v23/FULL_FT_REVIEW_GUIDE.md).
