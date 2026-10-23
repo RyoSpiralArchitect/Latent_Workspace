@@ -6,6 +6,12 @@ safety floors. [FT01](../v24_recruitment_ft01_20261023/README.md) and
 [FT02](../v24_recruitment_ft02_20261023/README.md) remain immutable stopped trials.
 The run was dispatched once; actual observations are recorded below.
 
+**Terminal update:** FT03 is now `INCOMPLETE_NO_RETRY` after two recorded canary
+updates, at the inherited read-only payload operation's 32-GiB disk forecast.
+No replay, training or canary deletion occurred. See the [complete result](README.md).
+Do not run either FT03 launcher or the prepared retirement helper. A new source/
+attempt and a changed, one-old-canary cleanup decision await Ryō's response.
+
 ## Audit-only source change
 
 The old `qualification_isolation.py`, original V24 runner and original plan
@@ -72,7 +78,7 @@ No automatic retry, recurring monitor, judge, new generation, PR, HF export
 or release is included. Old FAIL / winner:none / non-regression NOT_ESTABLISHED.
 On any new failure, retain evidence and request a recovery decision.
 
-## Live handoff: qualification complete, 7B checks running
+## Historical progress: qualification complete, 7B checks initially running
 
 Execution source: **09addc856ba6f10da31054f1674c7547b1ab91ad**, 845 sealed files.
 The clean Furnace worktree remains detached at this commit; later publication
@@ -99,3 +105,20 @@ The post-publication verifier and scoped-retirement tests add **48 passing
 offline cases** (including their historical regressions); they are not silently
 added to the frozen 608-per-device execution count. The two-body retirement
 helper is preparation only: no FT03/FT01 canary was deleted at this handoff.
+
+## Final handoff
+
+The existing process exited without retry; GPU was idle on the final check.
+`checks/FINISHED.json`, `raw/FINISHED.json` and `raw/canary/FINISHED.json` all retain
+failure. The observed two updates (eight rows / 2,220 targets) do not turn the
+terminal's null update count into success. `STEP2_PAYLOAD.json` and the replay
+role are absent. Verify the copied immutable metadata with
+`python3 -B scripts/verify_v24_recruitment_ft03.py provenance/engineering/v24_recruitment_ft03_20261023/furnace --phase storage-stopped`.
+The verifier supports failure description only; `checks` and `training` reject it.
+
+The unused retirement control copy is outside the sealed source tree at
+`/home/ryospiralarchitect/spiralreality/SpiralReality/tmp/latent-v24-ft03-retirement-control-kIB3Ij`.
+It was uploaded for preparation only and must not be invoked for this failed
+trial. Both checkpoint bodies remain, freshly rehashed. No new deletion took
+place after the separately completed V18 retirement. Updated failure/verifier/
+retirement regressions pass **56/56**; the execution count remains 608/device.

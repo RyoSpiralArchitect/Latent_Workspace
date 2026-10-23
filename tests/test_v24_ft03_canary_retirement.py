@@ -9,6 +9,22 @@ ROOT = Path(__file__).resolve().parents[1]
 HELPER = ROOT / "provenance/inventory/v24_ft03_canaries_20261023/retire.py"
 
 
+def test_actual_failed_ft03_is_not_spent_or_retirable(monkeypatch):
+    spec = importlib.util.spec_from_file_location("blocked_ft03_retirement", HELPER)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.setattr(module, "SOURCE_TREE", ROOT)
+    monkeypatch.setattr(module, "VERIFIER", ROOT / "scripts/verify_v24_recruitment_ft03.py")
+    monkeypatch.setattr(
+        module, "ROOT", ROOT / "provenance/engineering/v24_recruitment_ft03_20261023/furnace"
+    )
+    monkeypatch.setattr(
+        module, "OLD", ROOT / "provenance/engineering/v24_recruitment_ft01_20261023/furnace"
+    )
+    with pytest.raises(ValueError, match="Complete terminal manifest"):
+        module.gates()
+
+
 def fixture(tmp_path, monkeypatch):
     spec = importlib.util.spec_from_file_location("ft03_retirement_test", HELPER)
     module = importlib.util.module_from_spec(spec)

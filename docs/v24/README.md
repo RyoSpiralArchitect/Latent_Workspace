@@ -113,6 +113,13 @@ CUDA and 7B remained unrun. An explicitly authorized
 [FT03 audit-only recovery](../../provenance/engineering/v24_recruitment_ft03_20261023/EXECUTION_HANDOFF.md)
 adds an independent observer process and 38 regressions without changing any
 scientific conditions or safety floor. It must qualify all 608 tests per device.
+FT03 then passed **608/608 on both devices and 137 clean observer samples**, but
+[stopped after two recorded native updates](../../provenance/engineering/v24_recruitment_ft03_20261023/README.md):
+the inherited in-memory payload check forecast another 32-GiB disk write despite
+not writing a tensor file. Free space was 71.55 GiB, above the 50-GiB floor but
+below the forecast gate. Save/restore replay and both scientific arms remain
+unrun. Preserve both canaries and the negative terminal; the proposed next
+repair separates memory-only admission from real-file write forecasts.
 
 The [obsolete V15 engineering pair retirement](../../provenance/inventory/v24_v15_engineering_20261023/README.md)
 then reclaimed **54.1187 GiB**, leaving about **119.98 GiB at that time**.

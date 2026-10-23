@@ -62,8 +62,7 @@ def stopped(folder, seal, plan, qualified, result):
     )
     canary = raw / "canary"
     ex.require(
-        not (canary / "step2.json").exists()
-        and not (canary / "STEP2_PAYLOAD.json").exists(),
+        not (canary / "step2.json").exists() and not (canary / "STEP2_PAYLOAD.json").exists(),
         "Second update missing",
     )
     initial = ex.read(canary / "INITIAL.json")
@@ -120,10 +119,103 @@ def stopped(folder, seal, plan, qualified, result):
     return result
 
 
+def storage_stopped(folder, seal, plan, qualified, result):
+    """Observed two updates are not a complete canary or exact next-update replay."""
+    raw, canary = folder / "raw", folder / "raw/canary"
+    for path in (folder / "checks", raw, canary):
+        start, end = terminal(path, "INCOMPLETE_NO_RETRY", None)
+        ex.require(start["seal"] == seal and start["plan"] == plan, "Stopped source/protocol")
+        if path != folder / "checks":
+            ex.require(start["qualification"] == qualified, "Stopped qualification")
+        if path == canary:
+            ex.require(end["error"] == "ValueError: Forecast disk envelope", "Exact storage stop")
+        else:
+            ex.require(
+                end["completed_roles"] == []
+                and end["error"] == "ValueError: canary exited 1; stop without retry",
+                "No completed role",
+            )
+    ex.require(
+        not any((raw / r).exists() for r in ("replay", "inline", "workspace"))
+        and not (canary / "STEP2_PAYLOAD.json").exists()
+        and not (folder / "CANARY_RETIREMENT.json").exists()
+        and not (folder / "training").exists(),
+        "Retain missing payload/replay/training",
+    )
+    schedule = ex.read(PREP / "SCHEDULE.json")["canary"]
+    cumulative = 0
+    first = None
+    for step, keys in enumerate(schedule, 1):
+        value = ex.read(canary / f"step{step}.json")
+        ex.require(
+            [r["key"] for r in value["rows"]] == keys and len(keys) == 4, "Frozen canary windows"
+        )
+        for i, row in enumerate(value["rows"]):
+            ex.require(row == ex.read(canary / f"step{step}_row{i}.json"), "Individual rows")
+        cumulative += sum(r["tokens"] for r in value["rows"])
+        ex.require(
+            value["state"]["completed_steps"] == value["update"]["completed_steps"] == step
+            and value["state"]["tokens_seen"] == value["update"]["tokens_seen"] == cumulative,
+            "Recorded native update/cursor",
+        )
+        if step == 1:
+            first = value
+    ex.require(len(schedule) == 2 and cumulative == 2220, "Two recorded windows, 2220 targets")
+    saved = ex.read(canary / "CHECKPOINT_canary_step1.pt.json")
+    ex.require(
+        first["state"] == ex.read(canary / "STATE_canary_step1.pt.json")
+        and saved["completed_steps"] == 1
+        and saved["bytes"] == 29004378444,
+        "Only step 1 saved",
+    )
+    old = ex.read(
+        ROOT / "provenance/engineering/v24_recruitment_ft01_20261023/furnace/raw/canary/step1.json"
+    )
+    ex.require(old == first, "Whole first update reproduces FT01 despite new source identity")
+    host = [json.loads(s) for s in (canary / "HOST_RESOURCES.jsonl").read_text().splitlines()]
+    last = host[-1]
+    ex.require(
+        host[-2]["phase"] == "step2:complete"
+        and last["phase"] == "before_checkpoint"
+        and last["forecast_bytes"] == 32 * ex.GIB
+        and last["disk_free_bytes"] >= plan["resources"]["disk_free_gib"] * ex.GIB
+        and last["disk_free_bytes"] - last["forecast_bytes"]
+        < plan["resources"]["disk_free_gib"] * ex.GIB,
+        "Read-only payload gate nevertheless forecast another 32 GiB file",
+    )
+    resources = [json.loads(s) for s in (canary / "RESOURCES.jsonl").read_text().splitlines()]
+    own = ex.read(canary / "STARTED.json")["pid"]
+    ex.require(
+        all(p["pid"] == own for r in resources for p in r["processes"]),
+        "No observed foreign GPU client",
+    )
+    result.update(
+        status="VERIFIED_STORAGE_STOP_NOT_REPLAY_OR_TRAINING",
+        terminal_native_weight_updates=None,
+        observed_completed_canary_updates=2,
+        planned_canary_updates=2,
+        observed_backward_rows=8,
+        observed_training_tokens=2220,
+        scientific_updates=0,
+        exact_next_update_replay="NOT_RUN",
+        step2_payload="NOT_WRITTEN",
+        canary_checkpoint=saved,
+        first_update_exactly_matches_ft01=True,
+        failed_phase=last["phase"],
+        disk_free_bytes_at_failure=last["disk_free_bytes"],
+        disk_forecast_bytes_at_failure=last["forecast_bytes"],
+        peak_cuda_allocated_bytes=max(r.get("peak_allocated", 0) for r in resources),
+        peak_cuda_reserved_bytes=max(r.get("peak_reserved", 0) for r in resources),
+        terminal_sha256=ex.digest(raw / "FINISHED.json"),
+    )
+    return result
+
+
 def verify(folder, phase="checks"):
     folder = Path(folder)
     ex.require(
-        phase in ("qualification", "stopped", "checks", "training"), "Explicit verification stage"
+        phase in ("qualification", "stopped", "storage-stopped", "checks", "training"),
+        "Explicit verification stage",
     )
     seal = ex.read(folder / "SOURCE_SEAL.json")
     ex.require(seal["source_commit"] == SOURCE, "Exact execution source")
@@ -192,6 +284,8 @@ def verify(folder, phase="checks"):
         return result
     if phase == "stopped":
         return stopped(folder, seal, plan, qualified, result)
+    if phase == "storage-stopped":
+        return storage_stopped(folder, seal, plan, qualified, result)
     raw = folder / "raw"
     start, end = terminal(folder / "checks", "V24_ROUTE_CHECKS_COMPLETE_NOT_TRAINING", 3)
     ex.require(
@@ -305,7 +399,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("bundle", type=Path)
     parser.add_argument(
-        "--phase", choices=("qualification", "stopped", "checks", "training"), default="checks"
+        "--phase",
+        choices=("qualification", "stopped", "storage-stopped", "checks", "training"),
+        default="checks",
     )
     args = parser.parse_args()
     print(ex.canonical(verify(args.bundle, args.phase)))
