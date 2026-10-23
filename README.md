@@ -17,6 +17,17 @@ dated evidence.
 
 ## Reading this repository
 
+**2026-10-23 next FT preparation:** the [matched native input-route bank](provenance/engineering/v24_recruitment_preparation01_20261023/README.md)
+is frozen after 60/60 isolated Furnace CPU tests: **32 updates / 538 rows /
+21,112 targets per arm**, with identical information/targets supplied inline
+versus through workspace. Arithmetic/register/transform tasks broaden the
+unused world expansion; preservation stays a floor. [Scope and controls](docs/v24/RECRUITMENT_FT_01.md)
+and [execution handoff](provenance/engineering/v24_recruitment_ft01_20261023/EXECUTION_HANDOFF.md)
+separate preparation, upcoming 570-test CPU/CUDA qualification, real-model
+restart and training. No new candidate result yet. A separately recorded
+[V15 engineering-pair retirement](provenance/inventory/v24_v15_engineering_20261023/README.md)
+reclaimed 54.12 GiB; original and V18/V22/V23 comparison weights remain.
+
 **V24 readout complete:** [portable diagnosis and workspace capability improvement](docs/v24/README.md),
 with [all 132 traces / 591 forwards replayed](provenance/engineering/v24_readout_probe01_20261022/README.md)
 after 350/350 CPU and CUDA tests. Four assisted-content probes bind the correct
