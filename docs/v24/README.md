@@ -126,11 +126,22 @@ with 140 clean independent-observer samples. The
 [7B checks passed](../../provenance/engineering/v24_recruitment_ft04_20261023/README.md):
 both canary updates exactly reproduce FT03; fresh-process update-2 and full
 payload replay are exact. This is engineering qualification, not scientific FT
-or quality improvement. The scientific arms remain unrun pending storage.
+or quality improvement. At checks completion, the scientific arms were unrun
+pending storage.
 Real saves retain the 32-GiB
 reserve and paired-final admission is conservatively 110 GiB including the
 50-GiB floor. The [FT01-only retirement](../../provenance/inventory/v24_ft01_superseded_20261023/README.md)
 is complete (27.0124 GiB); replay stays explicitly NOT_RUN, not a training gate.
+
+**New authorized transition, 2026-10-23 16:52 JST:** the
+[FT03/FT04 canary-only retirement](../../provenance/inventory/v24_ft04_canaries_20261023/README.md)
+reclaimed 54.0249 GiB after whole-body rehash and published ledger. Scientific
+final weights and original Mistral remain protected; the FT03 failure is not
+rewritten. Free disk reached 124.2520 GiB, and the unchanged training admission
+passed. The same frozen FT04 source now runs inline then workspace, independently
+initialized from base, 32 updates / 538 rows / 21,112 targets per arm. Follow
+[the execution handoff](../../provenance/engineering/v24_recruitment_ft04_20261023/EXECUTION_HANDOFF.md).
+Training is not yet complete; no improved capability or non-regression is claimed.
 
 The [obsolete V15 engineering pair retirement](../../provenance/inventory/v24_v15_engineering_20261023/README.md)
 then reclaimed **54.1187 GiB**, leaving about **119.98 GiB at that time**.

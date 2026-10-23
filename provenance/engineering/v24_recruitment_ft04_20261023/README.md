@@ -77,15 +77,15 @@ native BF16 with CPU FP32 masters, Adafactor 2e-7, seed 47, P=0. The scientific
 recipe remains 32 updates / 538 matched rows / 21,112 targets per route, with
 both arms initialized independently from original base, never these canaries.
 
-## Storage disposition and the remaining gate
+## Storage at checks completion (historical)
 
 Only the explicitly authorized [old FT01 canary](../../inventory/v24_ft01_superseded_20261023/README.md)
 was retired: **one file / 27.0124 GiB**, after published ledger and complete
 target/protected-body rehash. Original FT01/FT03 failures and their missing
 historical replay remain visible. Git stores records, **not a recoverable copy
-of deleted tensor bytes**. No further body was deleted during FT04.
+of deleted tensor bytes**. No further body was deleted during the checks phase.
 
-Retained on Furnace:
+Retained on Furnace at the checks terminal:
 
 | Checkpoint | Size | Whole-file SHA-256 |
 | --- | ---: | --- |
@@ -109,6 +109,38 @@ would yield about **124.25 GiB**, before shared-disk changes. This is a
 FT03 was expressly retained in the current authorization. A different qualified
 storage destination is another option. The separate successful-replay and
 published spent-canary retirement gates remain mandatory before training.
+
+## Authorized retirement and scientific training dispatch
+
+Ryō subsequently approved only the two engineering canaries above. The
+[exclusive inventory and terminal](../../inventory/v24_ft04_canaries_20261023/README.md)
+record whole-file rehash before publication and again before deletion. Exactly
+two files / **58,008,756,888 bytes (54.0249 GiB)** were removed at
+2026-10-23 07:49:33 UTC. The ledger was already pushed at
+`62f2d78afb626db0809c7bfab4c7df14e2dc9f77`. No scientific final or base weight
+was deleted; all prior non-tensor evidence and protected final identities stayed
+unchanged. FT03 remains historically failed without replay. The
+[FT04-only retirement receipt](furnace/CANARY_RETIREMENT.json) binds its actual
+successful replay and exact checkpoint identity to the two-file terminal.
+
+Available disk reached **133,414,617,088 bytes / 124.2520 GiB** after retirement.
+At about **16:52 JST**, the one-shot training launcher entered the same clean
+execution checkout at `4b69c6b0d604f4947b7075e40430b9b8f113f4ad`, verified all
+856 sealed files, and passed the unchanged 110-GiB admission. Inline runs first;
+workspace starts only after its successful terminal, in a fresh process from
+original base. No checks are rerun and no canary state is inherited. Planned
+scientific denominator: **64 updates**, **538 rows / 21,112 target tokens per
+arm**, two final saves, with 76 descriptive development NLL rows per arm.
+
+Status is **RUNNING**, not a successful training/quality terminal. At the
+[16:57:16 JST observation](TRAINING_PROGRESS_20261023T075716Z.json), inline had
+completed **1/32 updates / 2 backward rows / 545 target tokens**, with all
+291 master tensors changed and the frozen row order exact. Update 2 was in
+progress; workspace had not started. Startup and first-update metadata are
+published, not a fabricated full-run manifest. See the
+[handoff](EXECUTION_HANDOFF.md). No automatic retry or recurring monitor was
+created. Local post-retirement offline/tiny-file selection: **103/103 PASS**
+and Ruff PASS, distinct from the unchanged 643-per-device qualification.
 
 ## Claim ceiling
 

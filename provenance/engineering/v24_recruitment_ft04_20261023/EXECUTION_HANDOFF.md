@@ -1,10 +1,12 @@
 # V24 R1 FT04: operation-specific snapshot/storage admission
 
-**Terminal update:** checks completed successfully, including exact fresh-process
-update-2/payload replay and both unchanged FT03 numerical update records.
-The [final results](README.md) and [offline replay](OFFLINE_CHECKS_VERIFICATION.json)
-are authoritative. No scientific training or further deletion was dispatched.
-Earlier progress notes below are historical. Do not rerun the checks launcher.
+**Current update:** checks passed and the subsequently authorized FT03/FT04
+canary-only retirement is complete. The same frozen FT04 source entered paired
+scientific training at about **16:52 JST on 2026-10-23**. Inline runs first;
+workspace is gated on its success. **RUNNING, not a completed training or quality
+result.** The [results/progress](README.md) and [offline checks replay](OFFLINE_CHECKS_VERIFICATION.json)
+separate the completed checks from this new phase. Earlier progress notes below
+are historical. Do not rerun checks, training, or the retirement helper.
 
 2026-10-23 JST. Ryō explicitly authorized a correction and regression-tested
 **new source/new attempt**, keeping numerical conditions and all safety floors.
@@ -134,3 +136,60 @@ Both retained engineering bodies were independently rehashed after the run;
 scientific final file identities still match the retirement ledger. The
 execution checkout remains clean at its original source commit. Further
 publication commits change local analysis/docs only, not that checkout.
+
+## New authority, completed cleanup and live training
+
+Ryō explicitly accepted the two-canary proposal. The
+[published retirement ledger](../../inventory/v24_ft04_canaries_20261023/README.md)
+at `62f2d78afb626db0809c7bfab4c7df14e2dc9f77` preceded whole-body revalidation
+and deletion of exactly the FT04 and FT03 `canary_step1.pt` paths. The terminal
+at 07:49:33 UTC records **54.0249 GiB reclaimed / 124.2520 GiB free**. Original
+Mistral, V22 step32, both V23 finals and historical failures remain protected.
+FT03 has no synthetic replay or retirement-training receipt. FT04's real
+[spent-canary receipt](furnace/CANARY_RETIREMENT.json) is separately bound to
+its completed exact replay. Deletion records were pushed at
+`509f52328c1fc63d00efeefb078c7abf7ac9552b` before training launch.
+
+The GPU was idle, host available memory about 120 GiB, and the execution
+checkout still clean at **4b69c6b0d604f4947b7075e40430b9b8f113f4ad**.
+One-shot tmux: **`ltws-v24-recruitment-training04-20261023`**.
+Launcher: `scripts/launch_v24_recruitment_ft04_training.sh`, with that exact
+source commit. Output remains the FT04 path above, not a new attempt.
+All 856 source files passed pre-import verification. Inline admission reported
+133,414,256,640 free disk bytes and a 64,424,509,440-byte future-write forecast,
+thus preserving more than the 50-GiB floor. Original base loading completed.
+At that initial launch observation no completed scientific update was claimed.
+
+The frozen dispatcher runs inline then workspace, each 32 updates / 538 rows /
+21,112 targets and one final save; both initialize independently from original
+Mistral. Development NLL is descriptive only. A foreign GPU client, resource
+failure or nonzero child exit stops the run without retry. Do not restart it,
+edit source/data, remove another checkpoint, or lower any safety threshold.
+No new generation, judge, benchmark, PR or HF export is included.
+
+On completion, copy metadata/logs only (never the checkpoint directory), then
+run `scripts/verify_v24_recruitment_ft04.py <local-furnace-bundle> --phase training`.
+Expect 32 updates per scientific role, 64 scientific / 67 total including checks,
+and complete closed manifests before calling training complete. If stopped,
+preserve all missingness and request recovery direction, never resume silently.
+No recurring monitor was created. Local publication regressions remain
+**103/103 PASS** plus Ruff; old **FAIL / winner:none / non_regression
+NOT_ESTABLISHED** is unchanged.
+
+### First scientific update observed, 16:57:16 JST
+
+[Timestamped progress](TRAINING_PROGRESS_20261023T075716Z.json) records the live
+inline process **PID 21717**, completed **1/32 updates / 2 backward rows /
+545 target tokens**, and the next window at `step2:before_update`. The first
+[complete numerical receipt](furnace/raw/inline/step1.json) matches the frozen
+row order exactly. All 291 FP32 master tensors changed; native, master and
+optimizer hashes differ from the original-base initial state. Both named
+[original-weight hashes](furnace/raw/inline/ORIGINAL_IDENTITY.json) match, and
+all 76 pretraining development NLL rows are recorded. These are execution
+checks, not improvement evidence or a completed scientific arm.
+
+Only closed startup/first-step files were copied into the local partial bundle;
+no tensor body, mutable log or invented terminal was copied. The training and
+workspace terminals were still absent at observation. The live dispatcher
+continues independently in tmux, with no recurring monitor. Collect the actual
+terminal and remaining immutable metadata before full training verification.

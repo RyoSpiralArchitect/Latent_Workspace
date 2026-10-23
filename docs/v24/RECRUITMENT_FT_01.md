@@ -97,9 +97,20 @@ confirmation claim, broad non-regression or release follows from training loss.
 Writing/judge qualification and public-benchmark comparison remain separate
 protocols. Old gate `FAIL`, winner `none`, non-regression `NOT_ESTABLISHED` remain.
 
-**Current status (2026-10-23):** data frozen; 570/570 CPU and 570/570 CUDA
+**Historical FT01 status (2026-10-23):** data frozen; 570/570 CPU and 570/570 CUDA
 qualification PASS. The [first 7B canary attempt](../../provenance/engineering/v24_recruitment_ft01_20261023/README.md)
 completed one update and saved before detecting a separate GPU client. It is
 sealed as `INCOMPLETE_NO_RETRY`; exact replay and both scientific arms are
 unrun. No new scientific checkpoint or quality result is claimed here. The
 canary body is retained, and the successful-replay retirement gate is not met.
+
+**Current status:** the separate [FT04 attempt](../../provenance/engineering/v24_recruitment_ft04_20261023/EXECUTION_HANDOFF.md)
+has passed 643/643 per device and exact fresh-process update/payload replay.
+The original FT01 body and subsequently the two FT03/FT04 engineering canaries
+were retired under separate, published authorizations; no historical missing
+replay was relabeled. Following the [two-canary retirement](../../provenance/inventory/v24_ft04_canaries_20261023/README.md),
+124.2520 GiB was available and the scientific pair entered training on the
+unchanged data and numerical recipe. The actual paired-file admission is
+**28+32+50=110 GiB**, retaining the 32-GiB per-write forecast and 50-GiB floor.
+Inline is dispatched first; workspace follows only its successful completion.
+No final training or quality result exists yet.

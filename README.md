@@ -63,11 +63,17 @@ criteria, the 32-GiB real-write reserve and 50-GiB free-space floor. It adds
 35 tests and has passed **643/643 on CPU and CUDA**. The
 [real 7B checks](provenance/engineering/v24_recruitment_ft04_20261023/README.md)
 also passed: two numerical updates reproduce FT03 exactly, and a fresh process
-replays update 2 and the whole payload exactly. Scientific Full FT remains
-unrun, pending the 110-GiB paired-final storage gate. The separately authorized
+replays update 2 and the whole payload exactly. The separately authorized
 [old FT01-only retirement](provenance/inventory/v24_ft01_superseded_20261023/README.md)
 is complete (27.0124 GiB reclaimed); it does not claim successful replay or
-relax the paired-FT storage gate. FT03 and all scientific final weights remain.
+relax the paired-FT storage gate. After a new specific authorization,
+[only the FT03/FT04 engineering canaries were retired](provenance/inventory/v24_ft04_canaries_20261023/README.md)
+with full rehashes and a pre-published ledger: **54.0249 GiB**, leaving
+**124.2520 GiB** before training. Original Mistral and V22/V23 finals remain.
+**Paired scientific Full FT is now running**, inline then workspace, each from
+original base at the frozen 32-update / 21,112-target budget. Entry passed the
+unchanged 110-GiB admission gate. This is a running experiment, not a completed
+candidate or quality result; see the [live handoff](provenance/engineering/v24_recruitment_ft04_20261023/EXECUTION_HANDOFF.md).
 
 **2026-10-22 readout complete:** [integrated V23 evaluation](docs/v23/EVALUATION_SYNTHESIS.md)
 and [full-FT PR review map](docs/v23/FULL_FT_REVIEW_GUIDE.md).
