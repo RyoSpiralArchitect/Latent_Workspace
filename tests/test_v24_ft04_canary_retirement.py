@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -17,14 +18,20 @@ def module():
     return result
 
 
-def test_real_ft04_replay_and_ft03_failure_remain_distinct(monkeypatch):
+def test_real_ft04_replay_and_ft03_failure_remain_distinct(tmp_path, monkeypatch):
     mod = module()
+    # Preserve the closed checks-only view even after later training artifacts
+    # are published. The real retirement helper itself must reject active FT.
+    published = ROOT / "provenance/engineering/v24_recruitment_ft04_20261023/furnace"
+    checks = tmp_path / "closed_checks"
+    checks.mkdir()
+    shutil.copy2(published / "SOURCE_SEAL.json", checks)
+    for relative in ("qualification", "checks", "raw/canary", "raw/replay"):
+        shutil.copytree(published / relative, checks / relative)
     monkeypatch.setattr(mod, "SOURCE_TREE", ROOT)
     monkeypatch.setattr(mod, "VERIFIER", ROOT / "scripts/verify_v24_recruitment_ft04.py")
     monkeypatch.setattr(mod, "OLD_VERIFIER", ROOT / "scripts/verify_v24_recruitment_ft03.py")
-    monkeypatch.setattr(
-        mod, "ROOT", ROOT / "provenance/engineering/v24_recruitment_ft04_20261023/furnace"
-    )
+    monkeypatch.setattr(mod, "ROOT", checks)
     monkeypatch.setattr(
         mod, "OLD", ROOT / "provenance/engineering/v24_recruitment_ft03_20261023/furnace"
     )
