@@ -1,5 +1,11 @@
 # V24 R1 FT04: operation-specific snapshot/storage admission
 
+**Terminal update:** checks completed successfully, including exact fresh-process
+update-2/payload replay and both unchanged FT03 numerical update records.
+The [final results](README.md) and [offline replay](OFFLINE_CHECKS_VERIFICATION.json)
+are authoritative. No scientific training or further deletion was dispatched.
+Earlier progress notes below are historical. Do not rerun the checks launcher.
+
 2026-10-23 JST. Ryō explicitly authorized a correction and regression-tested
 **new source/new attempt**, keeping numerical conditions and all safety floors.
 [FT03's closed failure](../v24_recruitment_ft03_20261023/README.md), its source,
@@ -107,3 +113,24 @@ The 7B canary is running as PID **17311**, beginning the same mixed-route
 windows from original Mistral. Its two-update terminal, payload hash and fresh
 process replay have not yet completed at this progress handoff. Do not
 restart, edit the execution checkout, or invoke training before its gates.
+
+## Final handoff: checks passed, training awaits storage authority
+
+The checks terminal is `V24_ROUTE_CHECKS_COMPLETE_NOT_TRAINING`, completed roles
+`canary,replay`, **3 total engineering/replay updates**. Both processes exited;
+the GPU was idle afterward. Canary elapsed 489.139 s, replay 343.692 s, dispatcher
+843.772 s. Full metadata/logs were copied without weights or private data and
+verified offline against source `4b69c6b0d604f4947b7075e40430b9b8f113f4ad`.
+
+The capacity gate remains: approximately 70.23 GiB free versus 110 GiB required
+for the paired finals. Only FT01's previously approved body was removed. FT03
+and FT04 canaries remain; original Mistral/V22/V23 finals stay protected.
+A new specific cleanup decision or other storage is needed before proceeding.
+Do not invent a retirement receipt, lower the floor, retry either old failure,
+change data or source, or dispatch a scientific arm with insufficient capacity.
+
+Final publication verification: **87/87** selected offline cases and Ruff pass.
+Both retained engineering bodies were independently rehashed after the run;
+scientific final file identities still match the retirement ledger. The
+execution checkout remains clean at its original source commit. Further
+publication commits change local analysis/docs only, not that checkout.

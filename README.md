@@ -60,8 +60,11 @@ scientific arms remain unrun; no quality success is claimed. Historical failures
 The authorized [FT04 recovery](provenance/engineering/v24_recruitment_ft04_20261023/EXECUTION_HANDOFF.md)
 separates memory-only snapshots from actual writes while preserving host/GPU
 criteria, the 32-GiB real-write reserve and 50-GiB free-space floor. It adds
-35 tests and has passed **643/643 on CPU and CUDA**; 7B canary/replay checks
-are in progress. The separately authorized
+35 tests and has passed **643/643 on CPU and CUDA**. The
+[real 7B checks](provenance/engineering/v24_recruitment_ft04_20261023/README.md)
+also passed: two numerical updates reproduce FT03 exactly, and a fresh process
+replays update 2 and the whole payload exactly. Scientific Full FT remains
+unrun, pending the 110-GiB paired-final storage gate. The separately authorized
 [old FT01-only retirement](provenance/inventory/v24_ft01_superseded_20261023/README.md)
 is complete (27.0124 GiB reclaimed); it does not claim successful replay or
 relax the paired-FT storage gate. FT03 and all scientific final weights remain.

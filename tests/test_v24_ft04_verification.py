@@ -55,6 +55,49 @@ def test_tiny_qualification_does_not_promote_unfinished_7b(tmp_path):
         verify.verify(qualification_fixture(tmp_path), "checks")
 
 
+def checks_fixture(tmp_path):
+    folder = qualification_fixture(tmp_path)
+    for name in ("raw", "checks"):
+        shutil.copytree(BUNDLE / name, folder / name)
+    return folder
+
+
+def test_real_7b_checks_replay_numerics_and_operation_accounting(tmp_path):
+    result = verify.verify(checks_fixture(tmp_path), "checks")
+    assert result["status"] == "CHECKS_COMPLETE_NOT_SCIENTIFIC_FT_OR_QUALITY"
+    assert result["native_executed_updates"] == 3
+    assert result["both_canary_updates_exactly_match_ft03"]
+    assert result["exact_next_update_replay"]
+    assert result["resources"]["canary"]["backward_rows"] == 8
+    assert result["resources"]["replay"]["storage_accounting"]["admission_forecast_bytes"] == 0
+    assert result["old_expression_gate"] == "FAIL" and result["winner"] == "none"
+
+
+def test_real_replay_does_not_waive_retirement_or_training(tmp_path):
+    with pytest.raises(FileNotFoundError, match="CANARY_RETIREMENT"):
+        verify.verify(checks_fixture(tmp_path), "training")
+
+
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "canary/step2.json",
+        "canary/STEP2_PAYLOAD.json",
+        "canary/CHECKPOINT_canary_step1.pt.json",
+        "canary/HOST_RESOURCES.jsonl",
+        "replay/step2.json",
+        "replay/REPLAY.json",
+        "replay/RESTORE.json",
+        "replay/FINISHED.json",
+    ],
+)
+def test_closed_7b_bytes_cannot_be_changed(relative, tmp_path):
+    folder = checks_fixture(tmp_path)
+    (folder / "raw" / relative).write_text("{}\n")
+    with pytest.raises((ValueError, KeyError)):
+        verify.verify(folder, "checks")
+
+
 def journal(role):
     forecast = {"canary": 32, "replay": 0, "inline": 60, "workspace": 32}[role]
     ops = {

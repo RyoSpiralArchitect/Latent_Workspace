@@ -122,7 +122,11 @@ unrun in FT03. Its negative terminal and newer canary remain protected.
 The authorized [FT04 repair](../../provenance/engineering/v24_recruitment_ft04_20261023/EXECUTION_HANDOFF.md)
 separates memory-only admission from real-file writes, retaining all safeguards.
 It keeps 608 tests and adds 35; **643/643 passed on both CPU and CUDA**,
-with 140 clean independent-observer samples. The 7B checks are running.
+with 140 clean independent-observer samples. The
+[7B checks passed](../../provenance/engineering/v24_recruitment_ft04_20261023/README.md):
+both canary updates exactly reproduce FT03; fresh-process update-2 and full
+payload replay are exact. This is engineering qualification, not scientific FT
+or quality improvement. The scientific arms remain unrun pending storage.
 Real saves retain the 32-GiB
 reserve and paired-final admission is conservatively 110 GiB including the
 50-GiB floor. The [FT01-only retirement](../../provenance/inventory/v24_ft01_superseded_20261023/README.md)
