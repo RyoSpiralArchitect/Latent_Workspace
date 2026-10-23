@@ -95,3 +95,16 @@ train-only oracle/data contracts, update/save/restart parity, token budgets,
 storage admission and an untouched capability panel precede a new FT run.
 GPU use through Full FT was explicitly authorized in this turn. The diagnostic
 launcher still cannot start FT automatically or bypass these gates.
+
+The next controlled factor is [R1 input-route learning](RECRUITMENT_FT_01.md):
+same independently checked records, answers and training windows, supplied
+inline versus through native M. New arithmetic/register/transform groups join
+the unused V23 world expansion; preservation remains 80% of requested target
+token exposure. The new bank/harness passed **60/60 local CPU tests**. Actual
+offline tokenizer counts, tiny-device/7B replay qualification and the final FT
+source seal still precede dispatch; no candidate result is claimed.
+
+The [obsolete V15 engineering pair retirement](../../provenance/inventory/v24_v15_engineering_20261023/README.md)
+then reclaimed **54.1187 GiB**, leaving about **119.98 GiB**. V18 and V22/V23
+comparators remain. Next FT uses a separately verified spent-canary lifecycle,
+not an implicit waiver of the 50-GiB free-space floor.

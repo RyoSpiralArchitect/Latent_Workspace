@@ -1,0 +1,24 @@
+{
+  "schema": "ltws-recruitment-bank-v1",
+  "namespace": "recruit-20261023",
+  "seed": 20261023,
+  "families": ["arithmetic", "register_trace", "stable_filter"],
+  "groups_per_family": {"train": 64, "dev": 8, "confirmation": 16},
+  "training_updates": 32,
+  "minimum_window_supervised_tokens": 512,
+  "maximum_window_rows": 128,
+  "target_supervised_token_shares": {
+    "world": 0.1, "reasoning": 0.1, "instruction": 0.4, "prose": 0.25, "code": 0.15
+  },
+  "world_plan": "configs/v23/WORLD_BANK_02.json",
+  "routes": ["inline", "workspace"],
+  "preservation_coefficient": 0.0,
+  "objective": "query_only_token_weighted_causal_nll",
+  "selection": "No selection by model outputs. Fresh deterministic whole-group split.",
+  "scope": "Controlled supplied-information recruitment; not latent S or general-intelligence evidence.",
+  "confirmation_model_evaluations": 0,
+  "teacher_calls": 0,
+  "old_expression_gate": "FAIL",
+  "winner": "none",
+  "non_regression": "NOT_ESTABLISHED"
+}

@@ -1,6 +1,6 @@
 # Superseded V15 engineering condition: two-body retirement
 
-2026-10-23. **Pre-delete ledger; not yet a deletion receipt.** Ryō authorized
+2026-10-23. **Completed: exactly two bodies retired at 00:44:41 UTC.** Ryō authorized
 removing no-longer-needed artifacts to make room for the next full FT. The
 bounded selection is the completed two-update V15 full engineering condition,
 not V18's later comparator or any V22/V23 scientific final. Current `src/`,
@@ -18,11 +18,15 @@ the original terminal/report digest and exact-replay evidence. The
 unchanged: engineering replay passed, semantic promotion did not, old gate
 `FAIL`, winner `none`, non-regression `NOT_ESTABLISHED`.
 
-Expected reclamation: **58,109,517,836 bytes (54.1187 GiB)**. Inventory available
-space was 70,715,494,400 bytes; the shared-disk free-space result must be read
-from the later deletion receipt, not assumed from this sum.
+Reclaimed: **58,109,517,836 bytes (54.1187 GiB)**. The
+[terminal receipt](furnace/DELETE_FINISHED.json) records available space rising
+from **70,715,473,920** to **128,824,995,840 bytes (119.9776 GiB)**. The original
+inventory is retained both here and in the unmodified Furnace receipt bundle.
 
-Publish this ledger before running [the bounded helper](retire.py). It rehashes
+The pre-delete ledger was published in commit
+`a9028b75fac414e3dfe81f6f9302422815fe6c55`, SHA256
+`cb12294a3bea45dd094e212288f20a4615caee3c1b3fea1be596a6766d5ccd9e`, before
+running [the bounded helper](retire.py). It rehashes
 both entire files immediately before deletion, checks no process has either
 open, refuses symlinks/hardlinks/path or receipt changes, and journals the exact
 unlinks. Tests cover exact scope, changed bodies/receipts/ledger, in-use checks,
