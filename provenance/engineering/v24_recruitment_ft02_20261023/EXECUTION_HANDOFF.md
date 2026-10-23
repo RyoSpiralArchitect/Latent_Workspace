@@ -50,8 +50,11 @@ canary until the separate recovery succeeds. No source worktree is deleted.
 The preceding V15 deletion remains a distinct historical action, not evidence
 that shared disk space has stayed constant. Recheck live storage at every gate.
 
-**Pre-dispatch status:** preparation only. No FT02 role has run yet. Record
-actual receipts below after launch; never convert engineering completion into
-a capability or release claim. Old FAIL / winner:none / non-regression
+**Terminal disposition:** CPU 570/570 passed, but its external audit failed on
+one unlocalized `ValueError`. CUDA and every 7B role are unrun; no new weights.
+See the [result and original seven-file bundle](README.md). Do not invoke either
+launcher again. Ryō authorized the separate [FT03 audit recovery](../v24_recruitment_ft03_20261023/EXECUTION_HANDOFF.md).
+Never convert engineering completion into a capability or release claim.
+Old FAIL / winner:none / non-regression
 NOT_ESTABLISHED remain. No new generation, judge call, held-out model exposure,
 HF export, PR or recurring monitor is part of this attempt.

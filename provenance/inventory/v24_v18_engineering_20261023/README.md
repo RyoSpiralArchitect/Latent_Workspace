@@ -1,4 +1,4 @@
-# V18 completed engineering pilot: pre-delete ledger
+# V18 completed engineering pilot: published ledger and retirement
 
 2026-10-23. Ryō authorized removing obsolete artifacts and confirmed a new
 same-conditions V24 attempt. Shared disk free space fell to about 45.72 GiB
@@ -16,6 +16,15 @@ Potential recovery: **58,166,527,816 bytes (54.1718 GiB)**. The
 fresh whole-file hashes, original save receipts, every raw/qualification
 artifact digest, helper hashes and protected-body identities. It is published
 before any unlink; this document alone does not claim deletion completed.
+
+**Completed disposition, 2026-10-23 05:59:59 UTC:** the
+[terminal journal](latent-v24-v18-retirement01-20261023/DELETE_FINISHED.json)
+records both exact bodies retired after publication in commit
+`67d4a1cec73fb36cd7ab67c228167bc9bd097c28`. Actual reclaimed bytes equal the
+forecast above. Available space increased from 49,089,372,160 to
+107,255,902,208 bytes (99.89 GiB); shared storage can change after this sample.
+Per-file journals and the published inventory remain alongside the terminal.
+No original model, V22/V23 final, FT01 canary, data or source worktree was removed.
 
 The [original V18 pilot](../../pilots/v18_native_pilot_20261015/README.md)
 already completed exact fresh-process step-2 replay from step 1. Its offline

@@ -48,6 +48,13 @@ for live receipt status and the separate Full-FT/storage gates.
 Two superseded engineering/intermediate checkpoints were
 [recorded before deletion and retired](provenance/inventory/v24_intermediates_20261022/README.md),
 freeing 54.02 GiB; scientific final comparison weights remain intact.
+The subsequent [paired-route FT qualification](provenance/engineering/v24_recruitment_ft01_20261023/README.md)
+passed 570 CPU/CUDA tests but stopped after one canary update on another GPU
+client. [FT02](provenance/engineering/v24_recruitment_ft02_20261023/README.md)
+stopped earlier on an external-audit error despite 570 passing CPU tests.
+[FT03](provenance/engineering/v24_recruitment_ft03_20261023/EXECUTION_HANDOFF.md)
+is the authorized audit-only, separate-source recovery with 608 tests per device;
+no scientific arm or quality success is claimed. Historical failures remain.
 
 **2026-10-22 readout complete:** [integrated V23 evaluation](docs/v23/EVALUATION_SYNTHESIS.md)
 and [full-FT PR review map](docs/v23/FULL_FT_REVIEW_GUIDE.md).

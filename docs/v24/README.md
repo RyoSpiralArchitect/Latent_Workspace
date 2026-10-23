@@ -106,10 +106,18 @@ tokenization froze 538 rows / 21,112 targets across 32 windows per arm. The
 then passed **570/570 CPU and 570/570 CUDA tests**. The 7B canary completed one
 update and saved, then stopped on an actual separate GPU client. Exact replay
 and both scientific arms are unrun; no candidate result is claimed. Preserve
-the failed trial and its checkpoint; a new exclusive-window attempt requires
-a separate recovery decision, without changing the scientific conditions.
+the failed trial and its checkpoint. The authorized
+[same-source FT02 attempt](../../provenance/engineering/v24_recruitment_ft02_20261023/README.md)
+then passed CPU 570/570 but stopped on one unlocalized external-audit ValueError;
+CUDA and 7B remained unrun. An explicitly authorized
+[FT03 audit-only recovery](../../provenance/engineering/v24_recruitment_ft03_20261023/EXECUTION_HANDOFF.md)
+adds an independent observer process and 38 regressions without changing any
+scientific conditions or safety floor. It must qualify all 608 tests per device.
 
 The [obsolete V15 engineering pair retirement](../../provenance/inventory/v24_v15_engineering_20261023/README.md)
-then reclaimed **54.1187 GiB**, leaving about **119.98 GiB**. V18 and V22/V23
+then reclaimed **54.1187 GiB**, leaving about **119.98 GiB at that time**.
+After shared storage fell again, the obsolete completed
+[V18 engineering pair](../../provenance/inventory/v24_v18_engineering_20261023/README.md)
+was separately journaled and retired, reclaiming **54.1718 GiB**. V22/V23 scientific
 comparators remain. Next FT uses a separately verified spent-canary lifecycle,
 not an implicit waiver of the 50-GiB free-space floor.
