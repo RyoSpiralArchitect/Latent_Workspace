@@ -70,3 +70,40 @@ independent initialization. GPU admission/cap/abort 31/30.5/0.75 GiB; host
 100/24 GiB; disk floor 50 GiB; 14,400 seconds per real role. No generation,
 judge, held-out/OOD exposure, automatic retry, monitor, PR or HF publication.
 Old FAIL, winner:none, non-regression NOT_ESTABLISHED remain unchanged.
+
+## Dispatch record
+
+Execution source **4b69c6b0d604f4947b7075e40430b9b8f113f4ad** was published
+before deletion or execution. The new detached Furnace checkout was clean and
+the GPU idle at dispatch. The one-shot checks launcher was started in tmux
+`ltws-v24-recruitment-checks04-20261023` at approximately 16:12 JST.
+The qualified test-file list was independently collected: **643 cases**.
+No source changes are to be applied to this checkout while the run is active.
+
+The FT01-only deletion is complete; the post-deletion journal shows about
+97.24 GiB free. All current scientific comparators and FT03's body remain.
+Training has not been dispatched. Once checks close, copy metadata only and
+use the separately published `scripts/verify_v24_recruitment_ft04.py` to replay
+source, qualification, per-operation resources, full next-update equality,
+and the unchanged FT03 numerical fingerprints. Do not rerun a failed role.
+
+## Closed qualification / real-model checks in progress
+
+The source seal contains **856 files** at the execution commit above.
+Both qualifications passed **643/643**, with zero failures/errors/skips:
+CPU **74.029 s**, CUDA **80.163 s**. The independent observer recorded
+**140 successful samples / zero errors**, exited normally on requested stop,
+and rejected the child CUDA-init probe. CPU PID 5486; observer PID 5513.
+These sampled observations are not continuous OS-level GPU isolation.
+
+The closed [qualification artifacts](furnace/qualification/) and source seal
+have been copied byte-for-byte, with no tensor bodies or private data.
+[Offline verification](OFFLINE_QUALIFICATION_VERIFICATION.json) passes against
+the complete frozen source archive. The independent verification/retirement
+and historical regressions now pass **77/77** locally. These post-publication
+tests are not added retroactively to the frozen 643-per-device run.
+
+The 7B canary is running as PID **17311**, beginning the same mixed-route
+windows from original Mistral. Its two-update terminal, payload hash and fresh
+process replay have not yet completed at this progress handoff. Do not
+restart, edit the execution checkout, or invoke training before its gates.

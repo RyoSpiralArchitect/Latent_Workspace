@@ -22,6 +22,12 @@ FT01 and FT03 remain `INCOMPLETE_NO_RETRY`; both had **NOT_RUN fresh replay**.
 No `CANARY_RETIREMENT.json` training handoff is created for either failed run.
 This ledger authorizes a storage action, not scientific success.
 
-Pre-execution status: inventory complete; deletion awaits ledger publication.
-The one-shot journal will report the actual result separately. **Git retains
-metadata only, not the tensor body; deletion cannot be undone from Git.**
+Completed once at **2026-10-23 07:10:41 UTC / 16:10:41 JST**, after publishing
+the ledger and helper in `4b69c6b0d604f4947b7075e40430b9b8f113f4ad`.
+The [terminal journal](latent-v24-ft01-superseded-retirement01-20261023/DELETE_FINISHED.json)
+confirms **one file / 27.0124 GiB removed**. Retained identities and historical
+evidence passed post-deletion checks. Shared free space was **104,414,429,184
+bytes (97.2435 GiB)** afterward, including the concurrently prepared FT04
+source worktree. It is sufficient for the new checks, not the 110-GiB pair gate.
+**Git retains metadata only, not the tensor body; deletion cannot be undone
+from Git.** No training-admission receipt was created.
