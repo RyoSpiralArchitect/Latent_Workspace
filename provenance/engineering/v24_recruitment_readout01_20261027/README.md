@@ -49,3 +49,17 @@ terminal, or change a protocol in place. A failed or missing terminal requires
 a separate recovery decision. Use only closed metadata for final replay.
 
 This document records preparation, **not a completed evaluation result**.
+
+## Qualified and started — 2026-10-27 09:25 JST
+
+Pinned-runtime input replay matched exactly. Furnace CPU and CUDA each passed
+**441/441 tests, zero skips**, and the independent CPU isolation audit passed.
+The complete source/qualification replay is in
+[QUALIFICATION_REPLAY.json](QUALIFICATION_REPLAY.json). The guarded real-model
+dispatcher then started base; 4/72 free generations and 10 fixed reference
+traces were journaled at the last observation. Neither the base nor dispatcher
+terminal was present yet. The two FT-model roles are still pending.
+
+[Execution handoff](EXECUTION_HANDOFF.md) records the immutable source, exact
+paths, process identities, observation time and no-retry recovery instructions.
+No quality comparison is reported before complete terminal replay.

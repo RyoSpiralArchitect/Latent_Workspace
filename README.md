@@ -23,9 +23,10 @@ original final checkpoint receipts are bound in the new
 It separates answer/step/format likelihood, gold-prefix assistance and
 unassisted generation: **3 checkpoints × 2 runtime routes**, six unexposed
 development source groups, 216 planned generations, no new learning or judges.
-The following dated notes retain the earlier progression. This new evaluation
-has no reported quality outcome yet; qualification and all six cells remain
-required. The old FAIL / no-winner / unestablished non-regression ceiling stands.
+The following dated notes retain the earlier progression. [CPU and CUDA each
+passed 441 tests and the base evaluation started](provenance/engineering/v24_recruitment_readout01_20261027/EXECUTION_HANDOFF.md);
+all six cells and terminal replay remain required. No quality outcome is
+reported yet. The old FAIL / no-winner / unestablished non-regression ceiling stands.
 
 **2026-10-23 next FT preparation:** the [matched native input-route bank](provenance/engineering/v24_recruitment_preparation01_20261023/README.md)
 is frozen after 60/60 isolated Furnace CPU tests: **32 updates / 538 rows /
