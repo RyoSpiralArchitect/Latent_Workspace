@@ -17,6 +17,16 @@ dated evidence.
 
 ## Reading this repository
 
+**2026-10-27 post-FT continuation:** FT04's two 32-update arms completed; the
+original final checkpoint receipts are bound in the new
+[crossed-route readout protocol](docs/v24/RECRUITMENT_READOUT_01.md).
+It separates answer/step/format likelihood, gold-prefix assistance and
+unassisted generation: **3 checkpoints × 2 runtime routes**, six unexposed
+development source groups, 216 planned generations, no new learning or judges.
+The following dated notes retain the earlier progression. This new evaluation
+has no reported quality outcome yet; qualification and all six cells remain
+required. The old FAIL / no-winner / unestablished non-regression ceiling stands.
+
 **2026-10-23 next FT preparation:** the [matched native input-route bank](provenance/engineering/v24_recruitment_preparation01_20261023/README.md)
 is frozen after 60/60 isolated Furnace CPU tests: **32 updates / 538 rows /
 21,112 targets per arm**, with identical information/targets supplied inline
@@ -37,7 +47,8 @@ with [all 132 traces / 591 forwards replayed](provenance/engineering/v24_readout
 after 350/350 CPU and CUDA tests. Four assisted-content probes bind the correct
 option in all three arms; on four world groups, reference-format likelihood
 gain dominates content gain. This is exposed conditional evidence, not a new
-benchmark or a universal bottleneck diagnosis. No new scientific FT arm has run.
+benchmark or a universal bottleneck diagnosis. At that probe's completion,
+no new scientific FT arm had run.
 New engine-owned observational instruments separate fixed-token content/copying,
 option binding and EOS; original/candidate × no-memory/inline/workspace contrasts
 keep missingness and group-level denominators. This bounded 7B diagnostic
@@ -70,10 +81,12 @@ relax the paired-FT storage gate. After a new specific authorization,
 [only the FT03/FT04 engineering canaries were retired](provenance/inventory/v24_ft04_canaries_20261023/README.md)
 with full rehashes and a pre-published ledger: **54.0249 GiB**, leaving
 **124.2520 GiB** before training. Original Mistral and V22/V23 finals remain.
-**Paired scientific Full FT is now running**, inline then workspace, each from
+**Historical launch state, 2026-10-23:** paired scientific Full FT started,
+inline then workspace, each from
 original base at the frozen 32-update / 21,112-target budget. Entry passed the
-unchanged 110-GiB admission gate. This is a running experiment, not a completed
-candidate or quality result; see the [live handoff](provenance/engineering/v24_recruitment_ft04_20261023/EXECUTION_HANDOFF.md).
+unchanged 110-GiB admission gate. Both arms subsequently completed; completion
+alone is not a quality result. See the [handoff](provenance/engineering/v24_recruitment_ft04_20261023/EXECUTION_HANDOFF.md)
+and the new post-FT protocol above.
 
 **2026-10-22 readout complete:** [integrated V23 evaluation](docs/v23/EVALUATION_SYNTHESIS.md)
 and [full-FT PR review map](docs/v23/FULL_FT_REVIEW_GUIDE.md).

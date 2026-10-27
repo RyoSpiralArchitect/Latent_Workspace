@@ -1,5 +1,12 @@
 # V24: readout instruments and workspace capability improvement
 
+**2026-10-27 continuation:** both FT04 arms have completed 32 updates. The new
+[post-FT crossed-route protocol](RECRUITMENT_READOUT_01.md) now separates gold
+answer assistance, semantic/step/format likelihood and unassisted generation
+on six unexposed development groups. This is a bounded evaluation of existing
+weights, not another FT or an established quality improvement. The dated
+progress below is historical; no old failed receipt or gate is rewritten.
+
 Ryō's intended target is **improvement**, not "constancy" (the latter was a
 typing error corrected on 2026-10-22). Preservation is a floor, not the primary
 research claim. We want useful capabilities to improve *because of* workspace
@@ -138,10 +145,11 @@ is complete (27.0124 GiB); replay stays explicitly NOT_RUN, not a training gate.
 reclaimed 54.0249 GiB after whole-body rehash and published ledger. Scientific
 final weights and original Mistral remain protected; the FT03 failure is not
 rewritten. Free disk reached 124.2520 GiB, and the unchanged training admission
-passed. The same frozen FT04 source now runs inline then workspace, independently
+passed. The same frozen FT04 source then ran inline and workspace, independently
 initialized from base, 32 updates / 538 rows / 21,112 targets per arm. Follow
 [the execution handoff](../../provenance/engineering/v24_recruitment_ft04_20261023/EXECUTION_HANDOFF.md).
-Training is not yet complete; no improved capability or non-regression is claimed.
+Training has since completed; improved capability and non-regression remain
+unestablished pending separate evaluation.
 
 The [obsolete V15 engineering pair retirement](../../provenance/inventory/v24_v15_engineering_20261023/README.md)
 then reclaimed **54.1187 GiB**, leaving about **119.98 GiB at that time**.
