@@ -39,8 +39,9 @@ steps-first FT would not have exactly matched supervised-token counts under
 the same row schedule. [The protocol](../../../docs/v24/ORDER_CONTROL_01.md)
 requires this to be resolved or retained as an explicit confound before any
 full 7B comparison. The Furnace root filesystem had 19.803 GiB free at the
-inventory sample, below the unchanged 50-GiB FT floor. No full update was
-admitted. [Capacity candidates](../../inventory/v24_order_control_capacity_20261114/README.md)
+initial inventory sample and 17.038 GiB after both isolated source checkouts,
+below the unchanged 50-GiB FT floor. No full update was admitted.
+[Capacity candidates](../../inventory/v24_order_control_capacity_20261114/README.md)
 are a read-only shortlist, not a deletion approval.
 
 The prior **FAIL / winner:none / non_regression NOT_ESTABLISHED** ceiling is

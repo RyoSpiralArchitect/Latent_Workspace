@@ -70,7 +70,8 @@ selection or confirmation panel.
 3. On 2026-11-14 the Furnace GPU was idle, but the filesystem had only
    **21,263,790,080 free bytes (19.803 GiB)**. Thus the old 50-GiB floor
    fails before even forecasting a new 29-GB final checkpoint. No 7B run may
-   start at this state. See the [read-only capacity candidates](../../provenance/inventory/v24_order_control_capacity_20261114/README.md).
+   start at this state. A later sample after the separate O1/O2 source
+   checkouts was 17.038 GiB. See the [read-only capacity candidates](../../provenance/inventory/v24_order_control_capacity_20261114/README.md).
 4. Once storage and scientific controls qualify, test tiny CPU/CUDA
    update/save/fresh-process replay before any full update. Compare unassisted
    affected target answer **and** independently checked generated steps; keep

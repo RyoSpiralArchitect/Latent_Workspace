@@ -8,6 +8,12 @@ sample. This fails the established 50-GiB disk floor by approximately
 that. `du` is apparent directory usage, **not guaranteed reclaimable bytes**:
 hardlinks, shared caches and live dependencies matter.
 
+After the two isolated O1/O2 source checkouts and the completed data-only
+probe, a later read-only sample was **18,294,886,400 free bytes (17.038 GiB)**.
+This later value, not the earlier one, is the current capacity observation;
+other workloads and caches may continue to change it. The previous FT04
+paired-save admission was 110 GiB, but no new full-FT admission was attempted.
+
 | Exact Furnace path / group | Observed apparent size | Classification before any retirement |
 | --- | ---: | --- |
 | `/home/ryospiralarchitect/spiralreality/SpiralReality/tmp/latent-v20-a2-depth-ladder-20261016` | ~5.6 GiB | Historical V20 feature-extraction data; two large `FEATURES_*.safetensors` have link count 1. Release checks still reference this raw folder. Archive/rehash and reproduce its verifier before considering deletion. |
