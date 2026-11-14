@@ -22,5 +22,15 @@ under `provenance/inventory/v12_weight_prune_20261014/` and
 identity, not a recoverable copy of the weight bodies. Re-running this exact
 V11 checkpoint requires rebuilding the bodies from source/training inputs.
 
-Status: planned; update this document with observed deletion and free-space
-receipt after the exact four-file transaction.
+Status: **deleted** on Furnace after a second size, link-count, regular-file
+and full SHA-256 check of all four targets. The first deletion command failed
+at Python parsing before any file operation; its corrected invocation printed
+`all four pre-delete checks passed` and `deleted four V11 historical shards`
+and exited 0. No directory or other file was removed. Root-filesystem
+available bytes rose from 18,211,024,896 immediately before the operation
+to 32,707,133,440 afterward, a measured gain of **14,496,108,544 bytes**.
+The historical shard bodies are no longer recoverable from this ledger.
+
+The resulting 30.461 GiB free remains below the unchanged 50-GiB training
+floor, even before reserving space for a new ~29-GB checkpoint. No 7B
+training was admitted as a consequence of this retirement alone.
