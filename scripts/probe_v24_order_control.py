@@ -49,6 +49,7 @@ def inspect(bundle, plan, tokenizer):
     ex.require(set(schedule) == {"training", "canary", "development"}, "Frozen schedule shape")
 
     changed_rows = {}
+    complete_original, complete_changed = {}, {}
     for route in bank.ROUTES:
         saved = {row["key"]: row for row in ex.read_gz(bundle / f"PRIVATE_{route}.json.gz")}
         prior = {row["key"]: row for row in original[route]}
@@ -59,6 +60,13 @@ def inspect(bundle, plan, tokenizer):
         ex.require(
             all(row == saved[key] for key, row in prior.items()), "Historical projection exact"
         )
+        preservation = {key: row for key, row in saved.items() if key not in prior}
+        ex.require(
+            all(row["role"] in ("instruction", "prose", "code") for row in preservation.values()),
+            "Only frozen preservation rows outside synthetic projection",
+        )
+        complete_original[route] = saved
+        complete_changed[route] = {**saved, **after}
         changed_rows[route] = 0
         for key, before in prior.items():
             now = after[key]
@@ -91,8 +99,8 @@ def inspect(bundle, plan, tokenizer):
                 changed_rows[route] += 1
     ex.require(changed_rows["inline"] == changed_rows["workspace"], "Matched changed rows")
 
-    by_original = {row["key"]: row for row in original["inline"]}
-    by_changed = {row["key"]: row for row in changed["inline"]}
+    by_original = complete_original["inline"]
+    by_changed = complete_changed["inline"]
     baseline_tokens = changed_tokens = changed_occurrences = scheduled_rows = 0
     delta_by_family = {}
     for window in schedule["training"]:
@@ -101,6 +109,11 @@ def inspect(bundle, plan, tokenizer):
                 key in by_original and by_original[key]["split"] == "train", "Train-only schedule"
             )
             left, right = by_original[key], by_changed[key]
+            ex.require(
+                left["target_ids"] == complete_original["workspace"][key]["target_ids"]
+                and right["target_ids"] == complete_changed["workspace"][key]["target_ids"],
+                "Both routes share the complete target budget",
+            )
             baseline_tokens += left["supervised_tokens"]
             changed_tokens += right["supervised_tokens"]
             scheduled_rows += 1

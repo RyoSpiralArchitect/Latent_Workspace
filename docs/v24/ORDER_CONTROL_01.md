@@ -28,6 +28,11 @@ non_regression NOT_ESTABLISHED` ceiling is unchanged. Its 10-GiB disk
 admission is only for this small data-only receipt; it does **not** replace
 the 50-GiB floor or the real-save forecast for 7B.
 
+The first sealed data-only attempt stopped before an output receipt on an
+audit-only preservation-row lookup error; see the [retained O1 failure](../../provenance/engineering/v24_order_control01_20261114/FAILED.md).
+The corrected O2 attempt has a separate source and exclusive output. No
+historical source, target, threshold or failed result is rewritten.
+
 ## Exploratory tokenizer observation, before the sealed probe
 
 The pinned Furnace tokenizer was used without a model call or download to
