@@ -30,8 +30,9 @@ the 50-GiB floor or the real-save forecast for 7B.
 
 The first sealed data-only attempt stopped before an output receipt on an
 audit-only preservation-row lookup error; see the [retained O1 failure](../../provenance/engineering/v24_order_control01_20261114/FAILED.md).
-The corrected O2 attempt has a separate source and exclusive output. No
-historical source, target, threshold or failed result is rewritten.
+The corrected O2 attempt used a separate source and exclusive output and
+[completed its data-only checks](../../provenance/engineering/v24_order_control02_20261114/README.md).
+No historical source, target, threshold or failed result was rewritten.
 
 ## Exploratory tokenizer observation, before the sealed probe
 

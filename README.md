@@ -17,6 +17,15 @@ dated evidence.
 
 ## Reading this repository
 
+**2026-11-14 bounded O-factor continuation:** the [output-order data pilot](provenance/engineering/v24_order_control02_20261114/README.md)
+replayed the frozen V24 private route inputs exactly and measured a +63-token
+steps-first serialization delta on the same 538-row schedule. This was a
+tokenizer/data check with zero model forwards or updates, **not** a new FT or
+quality gain. Its [capacity shortlist](provenance/inventory/v24_order_control_capacity_20261114/README.md)
+contains candidates only; no weight was deleted. The 50-GiB FT disk floor
+currently prevents another 7B full update. The old FAIL/no-winner ceiling
+stands. The V24 result below remains the latest model-quality observation.
+
 **2026-10-27 V24 post-FT result (recorded after completion):** FT04's inline
 and workspace arms independently completed 32 updates from the original base.
 The [crossed-route evaluation](provenance/engineering/v24_recruitment_readout01_20261027/RESULTS_README.md)
