@@ -1,5 +1,10 @@
 # V24 FT04: crossed-route post-training readout diagnosis
 
+**Terminal result:** all planned cells completed. Read the
+[source-backed outcome](../../provenance/engineering/v24_recruitment_readout01_20261027/RESULTS_README.md)
+and [bounded next factor](NEXT_ENGINE_FACTOR.md). The prospective protocol
+below is preserved as frozen before execution.
+
 Prepared on 2026-10-27 after the move. This is a **new bounded development
 evaluation**, not a restart of FT04, a new training run, or a release decision.
 The original expression gate remains **FAIL**, `winner: none`, and

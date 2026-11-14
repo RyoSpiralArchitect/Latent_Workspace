@@ -1,5 +1,10 @@
 # V24 FT04 post-training readout 01 — execution record
 
+**Later terminal result:** the run completed all six cells. See the separate
+[source-backed result](RESULTS_README.md) and literal [analysis](RESULTS.json).
+The preparation and dated launch snapshots below are preserved as historical
+records, not the current execution status.
+
 New bounded evaluation of existing weights, authorized by Ryō's continuation
 after post-relocation recovery and cache cleanup. No training, new checkpoint,
 judge, weight deletion, upload or GitHub push belongs to this run.

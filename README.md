@@ -17,16 +17,20 @@ dated evidence.
 
 ## Reading this repository
 
-**2026-10-27 post-FT continuation:** FT04's two 32-update arms completed; the
-original final checkpoint receipts are bound in the new
-[crossed-route readout protocol](docs/v24/RECRUITMENT_READOUT_01.md).
-It separates answer/step/format likelihood, gold-prefix assistance and
-unassisted generation: **3 checkpoints × 2 runtime routes**, six unexposed
-development source groups, 216 planned generations, no new learning or judges.
-The following dated notes retain the earlier progression. [CPU and CUDA each
-passed 441 tests and the base evaluation started](provenance/engineering/v24_recruitment_readout01_20261027/EXECUTION_HANDOFF.md);
-all six cells and terminal replay remain required. No quality outcome is
-reported yet. The old FAIL / no-winner / unestablished non-regression ceiling stands.
+**2026-10-27 V24 post-FT result (recorded after completion):** FT04's inline
+and workspace arms independently completed 32 updates from the original base.
+The [crossed-route evaluation](provenance/engineering/v24_recruitment_readout01_20261027/RESULTS_README.md)
+then completed **3 checkpoints × 2 runtime routes**, 216 unassisted
+generations across six correlated development source groups, plus 432 fixed
+reference traces. FT improves JSON completion and null/simple-control answers,
+but **all four FT/route cells score 0/12 on affected multi-step targets**.
+The [literal results](provenance/engineering/v24_recruitment_readout01_20261027/RESULTS.json)
+retain every case. This does not select a winner or establish broad
+non-regression: **FAIL / winner:none / non_regression NOT_ESTABLISHED**.
+The [next Engine factor](docs/v24/NEXT_ENGINE_FACTOR.md) separates target-order
+assistance, computation curriculum, internal S and route effects; no new
+training or judge call has followed this result. The dated notes below retain
+the earlier progression and their historical in-progress states.
 
 **2026-10-23 next FT preparation:** the [matched native input-route bank](provenance/engineering/v24_recruitment_preparation01_20261023/README.md)
 is frozen after 60/60 isolated Furnace CPU tests: **32 updates / 538 rows /

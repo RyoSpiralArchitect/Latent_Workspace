@@ -1,11 +1,14 @@
 # V24: readout instruments and workspace capability improvement
 
-**2026-10-27 continuation:** both FT04 arms have completed 32 updates. The new
-[post-FT crossed-route protocol](RECRUITMENT_READOUT_01.md) now separates gold
-answer assistance, semantic/step/format likelihood and unassisted generation
-on six unexposed development groups. This is a bounded evaluation of existing
-weights, not another FT or an established quality improvement. The dated
-progress below is historical; no old failed receipt or gate is rewritten.
+**2026-10-27 continuation, terminal result:** both FT04 arms independently
+completed 32 updates. The [post-FT crossed-route protocol](RECRUITMENT_READOUT_01.md)
+completed all six checkpoint/runtime-route cells; see the
+[source-backed result](../../provenance/engineering/v24_recruitment_readout01_20261027/RESULTS_README.md)
+and [next Engine factor](NEXT_ENGINE_FACTOR.md). Format and simple controls
+improve, while every trained cell is **0/12** on affected target computation.
+This is a bounded development observation of existing weights, not another FT
+or an established quality improvement. The dated progress below is historical;
+no old failed receipt or gate is rewritten.
 
 Ryō's intended target is **improvement**, not "constancy" (the latter was a
 typing error corrected on 2026-10-22). Preservation is a floor, not the primary
